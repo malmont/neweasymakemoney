@@ -1,0 +1,89 @@
+is_global = true
+build_property.EnableAotAnalyzer = 
+build_property.EnableSingleFileAnalyzer = true
+build_property.EnableTrimAnalyzer = false
+build_property.IncludeAllContentForSelfExtract = 
+build_property.TargetFramework = net8.0-android
+build_property.TargetPlatformMinVersion = 
+build_property.UsingMicrosoftNETSdkWeb = 
+build_property.ProjectTypeGuids = 
+build_property.InvariantGlobalization = false
+build_property.PlatformNeutralAssembly = 
+build_property.EnforceExtendedAnalyzerRules = 
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.RootNamespace = Easymakemoney
+build_property.ProjectDir = /Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
+
+[/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/App.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Easymakemoney.App.xaml
+build_metadata.AdditionalFiles.TargetPath = App.xaml
+build_metadata.AdditionalFiles.RelativePath = App.xaml
+
+[/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/AppShell.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Easymakemoney.AppShell.xaml
+build_metadata.AdditionalFiles.TargetPath = AppShell.xaml
+build_metadata.AdditionalFiles.RelativePath = AppShell.xaml
+
+[/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/Controls/FlyoutHeaderControl.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Easymakemoney.Controls.FlyoutHeaderControl.xaml
+build_metadata.AdditionalFiles.TargetPath = Controls/FlyoutHeaderControl.xaml
+build_metadata.AdditionalFiles.RelativePath = Controls/FlyoutHeaderControl.xaml
+
+[/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/MainPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Easymakemoney.MainPage.xaml
+build_metadata.AdditionalFiles.TargetPath = MainPage.xaml
+build_metadata.AdditionalFiles.RelativePath = MainPage.xaml
+
+[/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/Resources/ressourDictionnary.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Easymakemoney.Resources.ressourDictionnary.xaml
+build_metadata.AdditionalFiles.TargetPath = Resources/ressourDictionnary.xaml
+build_metadata.AdditionalFiles.RelativePath = Resources/ressourDictionnary.xaml
+
+[/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/Resources/Styles/Colors.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Easymakemoney.Resources.Styles.Colors.xaml
+build_metadata.AdditionalFiles.TargetPath = Resources/Styles/Colors.xaml
+build_metadata.AdditionalFiles.RelativePath = Resources/Styles/Colors.xaml
+
+[/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/Resources/Styles/Styles.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Easymakemoney.Resources.Styles.Styles.xaml
+build_metadata.AdditionalFiles.TargetPath = Resources/Styles/Styles.xaml
+build_metadata.AdditionalFiles.RelativePath = Resources/Styles/Styles.xaml
+
+[/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/Views/Dasboard/DashboardPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Easymakemoney.Views.Dasboard.DashboardPage.xaml
+build_metadata.AdditionalFiles.TargetPath = Views/Dasboard/DashboardPage.xaml
+build_metadata.AdditionalFiles.RelativePath = Views/Dasboard/DashboardPage.xaml
+
+[/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/Views/Lists/AllListsPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Easymakemoney.Views.Lists.AllListsPage.xaml
+build_metadata.AdditionalFiles.TargetPath = Views/Lists/AllListsPage.xaml
+build_metadata.AdditionalFiles.RelativePath = Views/Lists/AllListsPage.xaml
+
+[/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/Views/Lists/ListNewCollectionPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Easymakemoney.Views.Lists.ListNewCollectionPage.xaml
+build_metadata.AdditionalFiles.TargetPath = Views/Lists/ListNewCollectionPage.xaml
+build_metadata.AdditionalFiles.RelativePath = Views/Lists/ListNewCollectionPage.xaml
+
+[/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/Views/Startup/LoadingPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Easymakemoney.Views.Startup.LoadingPage.xaml
+build_metadata.AdditionalFiles.TargetPath = Views/Startup/LoadingPage.xaml
+build_metadata.AdditionalFiles.RelativePath = Views/Startup/LoadingPage.xaml
+
+[/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/Views/Startup/LoginPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = Easymakemoney.Views.Startup.LoginPage.xaml
+build_metadata.AdditionalFiles.TargetPath = Views/Startup/LoginPage.xaml
+build_metadata.AdditionalFiles.RelativePath = Views/Startup/LoginPage.xaml

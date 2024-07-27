@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <BundleResource Include="/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/obj/Debug/net8.0-ios/resizetizer/sp/splash_7CF9AE42DA2017EC6621B726A870D40F01970097ED8F3D99ABBC1EC8470F119D.png" />
+    <BundleResource Include="/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/obj/Debug/net8.0-ios/resizetizer/sp/splash_7CF9AE42DA2017EC6621B726A870D40F01970097ED8F3D99ABBC1EC8470F119D@2x.png" />
+    <BundleResource Include="/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/obj/Debug/net8.0-ios/resizetizer/sp/splash_7CF9AE42DA2017EC6621B726A870D40F01970097ED8F3D99ABBC1EC8470F119D@3x.png" />
+    <BundleResource Include="/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/obj/Debug/net8.0-ios/resizetizer/r/dotnet_bot@3x.png" />
+    <BundleResource Include="/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/obj/Debug/net8.0-ios/resizetizer/r/dotnet_bot@2x.png" />
+    <BundleResource Include="/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/obj/Debug/net8.0-ios/resizetizer/r/dotnet_bot.png" />
+    <BundleResource Include="/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/obj/Debug/net8.0-ios/resizetizer/r/Resources/lock.png" />
+    <BundleResource Include="/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/obj/Debug/net8.0-ios/resizetizer/r/Resources/about_us.png" />
+    <BundleResource Include="/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/obj/Debug/net8.0-ios/resizetizer/r/Resources/team.png" />
+    <BundleResource Include="/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/obj/Debug/net8.0-ios/resizetizer/r/Resources/contact_us.png" />
+    <BundleResource Include="/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/obj/Debug/net8.0-ios/resizetizer/r/Resources/user.png" />
+    <BundleResource Include="/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/obj/Debug/net8.0-ios/resizetizer/r/Resources/logo.png" />
+    <BundleResource Include="/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/obj/Debug/net8.0-ios/resizetizer/r/Resources/dashboard.png" />
+    <BundleResource Include="obj/Debug/net8.0-ios/resizetizer/f/OpenSans-Regular.ttf" />
+    <BundleResource Include="obj/Debug/net8.0-ios/resizetizer/f/OpenSans-Semibold.ttf" />
+  </ItemGroup>
+</Project>

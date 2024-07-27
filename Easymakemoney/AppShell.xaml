@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="Easymakemoney.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:startupPages="clr-namespace:Easymakemoney.Views.Startup"
+    xmlns:DashboardPages="clr-namespace:Easymakemoney.Views.Dasboard"
+    xmlns:Models="clr-namespace:Easymakemoney.Models"
+    Shell.TabBarIsVisible="False"
+    xmlns:local="clr-namespace:Easymakemoney">
+
+     <ShellContent FlyoutItemIsVisible="False" Shell.FlyoutBehavior="Disabled"
+        ContentTemplate="{DataTemplate startupPages:LoadingPage}"
+        Route="LoadingPage" />
+
+     <ShellContent Title="Login Page" FlyoutItemIsVisible="False" Shell.FlyoutBehavior="Disabled"
+        ContentTemplate="{DataTemplate startupPages:LoginPage}"
+        Route="LoginPage" />
+
+    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems" Route="DashboardPage">
+
+            <ShellContent
+            Title="Dashboard" Icon="{x:Static Models:Icons.Dashboard}"
+            ContentTemplate="{DataTemplate DashboardPages:DashboardPage}"/>
+          <ShellContent
+            Title="Contact US" Icon="{x:Static Models:Icons.ContactUs}"
+            ContentTemplate="{DataTemplate DashboardPages:DashboardPage}"/>
+         <ShellContent
+            Title="About US" Icon="{x:Static Models:Icons.AboutUs}"
+            ContentTemplate="{DataTemplate DashboardPages:DashboardPage}"/>
+
+         <ShellContent
+            Title="People" Icon="{x:Static Models:Icons.People}"
+            ContentTemplate="{DataTemplate DashboardPages:DashboardPage}"/>
+
+     </FlyoutItem>
+
+    <Shell.FlyoutFooter >
+        <StackLayout Padding="20" HorizontalOptions="Center">
+            <Button Text="Sign Out" Command="{Binding SignOutCommand}"/>
+        </StackLayout>
+    </Shell.FlyoutFooter>
+
+</Shell>
+

@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             x:DataType="list:AllListsViewModel"
+             x:Class="Easymakemoney.Views.Lists.AllListsPage"
+             Title="AllListsPage">
+        <ContentPage.Content>
+                <ScrollView HorizontalScrollBarVisibility="Always"
+                                VerticalScrollBarVisibility="Always">
+                        <StackLayout  Spacing="0"
+                                        Orientation="Vertical"
+                                        HorizontalOptions="FillAndExpand"
+                                        VerticalOptions="FillAndExpand">
+
+                                <StackLayout  BackgroundColor="#518faa"
+                                                Orientation="Vertical"
+                                                HorizontalOptions="FillAndExpand"
+                                                VerticalOptions="Start">
+                                        <Image  Margin="0,35,0,0"
+                                                        Source="logo.png"
+                                                        Aspect="AspectFit"
+                                                        HeightRequest="200"/>
+
+                                </StackLayout >
+
+                                <Image Source="lab_separator.png"
+                                                Aspect="AspectFill"/>
+
+                                <StackLayout Margin="5,0,5,0"
+                                                Spacing="0"
+                                                Orientation="Vertical"
+                                                HorizontalOptions="FillAndExpand"
+                                                VerticalOptions="FillAndExpand">
+                                        <StackLayout Margin="10,10"
+                                                        Orientation="Horizontal"
+                                                        HorizontalOptions="FillAndExpand"
+                                                        VerticalOptions="Start">
+
+                                                <Button Margin="2,2"
+                                                BorderColor="#C4AB4D"
+                                                                Style="{StaticResource boutonLabStyle}"
+                                                        BackgroundColor="White"
+                                                                Text="COLLECTIONS"
+                                                                HorizontalOptions="FillAndExpand"
+                                                                TextColor="#C4AB4D"
+                                                                Command="{Binding NavigateToCollectionCommand}"
+                                                        HeightRequest="40"
+                                                                WidthRequest="135"
+                                                                CornerRadius="5"/>
+
+
+                                                <Button Margin="2,2" BorderColor="#C4AB4D"
+                                                                Style="{StaticResource boutonLabStyle}"
+                                                                BackgroundColor="White"
+                                                                TextColor="#C4AB4D"
+                                                        Text="COMMANDES"
+                                                                HorizontalOptions="FillAndExpand"
+                                                        HeightRequest="40"
+                                                                WidthRequest="135"
+                                                                CornerRadius="5"/>
+
+                                        </StackLayout>
+
+                                             <StackLayout Margin="10,10"
+                                                        Orientation="Horizontal"
+                                                        HorizontalOptions="FillAndExpand"
+                                                        VerticalOptions="Start">
+
+                                                <Button Margin="2,2" BorderColor="#C4AB4D"
+                                                                Style="{StaticResource boutonLabStyle}"
+                                                        BackgroundColor="White"
+                                                                Text="PRODUITS"
+                                                                HorizontalOptions="FillAndExpand"
+                                                                TextColor="#C4AB4D"
+                                                        HeightRequest="40"
+                                                                WidthRequest="135"
+                                                                CornerRadius="5"/>
+
+                                                <Button Margin="2,2" BorderColor="#C4AB4D"
+                                                                Style="{StaticResource boutonLabStyle}"
+                                                        BackgroundColor="White"
+                                                                Text="FOURNISSEURS"
+                                                                HorizontalOptions="FillAndExpand"
+                                                                TextColor="#C4AB4D"
+                                                        HeightRequest="40"
+                                                                WidthRequest="135"
+                                                                CornerRadius="5"/>
+
+                                        </StackLayout>
+
+                                          <StackLayout Margin="10,10"
+                                                        Orientation="Horizontal"
+                                                        HorizontalOptions="FillAndExpand"
+                                                        VerticalOptions="Start">
+
+                                                <Button Margin="2,2" BorderColor="#C4AB4D"
+                                                                Style="{StaticResource boutonLabStyle}"
+                                                        BackgroundColor="White"
+                                                                Text="NOTES DE FRAIS"
+                                                                HorizontalOptions="FillAndExpand"
+                                                                TextColor="#C4AB4D"
+                                                        HeightRequest="40"
+                                                                WidthRequest="135"
+                                                                CornerRadius="5"/>
+
+                                                <Button Margin="2,2" 
+                                                                Style="{StaticResource boutonLabStyle}"
+                                                        BorderColor="#C4AB4D"
+                                                        BackgroundColor="White"
+                                                                Text="FRAIS DE PORT"
+                                                                HorizontalOptions="FillAndExpand"
+                                                                TextColor="#C4AB4D"
+                                                        HeightRequest="40"
+                                                                WidthRequest="135"
+                                                                CornerRadius="5"/>
+
+                                        </StackLayout>
+                                        <StackLayout  Orientation="Horizontal"  Margin="10,10"
+                                                        HorizontalOptions="CenterAndExpand"
+                                                        VerticalOptions="Start">
+
+                                                <Button Margin="20,2" BorderColor="#C4AB4D"
+                                                                Style="{StaticResource boutonLabStyle}"
+                                                        BackgroundColor="White"
+                                                                Text="Simulateur de budget"
+                                                                HorizontalOptions="Center"
+                                                                TextColor="#C4AB4D"
+                                                        HeightRequest="50"
+                                                                WidthRequest="340"
+                                                                CornerRadius="5"/>
+
+                                        </StackLayout>
+
+                                </StackLayout >
+                        </StackLayout>
+                </ScrollView>
+        </ContentPage.Content>
+</ContentPage>

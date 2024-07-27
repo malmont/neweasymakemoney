@@ -1,0 +1,1 @@
+-v --force --timestamp=none --sign - --entitlements /Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/obj/Debug/net8.0-maccatalyst/maccatalyst-x64/Entitlements.xcent /Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/bin/Debug/net8.0-maccatalyst/maccatalyst-x64/Easymakemoney.app

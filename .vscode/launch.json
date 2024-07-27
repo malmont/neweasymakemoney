@@ -1,0 +1,18 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": ".NET MAUI Android Debug",
+            "type": "android",
+            "request": "launch",
+            "preLaunchTask": "maui: Build Debug",
+            "appSrcRoot": "${workspaceFolder}",
+            "appOutput": "${workspaceFolder}/bin/Debug/net8.0-android",
+            "adbPort": 5037,
+            "appPackage": "com.companyname.easymakemoney",
+            "apkFile": "${workspaceFolder}/bin/Debug/net8.0-android/com.companyname.easymakemoney.apk",
+            "launchActivity": "com.companyname.easymakemoney.MainActivity",
+            "console": "internalConsole"
+        }
+    ]
+}
