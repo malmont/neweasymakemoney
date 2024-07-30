@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "Bso0WMklCf1n02gqP+FnoJIUqbv/0FTptqI0l0qPS+sahbezrhpLY/GF8oeJf1gk/3/1P63kif8B2sHbGxfecw==",
+  "dgSpecHash": "6qeJGS0Us12rF8sDcOWPtbPvZI3D12an6OD4Yn3Rn9P+QVC1ajw3TDd5RrhHegUMrsrjH+XoiDQ3veO6GswiDQ==",
   "success": true,
   "projectFilePath": "/Users/malmont/Desktop/projets/Easymakemoney1/Easymakemoney/Easymakemoney.csproj",
   "expectedPackageFiles": [
+    "/Users/malmont/.nuget/packages/communitytoolkit.maui/9.0.2/communitytoolkit.maui.9.0.2.nupkg.sha512",
+    "/Users/malmont/.nuget/packages/communitytoolkit.maui.core/9.0.2/communitytoolkit.maui.core.9.0.2.nupkg.sha512",
     "/Users/malmont/.nuget/packages/googlegson/2.10.1.4/googlegson.2.10.1.4.nupkg.sha512",
     "/Users/malmont/.nuget/packages/microsoft.extensions.configuration/8.0.0/microsoft.extensions.configuration.8.0.0.nupkg.sha512",
     "/Users/malmont/.nuget/packages/microsoft.extensions.configuration.abstractions/8.0.0/microsoft.extensions.configuration.abstractions.8.0.0.nupkg.sha512",

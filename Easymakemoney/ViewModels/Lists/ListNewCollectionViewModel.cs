@@ -1,33 +1,26 @@
-﻿using System;
-
-
-namespace Easymakemoney.ViewModels.Lists
+﻿namespace Easymakemoney.ViewModels.Lists
 {
-    public partial class ListNewCollectionViewModel: BaseViewModel
+    public partial class ListNewCollectionViewModel : BaseViewModel
     {
-        private readonly IListCollectionService _getListCollection;
-        private ObservableCollection<ListCollection> _listCollections;
+        private readonly GetListCollectionsUseCase _getListCollectionsUseCase;
+        public required ObservableCollection<ListCollection> _listCollections = new ObservableCollection<ListCollection>();
 
         public ObservableCollection<ListCollection> ListCollections
         {
-            get => _listCollections; 
-            set { _listCollections = value; OnPropertyChanged(nameof(ListCollection)); }
-
-        }
-        //[ObservableProperty]
-        //private ObservableCollection<ListCollection> _listCollections;
-
-        public ListNewCollectionViewModel(IListCollectionService GetListCollection)
-		{
-
-            _getListCollection = GetListCollection;
-            
-            
+            get => _listCollections;
+            set { _listCollections = value; OnPropertyChanged(nameof(ListCollections)); }
         }
 
+        // Constructeur
+        public ListNewCollectionViewModel(GetListCollectionsUseCase getListCollectionsUseCase)
+        {
+            _getListCollectionsUseCase = getListCollectionsUseCase;
+        }
+
+        // Commandes
         public async Task GetListCollectionCommand()
         {
-            ListCollections = await _getListCollection.GetCollectionList();
+            ListCollections = await _getListCollectionsUseCase.ExecuteAsync();
         }
 
         [ICommand]
@@ -39,9 +32,7 @@ namespace Easymakemoney.ViewModels.Lists
             try
             {
                 IsBusy = true;
-
-                var listCollections = await _getListCollection.GetCollectionList();
-
+                var listCollections = await _getListCollectionsUseCase.ExecuteAsync();
                 ListCollections.Clear();
 
                 foreach (var listCollection in listCollections)
@@ -54,22 +45,8 @@ namespace Easymakemoney.ViewModels.Lists
             }
             finally
             {
-                //IsBusy = false;
-                //IsRefreshing = false;
+                IsBusy = false;
             }
         }
-
-        //public override void loadViewModel()
-        //{
-        //    GetListCollection();
-        //}
-
-
-
-
-
-
-
     }
 }
-

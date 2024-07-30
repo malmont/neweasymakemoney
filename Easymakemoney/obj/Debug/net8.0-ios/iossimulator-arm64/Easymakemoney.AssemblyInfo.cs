@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Easymakemoney")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+af2acf3a743c757f9812456af4af2edaa6e4003d")]
 [assembly: System.Reflection.AssemblyProductAttribute("Easymakemoney")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Easymakemoney")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

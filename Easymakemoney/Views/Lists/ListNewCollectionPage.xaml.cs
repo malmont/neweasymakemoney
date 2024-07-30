@@ -1,7 +1,4 @@
 ﻿
-
-
-
 namespace Easymakemoney.Views.Lists;
 
 public partial class ListNewCollectionPage : ContentPage
