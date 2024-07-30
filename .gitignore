@@ -1,0 +1,26 @@
+# .NET build directories
+/bin/
+/obj/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Mono auto generated files
+mono_crash.*
+
+# VS Code directories
+.vscode/
+
+# Visual Studio 2019/2022 directories
+.vs/
+.idea/
+
+# JetBrains Rider
+.idea/
+
+# macOS files
+.DS_Store
