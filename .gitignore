@@ -24,3 +24,5 @@ mono_crash.*
 
 # macOS files
 .DS_Store
+Easymakemoney/obj
+Easymakemoney/bin
