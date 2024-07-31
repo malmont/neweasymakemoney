@@ -1,25 +1,19 @@
-﻿
-namespace Easymakemoney.Services
+﻿namespace Easymakemoney.Services
 {
     public class ListCollectionService : IListCollectionService
     {
+        private const string GetListUrl = "https://backend-strapi.online/jeesign/api/collections.json";
+        private readonly IHttpService _httpService;
+
+        public ListCollectionService(IHttpService httpService)
+        {
+            _httpService = httpService;
+        }
+
         public async Task<ObservableCollection<ListCollection>> GetCollectionList()
         {
-            string getListUrl = "https://backend-strapi.online/jeesign/api/collections.json";
-            using (var client = new HttpClient())
-            {
-                var response = await client.GetAsync(getListUrl);
-                if (response.StatusCode == System.Net.HttpStatusCode.OK)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-                    var deserializeJson = JsonConvert.DeserializeObject<ObservableCollection<ListCollection>>(json);
-                    return deserializeJson;
-                }
-                else
-                {
-                    return new ObservableCollection<ListCollection>(); // Retourne une collection vide en cas d'erreur
-                }
-            }
+            var collections = await _httpService.GetAsync<ObservableCollection<ListCollection>>(GetListUrl);
+            return collections ?? new ObservableCollection<ListCollection>();
         }
     }
 }

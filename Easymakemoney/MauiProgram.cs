@@ -1,9 +1,6 @@
 ﻿
-
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
-using SkiaSharp.Views.Maui.Controls.Hosting;
-
 
 namespace Easymakemoney;
 
@@ -21,8 +18,12 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
+		builder.Services.AddHttpClient<IHttpService, HttpService>();
+
 		builder.Services.AddSingleton<ILoginService, LoginService>();
         builder.Services.AddSingleton<IListCollectionService, ListCollectionService>();
+		builder.Services.AddSingleton<IJwtService, JwtService>();
+        builder.Services.AddSingleton<IPreferenceService, PreferenceService>();
 
         builder.Services.AddSingleton<LoginPage>();
         builder.Services.AddSingleton<DashboardPage>();

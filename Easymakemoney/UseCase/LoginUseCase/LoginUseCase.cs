@@ -4,10 +4,14 @@ namespace Easymakemoney.UseCases
     public class LoginUseCase
     {
         private readonly ILoginService _loginService;
+        private readonly IJwtService _jwtService;
+        private readonly IPreferenceService _preferenceService;
 
-        public LoginUseCase(ILoginService loginService)
+        public LoginUseCase(ILoginService loginService, IJwtService jwtService, IPreferenceService preferenceService)
         {
             _loginService = loginService;
+            _jwtService = jwtService;
+            _preferenceService = preferenceService;
         }
 
         public async Task<bool> ExecuteAsync(string email, string password)
@@ -23,25 +27,9 @@ namespace Easymakemoney.UseCases
 
             if (response != null)
             {
-                var handler = new JwtSecurityTokenHandler();
-                var jsonToken = handler.ReadJwtToken(response.Token) as JwtSecurityToken;
+                var (username, role) = _jwtService.ParseToken(response.Token);
+                _preferenceService.SaveUserDetails(response.Token, username, role);
 
-                var username = jsonToken.Claims.First(claim => claim.Type == "username").Value;
-                var role = jsonToken.Claims.First(claim => claim.Type == "roles").Value;
-
-                string encryptedToken = EncryptionHelper.Encrypt(response.Token);
-                Microsoft.Maui.Storage.Preferences.Set("userToken", encryptedToken);
-
-                UserBasicInfo userDetails = new UserBasicInfo()
-                {
-                    Email = username,
-                    Role = role
-                };
-
-                string userDetailStr = JsonConvert.SerializeObject(userDetails);
-                Microsoft.Maui.Storage.Preferences.Set(nameof(App.UserDetails), userDetailStr);
-                App.UserDetails = userDetails;
-                App.Token = response.Token;
                 AppShell.Current.FlyoutHeader = new FlyoutHeaderControl();
                 await Shell.Current.GoToAsync("//DashboardPage");
 
