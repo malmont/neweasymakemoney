@@ -19,5 +19,11 @@ namespace Easymakemoney.Services
             App.UserDetails = userDetails;
             App.Token = token;
         }
+
+        public string GetUserToken()
+        {
+            var encryptedToken = Microsoft.Maui.Storage.Preferences.Get("userToken", string.Empty);
+            return EncryptionHelper.Decrypt(encryptedToken);
+        }
     }
 }
