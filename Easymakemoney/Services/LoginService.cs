@@ -12,7 +12,7 @@
 
         public async Task<LoginResponse> Authenticate(LoginRequest loginRequest)
         {
-            return await _httpService.PostAsync<LoginResponse>(LoginUrl, loginRequest);
+            return await _httpService.PostAsyncWithoutAuth<LoginResponse>(LoginUrl, loginRequest);
         }
     }
 }
