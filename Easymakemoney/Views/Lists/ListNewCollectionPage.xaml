@@ -4,7 +4,7 @@
              xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
              x:DataType="list:ListNewCollectionViewModel"
              xmlns:x1="clr-namespace:Easymakemoney.Models"
-               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Easymakemoney.Views.Lists.ListNewCollectionPage"
              Title="ListNewCollectionPage">
     <ContentPage.Content>
@@ -60,7 +60,7 @@
                                                         HeightRequest="30"
                                                        Source="{Binding photoCollection}"/>
                                             </Frame>
-                                            <Label VerticalOptions="Start"
+                                            <!-- <Label VerticalOptions="Start"
                                                     Grid.Column="1"
                                                     Grid.Row="0"
                                                     LineBreakMode="TailTruncation"
@@ -70,7 +70,7 @@
                                                     FontSize="Small"
                                                     Text="{Binding id}"
                                                     VerticalTextAlignment="Center"
-                                                    HorizontalTextAlignment="Center"/>
+                                                    HorizontalTextAlignment="Center"/> -->
                                             <Label VerticalOptions="Center"
                                                     Grid.Column="2"
                                                     Grid.Row="1"
@@ -103,14 +103,12 @@
             WidthRequest="65" AbsoluteLayout.LayoutFlags="PositionProportional"  
             AbsoluteLayout.LayoutBounds=".95,.95,80,60" HorizontalOptions="EndAndExpand"
              VerticalOptions="End" >
-            
-             <ImageButton Source="boutonaddblanc64.png"  WidthRequest="65" HeightRequest="65"  />
-
-                  </StackLayout>
+                <ImageButton Source="boutonaddblanc64.png" 
+                             WidthRequest="65" 
+                             HeightRequest="65" 
+                             Command="{Binding ShowBottomSheetCommand}" />
+            </StackLayout>
         
-           </Grid>
-
-
-
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

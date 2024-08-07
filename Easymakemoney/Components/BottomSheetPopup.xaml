@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:viewmodels="clr-namespace:Easymakemoney.ViewModels"
+               xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+               x:Class="Easymakemoney.Components.BottomSheetPopup"
+               Color="Transparent"
+               BindingContext="{Binding .}">
+       <Frame BackgroundColor="White"  x:Name="PopupFrame"
+              Padding="20"
+              VerticalOptions="End"
+              WidthRequest="400"
+              HeightRequest="600"
+              CornerRadius="30"
+              Margin="20"
+               TranslationY="{Binding Source={x:Reference PopupFrame}, Path=TranslationY}">
+              <StackLayout BackgroundColor="Transparent">
+                     <Label Text="Create New Collection"
+                            FontSize="Large"
+                            HorizontalOptions="Center"/>
+                     <Frame HeightRequest="45"
+                            Margin="10,0,0,10"
+                            Padding="2"
+                            HasShadow="True"
+                            BorderColor="black"
+                            HorizontalOptions="Fill">
+                            <handlers:BorderlessEntry Placeholder="Collection Name"
+                                                      Text="{Binding NomCollection, Mode=TwoWay}"/>
+                     </Frame>
+                     <Frame HeightRequest="45"
+                            Margin="10,0,0,10"
+                            Padding="2"
+                            HasShadow="True"
+                            BorderColor="black"
+                            HorizontalOptions="Fill">
+                            <handlers:BorderlessEntry Placeholder="Budget"
+                                                      Keyboard="Numeric"
+                                                      Text="{Binding BudgetCollection, Mode=TwoWay}"/>
+                     </Frame>
+
+                     <Frame HeightRequest="65"
+                            Margin="10,0,0,10"
+                            Padding="2"
+                            HasShadow="True"
+                            BorderColor="black"
+                            HorizontalOptions="Fill">
+                            <StackLayout>
+                                   <Label Text="Start Date"/>
+                                   <handlers:BorderlessDatePicker Date="{Binding StartDateCollection, Mode=TwoWay}"
+                                                                  Format="yyyy-MM-dd"/>
+                            </StackLayout>
+                     </Frame>
+                     <Frame HeightRequest="65"
+                            Margin="10,0,0,10"
+                            Padding="2"
+                            HasShadow="True"
+                            BorderColor="black"
+                            HorizontalOptions="Fill">
+                            <StackLayout>
+                                   <Label Text="End Date"/>
+                                   <handlers:BorderlessDatePicker Date="{Binding EndDateCollection, Mode=TwoWay}"
+                                                                  Format="yyyy-MM-dd"/>
+                            </StackLayout>
+                     </Frame>
+
+                     <Switch IsToggled="{Binding Del, Mode=TwoWay}"
+                             HorizontalOptions="Start">
+                            <Switch.ThumbColor>Red</Switch.ThumbColor>
+                            <Switch.OnColor>Green</Switch.OnColor>
+                     </Switch>
+
+                     <Frame HeightRequest="45"
+                            Margin="10,0,0,10"
+                            Padding="2"
+                            HasShadow="True"
+                            BorderColor="black"
+                            HorizontalOptions="Fill">
+                            <handlers:BorderlessEntry Placeholder="Photo URL"
+                                                      Text="{Binding PhotoCollection, Mode=TwoWay}"/>
+                     </Frame>
+                     <Button Text="Save"
+                             Margin="0, 20, 0, 20"
+                             Command="{Binding SaveCommand}"/>
+                     <Button Text="Cancel"
+                             Command="{Binding CancelCommand}"/>
+              </StackLayout>
+       </Frame>
+</toolkit:Popup>

@@ -1,7 +1,4 @@
-﻿using Microsoft.Maui.Controls;
-using Microsoft.Maui.Controls.Hosting;
-using Microsoft.Maui.Hosting;
-#if ANDROID
+﻿#if ANDROID
 using Android.Graphics;
 #elif IOS
 using UIKit;
@@ -18,9 +15,23 @@ namespace Easymakemoney
         {
             InitializeComponent();
 
+            // Mapping personnalisé pour BorderlessEntry
             Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping(nameof(BorderlessEntry), (handler, view) =>
             {
                 if (view is BorderlessEntry)
+                {
+#if ANDROID
+                    handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
+#elif IOS
+                    handler.PlatformView.BorderStyle = UIKit.UITextBorderStyle.None;
+#endif
+                }
+            });
+
+            // Mapping personnalisé pour BorderlessDatePicker
+            Microsoft.Maui.Handlers.DatePickerHandler.Mapper.AppendToMapping(nameof(BorderlessDatePicker), (handler, view) =>
+            {
+                if (view is BorderlessDatePicker)
                 {
 #if ANDROID
                     handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
