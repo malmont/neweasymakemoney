@@ -1,7 +1,5 @@
-using System.Net.Http;
+
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace Easymakemoney.Services
 {
@@ -69,6 +67,28 @@ namespace Easymakemoney.Services
             }
         }
 
+        public async Task <bool> DeleAsyncWithAuth<T>(string url)
+        {
+            var token = _preferenceService.GetUserToken();
+
+            if(string.IsNullOrEmpty(token)) {
+                throw new InvalidOperationException("Token is not available.");
+            }
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            var response = await _httpClient.DeleteAsync(url);
+            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+              return true;
+            }
+            else
+            {
+                return false;
+            }
+
+
+        }
+
+
         public async Task<T> PostAsyncWithoutAuth<T>(string url, object data)
         {
             var json = JsonConvert.SerializeObject(data);
@@ -90,5 +110,7 @@ namespace Easymakemoney.Services
                 return default;
             }
         }
+
+
     }
 }

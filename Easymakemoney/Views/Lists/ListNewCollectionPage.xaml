@@ -15,100 +15,98 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
+            <ScrollView>
+                <StackLayout Spacing="0">
+                    <StackLayout Style="{StaticResource HeaderStackLayoutStyle}">
+                        <Image Style="{StaticResource HeaderImageStyle}"/>
+                    </StackLayout>
 
-            <StackLayout Spacing="0">
-                <StackLayout Style="{StaticResource HeaderStackLayoutStyle}">
-                    <Image Style="{StaticResource HeaderImageStyle}"/>
+                    <Image Style="{StaticResource SeparatorImageStyle}"/>
+
+                    <CollectionView ItemsSource="{Binding ListCollections}"
+                                    SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x1:ListCollection">
+                                <SwipeView>
+                                    <SwipeView.RightItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItem Text="Delete"
+                                                       BackgroundColor="Red"
+                                                       Command="{Binding Path=BindingContext.DeleteCollectionCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                       CommandParameter="{Binding .}"/>
+                                        </SwipeItems>
+                                    </SwipeView.RightItems>
+                                    <Grid Padding="30">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Frame BorderColor="#C4AB4D"
+                                               BackgroundColor="Transparent"
+                                               CornerRadius="10"
+                                               HasShadow="True">
+                                            <StackLayout Orientation="Horizontal"
+                                                         WidthRequest="310">
+                                                <Frame HasShadow="True"
+                                                       Padding="1"
+                                                       Grid.Row="0"
+                                                       Grid.RowSpan="3"
+                                                       CornerRadius="10"
+                                                       BackgroundColor="Gray">
+                                                    <Image Aspect="Fill"
+                                                           Margin="1,1"
+                                                           WidthRequest="60"
+                                                           HeightRequest="50"
+                                                           Source="{Binding photoCollection}"/>
+                                                </Frame>
+                                                <Label VerticalOptions="Center"
+                                                       Grid.Column="2"
+                                                       Grid.Row="1"
+                                                       LineBreakMode="TailTruncation"
+                                                       TextColor="Black"
+                                                       Margin="10,0,20,0"
+                                                       FontSize="Small"
+                                                       Text="{Binding nomCollection}"/>
+                                                <Label VerticalOptions="Center"
+                                                       Grid.Column="3"
+                                                       Grid.Row="1"
+                                                       LineBreakMode="TailTruncation"
+                                                       HorizontalOptions="FillAndExpand"
+                                                       TextColor="Black"
+                                                       Margin="10,0,20,0"
+                                                       FontSize="Small"
+                                                       Text="{Binding budgetCollection}"/>
+                                            </StackLayout>
+                                        </Frame>
+                                    </Grid>
+                                </SwipeView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
                 </StackLayout>
-
-                <Image Style="{StaticResource SeparatorImageStyle}"/>
-
-                <ListView SeparatorVisibility="None"
-                        RowHeight="110"
-                        ItemsSource="{Binding ListCollections}">
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="x1:ListCollection">
-                            <ViewCell>
-
-                                <Grid Padding="30">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="Auto"/>
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Frame BorderColor="#C4AB4D"
-                                            BackgroundColor="Transparent"
-                                           CornerRadius="10"
-                                           HasShadow="True">
-                                        <StackLayout Orientation="Horizontal"
-                                                WidthRequest="310">
-                                            <Frame  HasShadow="True"
-                                                    Padding="1"
-                                                    Grid.Row="0"
-                                                    Grid.RowSpan="3"
-                                                    CornerRadius="10"
-                                                    BackgroundColor="Gray">
-                                                <Image Aspect="Fill"
-                                                        Margin="1,1"
-                                                       WidthRequest="60"
-                                                        HeightRequest="30"
-                                                       Source="{Binding photoCollection}"/>
-                                            </Frame>
-                                            <!-- <Label VerticalOptions="Start"
-                                                    Grid.Column="1"
-                                                    Grid.Row="0"
-                                                    LineBreakMode="TailTruncation"
-                                                    HorizontalOptions="FillAndExpand"
-                                                    TextColor="Black"
-                                                    Margin="10,0,20,0"
-                                                    FontSize="Small"
-                                                    Text="{Binding id}"
-                                                    VerticalTextAlignment="Center"
-                                                    HorizontalTextAlignment="Center"/> -->
-                                            <Label VerticalOptions="Center"
-                                                    Grid.Column="2"
-                                                    Grid.Row="1"
-                                                    LineBreakMode="TailTruncation"
-                                                    TextColor="Black"
-                                                    Margin="10,0,20,0"
-                                                    FontSize="Small"
-                                                    Text="{Binding nomCollection}"/>
-                                            <Label VerticalOptions="Center"
-                                                    Grid.Column="3"
-                                                    Grid.Row="1"
-                                                    LineBreakMode="TailTruncation"
-                                                    HorizontalOptions="FillAndExpand"
-                                                    TextColor="Black"
-                                                    Margin="10,0,20,0"
-                                                    FontSize="Small"
-                                                    Text="{Binding budgetCollection}"/>
-                                        </StackLayout>
-                                    </Frame>
-                                </Grid>
-
-                            </ViewCell>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-
+            </ScrollView>
+            <StackLayout HeightRequest="65"
+                    Margin="30,0"
+                    IsVisible="true"
+                    x:Name="add"
+                         WidthRequest="65"
+                    AbsoluteLayout.LayoutFlags="PositionProportional"
+                         AbsoluteLayout.LayoutBounds=".95,.95,80,60"
+                    HorizontalOptions="EndAndExpand"
+                         VerticalOptions="End">
+                <ImageButton Source="boutonaddblanc64.png"
+                             WidthRequest="65"
+                             HeightRequest="65"
+                             Command="{Binding ShowBottomSheetCommand}"/>
             </StackLayout>
-
-            <StackLayout HeightRequest="65" Margin="30,0" IsVisible="true" x:Name="add"
-            WidthRequest="65" AbsoluteLayout.LayoutFlags="PositionProportional"  
-            AbsoluteLayout.LayoutBounds=".95,.95,80,60" HorizontalOptions="EndAndExpand"
-             VerticalOptions="End" >
-                <ImageButton Source="boutonaddblanc64.png" 
-                             WidthRequest="65" 
-                             HeightRequest="65" 
-                             Command="{Binding ShowBottomSheetCommand}" />
-            </StackLayout>
-        
         </Grid>
     </ContentPage.Content>
 </ContentPage>

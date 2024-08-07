@@ -21,5 +21,12 @@
             var result = await _httpService.PostAsyncWithAuth<object>(CollectionsUrl + "/createcollections", newCollection);
             return result != null;
         }
+
+        public async Task<bool> DeleteCollection(int id)
+        {
+            var url = $"{CollectionsUrl}/collections/{id}";
+            var result = await _httpService.DeleAsyncWithAuth<object>(url);
+            return result != null;
+        }
     }
 }
