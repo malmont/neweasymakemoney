@@ -17,3 +17,4 @@ global using System.IdentityModel.Tokens.Jwt;
 global using Easymakemoney.ViewModels.Lists;
 global using Easymakemoney.Views.Lists;
 global using Easymakemoney.UseCases;
+global using CommunityToolkit.Maui.Views;

@@ -24,7 +24,6 @@ namespace Easymakemoney.Services
                 throw new InvalidOperationException("Token is not available.");
             }
 
-            // Ajouter le token JWT à l'en-tête de la requête
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             var response = await _httpClient.GetAsync(url);
@@ -48,15 +47,19 @@ namespace Easymakemoney.Services
                 throw new InvalidOperationException("Token is not available.");
             }
 
-            // Ajouter le token JWT à l'en-tête de la requête
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
             var json = JsonConvert.SerializeObject(data);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(url, content);
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            var responseJson = await response.Content.ReadAsStringAsync();
+
+            // Ajoutez des journaux pour vérifier la réponse du serveur
+            Debug.WriteLine($"Response Status Code: {response.StatusCode}");
+            Debug.WriteLine($"Response Content: {responseJson}");
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK || response.StatusCode == System.Net.HttpStatusCode.Created)
             {
-                var responseJson = await response.Content.ReadAsStringAsync();
                 var deserializeJson = JsonConvert.DeserializeObject<T>(responseJson);
                 return deserializeJson ?? default;
             }
@@ -71,9 +74,14 @@ namespace Easymakemoney.Services
             var json = JsonConvert.SerializeObject(data);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await _httpClient.PostAsync(url, content);
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            var responseJson = await response.Content.ReadAsStringAsync();
+
+            // Ajoutez des journaux pour vérifier la réponse du serveur
+            Debug.WriteLine($"Response Status Code: {response.StatusCode}");
+            Debug.WriteLine($"Response Content: {responseJson}");
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK || response.StatusCode == System.Net.HttpStatusCode.Created)
             {
-                var responseJson = await response.Content.ReadAsStringAsync();
                 var deserializeJson = JsonConvert.DeserializeObject<T>(responseJson);
                 return deserializeJson ?? default;
             }

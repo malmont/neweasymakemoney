@@ -27,8 +27,8 @@ namespace Easymakemoney.UseCases
 
             if (response != null)
             {
-                var (username, role) = _jwtService.ParseToken(response.Token);
-                _preferenceService.SaveUserDetails(response.Token, username, role);
+                var (username, role,userId) = _jwtService.ParseToken(response.Token);
+                _preferenceService.SaveUserDetails(response.Token, username, role, userId);
 
                 AppShell.Current.FlyoutHeader = new FlyoutHeaderControl();
                 await Shell.Current.GoToAsync("//DashboardPage");

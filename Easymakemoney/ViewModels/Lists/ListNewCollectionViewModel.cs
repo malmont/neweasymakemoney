@@ -1,51 +1,59 @@
-﻿namespace Easymakemoney.ViewModels.Lists
+﻿using Easymakemoney.Components;
+
+namespace Easymakemoney.ViewModels.Lists
 {
     public partial class ListNewCollectionViewModel : BaseViewModel
     {
         private readonly GetListCollectionsUseCase _getListCollectionsUseCase;
-        public required ObservableCollection<ListCollection> _listCollections = new ObservableCollection<ListCollection>();
+        private readonly CreateCollectionUseCase _createCollectionUseCase;
+        private readonly IPreferenceService _preferenceService;
 
-        public ObservableCollection<ListCollection> ListCollections
-        {
-            get => _listCollections;
-            set { _listCollections = value; OnPropertyChanged(nameof(ListCollections)); }
-        }
+        public ObservableCollection<ListCollection> ListCollections { get; set; } = new ObservableCollection<ListCollection>();
 
-        // Constructeur
-        public ListNewCollectionViewModel(GetListCollectionsUseCase getListCollectionsUseCase)
+        public ListNewCollectionViewModel(GetListCollectionsUseCase getListCollectionsUseCase, CreateCollectionUseCase createCollectionUseCase, IPreferenceService preferenceService)
         {
             _getListCollectionsUseCase = getListCollectionsUseCase;
-        }
-
-        // Commandes
-        public async Task GetListCollectionCommand()
-        {
-            ListCollections = await _getListCollectionsUseCase.ExecuteAsync();
+            _createCollectionUseCase = createCollectionUseCase;
+            _preferenceService = preferenceService;
         }
 
         [ICommand]
-        public async Task GetRandomListCollectionAsync()
+        public async Task GetListCollectionAsync()
         {
             if (IsBusy)
                 return;
 
+            IsBusy = true;
+            ListCollections.Clear();
             try
             {
-                IsBusy = true;
-                var listCollections = await _getListCollectionsUseCase.ExecuteAsync();
-                ListCollections.Clear();
-
-                foreach (var listCollection in listCollections)
-                    ListCollections.Add(listCollection);
+                var collections = await _getListCollectionsUseCase.ExecuteAsync();
+                
+                foreach (var collection in collections)
+                {
+                    ListCollections.Add(collection);
+                }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                await Shell.Current.DisplayAlert("Error", "Unable to get products", "OK");
+                await Shell.Current.DisplayAlert("Error", "Unable to get collections", "OK");
             }
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+        [ICommand]
+        public void ShowBottomSheet()
+        {
+            var popup = new BottomSheetPopup(_createCollectionUseCase, _preferenceService, this);
+            var mainPage = Application.Current?.MainPage;
+
+            if (mainPage != null)
+            {
+                mainPage.ShowPopup(popup);
             }
         }
     }
