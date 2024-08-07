@@ -28,6 +28,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<GetListCollectionsUseCase>();
 		builder.Services.AddTransient<CreateCollectionUseCase>();
 		builder.Services.AddTransient<LoginUseCase>();
+		builder.Services.AddTransient<DeleteCollectionUseCase>();
 
         builder.Services.AddSingleton<LoginPage>();
         builder.Services.AddSingleton<DashboardPage>();
