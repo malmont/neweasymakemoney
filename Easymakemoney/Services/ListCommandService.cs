@@ -16,7 +16,7 @@ namespace Easymakemoney.Services
             var commandes = await _httpService.GetAsync<ObservableCollection<ListCommand>>(url);
             return commandes ?? new ObservableCollection<ListCommand>();
         }
-        public async Task<bool> PostCommandes(ListCommand newCommandes,int id)
+        public async Task<bool> PostCommandes(ListCommand newCommandes, int id)
         {
             var url = $"{CommandesUrl}/collections/{id}/commandes";
             var result = await _httpService.PostAsyncWithAuth<object>(url, newCommandes);

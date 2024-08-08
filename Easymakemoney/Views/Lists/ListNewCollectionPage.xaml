@@ -67,7 +67,7 @@
                                                            Source="{Binding photoCollection}">
                                                         <Image.GestureRecognizers>
                                                             <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                                                                  CommandParameter="{Binding .}" />
+                                                                                  CommandParameter="{Binding .}"/>
                                                         </Image.GestureRecognizers>
                                                     </Image>
                                                 </Frame>
@@ -81,7 +81,7 @@
                                                        Text="{Binding nomCollection}">
                                                     <Label.GestureRecognizers>
                                                         <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                                                              CommandParameter="{Binding .}" />
+                                                                              CommandParameter="{Binding .}"/>
                                                     </Label.GestureRecognizers>
                                                 </Label>
                                                 <Label VerticalOptions="Center"
@@ -95,7 +95,7 @@
                                                        Text="{Binding budgetCollection}">
                                                     <Label.GestureRecognizers>
                                                         <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                                                              CommandParameter="{Binding .}" />
+                                                                              CommandParameter="{Binding .}"/>
                                                     </Label.GestureRecognizers>
                                                 </Label>
                                             </StackLayout>
@@ -109,13 +109,13 @@
                 </StackLayout>
             </ScrollView>
             <StackLayout HeightRequest="65"
-                    Margin="30,0"
-                    IsVisible="true"
-                    x:Name="add"
+                         Margin="30,0"
+                         IsVisible="true"
+                         x:Name="add"
                          WidthRequest="65"
-                    AbsoluteLayout.LayoutFlags="PositionProportional"
+                         AbsoluteLayout.LayoutFlags="PositionProportional"
                          AbsoluteLayout.LayoutBounds=".95,.95,80,60"
-                    HorizontalOptions="EndAndExpand"
+                         HorizontalOptions="EndAndExpand"
                          VerticalOptions="End">
                 <ImageButton Source="boutonaddblanc64.png"
                              WidthRequest="65"

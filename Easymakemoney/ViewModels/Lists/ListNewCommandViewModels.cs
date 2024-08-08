@@ -1,25 +1,45 @@
+using System.Windows.Input;
+using Easymakemoney.Components;
+using Easymakemoney.ViewModels.FormModels;
 
 
 namespace Easymakemoney.ViewModels.Lists
 {
-
     public partial class ListNewCommandViewModel : BaseViewModel
     {
-     
-        private readonly GetListCommandUseCase getListCommandUseCase;
+        private readonly CreateCommandUseCase _createCommandUseCase;
+        private readonly CreateCollectionUseCase _createCollectionUseCase;
+        private readonly GetListCommandUseCase _getListCommandUseCase;
 
-        private int _id;
+        private readonly DeleteCommandUseCase _deleteCommandUseCase;
+
+        private readonly IPreferenceService _preferenceService;
+        private readonly CollectionFormModel _collectionFormModel;
+        private readonly CommandFormModel _commandFormModel;
 
         public ObservableCollection<ListCommand> ListCommands { get; set; } = new ObservableCollection<ListCommand>();
 
-        public ListNewCommandViewModel(GetListCommandUseCase getListCommandUseCase)
+        public ListNewCommandViewModel(GetListCommandUseCase getListCommandsUseCase, CreateCommandUseCase createCommandUseCase, CreateCollectionUseCase createCollectionUseCase,
+        IPreferenceService preferenceService,
+        DeleteCommandUseCase deleteCommandUseCase,
+        CollectionFormModel collectionFormModel,
+        CommandFormModel commandFormModel)
         {
-            this.getListCommandUseCase = getListCommandUseCase;
+            _createCollectionUseCase = createCollectionUseCase;
+            _getListCommandUseCase = getListCommandsUseCase;
+            _createCommandUseCase = createCommandUseCase;
+            _preferenceService = preferenceService;
+            _collectionFormModel = collectionFormModel;
+            _commandFormModel = commandFormModel;
+            _deleteCommandUseCase = deleteCommandUseCase;
+            DeleteCommandCommand =  new RelayCommand<ListCommand>(DeleteCommand);
         }
 
-        public async Task GetListCommandAsync(int id)
+
+        public int CollectionId { get; set; }
+        public ICommand DeleteCommandCommand { get; }
+        public async Task GetListCommandAsync()
         {
-            _id=id;
             if (IsBusy)
                 return;
 
@@ -27,8 +47,8 @@ namespace Easymakemoney.ViewModels.Lists
             ListCommands.Clear();
             try
             {
-                var commands = await getListCommandUseCase.ExecuteAsync(id);
-                
+                var commands = await _getListCommandUseCase.ExecuteAsync(CollectionId);
+
                 foreach (var command in commands)
                 {
                     ListCommands.Add(command);
@@ -45,6 +65,35 @@ namespace Easymakemoney.ViewModels.Lists
             }
         }
 
-    }  
-    }
+        private async void DeleteCommand(ListCommand command)
+        {
+            if (command == null)
+                return;
 
+            var result = await _deleteCommandUseCase.ExecuteAsync(command.id); ;
+            if (result)
+            {
+              await  GetListCommandAsync();
+                await Shell.Current.DisplayAlert("Success", "Collection deleted", "OK");
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert("Error", "Failed to delete collection", "OK");
+            }
+        }
+
+
+        [ICommand]
+        public async void ShowBottomSheet()
+        {
+            var viewModel = new BottomSheetPopupViewModel(_createCollectionUseCase, _createCommandUseCase, _preferenceService, new Popup(), null, this, false, _collectionFormModel, _commandFormModel);
+            var popup = new BottomSheetPopup(viewModel);
+            var mainPage = Application.Current?.MainPage;
+
+            if (mainPage != null)
+            {
+                await mainPage.ShowPopupAsync(popup);
+            }
+        }
+    }
+}
