@@ -1,12 +1,12 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
-             x:DataType="list:ListNewCollectionViewModel"
+             x:DataType="list:ListNewCommandViewModel"
              xmlns:x1="clr-namespace:Easymakemoney.Models"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:Class="Easymakemoney.Views.Lists.ListNewCollectionPage"
-             Title="ListNewCollectionPage">
+             x:Class="Easymakemoney.Views.Lists.ListNewCommandPage"
+             Title="ListNewCommandPage">
     <ContentPage.Content>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -23,17 +23,18 @@
 
                     <Image Style="{StaticResource SeparatorImageStyle}"/>
 
-                    <CollectionView ItemsSource="{Binding ListCollections}"
+                    <CollectionView ItemsSource="{Binding ListCommands}"
                                     SelectionMode="None">
                         <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="x1:ListCollection">
+                            <DataTemplate x:DataType="x1:ListCommand">
                                 <SwipeView>
                                     <SwipeView.RightItems>
                                         <SwipeItems Mode="Execute">
                                             <SwipeItem Text="Delete"
                                                        BackgroundColor="Red"
                                                        Command="{Binding Path=BindingContext.DeleteCollectionCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                                       CommandParameter="{Binding .}"/>
+                                                       CommandParameter="{Binding .}"
+                                                       />
                                         </SwipeItems>
                                     </SwipeView.RightItems>
                                     <Grid Padding="30">
@@ -64,12 +65,7 @@
                                                            Margin="1,1"
                                                            WidthRequest="60"
                                                            HeightRequest="50"
-                                                           Source="{Binding photoCollection}">
-                                                        <Image.GestureRecognizers>
-                                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                                                                  CommandParameter="{Binding .}" />
-                                                        </Image.GestureRecognizers>
-                                                    </Image>
+                                                           Source="{Binding photo}"/>
                                                 </Frame>
                                                 <Label VerticalOptions="Center"
                                                        Grid.Column="2"
@@ -78,12 +74,7 @@
                                                        TextColor="Black"
                                                        Margin="10,0,20,0"
                                                        FontSize="Small"
-                                                       Text="{Binding nomCollection}">
-                                                    <Label.GestureRecognizers>
-                                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                                                              CommandParameter="{Binding .}" />
-                                                    </Label.GestureRecognizers>
-                                                </Label>
+                                                       Text="{Binding name}"/>
                                                 <Label VerticalOptions="Center"
                                                        Grid.Column="3"
                                                        Grid.Row="1"
@@ -92,12 +83,7 @@
                                                        TextColor="Black"
                                                        Margin="10,0,20,0"
                                                        FontSize="Small"
-                                                       Text="{Binding budgetCollection}">
-                                                    <Label.GestureRecognizers>
-                                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                                                              CommandParameter="{Binding .}" />
-                                                    </Label.GestureRecognizers>
-                                                </Label>
+                                                       Text="{Binding budget}"/>
                                             </StackLayout>
                                         </Frame>
                                     </Grid>
@@ -109,18 +95,19 @@
                 </StackLayout>
             </ScrollView>
             <StackLayout HeightRequest="65"
-                    Margin="30,0"
-                    IsVisible="true"
-                    x:Name="add"
+                         Margin="30,0"
+                         IsVisible="true"
+                         x:Name="add"
                          WidthRequest="65"
-                    AbsoluteLayout.LayoutFlags="PositionProportional"
+                         AbsoluteLayout.LayoutFlags="PositionProportional"
                          AbsoluteLayout.LayoutBounds=".95,.95,80,60"
-                    HorizontalOptions="EndAndExpand"
+                         HorizontalOptions="EndAndExpand"
                          VerticalOptions="End">
                 <ImageButton Source="boutonaddblanc64.png"
                              WidthRequest="65"
                              HeightRequest="65"
-                             Command="{Binding ShowBottomSheetCommand}"/>
+                        
+                             />
             </StackLayout>
         </Grid>
     </ContentPage.Content>
