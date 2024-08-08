@@ -2,11 +2,11 @@ namespace Easymakemoney.Components
 {
     public partial class BottomSheetPopup : Popup
     {
-        public BottomSheetPopup(CreateCollectionUseCase createCollectionUseCase, IPreferenceService preferenceService, ListNewCollectionViewModel parentViewModel)
+        public BottomSheetPopup(BottomSheetPopupViewModel viewModel)
         {
             InitializeComponent();
-            BindingContext = new BottomSheetPopupViewModel(createCollectionUseCase, preferenceService, this, parentViewModel);
-
+            BindingContext = viewModel;
+              viewModel.SetPopupInstance(this);
         }
     }
 }

@@ -32,7 +32,7 @@
                                         <SwipeItems Mode="Execute">
                                             <SwipeItem Text="Delete"
                                                        BackgroundColor="Red"
-                                                       Command="{Binding Path=BindingContext.DeleteCollectionCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                       Command="{Binding Path=BindingContext.DeleteCommandCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
                                                        CommandParameter="{Binding .}"
                                                        />
                                         </SwipeItems>
@@ -106,8 +106,7 @@
                 <ImageButton Source="boutonaddblanc64.png"
                              WidthRequest="65"
                              HeightRequest="65"
-                        
-                             />
+                         Command="{Binding ShowBottomSheetCommand}"/>
             </StackLayout>
         </Grid>
     </ContentPage.Content>

@@ -1,5 +1,6 @@
 ﻿
 using CommunityToolkit.Maui;
+using Easymakemoney.ViewModels.FormModels;
 using Microsoft.Extensions.Logging;
 
 namespace Easymakemoney;
@@ -31,6 +32,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<LoginUseCase>();
 		builder.Services.AddTransient<DeleteCollectionUseCase>();
 		builder.Services.AddTransient<GetListCommandUseCase>();
+		builder.Services.AddTransient<CreateCommandUseCase>();
+		builder.Services.AddTransient<DeleteCommandUseCase>();
 
         builder.Services.AddSingleton<LoginPage>();
         builder.Services.AddSingleton<DashboardPage>();
@@ -48,6 +51,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<ListNewCollectionViewModel>();
 		builder.Services.AddSingleton<BottomSheetPopupViewModel>();
 		builder.Services.AddSingleton<ListNewCommandViewModel>();
+		builder.Services.AddTransient<CollectionFormModel>();
+        builder.Services.AddTransient<CommandFormModel>();
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
