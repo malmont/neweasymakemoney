@@ -20,10 +20,10 @@ namespace Easymakemoney.ViewModels.Lists
             _createCollectionUseCase = createCollectionUseCase;
             _preferenceService = preferenceService;
             _deleteCollectionUseCase = deleteCollectionUseCase;
-
+            ItemTappedCommand = new RelayCommand<ListCollection>(OnItemTapped);
             DeleteCollectionCommand = new RelayCommand<ListCollection>(DeleteCollection!);
         }
-
+        public ICommand ItemTappedCommand { get; }
         public ICommand DeleteCollectionCommand { get; }
 
         [ICommand]
@@ -64,14 +64,19 @@ namespace Easymakemoney.ViewModels.Lists
                 mainPage.ShowPopup(popup);
             }
         }
+          private async void OnItemTapped(ListCollection collection)
+        {
+            if (collection == null)
+                return;
+
+            // Navigate to the ListNewCommandPage and pass the collection ID
+        await Shell.Current.GoToAsync($"{nameof(ListNewCommandPage)}?CollectionId={collection.id}", true);
+        }
 
         private async void DeleteCollection(ListCollection collection)
         {
-            // if (ListCollections.Contains(collection))
-            // {
-            //     ListCollections.Remove(collection);
-            //     // Ajouter une logique pour supprimer la collection sur le serveur si nécessaire
-            // }
+            if (collection == null)
+                return;
              var result = await _deleteCollectionUseCase.ExecuteAsync(collection.id);
                 if (result)
                 {

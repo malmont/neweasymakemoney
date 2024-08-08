@@ -24,17 +24,20 @@ public static class MauiProgram
         builder.Services.AddSingleton<IListCollectionService, ListCollectionService>();
 		builder.Services.AddSingleton<IJwtService, JwtService>();
         builder.Services.AddSingleton<IPreferenceService, PreferenceService>();
+		builder.Services.AddSingleton<IListCommandService, ListCommandService>();
 
 		builder.Services.AddTransient<GetListCollectionsUseCase>();
 		builder.Services.AddTransient<CreateCollectionUseCase>();
 		builder.Services.AddTransient<LoginUseCase>();
 		builder.Services.AddTransient<DeleteCollectionUseCase>();
+		builder.Services.AddTransient<GetListCommandUseCase>();
 
         builder.Services.AddSingleton<LoginPage>();
         builder.Services.AddSingleton<DashboardPage>();
         builder.Services.AddSingleton<LoadingPage>();
         builder.Services.AddSingleton<AllListsPage>();
         builder.Services.AddSingleton<ListNewCollectionPage>();
+		 builder.Services.AddSingleton<ListNewCommandPage>();
 		
 	
         //View Models
@@ -44,6 +47,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<AllListsViewModel>();
         builder.Services.AddSingleton<ListNewCollectionViewModel>();
 		builder.Services.AddSingleton<BottomSheetPopupViewModel>();
+		builder.Services.AddSingleton<ListNewCommandViewModel>();
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
