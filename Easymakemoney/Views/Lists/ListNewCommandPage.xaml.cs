@@ -1,5 +1,3 @@
-using Easymakemoney.ViewModels.Lists;
-using Microsoft.Maui.Controls;
 
 namespace Easymakemoney.Views.Lists
 {

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             x:DataType="list:ListNewProductViewModel"
+             xmlns:x1="clr-namespace:Easymakemoney.Models"
+             xmlns:converters="clr-namespace:Easymakemoney.Converters"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Easymakemoney.Views.Lists.ListNewProductPage"
+             Title="ListNewProductPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:CurrencyConverter x:Key="CurrencyConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <ScrollView>
+                <StackLayout Spacing="0">
+                    <StackLayout Style="{StaticResource HeaderStackLayoutStyle}">
+                        <Image Style="{StaticResource HeaderImageStyle}"/>
+                    </StackLayout>
+
+                    <Image Style="{StaticResource SeparatorImageStyle}"/>
+
+                    <CollectionView ItemsSource="{Binding ListProducts}"
+                                    SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x1:ListProduct">
+                                <SwipeView>
+                                    <SwipeView.RightItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItem Text="Delete"
+                                                       BackgroundColor="Red"
+                                                       Command="{Binding Path=BindingContext.DeleteProductCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                       CommandParameter="{Binding .}"/>
+                                        </SwipeItems>
+                                    </SwipeView.RightItems>
+                                    <Grid Padding="30">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Frame BorderColor="#C4AB4D"
+                                               Padding="10"
+                                               BackgroundColor="Transparent"
+                                               CornerRadius="10"
+                                               HasShadow="True">
+                                            <StackLayout Orientation="Horizontal"
+                                                         WidthRequest="310">
+                                                <Frame HasShadow="True"
+                                                       Padding="1"
+                                                       Grid.Row="0"
+                                                       Grid.RowSpan="3"
+                                                       Grid.Column="0"
+                                                       Grid.ColumnSpan="1">
+                                                    <Image Source="{Binding image}"
+                                                           Aspect="AspectFill"
+                                                           HeightRequest="70"
+                                                           WidthRequest="70"/>
+                                                </Frame>
+                                                <StackLayout Orientation="Vertical">
+                                                    <Label Text="{Binding name}"
+                                                           VerticalOptions="FillAndExpand"
+                                                           FontSize="Small"
+                                                           Grid.Row="0"
+                                                           Grid.Column="1"
+                                                           Grid.ColumnSpan="3"/>
+                                                    <StackLayout Orientation="Horizontal"
+                                                                 VerticalOptions="StartAndExpand"
+                                                                 Margin="5,0,0,10">
+                                                        <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand"
+                                                                WidthRequest="90">
+                                                            <Frame BorderColor="#C4AB4D"
+                                                                   BackgroundColor="Green"
+                                                                   Padding="3,0"
+                                                                   Margin="2,0,7,0"
+                                                                   HeightRequest="30"
+                                                                   CornerRadius="5"
+                                                                   HasShadow="True">
+                                                                <Label Text="Stock"
+                                                                       VerticalOptions="End"
+                                                                       FontSize="Small"
+                                                                       Margin="5"
+                                                                       Grid.Row="1"
+                                                                       Grid.Column="1"
+                                                                       Grid.ColumnSpan="3"/>
+                                                            </Frame>
+                                                            <Label Text="{Binding quantity}"
+                                                                   VerticalOptions="End"
+                                                                   FontSize="Small"
+                                                                   Grid.Row="1"
+                                                                   Grid.Column="1"
+                                                                   Grid.ColumnSpan="3"/>
+                                                        </StackLayout>
+                                                        <Frame BorderColor="#C4AB4D"
+                                                               BackgroundColor="Green"
+                                                               Padding="3,0"
+                                                               Margin="7,0,5,0"
+                                                               HeightRequest="30"
+                                                               CornerRadius="5"
+                                                               HasShadow="True">
+                                                            <Label Text="Prix"
+                                                                   VerticalOptions="End"
+                                                                   FontSize="Small"
+                                                                   Margin="5"
+                                                                   Grid.Row="1"
+                                                                   Grid.Column="1"
+                                                                   Grid.ColumnSpan="3"/>
+                                                        </Frame>
+                                                        <Label VerticalOptions="End"
+                                                               Grid.Column="3"
+                                                               Grid.Row="1"
+                                                               LineBreakMode="TailTruncation"
+                                                               HorizontalOptions="FillAndExpand"
+                                                               TextColor="Black"
+                                                               Margin="3,0,5,0"
+                                                               FontSize="Small"
+                                                               Text="{Binding price, Converter={StaticResource CurrencyConverter}}">
+                                                            <!-- <Label.GestureRecognizers>
+                                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedProducts, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                                              CommandParameter="{Binding .}"/>
+                                                    </Label.GestureRecognizers> -->
+                                                        </Label>
+
+                                                    </StackLayout>
+                                                </StackLayout>
+                                            </StackLayout>
+                                        </Frame>
+                                    </Grid>
+                                </SwipeView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </ScrollView>
+            <StackLayout HeightRequest="65"
+                         Margin="30,0"
+                         IsVisible="true"
+                         x:Name="add"
+                         WidthRequest="65"
+                         AbsoluteLayout.LayoutFlags="PositionProportional"
+                         AbsoluteLayout.LayoutBounds=".95,.95,80,60"
+                         HorizontalOptions="EndAndExpand"
+                         VerticalOptions="End">
+                <ImageButton Source="boutonaddblanc64.png"
+                             WidthRequest="65"
+                             HeightRequest="65"
+                             Command="{Binding ShowBottomSheetCommand}"/>
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

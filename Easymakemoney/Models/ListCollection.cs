@@ -3,8 +3,8 @@ namespace Easymakemoney.Models
 {
     public class ListCollection
     {
-         public int id { get; set; }
-        public float budgetCollection { get; set; }
+        public int id { get; set; }
+        public double budgetCollection { get; set; }
         public string startDateCollection { get; set; }
         public string endDateCollection { get; set; }
         public bool del { get; set; }
