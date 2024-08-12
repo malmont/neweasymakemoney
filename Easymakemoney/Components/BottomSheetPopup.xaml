@@ -10,7 +10,7 @@
               <Frame BackgroundColor="White"
                      Padding="20"
                      VerticalOptions="End"
-                     WidthRequest="400"
+                     WidthRequest="300"
                      HeightRequest="600"
                      CornerRadius="30"
                      Margin="20"

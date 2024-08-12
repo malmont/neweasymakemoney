@@ -33,9 +33,10 @@ namespace Easymakemoney.ViewModels.Lists
             _commandFormModel = commandFormModel;
             _deleteCommandUseCase = deleteCommandUseCase;
             DeleteCommandCommand =  new RelayCommand<ListCommand>(DeleteCommand);
+            ItemTappedProducts = new RelayCommand<ListCommand>(OnItemTapped);
         }
 
-
+        public ICommand ItemTappedProducts { get; }
         public int CollectionId { get; set; }
         public ICommand DeleteCommandCommand { get; }
         public async Task GetListCommandAsync()
@@ -80,6 +81,15 @@ namespace Easymakemoney.ViewModels.Lists
             {
                 await Shell.Current.DisplayAlert("Error", "Failed to delete collection", "OK");
             }
+        }
+
+         private async void OnItemTapped(ListCommand command)
+        {
+            if (command == null)
+                return;
+
+            // Navigate to the ListNewCommandPage and pass the collection ID
+            await Shell.Current.GoToAsync($"{nameof(ListNewProductPage)}?CommandId={command.id}", true);
         }
 
 

@@ -4,9 +4,17 @@
              xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
              x:DataType="list:ListNewCollectionViewModel"
              xmlns:x1="clr-namespace:Easymakemoney.Models"
+             xmlns:converters="clr-namespace:Easymakemoney.Converters"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Easymakemoney.Views.Lists.ListNewCollectionPage"
              Title="ListNewCollectionPage">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:CurrencyConverter x:Key="CurrencyConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
     <ContentPage.Content>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -36,7 +44,7 @@
                                                        CommandParameter="{Binding .}"/>
                                         </SwipeItems>
                                     </SwipeView.RightItems>
-                                    <Grid Padding="30">
+                                    <Grid Padding="10">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
@@ -48,56 +56,84 @@
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Frame BorderColor="#C4AB4D"
+                                        <Frame BorderColor="#C4AB4D" Padding="10"
                                                BackgroundColor="Transparent"
                                                CornerRadius="10"
                                                HasShadow="True">
                                             <StackLayout Orientation="Horizontal"
                                                          WidthRequest="310">
-                                                <Frame HasShadow="True"
-                                                       Padding="1"
-                                                       Grid.Row="0"
-                                                       Grid.RowSpan="3"
-                                                       CornerRadius="10"
-                                                       BackgroundColor="Gray">
-                                                    <Image Aspect="Fill"
-                                                           Margin="1,1"
-                                                           WidthRequest="60"
-                                                           HeightRequest="50"
-                                                           Source="{Binding photoCollection}">
-                                                        <Image.GestureRecognizers>
+                                                <StackLayout Orientation="Horizontal"
+                                                        WidthRequest="150">
+                                                    <Frame HasShadow="True"
+                                                           Padding="1"
+                                                           Grid.Row="0"
+                                                           Grid.RowSpan="3"
+                                                           CornerRadius="10"
+                                                           BackgroundColor="Gray">
+                                                        <Image Aspect="Fill"
+                                                               Margin="1,1"
+                                                               WidthRequest="60"
+                                                               HeightRequest="50"
+                                                               Source="{Binding photoCollection}">
+                                                            <Image.GestureRecognizers>
+                                                                <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                                                      CommandParameter="{Binding .}"/>
+                                                            </Image.GestureRecognizers>
+                                                        </Image>
+                                                    </Frame>
+                                                    <Label VerticalOptions="Center"
+                                                           Grid.Column="2"
+                                                           Grid.Row="1"
+                                                           LineBreakMode="TailTruncation"
+                                                           TextColor="Black"
+                                                           Margin="10,0,20,0"
+                                                           FontSize="Small"
+                                                           WidthRequest="70"
+                                                           Text="{Binding nomCollection}">
+                                                        <Label.GestureRecognizers>
                                                             <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
                                                                                   CommandParameter="{Binding .}"/>
-                                                        </Image.GestureRecognizers>
-                                                    </Image>
+                                                        </Label.GestureRecognizers>
+                                                    </Label>
+                                                </StackLayout>
+                                                <Frame BorderColor="#C4AB4D"
+                                                       BackgroundColor="Green"
+                                                       Padding="3,0"
+                                                       Margin="0"
+                                                       HeightRequest="30"
+                                                       CornerRadius="5"
+                                                       HasShadow="True">
+                                                    <Label VerticalOptions="Fill"
+                                                           Grid.Column="3"
+                                                           Grid.Row="1"
+                                                           LineBreakMode="TailTruncation"
+                                                           HorizontalOptions="Fill"
+                                                           TextColor="Black"
+                                                           HeightRequest="20"
+                                                           Margin="2,0"
+                                                           FontSize="Small"
+                                                           Text="Budget">
+                                                        <Label.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                                                  CommandParameter="{Binding .}"/>
+                                                        </Label.GestureRecognizers>
+                                                    </Label>
                                                 </Frame>
-                                                <Label VerticalOptions="Center"
-                                                       Grid.Column="2"
-                                                       Grid.Row="1"
-                                                       LineBreakMode="TailTruncation"
-                                                       TextColor="Black"
-                                                       Margin="10,0,20,0"
-                                                       FontSize="Small"
-                                                       Text="{Binding nomCollection}">
-                                                    <Label.GestureRecognizers>
-                                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                                                              CommandParameter="{Binding .}"/>
-                                                    </Label.GestureRecognizers>
-                                                </Label>
                                                 <Label VerticalOptions="Center"
                                                        Grid.Column="3"
                                                        Grid.Row="1"
                                                        LineBreakMode="TailTruncation"
                                                        HorizontalOptions="FillAndExpand"
                                                        TextColor="Black"
-                                                       Margin="10,0,20,0"
+                                                       Margin="10,0,5,0"
                                                        FontSize="Small"
-                                                       Text="{Binding budgetCollection}">
+                                                       Text="{Binding budgetCollection, Converter={StaticResource CurrencyConverter}}">
                                                     <Label.GestureRecognizers>
                                                         <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
                                                                               CommandParameter="{Binding .}"/>
                                                     </Label.GestureRecognizers>
                                                 </Label>
+
                                             </StackLayout>
                                         </Frame>
                                     </Grid>

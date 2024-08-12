@@ -18,3 +18,5 @@ global using Easymakemoney.ViewModels.Lists;
 global using Easymakemoney.Views.Lists;
 global using Easymakemoney.UseCases;
 global using CommunityToolkit.Maui.Views;
+global using Easymakemoney.UseCase.ListProductUseCase;
+global using Easymakemoney.ViewModels.FormModels;
