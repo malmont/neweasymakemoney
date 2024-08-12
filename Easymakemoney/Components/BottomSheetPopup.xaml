@@ -2,136 +2,47 @@
 <toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-               xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
                x:Class="Easymakemoney.Components.BottomSheetPopup"
-              Color="Transparent"
+               Color="Transparent"
                BindingContext="{Binding .}">
-       <ScrollView>
-              <Frame BackgroundColor="White"
-                     Padding="20"
-                     VerticalOptions="End"
-                     WidthRequest="300"
-                     HeightRequest="600"
-                     CornerRadius="30"
-                     Margin="20"
-                     TranslationY="{Binding Source={x:Reference PopupFrame}, Path=TranslationY}">
 
-                     <StackLayout BackgroundColor="Transparent">
-                            <Label Text="{Binding IsCollectionForm, Converter={StaticResource BoolToCollectionCommandTextConverter}}"
-                                   FontSize="Large"
-                                   HorizontalOptions="Center"/>
+    <toolkit:Popup.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DataTemplates/CollectionFormTemplate.xaml" />
+                <ResourceDictionary Source="/DataTemplates/CommandFormTemplate.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </toolkit:Popup.Resources>
 
-                            <!-- Collection Form -->
-                            <StackLayout IsVisible="{Binding IsCollectionForm}">
-                                   <Frame HeightRequest="45"
-                                          Margin="10,0,0,10"
-                                          Padding="2"
-                                          HasShadow="True"
-                                          BorderColor="black"
-                                          HorizontalOptions="Fill">
-                                          <handlers:BorderlessEntry  Placeholder="Collection Name"
-                                                                     Text="{Binding CollectionForm.NomCollection, Mode=TwoWay}"/>
-                                   </Frame>
-                                   <Frame HeightRequest="45"
-                                          Margin="10,0,0,10"
-                                          Padding="2"
-                                          HasShadow="True"
-                                          BorderColor="black"
-                                          HorizontalOptions="Fill">
-                                          <handlers:BorderlessEntry  Placeholder="Budget"
-                                                                     Keyboard="Numeric"
-                                                                     Text="{Binding CollectionForm.BudgetCollection, Mode=TwoWay}"/>
-                                   </Frame>
-                                   <Frame HeightRequest="65"
-                                          Margin="10,0,0,10"
-                                          Padding="2"
-                                          HasShadow="True"
-                                          BorderColor="black"
-                                          HorizontalOptions="Fill">
-                                          <StackLayout>
-                                                 <Label Text="Start Date"/>
-                                                 <handlers:BorderlessDatePicker Date="{Binding CollectionForm.StartDateCollection, Mode=TwoWay}"
-                                                                                Format="yyyy-MM-dd"/>
-                                          </StackLayout>
-                                   </Frame>
-                                   <Frame HeightRequest="65"
-                                          Margin="10,0,0,10"
-                                          Padding="2"
-                                          HasShadow="True"
-                                          BorderColor="black"
-                                          HorizontalOptions="Fill">
-                                          <StackLayout>
-                                                 <Label Text="End Date"/>
-                                                 <handlers:BorderlessDatePicker Date="{Binding CollectionForm.EndDateCollection, Mode=TwoWay}"
-                                                                                Format="yyyy-MM-dd"/>
-                                          </StackLayout>
-                                   </Frame>
-                                   <Switch IsToggled="{Binding CollectionForm.Del, Mode=TwoWay}"
-                                           HorizontalOptions="Start">
-                                          <Switch.ThumbColor>Red</Switch.ThumbColor>
-                                          <Switch.OnColor>Green</Switch.OnColor>
-                                   </Switch>
-                                   <Frame HeightRequest="45"
-                                          Margin="10,0,0,10"
-                                          Padding="2"
-                                          HasShadow="True"
-                                          BorderColor="black"
-                                          HorizontalOptions="Fill">
-                                          <handlers:BorderlessEntry  Placeholder="Photo URL"
-                                                                     Text="{Binding CollectionForm.PhotoCollection, Mode=TwoWay}"/>
-                                   </Frame>
-                            </StackLayout>
+    <ScrollView>
+        <Frame BackgroundColor="White"
+               Padding="20"
+               VerticalOptions="End"
+               WidthRequest="300"
+               HeightRequest="600"
+               CornerRadius="30"
+               Margin="20">
 
-                            <!-- Command Form -->
-                            <StackLayout IsVisible="{Binding IsCommandForm}">
-                                   <Frame HeightRequest="45"
-                                          Margin="10,0,0,10"
-                                          Padding="2"
-                                          HasShadow="True"
-                                          BorderColor="black"
-                                          HorizontalOptions="Fill">
-                                          <handlers:BorderlessEntry Placeholder="Command Name"
-                                                                    Text="{Binding CommandForm.Name, Mode=TwoWay}"/>
-                                   </Frame>
-                                   <Frame HeightRequest="45"
-                                          Margin="10,0,0,10"
-                                          Padding="2"
-                                          HasShadow="True"
-                                          BorderColor="black"
-                                          HorizontalOptions="Fill">
-                                          <handlers:BorderlessEntry  Placeholder="Budget"
-                                                                     Keyboard="Numeric"
-                                                                     Text="{Binding CommandForm.Budget, Mode=TwoWay}"/>
-                                   </Frame>
-                                   <Frame HeightRequest="65"
-                                          Margin="10,0,0,10"
-                                          Padding="2"
-                                          HasShadow="True"
-                                          BorderColor="black"
-                                          HorizontalOptions="Fill">
-                                          <StackLayout>
-                                                 <Label Text="Date"/>
-                                                 <handlers:BorderlessDatePicker Date="{Binding CommandForm.Date, Mode=TwoWay}"
-                                                                                Format="yyyy-MM-dd"/>
-                                          </StackLayout>
-                                   </Frame>
-                                   <Frame HeightRequest="45"
-                                          Margin="10,0,0,10"
-                                          Padding="2"
-                                          HasShadow="True"
-                                          BorderColor="black"
-                                          HorizontalOptions="Fill">
-                                          <handlers:BorderlessEntry Placeholder="Photo URL"
-                                                                    Text="{Binding CommandForm.Photo, Mode=TwoWay}"/>
-                                   </Frame>
-                            </StackLayout>
+            <StackLayout BackgroundColor="Transparent">
+                <Label Text="{Binding IsCollectionForm, Converter={StaticResource BoolToCollectionCommandTextConverter}}"
+                       FontSize="Large"
+                       HorizontalOptions="Center"/>
 
-                            <Button Text="Save"
-                                    Margin="0, 20, 0, 20"
-                                    Command="{Binding SaveCommand}"/>
-                            <Button Text="Cancel"
-                                    Command="{Binding CancelCommand}"/>
-                     </StackLayout>
-              </Frame>
-       </ScrollView>
+                <!-- Collection Form -->
+                <ContentView ControlTemplate="{StaticResource CollectionFormTemplate}"
+                             IsVisible="{Binding IsCollectionForm}" />
+
+                <!-- Command Form -->
+                <ContentView ControlTemplate="{StaticResource CommandFormTemplate}"
+                             IsVisible="{Binding IsCommandForm}" />
+
+                <Button Text="Save"
+                        Margin="0, 20, 0, 20"
+                        Command="{Binding SaveCommand}"/>
+                <Button Text="Cancel"
+                        Command="{Binding CancelCommand}"/>
+            </StackLayout>
+        </Frame>
+    </ScrollView>
 </toolkit:Popup>
