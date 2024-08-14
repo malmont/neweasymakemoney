@@ -1,0 +1,26 @@
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Easymakemoney.Controls.CustomPicker">
+
+    <Grid Padding="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <!-- The Picker Control -->
+        <Picker x:Name="pickerControl"
+                Grid.Column="0"
+                Margin="0,0,10,0"
+                HeightRequest="50"
+                VerticalOptions="Center" />
+
+        <!-- Arrow Image -->
+        <Image Source="user.png"
+               Grid.Column="1"
+               VerticalOptions="Center"
+               HorizontalOptions="End"
+               WidthRequest="24"
+               HeightRequest="24" />
+    </Grid>
+</ContentView>

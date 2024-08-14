@@ -16,10 +16,13 @@ public class ListProductService : IListProductService
         var products = await _httpService.GetAsync<ObservableCollection<ListProduct>>(url);
         return products ?? new ObservableCollection<ListProduct>();
     }
-    public async Task<bool> PostProducts(ListProduct newProducts, int id)
+    public async Task<bool> PostProducts(ListProduct newProduct, Stream imageStream, string fileName, int id)
     {
         var url = $"{ProductsUrl}/commandes/{id}/products";
-        var result = await _httpService.PostAsyncWithAuth<object>(url, newProducts);
+
+        // Utilisez la méthode `PostMultipartAsyncWithAuth` pour envoyer le produit et l'image
+        var result = await _httpService.PostMultipartAsyncWithAuth<object>(url, newProduct, imageStream, fileName);
+
         return result != null;
     }
 
