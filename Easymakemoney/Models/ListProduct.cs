@@ -19,7 +19,7 @@ namespace Easymakemoney.Models
         public string createdAt { get; set; }
         public string tags { get; set; }
         public string slug { get; set; }
-        public Style style { get; set; }
+        public Styles style { get; set; }
         public List<ProductVariant> variants { get; set; }
 
         public List<Category> category { get; set; }

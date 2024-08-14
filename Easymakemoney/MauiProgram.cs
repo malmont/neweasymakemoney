@@ -1,6 +1,7 @@
 ﻿
 using CommunityToolkit.Maui;
-
+using Easymakemoney.UseCase.ListCategoryUseCase;
+using EEasymakemoney.UseCase.ListStyleUsesCase;
 using Microsoft.Extensions.Logging;
 
 namespace Easymakemoney;
@@ -19,6 +20,12 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
+		// Enregistrement du custom handler
+        builder.ConfigureMauiHandlers(handlers =>
+        {
+            handlers.AddHandler<CustomPicker, CustomPickerHandler>();
+        });	
+
 		builder.Services.AddHttpClient<IHttpService, HttpService>();
 
 		builder.Services.AddSingleton<ILoginService, LoginService>();
@@ -27,6 +34,8 @@ public static class MauiProgram
 		builder.Services.AddSingleton<IPreferenceService, PreferenceService>();
 		builder.Services.AddSingleton<IListCommandService, ListCommandService>();
 		builder.Services.AddSingleton<IListProductService, ListProductService>();
+		builder.Services.AddSingleton<IListCategoryServices, ListCategoryServices>();
+		builder.Services.AddSingleton<IListStyleService, ListStyleService>();
 
 		builder.Services.AddTransient<GetListCollectionsUseCase>();
 		builder.Services.AddTransient<CreateCollectionUseCase>();
@@ -36,6 +45,9 @@ public static class MauiProgram
 		builder.Services.AddTransient<CreateCommandUseCase>();
 		builder.Services.AddTransient<DeleteCommandUseCase>();
 		builder.Services.AddTransient<GetListProductsUseCase>();
+		builder.Services.AddTransient<CreateProductsUseCase>();
+		builder.Services.AddTransient<GetListCategoryUseCase>();
+		builder.Services.AddTransient<GetListStyleUsesCases>();
 
 		builder.Services.AddSingleton<LoginPage>();
 		builder.Services.AddSingleton<DashboardPage>();
@@ -58,6 +70,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<CollectionFormModel>();
 		builder.Services.AddTransient<CommandFormModel>();
 		builder.Services.AddSingleton<ListNewProductViewModel>();
+		builder.Services.AddTransient<ProductFormModel>();
+
 #if DEBUG
 		builder.Logging.AddDebug();
 #endif

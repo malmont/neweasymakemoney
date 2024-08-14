@@ -32,7 +32,7 @@ namespace Easymakemoney.ViewModels.Lists
             _collectionFormModel = collectionFormModel;
             _commandFormModel = commandFormModel;
             _deleteCommandUseCase = deleteCommandUseCase;
-            DeleteCommandCommand =  new RelayCommand<ListCommand>(DeleteCommand);
+            DeleteCommandCommand = new RelayCommand<ListCommand>(DeleteCommand);
             ItemTappedProducts = new RelayCommand<ListCommand>(OnItemTapped);
         }
 
@@ -74,7 +74,7 @@ namespace Easymakemoney.ViewModels.Lists
             var result = await _deleteCommandUseCase.ExecuteAsync(command.id); ;
             if (result)
             {
-              await  GetListCommandAsync();
+                await GetListCommandAsync();
                 await Shell.Current.DisplayAlert("Success", "Collection deleted", "OK");
             }
             else
@@ -83,7 +83,7 @@ namespace Easymakemoney.ViewModels.Lists
             }
         }
 
-         private async void OnItemTapped(ListCommand command)
+        private async void OnItemTapped(ListCommand command)
         {
             if (command == null)
                 return;
@@ -94,9 +94,25 @@ namespace Easymakemoney.ViewModels.Lists
 
 
         [ICommand]
-        public async void ShowBottomSheet()
+        public async Task ShowBottomSheet()
         {
-            var viewModel = new BottomSheetPopupViewModel(_createCollectionUseCase, _createCommandUseCase, _preferenceService, new Popup(), null, this, false, _collectionFormModel, _commandFormModel);
+            var viewModel = new BottomSheetPopupViewModel(
+            createCollectionUseCase: _createCollectionUseCase,
+            createCommandUseCase: _createCommandUseCase,
+            preferenceService: _preferenceService,
+            popup: new Popup(),
+            collectionViewModel: null,
+            commandViewModel: this,
+            isCollectionForm: false,
+            isCommandForm: true,
+            collectionFormModel: _collectionFormModel,
+            commandFormModel: _commandFormModel,
+            isProductForm: false,
+            productFormModel: null, // Explicitly setting unused parameters to null
+            productViewModel: null,
+            createProductsUseCase: null
+        );
+
             var popup = new BottomSheetPopup(viewModel);
             var mainPage = Application.Current?.MainPage;
 

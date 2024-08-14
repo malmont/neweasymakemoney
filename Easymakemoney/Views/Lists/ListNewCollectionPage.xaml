@@ -14,7 +14,7 @@
             <converters:CurrencyConverter x:Key="CurrencyConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
-    
+
     <ContentPage.Content>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -33,15 +33,19 @@
 
                     <CollectionView ItemsSource="{Binding ListCollections}"
                                     SelectionMode="None">
+                        <!-- <CollectionView.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                  CommandParameter="{Binding .}"/>
+                        </CollectionView.GestureRecognizers> -->
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="x1:ListCollection">
                                 <SwipeView>
                                     <SwipeView.RightItems>
                                         <SwipeItems Mode="Execute">
-                                            <SwipeItem Text="Delete"
-                                                       BackgroundColor="Red"
+                                            <SwipeItem BackgroundColor="transparent"
                                                        Command="{Binding Path=BindingContext.DeleteCollectionCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
-                                                       CommandParameter="{Binding .}"/>
+                                                       CommandParameter="{Binding .}">
+                                            </SwipeItem>
                                         </SwipeItems>
                                     </SwipeView.RightItems>
                                     <Grid Padding="10">
@@ -56,14 +60,15 @@
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Frame BorderColor="#C4AB4D" Padding="10"
+                                        <Frame BorderColor="#C4AB4D"
+                                               Padding="10"
                                                BackgroundColor="Transparent"
                                                CornerRadius="10"
                                                HasShadow="True">
                                             <StackLayout Orientation="Horizontal"
                                                          WidthRequest="310">
                                                 <StackLayout Orientation="Horizontal"
-                                                        WidthRequest="150">
+                                                             WidthRequest="150">
                                                     <Frame HasShadow="True"
                                                            Padding="1"
                                                            Grid.Row="0"

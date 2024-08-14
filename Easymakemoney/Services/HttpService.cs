@@ -67,18 +67,19 @@ namespace Easymakemoney.Services
             }
         }
 
-        public async Task <bool> DeleAsyncWithAuth<T>(string url)
+        public async Task<bool> DeleAsyncWithAuth<T>(string url)
         {
             var token = _preferenceService.GetUserToken();
 
-            if(string.IsNullOrEmpty(token)) {
+            if (string.IsNullOrEmpty(token))
+            {
                 throw new InvalidOperationException("Token is not available.");
             }
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
             var response = await _httpClient.DeleteAsync(url);
             if (response.StatusCode == System.Net.HttpStatusCode.OK)
             {
-              return true;
+                return true;
             }
             else
             {
@@ -110,6 +111,65 @@ namespace Easymakemoney.Services
                 return default;
             }
         }
+
+        public async Task<T> PostMultipartAsyncWithAuth<T>(string url, ListProduct data, Stream fileStream, string fileName)
+        {
+            var token = _preferenceService.GetUserToken();
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new InvalidOperationException("Token is not available.");
+            }
+
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var content = new MultipartFormDataContent();
+
+            // Ajouter manuellement les propriétés pertinentes de l'objet data
+            content.Add(new StringContent(data.name), "name");
+            content.Add(new StringContent(data.description), "description");
+            content.Add(new StringContent(data.purchasePrice.ToString()), "purchasePrice");
+            content.Add(new StringContent(data.coefficientMultiplier.ToString()), "coefficientMultiplier");
+
+            // Ajouter la catégorie si elle existe
+            if (data.category != null && data.category.Count > 0)
+            {
+                foreach (var category in data.category)
+                {
+                    content.Add(new StringContent(category.id.ToString()), "category_ids[]");
+                }
+            }
+
+            // Ajouter le style si il est sélectionné
+            if (data.style != null)
+            {
+                content.Add(new StringContent(data.style.id.ToString()), "style_id");
+            }
+
+            // Ajout du fichier si présent
+            if (fileStream != null)
+            {
+                var streamContent = new StreamContent(fileStream);
+                content.Add(streamContent, "image", fileName);
+            }
+
+            var response = await _httpClient.PostAsync(url, content);
+            var responseJson = await response.Content.ReadAsStringAsync();
+
+            Debug.WriteLine($"Response Status Code: {response.StatusCode}");
+            Debug.WriteLine($"Response Content: {responseJson}");
+
+            if (response.StatusCode == System.Net.HttpStatusCode.OK || response.StatusCode == System.Net.HttpStatusCode.Created)
+            {
+                var deserializeJson = JsonConvert.DeserializeObject<T>(responseJson);
+                return deserializeJson ?? default;
+            }
+            else
+            {
+                return default;
+            }
+        }
+
+
 
 
     }

@@ -1,25 +1,26 @@
 using System.Windows.Input;
-using Easymakemoney.UseCase.ListProductUseCase;
+using Easymakemoney.Components;
 
 namespace Easymakemoney.ViewModels.Lists
 {
     public partial class ListNewProductViewModel : BaseViewModel
     {
         private readonly GetListProductsUseCase _getListProductsUseCase;
-        // private readonly CreateProductUseCase _createProductUseCase;
+        private readonly CreateProductsUseCase _createProductUseCase;
         // private readonly DeleteProductUseCase _deleteProductUseCase;
         private readonly IPreferenceService _preferenceService;
-        // private readonly ProductFormModel _productFormModel;
+        private readonly ProductFormModel _productFormModel;
 
         public ObservableCollection<ListProduct> ListProducts { get; set; } = new ObservableCollection<ListProduct>();
 
-        public ListNewProductViewModel(GetListProductsUseCase getListProductsUseCase,IPreferenceService preferenceService)
+        public ListNewProductViewModel(GetListProductsUseCase getListProductsUseCase, IPreferenceService preferenceService,
+        CreateProductsUseCase createProductUseCase, ProductFormModel productFormModel)
         {
             _getListProductsUseCase = getListProductsUseCase;
-            // _createProductUseCase = createProductUseCase;
-            // _preferenceService = preferenceService;
+            _createProductUseCase = createProductUseCase;
+            _preferenceService = preferenceService;
             // _deleteProductUseCase = deleteProductUseCase;
-            // _productFormModel = productFormModel;
+            _productFormModel = productFormModel;
             // DeleteProductCommand = new RelayCommand<ListProduct>(DeleteProduct);
         }
 
@@ -53,17 +54,33 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
         [ICommand]
-        public async void ShowBottomSheet()
+        public async Task ShowBottomSheet()
         {
-            // var viewModel = new BottomSheetPopupViewModel(_createCollectionUseCase, _createCommandUseCase, _preferenceService, new Popup(), null, this, false, _collectionFormModel, _commandFormModel);
-            // var popup = new BottomSheetPopup(viewModel);
-            // var mainPage = Application.Current?.MainPage;
+            var viewModel = new BottomSheetPopupViewModel(
+            createCollectionUseCase: null,
+            createCommandUseCase: null,
+            preferenceService: _preferenceService,
+            popup: new Popup(),
+            collectionViewModel: null,
+            commandViewModel: null,
+            isCollectionForm: false,
+            isCommandForm: false,
+            collectionFormModel: null,
+            commandFormModel: null,
+            isProductForm: true,
+            productFormModel: _productFormModel, 
+            productViewModel: this,
+            createProductsUseCase: _createProductUseCase
+        );
 
-            // if (mainPage != null)
-            // {
-            //     await mainPage.ShowPopupAsync(popup);
-            // }
+            var popup = new BottomSheetPopup(viewModel);
+            var mainPage = Application.Current?.MainPage;
+
+            if (mainPage != null)
+            {
+                await mainPage.ShowPopupAsync(popup);
+            }
         }
 
-     }
+    }
 }

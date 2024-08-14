@@ -13,7 +13,7 @@
             <converters:CurrencyConverter x:Key="CurrencyConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
-    
+
 
     <ContentPage.Content>
         <Grid>
@@ -33,6 +33,10 @@
 
                     <CollectionView ItemsSource="{Binding ListCommands}"
                                     SelectionMode="None">
+                        <!-- <CollectionView.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedProducts, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                  CommandParameter="{Binding .}"/>
+                        </CollectionView.GestureRecognizers> -->
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="x1:ListCommand">
                                 <SwipeView>
@@ -56,13 +60,15 @@
                                             <ColumnDefinition Width="Auto"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <Frame BorderColor="#C4AB4D" Padding="10"
+                                        <Frame BorderColor="#C4AB4D"
+                                                Padding="10"
                                                BackgroundColor="Transparent"
                                                CornerRadius="10"
                                                HasShadow="True">
-                                            <StackLayout Orientation="Horizontal" Margin="0"
+                                            <StackLayout Orientation="Horizontal"
+                                                    Margin="0"
                                                          WidthRequest="310">
-                                                <Frame HasShadow="True" 
+                                                <Frame HasShadow="True"
                                                        Padding="1"
                                                        Grid.Row="0"
                                                        Grid.RowSpan="3"

@@ -5,12 +5,12 @@
                x:Class="Easymakemoney.Components.BottomSheetPopup"
                Color="Transparent"
                BindingContext="{Binding .}">
-
     <toolkit:Popup.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/DataTemplates/CollectionFormTemplate.xaml" />
-                <ResourceDictionary Source="/DataTemplates/CommandFormTemplate.xaml" />
+                <ResourceDictionary Source="/DataTemplates/CollectionFormTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplates/CommandFormTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplates/ProductFormTemplate.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </toolkit:Popup.Resources>
@@ -18,24 +18,27 @@
     <ScrollView>
         <Frame BackgroundColor="White"
                Padding="20"
-               VerticalOptions="End"
+               VerticalOptions="EndAndExpand"
                WidthRequest="300"
-               HeightRequest="600"
                CornerRadius="30"
-               Margin="20">
+               Margin="20, 0">
 
             <StackLayout BackgroundColor="Transparent">
-                <Label Text="{Binding IsCollectionForm, Converter={StaticResource BoolToCollectionCommandTextConverter}}"
+                <!-- <Label Text="{Binding IsCollectionForm, Converter={StaticResource BoolToCollectionCommandTextConverter}}"
                        FontSize="Large"
-                       HorizontalOptions="Center"/>
+                       HorizontalOptions="Center"/> -->
 
                 <!-- Collection Form -->
                 <ContentView ControlTemplate="{StaticResource CollectionFormTemplate}"
-                             IsVisible="{Binding IsCollectionForm}" />
+                             IsVisible="{Binding IsCollectionForm}"/>
 
                 <!-- Command Form -->
                 <ContentView ControlTemplate="{StaticResource CommandFormTemplate}"
-                             IsVisible="{Binding IsCommandForm}" />
+                             IsVisible="{Binding IsCommandForm}"/>
+
+                <!-- Product Form -->
+                <ContentView ControlTemplate="{StaticResource ProductFormTemplate}"
+                             IsVisible="{Binding IsProductForm}"/>
 
                 <Button Text="Save"
                         Margin="0, 20, 0, 20"
