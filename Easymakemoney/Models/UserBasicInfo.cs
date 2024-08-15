@@ -4,8 +4,8 @@ namespace Easymakemoney.Models
 	public class UserBasicInfo
 	{
 
-        public string Role { get; set; }
-        public string Email { get; set; }
+        public required string Role { get; set; }
+        public required string Email { get; set; }
         public int UserId { get; set; }
 
     }
