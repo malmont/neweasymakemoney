@@ -6,20 +6,21 @@ namespace Easymakemoney.ViewModels.Lists
     public partial class ListNewProductViewModel : BaseViewModel
     {
         private readonly GetListProductsUseCase _getListProductsUseCase;
-        // private readonly DeleteProductUseCase _deleteProductUseCase;
+        private readonly DeleteProductsUseCase _deleteProductUseCase;
         private readonly ProductFormModel _productFormModel;
 
         private readonly SaveProductUseCase _saveProductUseCase;
 
         public ObservableCollection<ListProduct> ListProducts { get; set; } = new ObservableCollection<ListProduct>();
 
-        public ListNewProductViewModel(GetListProductsUseCase getListProductsUseCase, ProductFormModel productFormModel, SaveProductUseCase saveProductUseCase)
+        public ListNewProductViewModel(GetListProductsUseCase getListProductsUseCase, ProductFormModel productFormModel, 
+        SaveProductUseCase saveProductUseCase, DeleteProductsUseCase deleteProductUseCase)
         {
             _saveProductUseCase = saveProductUseCase;
             _getListProductsUseCase = getListProductsUseCase;
-            // _deleteProductUseCase = deleteProductUseCase;
+            _deleteProductUseCase = deleteProductUseCase;
             _productFormModel = productFormModel;
-            // DeleteProductCommand = new RelayCommand<ListProduct>(DeleteProduct);
+            DeleteProductCommand = new RelayCommand<ListProduct>(DeleteProduct);
         }
 
         public int CommandId { get; set; }
@@ -68,6 +69,31 @@ namespace Easymakemoney.ViewModels.Lists
             if (mainPage != null)
             {
                 await mainPage.ShowPopupAsync(popup);
+            }
+        }
+
+        private async void DeleteProduct(ListProduct product)
+        {
+            if (IsBusy)
+                return;
+
+            IsBusy = true;
+            try
+            {
+                var result = await _deleteProductUseCase.ExecuteAsync(product.id);
+                if (result)
+                {
+                    ListProducts.Remove(product);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await Shell.Current.DisplayAlert("Error", "Unable to delete product", "OK");
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
