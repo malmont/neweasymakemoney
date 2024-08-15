@@ -142,7 +142,7 @@ namespace Easymakemoney.ViewModels.FormModels
                 purchasePrice = this.PurchasePrice,
                 coefficientMultiplier = this.CoefficientMultiplier,
                 category = this.SelectedCategory != null ? new List<Category> { this.SelectedCategory } : new List<Category>(),
-                style = this.SelectedStyles != null ? this.SelectedStyles : new Models.Styles(),
+                style = this.SelectedStyles != null ? this.SelectedStyles : new Styles(),
             };
         }
     }
