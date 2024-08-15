@@ -1,5 +1,5 @@
 
-namespace Easymakemoney.UseCases
+namespace Easymakemoney.UseCase.LisCommandeUseCase
 {
     public class DeleteCommandUseCase
     {

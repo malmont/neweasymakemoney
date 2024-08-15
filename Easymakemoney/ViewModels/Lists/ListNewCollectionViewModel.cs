@@ -2,41 +2,29 @@
 using System.Windows.Input;
 
 using Easymakemoney.Components;
-using Easymakemoney.UseCases;
-using Easymakemoney.ViewModels.FormModels;
 
 namespace Easymakemoney.ViewModels.Lists
 {
     public partial class ListNewCollectionViewModel : BaseViewModel
     {
         private readonly GetListCollectionsUseCase _getListCollectionsUseCase;
-        private readonly CreateCollectionUseCase _createCollectionUseCase;
-        private readonly CreateCommandUseCase _createCommandUseCase;
         private readonly DeleteCollectionUseCase _deleteCollectionUseCase;
-        private readonly IPreferenceService _preferenceService;
         private readonly CollectionFormModel _collectionFormModel;
-        private readonly CommandFormModel _commandFormModel;
-
-        private readonly ProductFormModel _productFormModel;
+        private readonly SaveCollectionUseCase _saveCollectionUseCase;
+        
 
         public ObservableCollection<ListCollection> ListCollections { get; set; } = new ObservableCollection<ListCollection>();
 
-        public ListNewCollectionViewModel(GetListCollectionsUseCase getListCollectionsUseCase,
-        CreateCollectionUseCase createCollectionUseCase,
-         IPreferenceService preferenceService, DeleteCollectionUseCase deleteCollectionUseCase, CreateCommandUseCase createCommandUseCase,
-        CollectionFormModel collectionFormModel,
-        CommandFormModel commandFormModel, ProductFormModel productFormModel)
+        public ListNewCollectionViewModel(GetListCollectionsUseCase getListCollectionsUseCase,SaveCollectionUseCase saveCollectionUseCase,
+        DeleteCollectionUseCase deleteCollectionUseCase,
+        CollectionFormModel collectionFormModel)
         {
-            _createCommandUseCase = createCommandUseCase;
+            _saveCollectionUseCase = saveCollectionUseCase;
             _getListCollectionsUseCase = getListCollectionsUseCase;
-            _createCollectionUseCase = createCollectionUseCase;
-            _preferenceService = preferenceService;
             _deleteCollectionUseCase = deleteCollectionUseCase;
             ItemTappedCommand = new RelayCommand<ListCollection>(OnItemTapped);
             DeleteCollectionCommand = new RelayCommand<ListCollection>(DeleteCollection!);
             _collectionFormModel = collectionFormModel;
-            _commandFormModel = commandFormModel;
-            _productFormModel = productFormModel;
         }
         public ICommand ItemTappedCommand { get; }
         public ICommand DeleteCollectionCommand { get; }
@@ -75,19 +63,11 @@ namespace Easymakemoney.ViewModels.Lists
             try
             {
                 var viewModel = new BottomSheetPopupViewModel(
-                    createCollectionUseCase: _createCollectionUseCase,
-                    createCommandUseCase: _createCommandUseCase,
-                    preferenceService: _preferenceService,
                     popup: new Popup(),
-                    collectionViewModel: this,
-                    commandViewModel: null,
+                    saveCollectionUseCase: _saveCollectionUseCase,
                     isCollectionForm: true,
-                    collectionFormModel: _collectionFormModel,
-                    commandFormModel: null,
-                    isProductForm: false,
-                    productFormModel: null,
-                    productViewModel: null,
-                    createProductsUseCase: null);
+                    collectionViewModel: this,
+                    collectionFormModel: _collectionFormModel);
 
                 var popup = new BottomSheetPopup(viewModel);
                 var mainPage = Application.Current?.MainPage;
@@ -100,6 +80,7 @@ namespace Easymakemoney.ViewModels.Lists
             }
             catch (Exception ex)
             {
+                if(Application.Current?.MainPage!=null)
                 await Application.Current.MainPage.DisplayAlert("Exception", ex.Message, "OK");
                 Console.WriteLine($"Exception: {ex}");
             }

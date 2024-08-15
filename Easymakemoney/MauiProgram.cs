@@ -48,6 +48,9 @@ public static class MauiProgram
 		builder.Services.AddTransient<CreateProductsUseCase>();
 		builder.Services.AddTransient<GetListCategoryUseCase>();
 		builder.Services.AddTransient<GetListStyleUsesCases>();
+		builder.Services.AddTransient<SaveCommandUseCase>();
+		builder.Services.AddTransient<SaveProductUseCase>();
+		builder.Services.AddTransient<SaveCollectionUseCase>();
 
 		builder.Services.AddSingleton<LoginPage>();
 		builder.Services.AddSingleton<DashboardPage>();
