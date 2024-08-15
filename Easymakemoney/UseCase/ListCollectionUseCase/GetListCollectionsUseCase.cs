@@ -1,4 +1,4 @@
-namespace Easymakemoney.UseCases
+namespace Easymakemoney.UseCase.ListCollectionUsecase
 {
     public class GetListCollectionsUseCase
     {

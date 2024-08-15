@@ -1,35 +1,27 @@
 using System.Windows.Input;
 using Easymakemoney.Components;
-using Easymakemoney.ViewModels.FormModels;
+
 
 
 namespace Easymakemoney.ViewModels.Lists
 {
     public partial class ListNewCommandViewModel : BaseViewModel
     {
-        private readonly CreateCommandUseCase _createCommandUseCase;
-        private readonly CreateCollectionUseCase _createCollectionUseCase;
         private readonly GetListCommandUseCase _getListCommandUseCase;
 
         private readonly DeleteCommandUseCase _deleteCommandUseCase;
-
-        private readonly IPreferenceService _preferenceService;
-        private readonly CollectionFormModel _collectionFormModel;
         private readonly CommandFormModel _commandFormModel;
+
+        private readonly SaveCommandUseCase _saveCommandUseCase;
 
         public ObservableCollection<ListCommand> ListCommands { get; set; } = new ObservableCollection<ListCommand>();
 
-        public ListNewCommandViewModel(GetListCommandUseCase getListCommandsUseCase, CreateCommandUseCase createCommandUseCase, CreateCollectionUseCase createCollectionUseCase,
-        IPreferenceService preferenceService,
+        public ListNewCommandViewModel(GetListCommandUseCase getListCommandUseCase,SaveCommandUseCase saveCommandUseCase,
         DeleteCommandUseCase deleteCommandUseCase,
-        CollectionFormModel collectionFormModel,
         CommandFormModel commandFormModel)
         {
-            _createCollectionUseCase = createCollectionUseCase;
-            _getListCommandUseCase = getListCommandsUseCase;
-            _createCommandUseCase = createCommandUseCase;
-            _preferenceService = preferenceService;
-            _collectionFormModel = collectionFormModel;
+            _saveCommandUseCase = saveCommandUseCase;
+            _getListCommandUseCase = getListCommandUseCase;
             _commandFormModel = commandFormModel;
             _deleteCommandUseCase = deleteCommandUseCase;
             DeleteCommandCommand = new RelayCommand<ListCommand>(DeleteCommand);
@@ -97,21 +89,11 @@ namespace Easymakemoney.ViewModels.Lists
         public async Task ShowBottomSheet()
         {
             var viewModel = new BottomSheetPopupViewModel(
-            createCollectionUseCase: _createCollectionUseCase,
-            createCommandUseCase: _createCommandUseCase,
-            preferenceService: _preferenceService,
             popup: new Popup(),
-            collectionViewModel: null,
             commandViewModel: this,
-            isCollectionForm: false,
             isCommandForm: true,
-            collectionFormModel: _collectionFormModel,
-            commandFormModel: _commandFormModel,
-            isProductForm: false,
-            productFormModel: null, // Explicitly setting unused parameters to null
-            productViewModel: null,
-            createProductsUseCase: null
-        );
+            saveCommandUseCase: _saveCommandUseCase,
+            commandFormModel: _commandFormModel);
 
             var popup = new BottomSheetPopup(viewModel);
             var mainPage = Application.Current?.MainPage;

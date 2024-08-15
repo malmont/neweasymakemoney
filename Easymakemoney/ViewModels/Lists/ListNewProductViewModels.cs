@@ -6,19 +6,17 @@ namespace Easymakemoney.ViewModels.Lists
     public partial class ListNewProductViewModel : BaseViewModel
     {
         private readonly GetListProductsUseCase _getListProductsUseCase;
-        private readonly CreateProductsUseCase _createProductUseCase;
         // private readonly DeleteProductUseCase _deleteProductUseCase;
-        private readonly IPreferenceService _preferenceService;
         private readonly ProductFormModel _productFormModel;
+
+        private readonly SaveProductUseCase _saveProductUseCase;
 
         public ObservableCollection<ListProduct> ListProducts { get; set; } = new ObservableCollection<ListProduct>();
 
-        public ListNewProductViewModel(GetListProductsUseCase getListProductsUseCase, IPreferenceService preferenceService,
-        CreateProductsUseCase createProductUseCase, ProductFormModel productFormModel)
+        public ListNewProductViewModel(GetListProductsUseCase getListProductsUseCase, ProductFormModel productFormModel, SaveProductUseCase saveProductUseCase)
         {
+            _saveProductUseCase = saveProductUseCase;
             _getListProductsUseCase = getListProductsUseCase;
-            _createProductUseCase = createProductUseCase;
-            _preferenceService = preferenceService;
             // _deleteProductUseCase = deleteProductUseCase;
             _productFormModel = productFormModel;
             // DeleteProductCommand = new RelayCommand<ListProduct>(DeleteProduct);
@@ -57,20 +55,11 @@ namespace Easymakemoney.ViewModels.Lists
         public async Task ShowBottomSheet()
         {
             var viewModel = new BottomSheetPopupViewModel(
-            createCollectionUseCase: null,
-            createCommandUseCase: null,
-            preferenceService: _preferenceService,
             popup: new Popup(),
-            collectionViewModel: null,
-            commandViewModel: null,
-            isCollectionForm: false,
-            isCommandForm: false,
-            collectionFormModel: null,
-            commandFormModel: null,
             isProductForm: true,
-            productFormModel: _productFormModel, 
             productViewModel: this,
-            createProductsUseCase: _createProductUseCase
+            saveProductUseCase: _saveProductUseCase,
+            productFormModel: _productFormModel
         );
 
             var popup = new BottomSheetPopup(viewModel);
