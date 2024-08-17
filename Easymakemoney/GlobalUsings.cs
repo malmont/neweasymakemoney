@@ -22,3 +22,7 @@ global using Easymakemoney.UseCase.ListProductUseCase;
 global using Easymakemoney.ViewModels.FormModels;
 global using Easymakemoney.UseCase.ListCollectionUsecase;
 global using Easymakemoney.UseCase.LisCommandeUseCase;
+global using Easymakemoney.UseCase.ListProductVariantUseCase;
+global using Easymakemoney.Components;
+global using Easymakemoney.UseCase.ListColorsUseCase;
+global using Easymakemoney.UseCase.ListSizesUseCase;

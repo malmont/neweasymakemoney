@@ -72,7 +72,12 @@
                                                     <Image Source="{Binding image}"
                                                            Aspect="AspectFill"
                                                            HeightRequest="70"
-                                                           WidthRequest="70"/>
+                                                           WidthRequest="70">
+                                                        <Image.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedProductsVariants, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                                                  CommandParameter="{Binding .}"/>
+                                                        </Image.GestureRecognizers>
+                                                    </Image>
                                                 </Frame>
                                                 <StackLayout Orientation="Vertical">
                                                     <Label Text="{Binding name}"
@@ -80,12 +85,18 @@
                                                            FontSize="Small"
                                                            Grid.Row="0"
                                                            Grid.Column="1"
-                                                           Grid.ColumnSpan="3"/>
+                                                           Grid.ColumnSpan="3">
+                                                        <Label.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedProductsVariants, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                                                  CommandParameter="{Binding .}"/>
+                                                        </Label.GestureRecognizers>
+                                                    </Label>
                                                     <StackLayout Orientation="Horizontal"
                                                                  VerticalOptions="StartAndExpand"
                                                                  Margin="5,0,0,10">
-                                                        <StackLayout Orientation="Horizontal" VerticalOptions="CenterAndExpand"
-                                                                WidthRequest="90">
+                                                        <StackLayout Orientation="Horizontal"
+                                                                     VerticalOptions="CenterAndExpand"
+                                                                     WidthRequest="90">
                                                             <Frame BorderColor="#C4AB4D"
                                                                    BackgroundColor="Green"
                                                                    Padding="3,0"
@@ -99,7 +110,12 @@
                                                                        Margin="5"
                                                                        Grid.Row="1"
                                                                        Grid.Column="1"
-                                                                       Grid.ColumnSpan="3"/>
+                                                                       Grid.ColumnSpan="3">
+                                                                    <Label.GestureRecognizers>
+                                                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedProductsVariants, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                                                              CommandParameter="{Binding .}"/>
+                                                                    </Label.GestureRecognizers>
+                                                                </Label>
                                                             </Frame>
                                                             <Label Text="{Binding quantity}"
                                                                    VerticalOptions="End"
@@ -121,7 +137,12 @@
                                                                    Margin="5"
                                                                    Grid.Row="1"
                                                                    Grid.Column="1"
-                                                                   Grid.ColumnSpan="3"/>
+                                                                   Grid.ColumnSpan="3">
+                                                                <Label.GestureRecognizers>
+                                                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedProductsVariants, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                                                          CommandParameter="{Binding .}"/>
+                                                                </Label.GestureRecognizers>
+                                                            </Label>
                                                         </Frame>
                                                         <Label VerticalOptions="End"
                                                                Grid.Column="3"

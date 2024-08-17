@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:controls="clr-namespace:Easymakemoney.Controls"
+                    xmlns:handlers="clr-namespace:Easymakemoney.Handlers">
+
+    <!-- Product Variant Form Template -->
+    <ControlTemplate x:Key="ProductVariantFormTemplate">
+        <StackLayout>
+            <Frame HeightRequest="45"
+                   Margin="10,0,0,10"
+                   Padding="2"
+                   HasShadow="True"
+                   BorderColor="black"
+                   HorizontalOptions="Fill">
+                <Picker Title="Select Colors"
+                        ItemsSource="{Binding ProductVariantForm.Colors}"
+                        SelectedItem="{Binding ProductVariantForm.SelectedColor}"
+                        ItemDisplayBinding="{Binding name}"/>
+            </Frame>
+             <Frame HeightRequest="45"
+                   Margin="10,0,0,10"
+                   Padding="2"
+                   HasShadow="True"
+                   BorderColor="black"
+                   HorizontalOptions="Fill">
+                <Picker Title="Select Sizes"
+                        ItemsSource="{Binding ProductVariantForm.Sizes}"
+                        SelectedItem="{Binding ProductVariantForm.SelectedSize}"
+                        ItemDisplayBinding="{Binding name}"/>
+            </Frame>
+            <Frame HeightRequest="45"
+                   Margin="10,0,0,10"
+                   Padding="2"
+                   HasShadow="True"
+                   BorderColor="black"
+                   HorizontalOptions="Fill">
+                <handlers:BorderlessEntry Placeholder="Stock Quantity"
+                                          Text="{Binding ProductVariantForm.StockQuantity, Mode=TwoWay}"
+                                          Keyboard="Numeric"/>
+            </Frame>
+        </StackLayout>
+    </ControlTemplate>
+</ResourceDictionary>

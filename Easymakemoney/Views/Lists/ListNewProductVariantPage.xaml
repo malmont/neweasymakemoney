@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             x:DataType="list:ListNewProductsVariantViewModel"
+             xmlns:x1="clr-namespace:Easymakemoney.Models"
+             xmlns:converters="clr-namespace:Easymakemoney.Converters"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Easymakemoney.Views.Lists.ListNewProductVariantPage"
+             Title="ListNewProductVariantPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:CurrencyConverter x:Key="CurrencyConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <ScrollView>
+                <StackLayout Spacing="0">
+                    <StackLayout Style="{StaticResource HeaderStackLayoutStyle}">
+                        <Image Style="{StaticResource HeaderImageStyle}"/>
+                    </StackLayout>
+
+                    <Image Style="{StaticResource SeparatorImageStyle}"/>
+
+                    <CollectionView ItemsSource="{Binding ListProductVariants}"
+                                    SelectionMode="None">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical" Span="2"/>
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x1:ProductVariant">
+                                <Frame BorderColor="#C4AB4D"
+                                       Padding="10"
+                                       BackgroundColor="White"
+                                       CornerRadius="15"
+                                       HasShadow="True"
+                                       Margin="10">
+                                    <StackLayout>
+                                        <Label Text="{Binding color.name}" Padding="5"
+                                               FontSize="Medium"
+                                               FontAttributes="Bold"/>
+                                        <Frame BorderColor="#C4AB4D"
+                                               CornerRadius="10"
+                                               Padding="0">
+                                            <BoxView Color="{Binding color.codeHexa}"
+                                                     HeightRequest="50"
+                                                     CornerRadius="10"
+                                                     Margin="5"/>
+                                        </Frame>
+                                         <StackLayout Orientation="Horizontal" Padding="5"
+                                                                VerticalOptions="CenterAndExpand"
+                                                                    >
+                                                            <Frame BorderColor="#C4AB4D"
+                                                                   BackgroundColor="Green"
+                                                                   Padding="3,0"
+                                                                   Margin="2,0,7,0"
+                                                                   HeightRequest="30"
+                                                                   CornerRadius="5"
+                                                                   HasShadow="True">
+                                                                <Label Text="size"
+                                                                       VerticalOptions="End"
+                                                                       FontSize="Small"
+                                                                       Margin="5"
+                                                                       Grid.Row="1"
+                                                                       Grid.Column="1"
+                                                                       Grid.ColumnSpan="3"/>
+                                                            </Frame>
+                                                            <Label Text="{Binding size.name}"
+                                                                   VerticalOptions="End"
+                                                                   FontSize="Small"
+                                                                   Grid.Row="1"
+                                                                   Grid.Column="1"
+                                                                   Grid.ColumnSpan="3"/>
+                                                        </StackLayout>
+                                                         <StackLayout Orientation="Horizontal" Padding="5"
+                                                                VerticalOptions="CenterAndExpand"
+                                                                    >
+                                                            <Frame BorderColor="#C4AB4D"
+                                                                   BackgroundColor="Green"
+                                                                   Padding="3,0"
+                                                                   Margin="2,0,7,0"
+                                                                   HeightRequest="30"
+                                                                   CornerRadius="5"
+                                                                   HasShadow="True">
+                                                                <Label Text="Stock"
+                                                                       VerticalOptions="End"
+                                                                       FontSize="Small"
+                                                                       Margin="5"
+                                                                       Grid.Row="1"
+                                                                       Grid.Column="1"
+                                                                       Grid.ColumnSpan="3"/>
+                                                            </Frame>
+                                                            <Label Text="{Binding stockQuantity}"
+                                                                   VerticalOptions="End"
+                                                                   FontSize="Small"
+                                                                   Grid.Row="1"
+                                                                   Grid.Column="1"
+                                                                   Grid.ColumnSpan="3"/>
+                                                        </StackLayout>
+                                       
+                                        <Button Text="Delete"
+                                                BackgroundColor="Red"
+                                                TextColor="White"
+                                                Command="{Binding Path=BindingContext.DeleteProductVariantCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                CommandParameter="{Binding .}"/>
+                                    </StackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </ScrollView>
+            <StackLayout HeightRequest="65"
+                         Margin="30,0"
+                         IsVisible="true"
+                         x:Name="add"
+                         WidthRequest="65"
+                         AbsoluteLayout.LayoutFlags="PositionProportional"
+                         AbsoluteLayout.LayoutBounds=".95,.95,80,60"
+                         HorizontalOptions="EndAndExpand"
+                         VerticalOptions="End">
+                <ImageButton Source="boutonaddblanc64.png"
+                             WidthRequest="65"
+                             HeightRequest="65"
+                             Command="{Binding ShowBottomSheetCommand}"/>
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

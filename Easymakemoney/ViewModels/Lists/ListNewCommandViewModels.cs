@@ -1,7 +1,4 @@
 using System.Windows.Input;
-using Easymakemoney.Components;
-
-
 
 namespace Easymakemoney.ViewModels.Lists
 {

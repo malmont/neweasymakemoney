@@ -1,6 +1,6 @@
 namespace Easymakemoney.Models
 {
-    public class Color
+    public class ColorsProduct
     {
         public int id { get; set; }
         public required string name { get; set; }

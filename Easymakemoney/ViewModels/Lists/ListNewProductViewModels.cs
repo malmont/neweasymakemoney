@@ -1,5 +1,5 @@
 using System.Windows.Input;
-using Easymakemoney.Components;
+
 
 namespace Easymakemoney.ViewModels.Lists
 {
@@ -21,7 +21,9 @@ namespace Easymakemoney.ViewModels.Lists
             _deleteProductUseCase = deleteProductUseCase;
             _productFormModel = productFormModel;
             DeleteProductCommand = new RelayCommand<ListProduct>(DeleteProduct);
+            ItemTappedProductsVariants = new RelayCommand<ListProduct>(OnItemTapped);
         }
+        public ICommand ItemTappedProductsVariants { get; }
 
         public int CommandId { get; set; }
         public ICommand DeleteProductCommand { get; }
@@ -70,6 +72,14 @@ namespace Easymakemoney.ViewModels.Lists
             {
                 await mainPage.ShowPopupAsync(popup);
             }
+        }
+        private async void OnItemTapped (ListProduct product)
+        {
+          if (product == null)
+                return;
+
+            // Navigate to the ListNewCommandPage and pass the collection ID
+            await Shell.Current.GoToAsync($"{nameof(ListNewProductVariantPage)}?ProductId={product.id}", true);
         }
 
         private async void DeleteProduct(ListProduct product)

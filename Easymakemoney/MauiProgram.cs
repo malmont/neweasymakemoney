@@ -20,11 +20,7 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
-		// Enregistrement du custom handler
-        builder.ConfigureMauiHandlers(handlers =>
-        {
-            handlers.AddHandler<CustomPicker, CustomPickerHandler>();
-        });	
+	
 
 		builder.Services.AddHttpClient<IHttpService, HttpService>();
 
@@ -36,6 +32,9 @@ public static class MauiProgram
 		builder.Services.AddSingleton<IListProductService, ListProductService>();
 		builder.Services.AddSingleton<IListCategoryServices, ListCategoryServices>();
 		builder.Services.AddSingleton<IListStyleService, ListStyleService>();
+		builder.Services.AddSingleton<IListColorsServices, ListColorsServices>();
+		builder.Services.AddSingleton<IListSizesServices, ListSizesServices>();
+		builder.Services.AddSingleton<IListProductVarianstService, ListProductVariantService>();
 
 		builder.Services.AddTransient<GetListCollectionsUseCase>();
 		builder.Services.AddTransient<CreateCollectionUseCase>();
@@ -52,6 +51,14 @@ public static class MauiProgram
 		builder.Services.AddTransient<SaveProductUseCase>();
 		builder.Services.AddTransient<SaveCollectionUseCase>();
 		builder.Services.AddTransient<DeleteProductsUseCase>();
+		builder.Services.AddTransient<DeleteProductsVariantUseCase>();
+		builder.Services.AddTransient<GetListColorsUseCase>();
+		builder.Services.AddTransient<GetListSizesUseCase>();
+		builder.Services.AddTransient<GetListProductsVariantUseCase>();
+		builder.Services.AddTransient<CreateProductsVariantUseCase>();
+		builder.Services.AddTransient<SaveProductvariantUseCase>();
+
+
 
 		builder.Services.AddSingleton<LoginPage>();
 		builder.Services.AddSingleton<DashboardPage>();
@@ -60,6 +67,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<ListNewCollectionPage>();
 		builder.Services.AddSingleton<ListNewCommandPage>();
 		builder.Services.AddSingleton<ListNewProductPage>();
+		builder.Services.AddSingleton<ListNewProductVariantPage>();
 		
 
 
@@ -75,6 +83,9 @@ public static class MauiProgram
 		builder.Services.AddTransient<CommandFormModel>();
 		builder.Services.AddSingleton<ListNewProductViewModel>();
 		builder.Services.AddTransient<ProductFormModel>();
+		builder.Services.AddTransient<ProductVariantFormModel>();
+		builder.Services.AddSingleton<ListNewProductsVariantViewModel>();
+
 
 #if DEBUG
 		builder.Logging.AddDebug();
