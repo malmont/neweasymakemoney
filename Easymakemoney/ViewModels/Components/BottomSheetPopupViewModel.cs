@@ -1,9 +1,4 @@
 using System.Windows.Input;
-
-
-
-
-
 namespace Easymakemoney.ViewModels
 {
     public partial class BottomSheetPopupViewModel : ObservableObject
@@ -11,14 +6,17 @@ namespace Easymakemoney.ViewModels
 
         private readonly SaveCommandUseCase _saveCommandUseCase;
         private readonly SaveProductUseCase _saveProductUseCase;
+        private readonly SaveCollectionUseCase _saveCollectionUseCase;
+        private readonly SaveProductvariantUseCase _saveProductvariantUseCase;
+
         private readonly ListNewCollectionViewModel _collectionViewModel;
 
         private readonly ListNewProductViewModel _productViewModel;
 
         private readonly ListNewCommandViewModel _commandViewModel;
-        private readonly SaveCollectionUseCase _saveCollectionUseCase;
-        private Popup _popup;
 
+        private readonly ListNewProductsVariantViewModel _productVariantViewModel;
+        private Popup _popup;
         public BottomSheetPopupViewModel(
         Popup popup = null,
         bool isCollectionForm = false,
@@ -26,16 +24,22 @@ namespace Easymakemoney.ViewModels
         CollectionFormModel collectionFormModel = null,
         CommandFormModel commandFormModel = null,
         bool isProductForm = false,
+        bool isProductVariantForm = false,
         ProductFormModel productFormModel = null,
         SaveCollectionUseCase saveCollectionUseCase = null,
         SaveCommandUseCase saveCommandUseCase = null,
         SaveProductUseCase saveProductUseCase = null
         , ListNewCollectionViewModel collectionViewModel = null,
         ListNewCommandViewModel commandViewModel = null,
-        ListNewProductViewModel productViewModel = null
-
-        )
+        ListNewProductViewModel productViewModel = null,
+        ListNewProductsVariantViewModel productVariantViewModel = null,
+        SaveProductvariantUseCase saveProductvariantUseCase = null,
+        ProductVariantFormModel productVariantForm = null)
         {
+            IsProductVariantForm = isProductVariantForm;
+            ProductVariantForm=productVariantForm;
+            _productVariantViewModel = productVariantViewModel;
+            _saveProductvariantUseCase = saveProductvariantUseCase;
             _productViewModel = productViewModel;
             _commandViewModel = commandViewModel;
             _collectionViewModel = collectionViewModel;
@@ -63,6 +67,13 @@ namespace Easymakemoney.ViewModels
             set => SetProperty(ref _isCollectionForm, value);
         }
 
+        private bool _isProductVariantForm;
+        public bool IsProductVariantForm
+        {
+            get => _isProductVariantForm;
+            set => SetProperty(ref _isProductVariantForm, value);
+        }
+
         private bool _isCommandForm;
         public bool IsCommandForm
         {
@@ -84,6 +95,8 @@ namespace Easymakemoney.ViewModels
 
         public ProductFormModel ProductForm { get; }
 
+        public ProductVariantFormModel ProductVariantForm { get; }
+
         public void SetPopupInstance(Popup popup) // Ajouter cette méthode pour recevoir l'instance du popup
         {
             _popup = popup;
@@ -100,7 +113,7 @@ namespace Easymakemoney.ViewModels
                 }
                 else if (IsCommandForm)
                 {
-                    var result = await _saveCommandUseCase.ExecuteAsync(CommandForm,_commandViewModel.CollectionId);
+                    var result = await _saveCommandUseCase.ExecuteAsync(CommandForm, _commandViewModel.CollectionId);
                     if (result) await _commandViewModel.GetListCommandAsync();
                     if (!result) throw new Exception("Failed to save command.");
                 }
@@ -109,6 +122,12 @@ namespace Easymakemoney.ViewModels
                     var result = await _saveProductUseCase.ExecuteAsync(ProductForm, _productViewModel.CommandId);
                     if (result) await _productViewModel.GetListProductAsync();
                     if (!result) throw new Exception("Failed to save product.");
+                }
+                else if (IsProductVariantForm)
+                {
+                    var result = await _saveProductvariantUseCase.ExecuteAsync(ProductVariantForm, _productVariantViewModel.ProductId);
+                    if (result) await _productVariantViewModel.GetlistProductVariantAsync();
+                    if (!result) throw new Exception("Failed to save product variant.");
                 }
 
                 _popup.Close();
