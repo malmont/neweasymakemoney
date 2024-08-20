@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             x:DataType="list:ListNewNoteDeFraisViewModel"
+             xmlns:x1="clr-namespace:Easymakemoney.Models"
+             xmlns:converters="clr-namespace:Easymakemoney.Converters"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Easymakemoney.Views.Lists.ListNewNoteDeFraisPage"
+             Title="ListNewNoteDeFrais">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:CurrencyConverter x:Key="CurrencyConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <ScrollView>
+                <!--children1-->
+                <StackLayout Spacing="0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!--Navbar-->
+                        <StackLayout Spacing="0"
+                                     Grid.Row="0"
+                                     Grid.Column="0"
+                                     BackgroundColor="#518faa"
+                                     Orientation="Vertical"
+                                     HorizontalOptions="FillAndExpand"
+                                     VerticalOptions="Start">
+
+                            <Frame Margin="10,10"
+                                   HasShadow="True"
+                                   BackgroundColor="#518faa"
+                                   CornerRadius="10"
+                                   Padding="1"
+                                   HorizontalOptions="Start"
+                                   HeightRequest="79">
+                                <StackLayout Margin="2,2"
+                                             Orientation="Horizontal"
+                                             HorizontalOptions="FillAndExpand"
+                                             WidthRequest="380"
+                                             BackgroundColor="#518faa">
+                                    <!--bouton pour selectionner listedeCollection-->
+                                    <StackLayout Margin="2,2,2,2"
+                                                 HorizontalOptions="Start"
+                                                 VerticalOptions="Center"
+                                                 BackgroundColor="#518faa"
+                                                 HeightRequest="30"
+                                                 WidthRequest="60">
+                                        <Frame Margin="1,1"
+                                               HasShadow="True"
+                                               CornerRadius="10"
+                                               Padding="1"
+                                               BackgroundColor="#C4AB4D"
+                                               HeightRequest="30"
+                                               WidthRequest="60"
+                                               HorizontalOptions="Fill">
+                                            <Button Text="Listes" BackgroundColor="#C4AB4D" 
+                                                         WidthRequest="65"
+                                                         HeightRequest="65"
+                                                         Command="{Binding ShowBottomSheetPopupListViewCommand}"
+                                                         />
+                                        </Frame>
+                                    </StackLayout>
+                                    <StackLayout HeightRequest="65"
+                                                 Margin="30,0"
+                                                 IsVisible="true"
+                                                 x:Name="add"
+                                                 WidthRequest="95"
+                                                 AbsoluteLayout.LayoutFlags="PositionProportional"
+                                                 AbsoluteLayout.LayoutBounds=".95,.95,80,60"
+                                                 HorizontalOptions="EndAndExpand"
+                                                 VerticalOptions="End">
+                                        <ImageButton Source="boutonaddblanc64.png"
+                                                     WidthRequest="40"
+                                                     HeightRequest="40"
+                                                     Command="{Binding ShowBottomSheetCreateListCommand}"/>
+
+                                        <Label Text="COLLECTION"
+                                               FontSize="Small"
+                                               VerticalTextAlignment="Center"
+                                               VerticalOptions="Center"
+                                               HorizontalOptions="Center"
+                                               Margin="0,0,10,0"
+                                               TextColor="#C4AB4D"/>
+                                    </StackLayout>
+                                </StackLayout>
+                            </Frame>
+                        </StackLayout>
+                    </Grid>
+                    <!--fin navbar-->
+
+                    <!--fin bouton pour creer une collection-->
+                    <StackLayout Style="{StaticResource HeaderStackLayoutStyle}">
+                        <Image Style="{StaticResource HeaderImageStyle}"/>
+                    </StackLayout>
+
+                    <Image Style="{StaticResource SeparatorImageStyle}"/>
+
+                    <CollectionView ItemsSource="{Binding ListNoteDeFrais}"
+                                    SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x1:NoteDeFrais">
+                                <SwipeView>
+                                    <SwipeView.RightItems>
+                                        <SwipeItems Mode="Execute">
+                                            <SwipeItem Text="Delete"
+                                                       BackgroundColor="Red"
+                                                       Command="{Binding Path=BindingContext.DeleteNoteDefraisCommand, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                       CommandParameter="{Binding .}"/>
+                                        </SwipeItems>
+                                    </SwipeView.RightItems>
+                                    <Grid Padding="30">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Frame BorderColor="#C4AB4D"
+                                               Padding="10"
+                                               BackgroundColor="Transparent"
+                                               CornerRadius="10"
+                                               HasShadow="True">
+                                            <StackLayout Orientation="Horizontal"
+                                                         WidthRequest="310">
+                                                <Frame HasShadow="True"
+                                                       Padding="1"
+                                                       Grid.Row="0"
+                                                       Grid.RowSpan="3"
+                                                       Grid.Column="0"
+                                                       Grid.ColumnSpan="1">
+                                                    <Image Source="{Binding imageNdf}"
+                                                           Aspect="AspectFill"
+                                                           HeightRequest="70"
+                                                           WidthRequest="70">
+                                                        <Image.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedNoteDeFrais, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                                                  CommandParameter="{Binding .}"/>
+                                                        </Image.GestureRecognizers>
+                                                    </Image>
+                                                </Frame>
+                                                <StackLayout Orientation="Vertical">
+                                                    <Label Text="{Binding name}"
+                                                           VerticalOptions="FillAndExpand"
+                                                           FontSize="Small"
+                                                           Grid.Row="0"
+                                                           Grid.Column="1"
+                                                           Grid.ColumnSpan="3">
+                                                        <Label.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedNoteDeFrais, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                                                  CommandParameter="{Binding .}"/>
+                                                        </Label.GestureRecognizers>
+                                                    </Label>
+                                                    <StackLayout Orientation="Horizontal"
+                                                                 VerticalOptions="StartAndExpand"
+                                                                 Margin="5,0,0,10">
+                                                        <!-- <StackLayout Orientation="Horizontal"
+                                                                     VerticalOptions="CenterAndExpand"
+                                                                     WidthRequest="90">
+                                                            <Frame BorderColor="#C4AB4D"
+                                                                   BackgroundColor="Green"
+                                                                   Padding="3,0"
+                                                                   Margin="2,0,7,0"
+                                                                   HeightRequest="30"
+                                                                   CornerRadius="5"
+                                                                   HasShadow="True">
+                                                                <Label Text="Stock"
+                                                                       VerticalOptions="End"
+                                                                       FontSize="Small"
+                                                                       Margin="5"
+                                                                       Grid.Row="1"
+                                                                       Grid.Column="1"
+                                                                       Grid.ColumnSpan="3">
+                                                                    <Label.GestureRecognizers>
+                                                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedProductsVariants, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                                                              CommandParameter="{Binding .}"/>
+                                                                    </Label.GestureRecognizers>
+                                                                </Label>
+                                                            </Frame>
+                                                            <Label Text="{Binding quantity}"
+                                                                   VerticalOptions="End"
+                                                                   FontSize="Small"
+                                                                   Grid.Row="1"
+                                                                   Grid.Column="1"
+                                                                   Grid.ColumnSpan="3"/>
+                                                        </StackLayout> -->
+                                                        <Frame BorderColor="#C4AB4D"
+                                                               BackgroundColor="Green"
+                                                               Padding="3,0"
+                                                               Margin="7,0,5,0"
+                                                               HeightRequest="30"
+                                                               CornerRadius="5"
+                                                               HasShadow="True">
+                                                            <Label Text="Montant"
+                                                                   VerticalOptions="End"
+                                                                   FontSize="Small"
+                                                                   Margin="5"
+                                                                   Grid.Row="1"
+                                                                   Grid.Column="1"
+                                                                   Grid.ColumnSpan="3">
+                                                                <Label.GestureRecognizers>
+                                                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedNoteDeFrais, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                                                          CommandParameter="{Binding .}"/>
+                                                                </Label.GestureRecognizers>
+                                                            </Label>
+                                                        </Frame>
+                                                        <Label VerticalOptions="End"
+                                                               Grid.Column="3"
+                                                               Grid.Row="1"
+                                                               LineBreakMode="TailTruncation"
+                                                               HorizontalOptions="FillAndExpand"
+                                                               TextColor="Black"
+                                                               Margin="3,0,5,0"
+                                                               FontSize="Small"
+                                                               Text="{Binding montant, Converter={StaticResource CurrencyConverter}}">
+                                                            <!-- <Label.GestureRecognizers>
+                                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedProducts, Source={RelativeSource AncestorType={x:Type ContentPage}}}"
+                                                                              CommandParameter="{Binding .}"/>
+                                                    </Label.GestureRecognizers> -->
+                                                        </Label>
+
+                                                    </StackLayout>
+                                                </StackLayout>
+                                            </StackLayout>
+                                        </Frame>
+                                    </Grid>
+                                </SwipeView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </ScrollView>
+            <StackLayout HeightRequest="65"
+                         Margin="30,0"
+                         IsVisible="true"
+                         WidthRequest="65"
+                         AbsoluteLayout.LayoutFlags="PositionProportional"
+                         AbsoluteLayout.LayoutBounds=".95,.95,80,60"
+                         HorizontalOptions="EndAndExpand"
+                         VerticalOptions="End">
+                <ImageButton Source="boutonaddblanc64.png"
+                             WidthRequest="65"
+                             HeightRequest="65"
+                             Command="{Binding ShowBottomSheetCommand}"/>
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

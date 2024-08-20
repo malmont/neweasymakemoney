@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x1="clr-namespace:Easymakemoney.Models"
+                    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- Collection Form Template -->
+   <ControlTemplate x:Key="CollectionFormListViewTemplate">
+    <StackLayout>
+        <ScrollView>
+            <StackLayout Spacing="0">
+                <CollectionView ItemsSource="{Binding ListCollections}" HeightRequest="500" SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="x1:ListCollection">
+                            <Grid Padding="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Frame BorderColor="#C4AB4D"
+                                       Padding="10"
+                                       BackgroundColor="Transparent"
+                                       CornerRadius="10"
+                                       HasShadow="True">
+                                    <StackLayout Orientation="Horizontal"
+                                                 WidthRequest="200">
+                                        <StackLayout Orientation="Horizontal"
+                                                     WidthRequest="150">
+                                            <Frame HasShadow="True"
+                                                   Padding="1"
+                                                   Grid.Row="0"
+                                                   Grid.RowSpan="3"
+                                                   CornerRadius="10"
+                                                   BackgroundColor="Gray">
+                                                <Image Aspect="Fill"
+                                                       Margin="1,1"
+                                                       WidthRequest="60"
+                                                       HeightRequest="50"
+                                                       Source="{Binding photoCollection}">
+                                                      <Image.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type toolkit:Popup}}}"
+                                                                                  CommandParameter="{Binding .}"/>
+                                                        </Image.GestureRecognizers>
+                                                </Image>
+                                            </Frame>
+                                            <Label VerticalOptions="Center"
+                                                   Grid.Column="2"
+                                                   Grid.Row="1"
+                                                   LineBreakMode="TailTruncation"
+                                                   TextColor="Black"
+                                                   Margin="10,0,20,0"
+                                                   FontSize="Small"
+                                                   WidthRequest="70"
+                                                   Text="{Binding nomCollection}">
+                                                 <Label.GestureRecognizers>
+                                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type toolkit:Popup}}}"
+                                                                              CommandParameter="{Binding .}"/>
+                                                    </Label.GestureRecognizers>
+                                            </Label>
+                                        </StackLayout>
+                                    </StackLayout>
+                                </Frame>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </StackLayout>
+        </ScrollView>
+    </StackLayout>
+</ControlTemplate>
+
+</ResourceDictionary>

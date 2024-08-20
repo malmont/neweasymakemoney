@@ -1,8 +1,4 @@
 ﻿
-using System.Windows.Input;
-
-using Easymakemoney.Components;
-
 namespace Easymakemoney.ViewModels.Lists
 {
     public partial class ListNewCollectionViewModel : BaseViewModel

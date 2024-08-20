@@ -13,6 +13,12 @@ namespace Easymakemoney.ViewModels.Lists
             await Shell.Current.GoToAsync(nameof(ListNewCollectionPage));
             //await Shell.Current.GoToAsync($"//{nameof(ListNewCollectionPage)}");
         }
+        [ICommand]
+        async void NavigateToNoteDeFrais()
+        {
+            await Shell.Current.GoToAsync(nameof(ListNewNoteDeFraisPage));
+            //await Shell.Current.GoToAsync($"//{nameof(ListNewProductPage)}");
+        }
     }
 }
 

@@ -26,3 +26,8 @@ global using Easymakemoney.UseCase.ListProductVariantUseCase;
 global using Easymakemoney.Components;
 global using Easymakemoney.UseCase.ListColorsUseCase;
 global using Easymakemoney.UseCase.ListSizesUseCase;
+global using Easymakemoney.ViewModels.Components;
+global using Easymakemoney.UseCase.ListCategoryUseCase;
+global using Easymakemoney.UseCase.ListNoteDeFraisUseCase;
+global using EEasymakemoney.UseCase.ListStyleUsesCase;
+global using System.Windows.Input;

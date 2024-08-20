@@ -1,5 +1,5 @@
-using System.Windows.Input;
-namespace Easymakemoney.ViewModels
+
+namespace Easymakemoney.ViewModels.Components
 {
     public partial class BottomSheetPopupViewModel : ObservableObject
     {
@@ -9,13 +9,17 @@ namespace Easymakemoney.ViewModels
         private readonly SaveCollectionUseCase _saveCollectionUseCase;
         private readonly SaveProductvariantUseCase _saveProductvariantUseCase;
 
+        private readonly SaveNoteDeFraisUseCase _saveNoteDeFraisUseCase;
+
         private readonly ListNewCollectionViewModel _collectionViewModel;
 
         private readonly ListNewProductViewModel _productViewModel;
 
         private readonly ListNewCommandViewModel _commandViewModel;
-
+        
         private readonly ListNewProductsVariantViewModel _productVariantViewModel;
+
+        private readonly ListNewNoteDeFraisViewModel _noteDeFraisViewModel;
         private Popup _popup;
         public BottomSheetPopupViewModel(
         Popup popup = null,
@@ -25,6 +29,7 @@ namespace Easymakemoney.ViewModels
         CommandFormModel commandFormModel = null,
         bool isProductForm = false,
         bool isProductVariantForm = false,
+        bool isNoteDeFraisForm = false,
         ProductFormModel productFormModel = null,
         SaveCollectionUseCase saveCollectionUseCase = null,
         SaveCommandUseCase saveCommandUseCase = null,
@@ -34,8 +39,14 @@ namespace Easymakemoney.ViewModels
         ListNewProductViewModel productViewModel = null,
         ListNewProductsVariantViewModel productVariantViewModel = null,
         SaveProductvariantUseCase saveProductvariantUseCase = null,
-        ProductVariantFormModel productVariantForm = null)
+        ProductVariantFormModel productVariantForm = null,
+        NoteDeFraisForModel noteDeFraisForm = null,
+        SaveNoteDeFraisUseCase saveNoteDeFraisUseCase = null,
+        ListNewNoteDeFraisViewModel noteDeFraisViewModel = null)
         {
+            NoteDeFraisForm = noteDeFraisForm;
+            _saveNoteDeFraisUseCase = saveNoteDeFraisUseCase;
+            _noteDeFraisViewModel = noteDeFraisViewModel;
             IsProductVariantForm = isProductVariantForm;
             ProductVariantForm=productVariantForm;
             _productVariantViewModel = productVariantViewModel;
@@ -50,11 +61,13 @@ namespace Easymakemoney.ViewModels
             IsCollectionForm = isCollectionForm;
             CollectionForm = collectionFormModel;
             IsCommandForm = isCommandForm;
+            IsNoteDeFraisForm = isNoteDeFraisForm;
             CommandForm = commandFormModel;
             IsProductForm = isProductForm;
             ProductForm = productFormModel;
             SaveCommand = new RelayCommand(Save);
             CancelCommand = new RelayCommand(Cancel);
+
         }
 
         public ICommand SaveCommand { get; }
@@ -87,6 +100,13 @@ namespace Easymakemoney.ViewModels
             get => _isProductForm;
             set => SetProperty(ref _isProductForm, value);
         }
+        
+        private bool _isNoteDeFraisForm;
+        public bool IsNoteDeFraisForm
+        {
+            get => _isNoteDeFraisForm;
+            set => SetProperty(ref _isNoteDeFraisForm, value);
+        }
 
 
 
@@ -96,6 +116,8 @@ namespace Easymakemoney.ViewModels
         public ProductFormModel ProductForm { get; }
 
         public ProductVariantFormModel ProductVariantForm { get; }
+
+        public NoteDeFraisForModel NoteDeFraisForm { get; }
 
         public void SetPopupInstance(Popup popup) // Ajouter cette méthode pour recevoir l'instance du popup
         {
@@ -128,6 +150,11 @@ namespace Easymakemoney.ViewModels
                     var result = await _saveProductvariantUseCase.ExecuteAsync(ProductVariantForm, _productVariantViewModel.ProductId);
                     if (result) await _productVariantViewModel.GetlistProductVariantAsync();
                     if (!result) throw new Exception("Failed to save product variant.");
+                }else if (IsNoteDeFraisForm)
+                {
+                    var result = await _saveNoteDeFraisUseCase.ExecuteAsync(NoteDeFraisForm, _noteDeFraisViewModel.CollectionId);
+                    if (result) await _noteDeFraisViewModel.GetListNoteDeFraisAsync();
+                    if (!result) throw new Exception("Failed to save note de frais.");
                 }
 
                 _popup.Close();

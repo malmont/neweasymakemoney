@@ -1,7 +1,6 @@
 ﻿
 using CommunityToolkit.Maui;
-using Easymakemoney.UseCase.ListCategoryUseCase;
-using EEasymakemoney.UseCase.ListStyleUsesCase;
+
 using Microsoft.Extensions.Logging;
 
 namespace Easymakemoney;
@@ -35,6 +34,8 @@ public static class MauiProgram
 		builder.Services.AddSingleton<IListColorsServices, ListColorsServices>();
 		builder.Services.AddSingleton<IListSizesServices, ListSizesServices>();
 		builder.Services.AddSingleton<IListProductVarianstService, ListProductVariantService>();
+		builder.Services.AddSingleton<IListNoteDeFraisServices, ListNoteDeFraisServices>();
+		
 
 		builder.Services.AddTransient<GetListCollectionsUseCase>();
 		builder.Services.AddTransient<CreateCollectionUseCase>();
@@ -57,6 +58,10 @@ public static class MauiProgram
 		builder.Services.AddTransient<GetListProductsVariantUseCase>();
 		builder.Services.AddTransient<CreateProductsVariantUseCase>();
 		builder.Services.AddTransient<SaveProductvariantUseCase>();
+		builder.Services.AddTransient<DeleteNoteDeFraisUseCase>();
+		builder.Services.AddTransient<GetListNoteDeFraisUseCase>();
+		builder.Services.AddTransient<CreateNoteDeFraisUseCase>();
+		builder.Services.AddTransient<SaveNoteDeFraisUseCase>();
 
 
 
@@ -68,6 +73,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<ListNewCommandPage>();
 		builder.Services.AddSingleton<ListNewProductPage>();
 		builder.Services.AddSingleton<ListNewProductVariantPage>();
+		builder.Services.AddSingleton<ListNewNoteDeFraisPage>();
 		
 
 
@@ -85,6 +91,9 @@ public static class MauiProgram
 		builder.Services.AddTransient<ProductFormModel>();
 		builder.Services.AddTransient<ProductVariantFormModel>();
 		builder.Services.AddSingleton<ListNewProductsVariantViewModel>();
+		builder.Services.AddSingleton<BottomSheetPopupListViewViewModel>();
+		builder.Services.AddSingleton<ListNewNoteDeFraisViewModel>();
+		builder.Services.AddSingleton<NoteDeFraisForModel>();
 
 
 #if DEBUG

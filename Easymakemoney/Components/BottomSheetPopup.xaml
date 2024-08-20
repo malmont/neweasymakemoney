@@ -11,7 +11,8 @@
                 <ResourceDictionary Source="/DataTemplates/CollectionFormTemplate.xaml"/>
                 <ResourceDictionary Source="/DataTemplates/CommandFormTemplate.xaml"/>
                 <ResourceDictionary Source="/DataTemplates/ProductFormTemplate.xaml"/>
-                 <ResourceDictionary Source="/DataTemplates/ProductVariantFormTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplates/ProductVariantFormTemplate.xaml"/>
+                <ResourceDictionary Source="/DataTemplates/NoteDeFraisFormTermplate.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </toolkit:Popup.Resources>
@@ -41,9 +42,13 @@
                 <ContentView ControlTemplate="{StaticResource ProductFormTemplate}"
                              IsVisible="{Binding IsProductForm}"/>
 
-                               <!-- ProductVaraint Form -->
+                <!-- ProductVaraint Form -->
                 <ContentView ControlTemplate="{StaticResource ProductVariantFormTemplate}"
                              IsVisible="{Binding IsProductVariantForm}"/>
+
+                <!-- ProductVaraint Form -->
+                <ContentView ControlTemplate="{StaticResource NoteDeFraisFormTermplate}"
+                             IsVisible="{Binding IsNoteDeFraisForm}"/>
 
                 <Button Text="Save"
                         Margin="0, 20, 0, 20"

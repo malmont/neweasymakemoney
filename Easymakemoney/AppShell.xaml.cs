@@ -9,6 +9,7 @@ public partial class AppShell : Shell
 		this.BindingContext = new AppShellViewModel();
         Routing.RegisterRoute("DashboardPage", typeof(DashboardPage));
 		Routing.RegisterRoute("ListNewProductVariantPage", typeof(ListNewProductVariantPage));
+		Routing.RegisterRoute("ListNewNoteDeFraisPage", typeof(ListNewNoteDeFraisPage));
 		Routing.RegisterRoute("ListNewCommandPage", typeof(ListNewCommandPage));
 		Routing.RegisterRoute("ListNewProductPage", typeof(ListNewProductPage));
 		Routing.RegisterRoute("LoginPage", typeof(LoginPage));
