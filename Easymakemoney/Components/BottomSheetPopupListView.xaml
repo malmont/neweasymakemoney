@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="Easymakemoney.Components.BottomSheetPopupListView"
+               Color="Transparent"
+               BindingContext="{Binding .}">
+    <toolkit:Popup.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DataTemplates/CollectionFormListViewTemplate.xaml"/>
+
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </toolkit:Popup.Resources>
+
+    <ScrollView>
+        <Frame BackgroundColor="White"
+               Padding="20"
+               VerticalOptions="EndAndExpand"
+               WidthRequest="300"
+               CornerRadius="30"
+               Margin="20, 0">
+
+            <StackLayout BackgroundColor="Transparent">
+                <!-- CollectionListView Form -->
+                <ContentView ControlTemplate="{StaticResource CollectionFormListViewTemplate}"/>
+
+            </StackLayout>
+        </Frame>
+    </ScrollView>
+</toolkit:Popup>

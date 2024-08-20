@@ -94,7 +94,7 @@
                                                         HorizontalOptions="FillAndExpand"
                                                         VerticalOptions="Start">
 
-                                                <Button Margin="2,2" BorderColor="#C4AB4D"
+                                                <Button Margin="2,2" BorderColor="#C4AB4D" Command="{Binding NavigateToNoteDeFraisCommand}"
                                                                 Style="{StaticResource boutonLabStyle}"
                                                         BackgroundColor="White"
                                                                 Text="NOTES DE FRAIS"
