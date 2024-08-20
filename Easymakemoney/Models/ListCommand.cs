@@ -1,7 +1,6 @@
 namespace Easymakemoney.Models
-
 {
-    public class ListCommand
+    public class ListCommand : IListItem
     {
         public int id { get; set; }
         public required string name { get; set; }
@@ -9,5 +8,10 @@ namespace Easymakemoney.Models
         public double budget { get; set; }
         public required string date { get; set; }
         public int collectionId { get; set; }
+
+        // Implémentation de l'interface IListItem
+        public int Id => id;
+        public string Name => name;
+        public string Photo => photo;
     }
 }

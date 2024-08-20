@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-                    xmlns:x1="clr-namespace:Easymakemoney.Models"
                     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                    xmlns:local="clr-namespace:Easymakemoney.Models"
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <!-- Collection Form Template -->
+    <!-- Generic Form Template -->
    <ControlTemplate x:Key="CollectionFormListViewTemplate">
     <StackLayout>
         <ScrollView>
             <StackLayout Spacing="0">
-                <CollectionView ItemsSource="{Binding ListCollections}" HeightRequest="500" SelectionMode="None">
+                <!-- Utilisation de Items au lieu de ListCollections -->
+                <CollectionView ItemsSource="{Binding Items}" HeightRequest="500" SelectionMode="None">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="x1:ListCollection">
+                        <!-- Utilisation d'un IListItem générique -->
+                         <DataTemplate x:DataType="local:IListItem">
                             <Grid Padding="10">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -39,11 +41,12 @@
                                                    Grid.RowSpan="3"
                                                    CornerRadius="10"
                                                    BackgroundColor="Gray">
+                                                <!-- Assurez-vous que votre IListItem a une propriété d'image -->
                                                 <Image Aspect="Fill"
                                                        Margin="1,1"
                                                        WidthRequest="60"
                                                        HeightRequest="50"
-                                                       Source="{Binding photoCollection}">
+                                                       Source="{Binding Photo}">
                                                       <Image.GestureRecognizers>
                                                             <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type toolkit:Popup}}}"
                                                                                   CommandParameter="{Binding .}"/>
@@ -58,7 +61,7 @@
                                                    Margin="10,0,20,0"
                                                    FontSize="Small"
                                                    WidthRequest="70"
-                                                   Text="{Binding nomCollection}">
+                                                   Text="{Binding Name}">
                                                  <Label.GestureRecognizers>
                                                         <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type toolkit:Popup}}}"
                                                                               CommandParameter="{Binding .}"/>
