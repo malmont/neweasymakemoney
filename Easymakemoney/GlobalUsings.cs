@@ -31,3 +31,4 @@ global using Easymakemoney.UseCase.ListCategoryUseCase;
 global using Easymakemoney.UseCase.ListNoteDeFraisUseCase;
 global using EEasymakemoney.UseCase.ListStyleUsesCase;
 global using System.Windows.Input;
+global using Easymakemoney.UseCase.ListFournisseurUseCase;

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:handlers="clr-namespace:Easymakemoney.Handlers">
+
+    <!-- Command Form Template -->
+    <ControlTemplate x:Key="FournisseurFormTemplate">
+        <StackLayout>
+            <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
+                <handlers:BorderlessEntry Placeholder="Name" Text="{Binding FournisseurForm.Name, Mode=TwoWay}" />
+            </Frame>
+             <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
+                <handlers:BorderlessEntry Placeholder="Photo" Text="{Binding FournisseurForm.Photo, Mode=TwoWay}" />
+            </Frame>
+              <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
+                <handlers:BorderlessEntry Placeholder="Adresse" Text="{Binding FournisseurForm.Adresse, Mode=TwoWay}" />
+            </Frame>
+            <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
+                <handlers:BorderlessEntry Placeholder="Ville" Text="{Binding FournisseurForm.Ville, Mode=TwoWay}" />
+            </Frame>
+              <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
+                <handlers:BorderlessEntry Placeholder="Pays" Text="{Binding FournisseurForm.Pays, Mode=TwoWay}" />
+            </Frame>
+              <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
+                <handlers:BorderlessEntry Placeholder="Tel" Text="{Binding FournisseurForm.Tel, Mode=TwoWay}" />
+            </Frame>
+        </StackLayout>
+    </ControlTemplate>
+</ResourceDictionary>

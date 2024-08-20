@@ -11,6 +11,8 @@ namespace Easymakemoney.ViewModels.Components
 
         private readonly SaveNoteDeFraisUseCase _saveNoteDeFraisUseCase;
 
+        private readonly SaveFournisseurUseCase _saveFournisseurUseCase;
+
         private readonly ListNewCollectionViewModel _collectionViewModel;
 
         private readonly ListNewProductViewModel _productViewModel;
@@ -20,6 +22,8 @@ namespace Easymakemoney.ViewModels.Components
         private readonly ListNewProductsVariantViewModel _productVariantViewModel;
 
         private readonly ListNewNoteDeFraisViewModel _noteDeFraisViewModel;
+
+        private readonly ListNewFournisseurViewModel _fournisseurViewModel;
         private Popup _popup;
         public BottomSheetPopupViewModel(
         Popup popup = null,
@@ -42,8 +46,16 @@ namespace Easymakemoney.ViewModels.Components
         ProductVariantFormModel productVariantForm = null,
         NoteDeFraisForModel noteDeFraisForm = null,
         SaveNoteDeFraisUseCase saveNoteDeFraisUseCase = null,
-        ListNewNoteDeFraisViewModel noteDeFraisViewModel = null)
+        ListNewNoteDeFraisViewModel noteDeFraisViewModel = null,
+        ListNewFournisseurViewModel fournisseurViewModel = null,
+        SaveFournisseurUseCase saveFournisseurUseCase =null,
+        FournisseurFormModel fournisseurForm = null,
+        bool isFournisseurForm = false
+        )
         {
+            _fournisseurViewModel = fournisseurViewModel;
+            FournisseurForm = fournisseurForm;
+            IsFournisseurForm = isFournisseurForm;
             NoteDeFraisForm = noteDeFraisForm;
             _saveNoteDeFraisUseCase = saveNoteDeFraisUseCase;
             _noteDeFraisViewModel = noteDeFraisViewModel;
@@ -67,6 +79,7 @@ namespace Easymakemoney.ViewModels.Components
             ProductForm = productFormModel;
             SaveCommand = new RelayCommand(Save);
             CancelCommand = new RelayCommand(Cancel);
+            _saveFournisseurUseCase = saveFournisseurUseCase;
 
         }
 
@@ -108,9 +121,19 @@ namespace Easymakemoney.ViewModels.Components
             set => SetProperty(ref _isNoteDeFraisForm, value);
         }
 
+        private bool _isFournisseurForm;
+        public bool IsFournisseurForm
+        {
+            get => _isFournisseurForm;
+            set => SetProperty(ref _isFournisseurForm, value);
+        }
+
 
 
         public CollectionFormModel CollectionForm { get; }
+
+        public FournisseurFormModel FournisseurForm { get; }
+
         public CommandFormModel CommandForm { get; }
 
         public ProductFormModel ProductForm { get; }
@@ -155,6 +178,11 @@ namespace Easymakemoney.ViewModels.Components
                     var result = await _saveNoteDeFraisUseCase.ExecuteAsync(NoteDeFraisForm, _noteDeFraisViewModel.CollectionId);
                     if (result) await _noteDeFraisViewModel.GetListNoteDeFraisAsync();
                     if (!result) throw new Exception("Failed to save note de frais.");
+                }else if (IsFournisseurForm)
+                {
+                    var result = await _saveFournisseurUseCase.ExecuteAsync(FournisseurForm, _fournisseurViewModel.CommandId);
+                    if (result) await _fournisseurViewModel.GetListFournisseursAsync();
+                    if (!result) throw new Exception("Failed to save fournisseur.");
                 }
 
                 _popup.Close();
