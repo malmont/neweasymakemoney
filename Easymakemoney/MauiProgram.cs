@@ -1,6 +1,5 @@
 ﻿
 using CommunityToolkit.Maui;
-
 using Microsoft.Extensions.Logging;
 
 namespace Easymakemoney;
@@ -35,6 +34,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<IListSizesServices, ListSizesServices>();
 		builder.Services.AddSingleton<IListProductVarianstService, ListProductVariantService>();
 		builder.Services.AddSingleton<IListNoteDeFraisServices, ListNoteDeFraisServices>();
+		builder.Services.AddSingleton<IListFourniseursServices, ListFourniseursServices>();
 		
 
 		builder.Services.AddTransient<GetListCollectionsUseCase>();
@@ -62,6 +62,10 @@ public static class MauiProgram
 		builder.Services.AddTransient<GetListNoteDeFraisUseCase>();
 		builder.Services.AddTransient<CreateNoteDeFraisUseCase>();
 		builder.Services.AddTransient<SaveNoteDeFraisUseCase>();
+		builder.Services.AddTransient<DeleteFournisseurUseCase>();
+		builder.Services.AddTransient<GetListFournisseursUseCase>();
+		builder.Services.AddTransient<CreateFournisseurUseCase>();
+		builder.Services.AddTransient<SaveFournisseurUseCase>();
 
 
 
@@ -74,6 +78,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<ListNewProductPage>();
 		builder.Services.AddSingleton<ListNewProductVariantPage>();
 		builder.Services.AddSingleton<ListNewNoteDeFraisPage>();
+		builder.Services.AddSingleton<ListNewFournisseurPage>();
 		
 
 
@@ -94,6 +99,9 @@ public static class MauiProgram
 		builder.Services.AddSingleton<BottomSheetPopupListViewViewModel>();
 		builder.Services.AddSingleton<ListNewNoteDeFraisViewModel>();
 		builder.Services.AddSingleton<NoteDeFraisForModel>();
+		builder.Services.AddSingleton<FournisseurFormModel>();
+		builder.Services.AddSingleton<ListNewFournisseurViewModel>();
+
 
 
 #if DEBUG

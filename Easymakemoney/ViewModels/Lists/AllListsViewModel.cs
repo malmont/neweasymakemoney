@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 namespace Easymakemoney.ViewModels.Lists
 {
     public partial class AllListsViewModel
@@ -19,6 +19,16 @@ namespace Easymakemoney.ViewModels.Lists
             await Shell.Current.GoToAsync(nameof(ListNewNoteDeFraisPage));
             //await Shell.Current.GoToAsync($"//{nameof(ListNewProductPage)}");
         }
+
+        [ICommand]
+          async void NavigateToNoteFournisseur()
+        {
+            await Shell.Current.GoToAsync(nameof(ListNewFournisseurPage));
+            //await Shell.Current.GoToAsync($"//{nameof(ListNewProductPage)}");
+        }
+
+
+       
     }
 }
 

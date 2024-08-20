@@ -85,7 +85,8 @@
                                                                 TextColor="#C4AB4D"
                                                         HeightRequest="40"
                                                                 WidthRequest="135"
-                                                                CornerRadius="5"/>
+                                                                CornerRadius="5"
+                                                                Command="{Binding NavigateToNoteFournisseurCommand}"/>
 
                                         </StackLayout>
 
