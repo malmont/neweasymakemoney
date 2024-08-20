@@ -14,13 +14,13 @@ namespace Easymakemoney.ViewModels.Lists
 
         private readonly ListNewCollectionViewModel _listNewCollectionViewModel;
 
-         private readonly SaveCollectionUseCase _saveCollectionUseCase;
+        private readonly SaveCollectionUseCase _saveCollectionUseCase;
 
         private readonly SaveNoteDeFraisUseCase _saveNoteDeFraisUseCase;
 
         public ListNewNoteDeFraisViewModel(GetListCollectionsUseCase getListCollectionsUseCase,
          GetListNoteDeFraisUseCase getListNoteDeFraisUseCase, DeleteNoteDeFraisUseCase deleteNoteDeFraisUseCase,
-          SaveNoteDeFraisUseCase saveNoteDeFraisUseCase, NoteDeFraisForModel noteDeFraisForModel,SaveCollectionUseCase saveCollectionUseCase,
+          SaveNoteDeFraisUseCase saveNoteDeFraisUseCase, NoteDeFraisForModel noteDeFraisForModel, SaveCollectionUseCase saveCollectionUseCase,
           ListNewCollectionViewModel listNewCollectionViewModel, CollectionFormModel collectionFormModel)
         {
             _collectionFormModel = collectionFormModel;
@@ -95,17 +95,20 @@ namespace Easymakemoney.ViewModels.Lists
         [ICommand]
         public async Task ShowBottomSheetPopupListView()
         {
-            var viewModel = new BottomSheetPopupListViewViewModel(popup: new Popup(), getListCollectionsUseCase: _getListCollectionsUseCase, noteDeFraisViewModel: this);
-            var popup = new BottomSheetPopupListView(viewModel)
-            {
-                CollectionId = this.CollectionId
-            };
-            var mainPage = Application.Current?.MainPage;
+            var viewModel = new BottomSheetPopupListViewViewModel(
+                getItemsFunc: async () => await _getListCollectionsUseCase.ExecuteAsync(),
+                onItemTappedAction: async (item) =>
+                {
+                    var collection = item as ListCollection;
+                    if (collection != null)
+                    {
+                        this.CollectionId = collection.id;
+                        await this.GetListNoteDeFraisAsync();
+                    }
+                });
 
-            if (mainPage != null)
-            {
-                await mainPage.ShowPopupAsync(popup);
-            }
+            var popup = new BottomSheetPopupListView(viewModel);
+            await Application.Current.MainPage.ShowPopupAsync(popup);
         }
 
         [ICommand]
