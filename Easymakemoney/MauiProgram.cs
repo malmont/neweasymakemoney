@@ -1,5 +1,6 @@
 ﻿
 using CommunityToolkit.Maui;
+
 using Microsoft.Extensions.Logging;
 
 namespace Easymakemoney;
@@ -35,6 +36,8 @@ public static class MauiProgram
 		builder.Services.AddSingleton<IListProductVarianstService, ListProductVariantService>();
 		builder.Services.AddSingleton<IListNoteDeFraisServices, ListNoteDeFraisServices>();
 		builder.Services.AddSingleton<IListFourniseursServices, ListFourniseursServices>();
+		builder.Services.AddSingleton<IListTransporteurService, ListTransporteurService>();
+		builder.Services.AddSingleton<IListFraisDePortService, ListFraisDePortService>();
 		
 
 		builder.Services.AddTransient<GetListCollectionsUseCase>();
@@ -66,6 +69,11 @@ public static class MauiProgram
 		builder.Services.AddTransient<GetListFournisseursUseCase>();
 		builder.Services.AddTransient<CreateFournisseurUseCase>();
 		builder.Services.AddTransient<SaveFournisseurUseCase>();
+		builder.Services.AddTransient<DeleteFraisDePortUseCase>();
+		builder.Services.AddTransient<GetListFraisDePortUseCase>();
+		builder.Services.AddTransient<CreateFraisDePortUseCase>();
+		builder.Services.AddTransient<SaveFraisDePortUseCase>();
+		builder.Services.AddTransient<GetListTransporteurUseCase>();
 
 
 
@@ -79,6 +87,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<ListNewProductVariantPage>();
 		builder.Services.AddSingleton<ListNewNoteDeFraisPage>();
 		builder.Services.AddSingleton<ListNewFournisseurPage>();
+		builder.Services.AddSingleton<ListNewFraisDePortPage>();
 		
 
 
@@ -101,6 +110,8 @@ public static class MauiProgram
 		builder.Services.AddSingleton<NoteDeFraisForModel>();
 		builder.Services.AddSingleton<FournisseurFormModel>();
 		builder.Services.AddSingleton<ListNewFournisseurViewModel>();
+		builder.Services.AddSingleton<FraisDePortFormModel>();
+		builder.Services.AddSingleton<ListNewFraisDePortViewModel>();
 
 
 

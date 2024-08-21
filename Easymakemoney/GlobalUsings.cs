@@ -32,3 +32,5 @@ global using Easymakemoney.UseCase.ListNoteDeFraisUseCase;
 global using EEasymakemoney.UseCase.ListStyleUsesCase;
 global using System.Windows.Input;
 global using Easymakemoney.UseCase.ListFournisseurUseCase;
+global using Easymakemoney.UseCase.ListFraisDePortUseCase;
+global using Easymakemoney.UseCase.ListTransporteurUseCase;

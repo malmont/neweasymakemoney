@@ -6,30 +6,62 @@
     <!-- Collection Form Template -->
     <ControlTemplate x:Key="CollectionFormTemplate">
         <StackLayout>
-            <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Collection Name" Text="{Binding CollectionForm.NomCollection, Mode=TwoWay}" />
+            <Frame HeightRequest="45"
+                    Margin="10,0,0,10"
+                    Padding="2"
+                    HasShadow="True"
+                    BorderColor="black"
+                    HorizontalOptions="Fill">
+                <handlers:BorderlessEntry Placeholder="Collection Name"
+                        Text="{Binding CollectionForm.NomCollection, Mode=TwoWay}"/>
             </Frame>
-            <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Budget" Keyboard="Numeric" Text="{Binding CollectionForm.BudgetCollection, Mode=TwoWay}" />
+            <Frame HeightRequest="45"
+                    Margin="10,0,0,10"
+                    Padding="2"
+                    HasShadow="True"
+                    BorderColor="black"
+                    HorizontalOptions="Fill">
+                <handlers:BorderlessEntry Placeholder="Budget"
+                        Keyboard="Numeric"
+                        Text="{Binding CollectionForm.BudgetCollection, Mode=TwoWay}"/>
             </Frame>
-            <Frame HeightRequest="65" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
+            <Frame HeightRequest="65"
+                    Margin="10,0,0,10"
+                    Padding="2"
+                    HasShadow="True"
+                    BorderColor="black"
+                    HorizontalOptions="Fill">
                 <StackLayout>
-                    <Label Text="Start Date" />
-                    <handlers:BorderlessDatePicker Date="{Binding CollectionForm.StartDateCollection, Mode=TwoWay}" Format="yyyy-MM-dd" />
+                    <Label Text="Start Date"/>
+                    <handlers:BorderlessDatePicker Date="{Binding CollectionForm.StartDateCollection, Mode=TwoWay}"
+                            Format="yyyy-MM-dd"/>
                 </StackLayout>
             </Frame>
-            <Frame HeightRequest="65" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
+            <Frame HeightRequest="65"
+                    Margin="10,0,0,10"
+                    Padding="2"
+                    HasShadow="True"
+                    BorderColor="black"
+                    HorizontalOptions="Fill">
                 <StackLayout>
-                    <Label Text="End Date" />
-                    <handlers:BorderlessDatePicker Date="{Binding CollectionForm.EndDateCollection, Mode=TwoWay}" Format="yyyy-MM-dd" />
+                    <Label Text="End Date"/>
+                    <handlers:BorderlessDatePicker Date="{Binding CollectionForm.EndDateCollection, Mode=TwoWay}"
+                            Format="yyyy-MM-dd"/>
                 </StackLayout>
             </Frame>
-            <Switch IsToggled="{Binding CollectionForm.Del, Mode=TwoWay}" HorizontalOptions="Start">
+            <Switch IsToggled="{Binding CollectionForm.Del, Mode=TwoWay}"
+                    HorizontalOptions="Start">
                 <Switch.ThumbColor>Red</Switch.ThumbColor>
                 <Switch.OnColor>Green</Switch.OnColor>
             </Switch>
-            <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Photo URL" Text="{Binding CollectionForm.PhotoCollection, Mode=TwoWay}" />
+            <Frame HeightRequest="45"
+                    Margin="10,0,0,10"
+                    Padding="2"
+                    HasShadow="True"
+                    BorderColor="black"
+                    HorizontalOptions="Fill">
+                <handlers:BorderlessEntry Placeholder="Photo URL"
+                        Text="{Binding CollectionForm.PhotoCollection, Mode=TwoWay}"/>
             </Frame>
         </StackLayout>
     </ControlTemplate>
