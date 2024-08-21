@@ -9,9 +9,9 @@ namespace Easymakemoney.UseCase.ListFournisseurUseCase
             _listFourniseursServices = listFourniseursServices;
         }
 
-        public async Task<ObservableCollection<ListFournisseur>> ExecuteAsync(int id)
+        public async Task<ObservableCollection<ListFournisseur>> ExecuteAsync()
         {
-            return await _listFourniseursServices.GetFourniseursList(id);
+            return await _listFourniseursServices.GetFourniseursList();
         }
         
     }

@@ -18,7 +18,9 @@ public class SaveCommandUseCase
             date = commandForm.Date.ToString("yyyy-MM-ddTHH:mm:ssZ"),
             name = commandForm.Name,
             photo = commandForm.Photo,
-            collectionId =  CollectionId
+            collectionId =  CollectionId,
+            listFournisseur = commandForm.SelectedFournisseurs
+            
         };
 
         var result = await _createCommandUseCase.ExecuteAsync(newCommand, CollectionId);

@@ -8,5 +8,11 @@ namespace Easymakemoney.Views.Lists
             BindingContext =_viewModel=viewModel;
             InitializeComponent();
         }
+
+         protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await _viewModel.GetListFournisseursAsync();
+        }
     }
 }

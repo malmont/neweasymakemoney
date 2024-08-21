@@ -9,9 +9,9 @@ namespace Easymakemoney.UseCase.ListFournisseurUseCase
             _listFourniseursServices = listFourniseursServices;
         }
 
-        public async Task<bool> ExecuteAsync(ListFournisseur newFourniseurs,int id)
+        public async Task<bool> ExecuteAsync(ListFournisseur newFourniseurs)
         {
-            return await _listFourniseursServices.PostFourniseurs(newFourniseurs,id);
+            return await _listFourniseursServices.PostFourniseurs(newFourniseurs);
         }
         
     }

@@ -9,7 +9,7 @@ namespace Easymakemoney.UseCase.ListFournisseurUseCase
             _createFournisseurUseCase = createFournisseurUseCase;
         }
 
-        public async Task<bool> ExecuteAsync(FournisseurFormModel FourniseursForm, int commandId)
+        public async Task<bool> ExecuteAsync(FournisseurFormModel FourniseursForm)
         {
             var newFournisseur = new ListFournisseur
             {
@@ -19,12 +19,10 @@ namespace Easymakemoney.UseCase.ListFournisseurUseCase
                 ville = FourniseursForm.Ville,
                 pays = FourniseursForm.Pays,
                 photo = FourniseursForm.Photo,
-                tel = FourniseursForm.Tel
-                
-            
+                tel = FourniseursForm.Tel,
             };
 
-            return await _createFournisseurUseCase.ExecuteAsync(newFournisseur, commandId);
+            return await _createFournisseurUseCase.ExecuteAsync(newFournisseur);
 
         }
     }
