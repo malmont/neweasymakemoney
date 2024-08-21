@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="/DataTemplates/ProductVariantFormTemplate.xaml"/>
                 <ResourceDictionary Source="/DataTemplates/NoteDeFraisFormTermplate.xaml"/>
                  <ResourceDictionary Source="/DataTemplates/FournisseurFormTemplate.xaml"/>
+                 <ResourceDictionary Source="/DataTemplates/FraisDePortFormTemplate.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </toolkit:Popup.Resources>
@@ -54,6 +55,9 @@
                               <!-- Founisseur Form -->
                 <ContentView ControlTemplate="{StaticResource FournisseurFormTemplate}"
                              IsVisible="{Binding IsFournisseurForm}"/>
+
+                <ContentView ControlTemplate="{StaticResource FraisDePortFormTemplate}"
+                             IsVisible="{Binding IsFraisDePortForm}"/>            
 
                 <Button Text="Save"
                         Margin="0, 20, 0, 20"
