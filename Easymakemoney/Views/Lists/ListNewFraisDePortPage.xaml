@@ -4,6 +4,7 @@
              xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
              x:DataType="list:ListNewFraisDePortViewModel"
              xmlns:x1="clr-namespace:Easymakemoney.Models"
+            xmlns:components="clr-namespace:Easymakemoney.Components"
              xmlns:converters="clr-namespace:Easymakemoney.Converters"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="Easymakemoney.Views.Lists.ListNewFraisDePortPage"
@@ -34,162 +35,23 @@
                             <RowDefinition Height="*"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
+     <!-- Navbar 1 -->
+            <components:NavbarContentView Grid.Row="0"
+                                        ButtonText="Listes"
+                                        ButtonCommand="{Binding ShowBottomSheetPopupListViewCommand}"
+                                        ImageSource="{Binding CollectionImage}"
+                                        ImageButtonSource="boutonaddblanc64.png"
+                                        ImageButtonCommand="{Binding ShowBottomSheetCreateCollectionCommand}"
+                                        LabelText="COLLECTION"/>
 
-                        <!--Navbar-->
-                        <StackLayout Spacing="0"
-                                     Grid.Row="0"
-                                     Grid.Column="0"
-                                     BackgroundColor="#518faa"
-                                     Orientation="Vertical"
-                                     HorizontalOptions="FillAndExpand"
-                                     VerticalOptions="Start">
-
-                            <Frame Margin="10,10"
-                                   HasShadow="True"
-                                   BackgroundColor="#518faa"
-                                   CornerRadius="10"
-                                   Padding="1"
-                                   HorizontalOptions="Start"
-                                   HeightRequest="79">
-                                <StackLayout Margin="2,2"
-                                             Orientation="Horizontal"
-                                             HorizontalOptions="FillAndExpand"
-                                             WidthRequest="380"
-                                             BackgroundColor="#518faa">
-                                    <!--bouton pour selectionner listedeCollection-->
-                                    <StackLayout Margin="2,2,2,2"
-                                                 HorizontalOptions="Start"
-                                                 VerticalOptions="Center"
-                                                 BackgroundColor="#518faa"
-                                                 HeightRequest="30"
-                                                 WidthRequest="60">
-                                        <Frame Margin="1,1"
-                                               HasShadow="True"
-                                               CornerRadius="10"
-                                               Padding="1"
-                                               BackgroundColor="#C4AB4D"
-                                               HeightRequest="30"
-                                               WidthRequest="60"
-                                               HorizontalOptions="Fill">
-                                            <Button Text="Listes"
-                                                    BackgroundColor="#C4AB4D"
-                                                    WidthRequest="65"
-                                                    HeightRequest="65"
-                                                    Command="{Binding ShowBottomSheetPopupListViewCommand}"/>
-                                        </Frame>
-                                    </StackLayout>
-                                     <Frame HasShadow="True"
-                                           CornerRadius="10"
-                                           Padding="4"
-                                           BackgroundColor="#C4AB4D"
-                                           HorizontalOptions="EndAndExpand">
-                                        <Image Source="{Binding CollectionImage}"
-                                               Aspect="AspectFill"
-                                               HeightRequest="50"
-                                               WidthRequest="70">
-                                        </Image>
-                                    </Frame>
-                                    <StackLayout HeightRequest="65"
-                                                 Margin="30,0"
-                                                 IsVisible="true"
-                                                 WidthRequest="95"
-                                                 AbsoluteLayout.LayoutFlags="PositionProportional"
-                                                 AbsoluteLayout.LayoutBounds=".95,.95,80,60"
-                                                 HorizontalOptions="EndAndExpand"
-                                                 VerticalOptions="End">
-                                        <ImageButton Source="boutonaddblanc64.png"
-                                                     WidthRequest="40"
-                                                     HeightRequest="40"
-                                                     Command="{Binding ShowBottomSheetCreateCollectionCommand}"/>
-
-                                        <Label Text="COLLECTION"
-                                               FontSize="Small"
-                                               VerticalTextAlignment="Center"
-                                               VerticalOptions="Center"
-                                               HorizontalOptions="Center"
-                                               Margin="0,0,10,0"
-                                               TextColor="#C4AB4D"/>
-                                    </StackLayout>
-                                </StackLayout>
-                            </Frame>
-                        </StackLayout>
-                        <StackLayout Spacing="0"
-                                     Grid.Row="1"
-                                     Grid.Column="0"
-                                     BackgroundColor="#518faa"
-                                     Orientation="Vertical"
-                                     HorizontalOptions="FillAndExpand"
-                                     VerticalOptions="Start">
-
-                            <Frame Margin="10,10"
-                                   HasShadow="True"
-                                   BackgroundColor="#518faa"
-                                   CornerRadius="10"
-                                   Padding="1"
-                                   HorizontalOptions="Start"
-                                   HeightRequest="79">
-                                <StackLayout Margin="2,2"
-                                             Orientation="Horizontal"
-                                             HorizontalOptions="FillAndExpand"
-                                             WidthRequest="380"
-                                             BackgroundColor="#518faa">
-                                    <!--bouton pour selectionner listedeCollection-->
-                                    <StackLayout Margin="2,2,2,2"
-                                                 HorizontalOptions="Start"
-                                                 VerticalOptions="Center"
-                                                 BackgroundColor="#518faa"
-                                                 HeightRequest="30"
-                                                 WidthRequest="60">
-                                        <Frame Margin="1,1"
-                                               HasShadow="True"
-                                               CornerRadius="10"
-                                               Padding="1"
-                                               BackgroundColor="#C4AB4D"
-                                               HeightRequest="30"
-                                               WidthRequest="60"
-                                               HorizontalOptions="Fill">
-                                            <Button Text="Liste"
-                                                    BackgroundColor="#C4AB4D"
-                                                    WidthRequest="65"
-                                                    HeightRequest="65"
-                                                    Command="{Binding ShowBottomSheetPopupListCommandViewCommand}"/>
-                                        </Frame>
-                                    </StackLayout>
-                                    <Frame HasShadow="True"
-                                           CornerRadius="10"
-                                           Padding="4"
-                                           BackgroundColor="#C4AB4D"
-                                           HorizontalOptions="EndAndExpand">
-                                        <Image Source="{Binding CommandImage}"
-                                               Aspect="AspectFill"
-                                               HeightRequest="50"
-                                               WidthRequest="70">
-                                        </Image>
-                                    </Frame>
-                                    <StackLayout HeightRequest="65"
-                                                 Margin="30,0"
-                                                 IsVisible="true"
-                                                 WidthRequest="95"
-                                                 AbsoluteLayout.LayoutFlags="PositionProportional"
-                                                 AbsoluteLayout.LayoutBounds=".95,.95,80,60"
-                                                 HorizontalOptions="EndAndExpand"
-                                                 VerticalOptions="End">
-                                        <ImageButton Source="boutonaddblanc64.png"
-                                                     WidthRequest="40"
-                                                     HeightRequest="40"
-                                                     Command="{Binding ShowBottomSheetCreateCommandCommand}"/>
-
-                                        <Label Text="COMMAND"
-                                               FontSize="Small"
-                                               VerticalTextAlignment="Center"
-                                               VerticalOptions="Center"
-                                               HorizontalOptions="Center"
-                                               Margin="0,0,10,0"
-                                               TextColor="#C4AB4D"/>
-                                    </StackLayout>
-                                </StackLayout>
-                            </Frame>
-                        </StackLayout>
+            <!-- Navbar 2 -->
+            <components:NavbarContentView Grid.Row="1"
+                                        ButtonText="Liste"
+                                        ButtonCommand="{Binding ShowBottomSheetPopupListCommandViewCommand}"
+                                        ImageSource="{Binding CommandImage}"
+                                        ImageButtonSource="boutonaddblanc64.png"
+                                        ImageButtonCommand="{Binding ShowBottomSheetCreateCommandCommand}"
+                                        LabelText="COMMAND"/>
                     </Grid>
                     <!--fin navbar-->
 

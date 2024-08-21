@@ -43,6 +43,13 @@ namespace Easymakemoney.ViewModels.Lists
         public int CollectionId { get; set; }
         public ICommand DeleteNoteDefraisCommand { get; }
 
+        private string _collectionImage;
+        public string CollectionImage
+        {
+            get => _collectionImage;
+            set { _collectionImage = value; OnPropertyChanged(nameof(CollectionImage)); }
+        }
+
         public async Task GetListNoteDeFraisAsync()
         {
             if (IsBusy)
@@ -103,6 +110,7 @@ namespace Easymakemoney.ViewModels.Lists
                     if (collection != null)
                     {
                         this.CollectionId = collection.id;
+                        this.CollectionImage = collection.Photo;
                         await this.GetListNoteDeFraisAsync();
                     }
                 });
