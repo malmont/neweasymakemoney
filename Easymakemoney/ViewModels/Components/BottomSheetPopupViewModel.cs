@@ -202,7 +202,7 @@ namespace Easymakemoney.ViewModels.Components
                     if (!result) throw new Exception("Failed to save note de frais.");
                 }else if (IsFournisseurForm)
                 {
-                    var result = await _saveFournisseurUseCase.ExecuteAsync(FournisseurForm, _fournisseurViewModel.CommandId);
+                    var result = await _saveFournisseurUseCase.ExecuteAsync(FournisseurForm);
                     if (result) await _fournisseurViewModel.GetListFournisseursAsync();
                     if (!result) throw new Exception("Failed to save fournisseur.");
                 }else if (IsFraisDePortForm)

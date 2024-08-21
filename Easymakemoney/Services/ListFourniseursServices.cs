@@ -10,15 +10,15 @@ namespace Easymakemoney.Services
             _httpService = httpService;
         }
 
-        public async Task<ObservableCollection<ListFournisseur>> GetFourniseursList(int id)
+        public async Task<ObservableCollection<ListFournisseur>> GetFourniseursList()
         {
-            var url = $"{FourniseursUrl}/commandes/{id}/fournisseurs";
+            var url = $"{FourniseursUrl}/fournisseurs";
             var fourniseurs = await _httpService.GetAsync<ObservableCollection<ListFournisseur>>(url);
             return fourniseurs ?? new ObservableCollection<ListFournisseur>();
         }
-        public async Task<bool> PostFourniseurs(ListFournisseur newFourniseurs, int id)
+        public async Task<bool> PostFourniseurs(ListFournisseur newFourniseurs)
         {
-            var url = $"{FourniseursUrl}/commandes/{id}/fournisseurs";
+            var url = $"{FourniseursUrl}/fournisseurs";
             var result = await _httpService.PostAsyncWithAuth<object>(url, newFourniseurs);
             return result != null;
         }

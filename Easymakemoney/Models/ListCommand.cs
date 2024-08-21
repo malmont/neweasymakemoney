@@ -8,6 +8,7 @@ namespace Easymakemoney.Models
         public double budget { get; set; }
         public required string date { get; set; }
         public int collectionId { get; set; }
+        public ListFournisseur? listFournisseur { get; set; }
 
         // Implémentation de l'interface IListItem
         public int Id => id;

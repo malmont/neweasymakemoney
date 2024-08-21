@@ -32,7 +32,7 @@
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
-                             <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
                         <!--Navbar-->
@@ -78,6 +78,17 @@
                                                     Command="{Binding ShowBottomSheetPopupListViewCommand}"/>
                                         </Frame>
                                     </StackLayout>
+                                     <Frame HasShadow="True"
+                                           CornerRadius="10"
+                                           Padding="4"
+                                           BackgroundColor="#C4AB4D"
+                                           HorizontalOptions="EndAndExpand">
+                                        <Image Source="{Binding CollectionImage}"
+                                               Aspect="AspectFill"
+                                               HeightRequest="50"
+                                               WidthRequest="70">
+                                        </Image>
+                                    </Frame>
                                     <StackLayout HeightRequest="65"
                                                  Margin="30,0"
                                                  IsVisible="true"
@@ -137,13 +148,24 @@
                                                HeightRequest="30"
                                                WidthRequest="60"
                                                HorizontalOptions="Fill">
-                                            <Button Text="ListCommand"
+                                            <Button Text="Liste"
                                                     BackgroundColor="#C4AB4D"
                                                     WidthRequest="65"
                                                     HeightRequest="65"
                                                     Command="{Binding ShowBottomSheetPopupListCommandViewCommand}"/>
                                         </Frame>
                                     </StackLayout>
+                                    <Frame HasShadow="True"
+                                           CornerRadius="10"
+                                           Padding="4"
+                                           BackgroundColor="#C4AB4D"
+                                           HorizontalOptions="EndAndExpand">
+                                        <Image Source="{Binding CommandImage}"
+                                               Aspect="AspectFill"
+                                               HeightRequest="50"
+                                               WidthRequest="70">
+                                        </Image>
+                                    </Frame>
                                     <StackLayout HeightRequest="65"
                                                  Margin="30,0"
                                                  IsVisible="true"
@@ -152,12 +174,12 @@
                                                  AbsoluteLayout.LayoutBounds=".95,.95,80,60"
                                                  HorizontalOptions="EndAndExpand"
                                                  VerticalOptions="End">
-                                        <ImageButton Source="boutonaddblanc64.png" 
+                                        <ImageButton Source="boutonaddblanc64.png"
                                                      WidthRequest="40"
                                                      HeightRequest="40"
-                                                   Command="{Binding ShowBottomSheetCreateCommandCommand}"/>
+                                                     Command="{Binding ShowBottomSheetCreateCommandCommand}"/>
 
-                                        <Label Text="Command"
+                                        <Label Text="COMMAND"
                                                FontSize="Small"
                                                VerticalTextAlignment="Center"
                                                VerticalOptions="Center"
