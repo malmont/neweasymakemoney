@@ -34,3 +34,5 @@ global using System.Windows.Input;
 global using Easymakemoney.UseCase.ListFournisseurUseCase;
 global using Easymakemoney.UseCase.ListFraisDePortUseCase;
 global using Easymakemoney.UseCase.ListTransporteurUseCase;
+global using Easymakemoney.Models.DashbordCollection;
+global using Easymakemoney.UseCase.DashBoardCollectionUseCase;

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Easymakemoney.Components"
+             x:Class="Easymakemoney.Components.BudgetOverviewView">
+
+    <ContentView.Content>
+        <StackLayout>
+            <Frame BorderColor="#C4AB4D"
+                   Margin="25,5"
+                   Padding="10"
+                   HorizontalOptions="FillAndExpand"
+                   BackgroundColor="#C4AB4D"
+                   CornerRadius="10"
+                   HasShadow="True">
+                <StackLayout Orientation="Horizontal"
+                             HorizontalOptions="FillAndExpand"
+                             HeightRequest="50">
+                    <Image Source="{Binding IconSource, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewView}}}"
+                           HeightRequest="40"
+                           WidthRequest="40"
+                           Margin="0,0,10,0"/>
+                    <Label VerticalTextAlignment="Center"
+                           HorizontalTextAlignment="End"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           Text="{Binding HeaderText, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewView}}}"
+                           Margin="10"/>
+                </StackLayout>
+            </Frame>
+
+            <StackLayout Margin="0,0"
+                         Orientation="Horizontal"
+                         HorizontalOptions="FillAndExpand">
+                <StackLayout Margin="25,0,0,0"
+                             HorizontalOptions="FillAndExpand"
+                             Orientation="Horizontal">
+                    <Frame BorderColor="#C4AB4D"
+                           Margin="3"
+                           HorizontalOptions="FillAndExpand"
+                           CornerRadius="5"
+                           Padding="2">
+                        <StackLayout HorizontalOptions="FillAndExpand"
+                                     Margin="5,5"
+                                     Orientation="Vertical">
+                            <Label HorizontalTextAlignment="Center"
+                                   Text="{Binding TotalLabelText, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewView}}}"
+                                   FontSize="13"
+                                   FontAttributes="Bold"/>
+                            <BoxView Color="Gray"
+                                     HeightRequest="2"
+                                     HorizontalOptions="Fill"/>
+                            <Label HorizontalOptions="CenterAndExpand"
+                                   Text="{Binding TotalValue, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewView}}}"
+                                   FontSize="13"
+                                   TextColor="#E8B805"
+                                   HorizontalTextAlignment="Center"/>
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+
+                <StackLayout Margin="0"  IsVisible="{Binding IsExpensesVisible, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewView}}}"
+                             HorizontalOptions="FillAndExpand"
+                             Orientation="Horizontal">
+                    <Frame BorderColor="#C4AB4D"
+                           Margin="3"
+                           HorizontalOptions="FillAndExpand"
+                           CornerRadius="5"
+                           Padding="2">
+                        <StackLayout HorizontalOptions="FillAndExpand"
+                                     Margin="5,5"
+                                     Orientation="Vertical">
+                            <Label Text="{Binding ExpensesLabelText, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewView}}}"
+                                   HorizontalTextAlignment="Center"
+                                   FontSize="13"
+                                   FontAttributes="Bold"/>
+                            <BoxView Color="Gray"
+                                     HeightRequest="2"
+                                     HorizontalOptions="Fill"/>
+                            <Label HorizontalOptions="CenterAndExpand"
+                                   Text="{Binding ExpensesValue, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewView}}}"
+                                   FontSize="13"
+                                   TextColor="#E8B805"
+                                   HorizontalTextAlignment="Center"/>
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+
+                <StackLayout Margin="0,0,25,0" 
+                             HorizontalOptions="FillAndExpand"
+                             Orientation="Horizontal">
+                    <Frame BorderColor="#C4AB4D"
+                           Margin="3"
+                           HorizontalOptions="FillAndExpand"
+                           CornerRadius="5"
+                           Padding="2">
+                        <StackLayout HorizontalOptions="FillAndExpand"
+                                     Margin="5,5"
+                                     Orientation="Vertical">
+                            <Label Text="{Binding RemainingLabelText, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewView}}}"
+                                   HorizontalTextAlignment="Center"
+                                   FontSize="13"
+                                   FontAttributes="Bold"/>
+                            <BoxView Color="Gray"
+                                     HeightRequest="2"
+                                     HorizontalOptions="Fill"/>
+                            <Label HorizontalOptions="CenterAndExpand"
+                                   Text="{Binding RemainingValue, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewView}}}"
+                                   FontSize="13"
+                                   TextColor="#E8B805"
+                                   HorizontalTextAlignment="Center"/>
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+            </StackLayout>
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

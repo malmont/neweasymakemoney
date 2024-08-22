@@ -13,8 +13,15 @@ namespace Easymakemoney.ViewModels.Dashboard
         [ICommand]
         async void NavigateToAllListsPage()
         {
-             await Shell.Current.GoToAsync(nameof(AllListsPage));
-             
+            await Shell.Current.GoToAsync(nameof(AllListsPage));
+
+        }
+
+        [ICommand]
+        async void NavigateTDashboardPage()
+        {
+            await Shell.Current.GoToAsync(nameof(DashBoardCollectionPage));
+            //await Shell.Current.GoToAsync($"//{nameof(ListNewProductPage)}");
         }
     }
 }

@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Dashboard"
+             x:DataType="list:DashBoardCollectionViewModel"
+             xmlns:x1="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:converters="clr-namespace:Easymakemoney.Converters"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Easymakemoney.Views.Dasboard.DashBoardCollectionPage"
+             Title="DashBoardCollectionPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:CurrencyConverter x:Key="CurrencyConverter"/>
+            <converters:PercentageConverter x:Key="PercentageConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <ScrollView>
+                <!--children1-->
+                <StackLayout Spacing="0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <components:NavbarContentView Grid.Row="0"
+                                                      ButtonText="Listes"
+                                                      ButtonCommand="{Binding ShowBottomSheetPopupListViewCommand}"
+                                                      ImageSource="{Binding CollectionImage}"
+                                                      ImageButtonSource="boutonaddblanc64.png"
+                                                      ImageButtonCommand="{Binding ShowBottomSheetCreateListCommand}"
+                                                      LabelText="COLLECTION"/>
+                    </Grid>
+                    <!--fin navbar-->
+
+                    <!--fin bouton pour creer une collection-->
+                    <StackLayout Style="{StaticResource HeaderStackLayoutStyle}">
+                        <Image Style="{StaticResource HeaderImageStyle}"/>
+                    </StackLayout>
+
+                    <Image Style="{StaticResource SeparatorImageStyle}"/>
+
+                    <Frame BorderColor="#C4AB4D"
+                           Margin="20,20"
+                           CornerRadius="10"
+                           HasShadow="True">
+                        <Label TextColor="#C4AB4D"
+                               HorizontalTextAlignment="Center"
+                               FontAttributes="Bold"
+                               Text="TABLEAU DE BORD PRINCIPAL"/>
+                    </Frame>
+
+                    <components:BudgetOverviewView
+                        IconSource="calculator1.png"
+                        HeaderText="Budget Général"
+                        TotalLabelText="Total"
+                        TotalValue="{Binding DashBoardCollection.budgetGeneral.generalBudget, Converter={StaticResource CurrencyConverter}}"
+                        ExpensesLabelText="Dépenses"
+                        ExpensesValue="{Binding DashBoardCollection.budgetGeneral.usedBudget, Converter={StaticResource CurrencyConverter}}"
+                        RemainingLabelText="Reste"
+                        IsExpensesVisible="True"
+                        RemainingValue="{Binding DashBoardCollection.budgetGeneral.remainingBudget, Converter={StaticResource CurrencyConverter}}"/>
+                    <CheckBox BackgroundColor="Transparent"
+                              Color="Transparent"/>
+                    <Frame BorderColor="#C4AB4D"
+                           Margin="25,5"
+                           Padding="10"
+                           HorizontalOptions="FillAndExpand"
+                           BackgroundColor="#C4AB4D"
+                           CornerRadius="10"
+                           HasShadow="True">
+                        <StackLayout Orientation="Horizontal"
+                                     HorizontalOptions="FillAndExpand"
+                                     HeightRequest="60">
+                            <Image Source="list1.png"
+                                   HeightRequest="40"
+                                   WidthRequest="40"
+                                   Margin="0,0,10,0"/>
+                            <Label VerticalTextAlignment="Center"
+                                   HorizontalTextAlignment="End"
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   Text="Coeeficient moyen"
+                                   Margin="10"/>
+                            <Frame BorderColor="#C4AB4D"
+                                   HeightRequest="50"
+                                   WidthRequest="50"
+                                   Padding="0"
+                                   HorizontalOptions="CenterAndExpand"
+                                   BackgroundColor="black"
+                                   CornerRadius="10"
+                                   HasShadow="True">
+                                <Label VerticalTextAlignment="Center"
+                                       HorizontalTextAlignment="Center"
+                                       FontSize="20"
+                                       TextColor="white"
+                                       FontAttributes="Bold"
+                                       Text="{Binding DashBoardCollection.averageMultiplier}"
+                                       Margin="10"/>
+                            </Frame>
+
+                        </StackLayout>
+                    </Frame>
+                    <CheckBox BackgroundColor="Transparent"
+                              Color="Transparent"/>
+                    <components:BudgetOverviewView
+                        IconSource="calendar.png"
+                        HeaderText="Durée de la collection"
+                        TotalLabelText="Début"
+                        TotalValue="{Binding DashBoardCollection.collectionDuration.startDate}"
+                        ExpensesLabelText="Fin"
+                        ExpensesValue="{Binding DashBoardCollection.collectionDuration.endDate}"
+                        RemainingLabelText="Durée"
+                        IsExpensesVisible="True"
+                        RemainingValue="{Binding DashBoardCollection.collectionDuration.days}"/>
+
+                    <CheckBox BackgroundColor="Transparent"
+                              Color="Transparent"/>
+                    <Frame BorderColor="#C4AB4D"
+                           Margin="25,5"
+                           Padding="10"
+                           HorizontalOptions="FillAndExpand"
+                           BackgroundColor="#C4AB4D"
+                           CornerRadius="10"
+                           HasShadow="True">
+                        <StackLayout Orientation="Horizontal"
+                                     HorizontalOptions="FillAndExpand"
+                                     HeightRequest="60">
+                            <Image Source="online.png"
+                                   HeightRequest="40"
+                                   WidthRequest="40"
+                                   Margin="0,0,10,0"/>
+                            <Label VerticalTextAlignment="Center"
+                                   HorizontalTextAlignment="End"
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   Text="Cout Articles"
+                                   Margin="10"/>
+                            <Frame BorderColor="#C4AB4D"
+                                   HeightRequest="50"
+                                   WidthRequest="50"
+                                   Padding="0"
+                                   HorizontalOptions="CenterAndExpand"
+                                   BackgroundColor="black"
+                                   CornerRadius="10"
+                                   HasShadow="True">
+                                <Label VerticalTextAlignment="Center"
+                                       HorizontalTextAlignment="Center"
+                                       FontSize="20"
+                                       TextColor="white"
+                                       FontAttributes="Bold"
+                                       Text="{Binding DashBoardCollection.totalItemCost}"
+                                       Margin="10"/>
+                            </Frame>
+
+                        </StackLayout>
+                    </Frame>
+                    <CheckBox BackgroundColor="Transparent"
+                              Color="Transparent"/>
+                    <components:BudgetOverviewView
+                        IconSource="calculator.png"
+                        HeaderText="Frais Généraux"
+                        TotalLabelText="Total"
+                        TotalValue="{Binding DashBoardCollection.generalExpenses.totalExpenseCost, Converter={StaticResource CurrencyConverter}}"
+                        ExpensesLabelText="Port"
+                        ExpensesValue="{Binding DashBoardCollection.generalExpenses.totalShippingCost, Converter={StaticResource CurrencyConverter}}"
+                        RemainingLabelText="Divers"
+                        IsExpensesVisible="True"
+                        RemainingValue="{Binding DashBoardCollection.generalExpenses.totalGeneralExpenses, Converter={StaticResource CurrencyConverter}}"/>
+                    <CheckBox BackgroundColor="Transparent"
+                              Color="Transparent"/>
+                    <components:BudgetOverviewView
+                        IconSource="manage.png"
+                        HeaderText="Statistiques"
+                        TotalLabelText="Commandes"
+                        TotalValue="{Binding DashBoardCollection.statistics.orderCount}"
+                        ExpensesLabelText="Articles"
+                        ExpensesValue="{Binding DashBoardCollection.statistics.itemCount}"
+                        RemainingLabelText="Modèles"
+                        IsExpensesVisible="True"
+                        RemainingValue="{Binding DashBoardCollection.statistics.modelCount}"/>
+                    <CheckBox BackgroundColor="Transparent"
+                              Color="Transparent"/>
+                    <components:BudgetOverviewView
+                        IconSource="collection.png"
+                        HeaderText="Valeur Stock"
+                        TotalLabelText="Chiffres affaires"
+                        TotalValue="{Binding DashBoardCollection.valeurStock.stockValue, Converter={StaticResource CurrencyConverter}}"
+                        ExpensesLabelText="Articles"
+                        ExpensesValue="{Binding DashBoardCollection.valeurStock.stockValue, Converter={StaticResource CurrencyConverter}}"
+                        RemainingLabelText="Marge"
+                        IsExpensesVisible="False"
+                        RemainingValue="{Binding DashBoardCollection.valeurStock.marge, Converter={StaticResource CurrencyConverter}}"/>
+                    <CheckBox BackgroundColor="Transparent"
+                              Color="Transparent"/>
+                    <components:BudgetOverviewView
+                        IconSource="percentagediscount.png"
+                        HeaderText="Taux Marge"
+                        TotalLabelText="Taux Marge"
+                        TotalValue="{Binding DashBoardCollection.tauxMarge.tauxMarge, Converter={StaticResource PercentageConverter}}"
+                        ExpensesLabelText="Articles"
+                        ExpensesValue="{Binding DashBoardCollection.tauxMarge.tauxMarge, Converter={StaticResource PercentageConverter}}"
+                        RemainingLabelText="Taux Marque"
+                        IsExpensesVisible="False"
+                        RemainingValue="{Binding DashBoardCollection.tauxMarge.tauxMarque, Converter={StaticResource PercentageConverter}}"/>
+                </StackLayout>
+            </ScrollView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

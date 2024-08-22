@@ -33,6 +33,8 @@ namespace Easymakemoney.ViewModels.Lists
             await Shell.Current.GoToAsync(nameof(ListNewFraisDePortPage));
             //await Shell.Current.GoToAsync($"//{nameof(ListNewProductPage)}");
         }
+
+        
        
     }
 }
