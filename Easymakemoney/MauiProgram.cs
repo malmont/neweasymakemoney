@@ -38,6 +38,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<IListFourniseursServices, ListFourniseursServices>();
 		builder.Services.AddSingleton<IListTransporteurService, ListTransporteurService>();
 		builder.Services.AddSingleton<IListFraisDePortService, ListFraisDePortService>();
+		builder.Services.AddSingleton<IDashBoardCollectionService,DashBoardCollectionService>();
 		
 
 		builder.Services.AddTransient<GetListCollectionsUseCase>();
@@ -74,6 +75,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<CreateFraisDePortUseCase>();
 		builder.Services.AddTransient<SaveFraisDePortUseCase>();
 		builder.Services.AddTransient<GetListTransporteurUseCase>();
+		builder.Services.AddTransient<GetDashBoardCollectionUseCase>();
 
 
 
@@ -88,6 +90,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<ListNewNoteDeFraisPage>();
 		builder.Services.AddSingleton<ListNewFournisseurPage>();
 		builder.Services.AddSingleton<ListNewFraisDePortPage>();
+		builder.Services.AddSingleton<DashBoardCollectionPage>();
 		
 
 
@@ -112,6 +115,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<ListNewFournisseurViewModel>();
 		builder.Services.AddSingleton<FraisDePortFormModel>();
 		builder.Services.AddSingleton<ListNewFraisDePortViewModel>();
+		builder.Services.AddSingleton<DashBoardCollectionViewModel>();
 
 
 

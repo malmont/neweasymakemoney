@@ -7,132 +7,89 @@
              Title="AllListsPage">
         <ContentPage.Content>
                 <ScrollView HorizontalScrollBarVisibility="Always"
-                                VerticalScrollBarVisibility="Always">
+                            VerticalScrollBarVisibility="Always">
                         <StackLayout  Spacing="0"
-                                        Orientation="Vertical"
-                                        HorizontalOptions="FillAndExpand"
-                                        VerticalOptions="FillAndExpand">
+                                      Orientation="Vertical"
+                                      HorizontalOptions="FillAndExpand"
+                                      VerticalOptions="FillAndExpand">
 
                                 <StackLayout  BackgroundColor="#518faa"
-                                                Orientation="Vertical"
-                                                HorizontalOptions="FillAndExpand"
-                                                VerticalOptions="Start">
+                                              Orientation="Vertical"
+                                              HorizontalOptions="FillAndExpand"
+                                              VerticalOptions="Start">
                                         <Image  Margin="0,35,0,0"
-                                                        Source="logo.png"
-                                                        Aspect="AspectFit"
-                                                        HeightRequest="200"/>
+                                                Source="logo.png"
+                                                Aspect="AspectFit"
+                                                HeightRequest="200"/>
 
                                 </StackLayout >
 
                                 <Image Source="lab_separator.png"
-                                                Aspect="AspectFill"/>
+                                       Aspect="AspectFill"/>
 
-                                <StackLayout Margin="5,0,5,0"
-                                                Spacing="0"
-                                                Orientation="Vertical"
-                                                HorizontalOptions="FillAndExpand"
-                                                VerticalOptions="FillAndExpand">
+                                <StackLayout Margin="10"
+                                             Spacing="0"
+                                             Orientation="Vertical"
+                                             HorizontalOptions="FillAndExpand"
+                                             VerticalOptions="FillAndExpand">
                                         <StackLayout Margin="10,10"
-                                                        Orientation="Horizontal"
-                                                        HorizontalOptions="FillAndExpand"
-                                                        VerticalOptions="Start">
+                                                     Orientation="Horizontal"
+                                                     HorizontalOptions="FillAndExpand"
+                                                     VerticalOptions="Start">
 
-                                                <Button Margin="2,2"
-                                                BorderColor="#C4AB4D"
-                                                                Style="{StaticResource boutonLabStyle}"
-                                                        BackgroundColor="White"
-                                                                Text="COLLECTIONS"
-                                                                HorizontalOptions="FillAndExpand"
-                                                                TextColor="#C4AB4D"
-                                                                Command="{Binding NavigateToCollectionCommand}"
-                                                        HeightRequest="40"
-                                                                WidthRequest="135"
-                                                                CornerRadius="5"/>
-
-
-                                                <Button Margin="2,2" BorderColor="#C4AB4D"
-                                                                Style="{StaticResource boutonLabStyle}"
-                                                                BackgroundColor="White"
-                                                                TextColor="#C4AB4D"
-                                                        Text="COMMANDES"
-                                                                HorizontalOptions="FillAndExpand"
-                                                        HeightRequest="40"
-                                                                WidthRequest="135"
-                                                                CornerRadius="5"/>
-
-                                        </StackLayout>
-
-                                             <StackLayout Margin="10,10"
-                                                        Orientation="Horizontal"
-                                                        HorizontalOptions="FillAndExpand"
-                                                        VerticalOptions="Start">
-
-                                                <Button Margin="2,2" BorderColor="#C4AB4D"
-                                                                Style="{StaticResource boutonLabStyle}"
-                                                        BackgroundColor="White"
-                                                                Text="PRODUITS"
-                                                                HorizontalOptions="FillAndExpand"
-                                                                TextColor="#C4AB4D"
-                                                        HeightRequest="40"
-                                                                WidthRequest="135"
-                                                                CornerRadius="5"/>
-
-                                                <Button Margin="2,2" BorderColor="#C4AB4D"
-                                                                Style="{StaticResource boutonLabStyle}"
-                                                        BackgroundColor="White"
-                                                                Text="FOURNISSEURS"
-                                                                HorizontalOptions="FillAndExpand"
-                                                                TextColor="#C4AB4D"
-                                                        HeightRequest="40"
-                                                                WidthRequest="135"
-                                                                CornerRadius="5"
-                                                                Command="{Binding NavigateToNoteFournisseurCommand}"/>
-
-                                        </StackLayout>
-
-                                          <StackLayout Margin="10,10"
-                                                        Orientation="Horizontal"
-                                                        HorizontalOptions="FillAndExpand"
-                                                        VerticalOptions="Start">
-
-                                                <Button Margin="2,2" BorderColor="#C4AB4D" Command="{Binding NavigateToNoteDeFraisCommand}"
-                                                                Style="{StaticResource boutonLabStyle}"
-                                                        BackgroundColor="White"
-                                                                Text="NOTES DE FRAIS"
-                                                                HorizontalOptions="FillAndExpand"
-                                                                TextColor="#C4AB4D"
-                                                        HeightRequest="40"
-                                                                WidthRequest="135"
-                                                                CornerRadius="5"/>
-
-                                                <Button Margin="2,2" 
-                                                                Style="{StaticResource boutonLabStyle}"
+                                                <Button
                                                         BorderColor="#C4AB4D"
-                                                        BackgroundColor="White"
-                                                                Text="FRAIS DE PORT"
-                                                                HorizontalOptions="FillAndExpand"
-                                                                TextColor="#C4AB4D"
-                                                        HeightRequest="40"
-                                                                WidthRequest="135"
-                                                                CornerRadius="5"
-                                                                Command="{Binding NavigateToFraisDePortCommand}"/>
+                                                        Style="{StaticResource boutonLabStyle}"
+                                                        Text="COLLECTIONS"
+                                                        Command="{Binding NavigateToCollectionCommand}"/>
+                                                <Button  BorderColor="#C4AB4D"
+                                                         Style="{StaticResource boutonLabStyle}"
+                                                         Text="FOURNISSEURS"
+                                                         Command="{Binding NavigateToNoteFournisseurCommand}"/>
 
-                                        </StackLayout>
-                                        <StackLayout  Orientation="Horizontal"  Margin="10,10"
-                                                        HorizontalOptions="CenterAndExpand"
-                                                        VerticalOptions="Start">
-
-                                                <Button Margin="20,2" BorderColor="#C4AB4D"
+                                                <!-- 
+                                                <Button  BorderColor="#C4AB4D"
                                                                 Style="{StaticResource boutonLabStyle}"
-                                                        BackgroundColor="White"
-                                                                Text="Simulateur de budget"
-                                                                HorizontalOptions="Center"
-                                                                TextColor="#C4AB4D"
-                                                        HeightRequest="50"
-                                                                WidthRequest="340"
-                                                                CornerRadius="5"/>
+                                                        Text="COMMANDES"/> -->
 
                                         </StackLayout>
+
+                                        <StackLayout Margin="10,10"
+                                                     Orientation="Horizontal"
+                                                     HorizontalOptions="FillAndExpand"
+                                                     VerticalOptions="Start">
+                                                <Button  BorderColor="#C4AB4D"
+                                                         Command="{Binding NavigateToNoteDeFraisCommand}"
+                                                         Style="{StaticResource boutonLabStyle}"
+                                                         Text="NOTES DE FRAIS"/>
+
+                                                <!-- <Button BorderColor="#C4AB4D"
+                                                                Style="{StaticResource boutonLabStyle}"
+                                                                Text="PRODUITS"/> -->
+
+                                                 <Button
+                                                        Style="{StaticResource boutonLabStyle}"
+                                                        Text="FRAIS DE PORT"
+                                                        Command="{Binding NavigateToFraisDePortCommand}"/>
+
+                                        </StackLayout>
+
+                                        <StackLayout Margin="10,10"
+                                                     Orientation="Horizontal"
+                                                     HorizontalOptions="FillAndExpand"
+                                                     VerticalOptions="Start">
+
+
+
+                                               
+                                                <Button HorizontalOptions="CenterAndExpand"
+                                                        WidthRequest="335"
+                                                        BorderColor="#C4AB4D"
+                                                        Style="{StaticResource boutonLabStyle}"
+                                                        Text="SIMULATEUR"/>
+
+                                        </StackLayout>
+
 
                                 </StackLayout >
                         </StackLayout>
