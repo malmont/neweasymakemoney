@@ -42,8 +42,9 @@
                                                       ImageButtonSourceList="{Binding CommandImage}"
                                                       ImageButtonSource="boutonaddblanc64.png"
                                                       ImageButtonCommand="{Binding ShowBottomSheetCreateCommandCommand}"
+                                                      ImageButtonCommandList="{Binding ItemTappedCommand}"
                                                       LabelText="COLLECTION"/>
-                                                          <!-- ImageButtonCommandList="{Binding ShowBottomSheetCreateListCommand}" -->
+                                                         
                     </Grid>
                     <!--fin navbar-->
 

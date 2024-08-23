@@ -94,6 +94,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<ListNewFraisDePortPage>();
 		builder.Services.AddTransient<DashBoardCollectionPage>();
 		builder.Services.AddTransient<DashBoardCommandPage>();
+		builder.Services.AddTransient<DashBoardProductPage>();
 
 
 		//View Models
@@ -119,6 +120,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<ListNewFraisDePortViewModel>();
 		builder.Services.AddTransient<DashBoardCollectionViewModel>();
 		builder.Services.AddTransient<DashBoardCommandViewModel>();
+		builder.Services.AddTransient<DashBoardProductViewModel>();
 
 
 

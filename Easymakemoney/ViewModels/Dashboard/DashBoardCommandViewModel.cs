@@ -1,4 +1,3 @@
-using Easymakemoney.UseCase.DashboardCommandUseCase;
 
 namespace Easymakemoney.ViewModels.Dashboard
 {
@@ -112,6 +111,16 @@ namespace Easymakemoney.ViewModels.Dashboard
 
             var popup = new BottomSheetPopupListView(viewModel);
             await Application.Current.MainPage.ShowPopupAsync(popup);
+        }
+
+          [ICommand]
+            private async void ItemTapped()
+        {
+            if (CommandId == 0)
+                return;
+
+            // Navigate to the ListNewCommandPage and pass the collection ID
+            await Shell.Current.GoToAsync($"{nameof(DashBoardProductPage)}?CommandId={CommandId}", true);
         }
 
     }
