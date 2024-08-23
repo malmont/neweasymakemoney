@@ -9,14 +9,17 @@ namespace Easymakemoney.Components
         public static readonly BindableProperty ButtonCommandProperty =
             BindableProperty.Create(nameof(ButtonCommand), typeof(ICommand), typeof(NavbarContentView));
 
-        public static readonly BindableProperty ImageSourceProperty =
-            BindableProperty.Create(nameof(ImageSource), typeof(ImageSource), typeof(NavbarContentView));
+        public static readonly BindableProperty ImageButtonSourceListProperty =
+            BindableProperty.Create(nameof(ImageButtonSourceList), typeof(ImageSource), typeof(NavbarContentView));
 
         public static readonly BindableProperty ImageButtonSourceProperty =
             BindableProperty.Create(nameof(ImageButtonSource), typeof(ImageSource), typeof(NavbarContentView));
 
         public static readonly BindableProperty ImageButtonCommandProperty =
             BindableProperty.Create(nameof(ImageButtonCommand), typeof(ICommand), typeof(NavbarContentView));
+
+        public static readonly BindableProperty ImageButtonCommandListProperty =
+            BindableProperty.Create(nameof(ImageButtonCommandList), typeof(ICommand), typeof(NavbarContentView));
 
         public static readonly BindableProperty LabelTextProperty =
             BindableProperty.Create(nameof(LabelText), typeof(string), typeof(NavbarContentView), default(string));
@@ -33,10 +36,10 @@ namespace Easymakemoney.Components
             set => SetValue(ButtonCommandProperty, value);
         }
 
-        public ImageSource ImageSource
+        public ImageSource ImageButtonSourceList
         {
-            get => (ImageSource)GetValue(ImageSourceProperty);
-            set => SetValue(ImageSourceProperty, value);
+            get => (ImageSource)GetValue(ImageButtonSourceListProperty);
+            set => SetValue(ImageButtonSourceListProperty, value);
         }
 
         public ImageSource ImageButtonSource
@@ -49,6 +52,12 @@ namespace Easymakemoney.Components
         {
             get => (ICommand)GetValue(ImageButtonCommandProperty);
             set => SetValue(ImageButtonCommandProperty, value);
+        }
+
+        public ICommand ImageButtonCommandList
+        {
+            get => (ICommand)GetValue(ImageButtonCommandListProperty);
+            set => SetValue(ImageButtonCommandListProperty, value);
         }
 
         public string LabelText

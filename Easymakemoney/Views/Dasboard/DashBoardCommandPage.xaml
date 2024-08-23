@@ -2,13 +2,13 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:list="clr-namespace:Easymakemoney.ViewModels.Dashboard"
-             x:DataType="list:DashBoardCollectionViewModel"
+             x:DataType="list:DashBoardCommandViewModel"
              xmlns:x1="clr-namespace:Easymakemoney.Models"
              xmlns:components="clr-namespace:Easymakemoney.Components"
              xmlns:converters="clr-namespace:Easymakemoney.Converters"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             x:Class="Easymakemoney.Views.Dasboard.DashBoardCollectionPage"
-             Title="DashBoardCollectionPage">
+             x:Class="Easymakemoney.Views.Dasboard.DashBoardCommandPage"
+             Title="DashBoardCommandPage">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:CurrencyConverter x:Key="CurrencyConverter"/>
@@ -35,14 +35,15 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
+
                         <components:NavbarContentView Grid.Row="0"
                                                       ButtonText="Listes"
-                                                      ButtonCommand="{Binding ShowBottomSheetPopupListViewCommand}"
-                                                      ImageButtonSourceList="{Binding CollectionImage}"
+                                                      ButtonCommand="{Binding ShowBottomSheetPopupListCommandViewCommand}"
+                                                      ImageButtonSourceList="{Binding CommandImage}"
                                                       ImageButtonSource="boutonaddblanc64.png"
-                                                      ImageButtonCommand="{Binding ShowBottomSheetCreateListCommand}"
-                                                      ImageButtonCommandList="{Binding ItemTappedCommand}"
+                                                      ImageButtonCommand="{Binding ShowBottomSheetCreateCommandCommand}"
                                                       LabelText="COLLECTION"/>
+                                                          <!-- ImageButtonCommandList="{Binding ShowBottomSheetCreateListCommand}" -->
                     </Grid>
                     <!--fin navbar-->
 
@@ -60,19 +61,19 @@
                         <Label TextColor="#C4AB4D"
                                HorizontalTextAlignment="Center"
                                FontAttributes="Bold"
-                               Text="TABLEAU DE BORD PRINCIPAL"/>
+                               Text="TABLEAU DE BORD COMMANDE"/>
                     </Frame>
 
                     <components:BudgetOverviewView
                         IconSource="calculator1.png"
                         HeaderText="Budget Général"
                         TotalLabelText="Total"
-                        TotalValue="{Binding DashBoardCollection.budgetGeneral.generalBudget, Converter={StaticResource CurrencyConverter}}"
+                        TotalValue="{Binding DashBoardCommand.budgetGeneral.generalBudget, Converter={StaticResource CurrencyConverter}}"
                         ExpensesLabelText="Dépenses"
-                        ExpensesValue="{Binding DashBoardCollection.budgetGeneral.usedBudget, Converter={StaticResource CurrencyConverter}}"
+                        ExpensesValue="{Binding DashBoardCommand.budgetGeneral.usedBudget, Converter={StaticResource CurrencyConverter}}"
                         RemainingLabelText="Reste"
                         IsExpensesVisible="True"
-                        RemainingValue="{Binding DashBoardCollection.budgetGeneral.remainingBudget, Converter={StaticResource CurrencyConverter}}"/>
+                        RemainingValue="{Binding DashBoardCommand.budgetGeneral.remainingBudget, Converter={StaticResource CurrencyConverter}}"/>
                     <CheckBox BackgroundColor="Transparent"
                               Color="Transparent"/>
                     <Frame BorderColor="#C4AB4D"
@@ -93,7 +94,7 @@
                                    HorizontalTextAlignment="End"
                                    FontSize="20"
                                    FontAttributes="Bold"
-                                   Text="Coeeficient moyen"
+                                   Text="Coeficient moyen"
                                    Margin="10"/>
                             <Frame BorderColor="#C4AB4D"
                                    HeightRequest="50"
@@ -108,24 +109,24 @@
                                        FontSize="20"
                                        TextColor="white"
                                        FontAttributes="Bold"
-                                       Text="{Binding DashBoardCollection.averageMultiplier}"
+                                       Text="{Binding DashBoardCommand.averageMultiplier}"
                                        Margin="10"/>
                             </Frame>
 
                         </StackLayout>
                     </Frame>
-                    <CheckBox BackgroundColor="Transparent"
+                    <!-- <CheckBox BackgroundColor="Transparent"
                               Color="Transparent"/>
                     <components:BudgetOverviewView
                         IconSource="calendar.png"
                         HeaderText="Durée de la collection"
                         TotalLabelText="Début"
-                        TotalValue="{Binding DashBoardCollection.collectionDuration.startDate}"
+                        TotalValue="{Binding DashBoardCommand.collectionDuration.startDate}"
                         ExpensesLabelText="Fin"
-                        ExpensesValue="{Binding DashBoardCollection.collectionDuration.endDate}"
+                        ExpensesValue="{Binding DashBoardCommand.collectionDuration.endDate}"
                         RemainingLabelText="Durée"
                         IsExpensesVisible="True"
-                        RemainingValue="{Binding DashBoardCollection.collectionDuration.days}"/>
+                        RemainingValue="{Binding DashBoardCommand.collectionDuration.days}"/> -->
 
                     <CheckBox BackgroundColor="Transparent"
                               Color="Transparent"/>
@@ -161,60 +162,60 @@
                                        FontSize="15"
                                        TextColor="white"
                                        FontAttributes="Bold"
-                                       Text="{Binding DashBoardCollection.totalItemCost, Converter={StaticResource CurrencyConverter}}"
+                                       Text="{Binding DashBoardCommand.totalItemCost, Converter={StaticResource CurrencyConverter}}"
                                        Margin="10"/>
                             </Frame>
 
                         </StackLayout>
                     </Frame>
-                    <CheckBox BackgroundColor="Transparent"
+                    <!-- <CheckBox BackgroundColor="Transparent"
                               Color="Transparent"/>
                     <components:BudgetOverviewView
                         IconSource="calculator.png"
                         HeaderText="Frais Généraux"
                         TotalLabelText="Total"
-                        TotalValue="{Binding DashBoardCollection.generalExpenses.totalExpenseCost, Converter={StaticResource CurrencyConverter}}"
+                        TotalValue="{Binding DashBoardCommand.generalExpenses.totalExpenseCost, Converter={StaticResource CurrencyConverter}}"
                         ExpensesLabelText="Port"
-                        ExpensesValue="{Binding DashBoardCollection.generalExpenses.totalShippingCost, Converter={StaticResource CurrencyConverter}}"
+                        ExpensesValue="{Binding DashBoardCommand.generalExpenses.totalShippingCost, Converter={StaticResource CurrencyConverter}}"
                         RemainingLabelText="Divers"
                         IsExpensesVisible="True"
-                        RemainingValue="{Binding DashBoardCollection.generalExpenses.totalGeneralExpenses, Converter={StaticResource CurrencyConverter}}"/>
+                        RemainingValue="{Binding DashBoardCommand.generalExpenses.totalGeneralExpenses, Converter={StaticResource CurrencyConverter}}"/>
                     <CheckBox BackgroundColor="Transparent"
-                              Color="Transparent"/>
+                              Color="Transparent"/> -->
                     <components:BudgetOverviewView
                         IconSource="manage.png"
                         HeaderText="Statistiques"
-                        TotalLabelText="Commandes"
-                        TotalValue="{Binding DashBoardCollection.statistics.orderCount}"
+                        TotalLabelText="Articles"
+                        TotalValue="{Binding DashBoardCommand.statistics.itemCount}"
                         ExpensesLabelText="Articles"
-                        ExpensesValue="{Binding DashBoardCollection.statistics.itemCount}"
+                        ExpensesValue="{Binding DashBoardCommand.statistics.itemCount}"
                         RemainingLabelText="Modèles"
-                        IsExpensesVisible="True"
-                        RemainingValue="{Binding DashBoardCollection.statistics.modelCount}"/>
+                        IsExpensesVisible="False"
+                        RemainingValue="{Binding DashBoardCommand.statistics.modelCount}"/>
                     <CheckBox BackgroundColor="Transparent"
                               Color="Transparent"/>
                     <components:BudgetOverviewView
                         IconSource="collection.png"
                         HeaderText="Valeur Stock"
                         TotalLabelText="Chiffres affaires"
-                        TotalValue="{Binding DashBoardCollection.valeurStock.stockValue, Converter={StaticResource CurrencyConverter}}"
+                        TotalValue="{Binding DashBoardCommand.valeurStock.stockValue, Converter={StaticResource CurrencyConverter}}"
                         ExpensesLabelText="Articles"
-                        ExpensesValue="{Binding DashBoardCollection.valeurStock.stockValue, Converter={StaticResource CurrencyConverter}}"
+                        ExpensesValue="{Binding DashBoardCommand.valeurStock.stockValue, Converter={StaticResource CurrencyConverter}}"
                         RemainingLabelText="Marge"
                         IsExpensesVisible="False"
-                        RemainingValue="{Binding DashBoardCollection.valeurStock.marge, Converter={StaticResource CurrencyConverter}}"/>
+                        RemainingValue="{Binding DashBoardCommand.valeurStock.marge, Converter={StaticResource CurrencyConverter}}"/>
                     <CheckBox BackgroundColor="Transparent"
                               Color="Transparent"/>
                     <components:BudgetOverviewView
                         IconSource="percentagediscount.png"
                         HeaderText="Taux Marge"
                         TotalLabelText="Taux Marge"
-                        TotalValue="{Binding DashBoardCollection.tauxMarge.tauxMarge, Converter={StaticResource PercentageConverter}}"
+                        TotalValue="{Binding DashBoardCommand.tauxMarge.tauxMarge, Converter={StaticResource PercentageConverter}}"
                         ExpensesLabelText="Articles"
-                        ExpensesValue="{Binding DashBoardCollection.tauxMarge.tauxMarge, Converter={StaticResource PercentageConverter}}"
+                        ExpensesValue="{Binding DashBoardCommand.tauxMarge.tauxMarge, Converter={StaticResource PercentageConverter}}"
                         RemainingLabelText="Taux Marque"
                         IsExpensesVisible="False"
-                        RemainingValue="{Binding DashBoardCollection.tauxMarge.tauxMarque, Converter={StaticResource PercentageConverter}}"/>
+                        RemainingValue="{Binding DashBoardCommand.tauxMarge.tauxMarque, Converter={StaticResource PercentageConverter}}"/>
                 </StackLayout>
             </ScrollView>
         </Grid>

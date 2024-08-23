@@ -50,10 +50,11 @@
                            Padding="4"
                            BackgroundColor="#C4AB4D"
                            HorizontalOptions="EndAndExpand">
-                        <Image Source="{Binding ImageSource, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
+                        <ImageButton Source="{Binding ImageButtonSourceList, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
                                Aspect="AspectFill"
                                HeightRequest="50"
-                               WidthRequest="70"/>
+                               WidthRequest="70"
+                                Command="{Binding ImageButtonCommandList, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"/>
                     </Frame>
                     <!-- Action Button and Label -->
                     <StackLayout HeightRequest="65"

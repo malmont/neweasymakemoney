@@ -19,7 +19,7 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
-	
+
 
 		builder.Services.AddHttpClient<IHttpService, HttpService>();
 
@@ -27,19 +27,20 @@ public static class MauiProgram
 		builder.Services.AddSingleton<IListCollectionService, ListCollectionService>();
 		builder.Services.AddSingleton<IJwtService, JwtService>();
 		builder.Services.AddSingleton<IPreferenceService, PreferenceService>();
-		builder.Services.AddSingleton<IListCommandService, ListCommandService>();
-		builder.Services.AddSingleton<IListProductService, ListProductService>();
-		builder.Services.AddSingleton<IListCategoryServices, ListCategoryServices>();
-		builder.Services.AddSingleton<IListStyleService, ListStyleService>();
-		builder.Services.AddSingleton<IListColorsServices, ListColorsServices>();
-		builder.Services.AddSingleton<IListSizesServices, ListSizesServices>();
-		builder.Services.AddSingleton<IListProductVarianstService, ListProductVariantService>();
-		builder.Services.AddSingleton<IListNoteDeFraisServices, ListNoteDeFraisServices>();
-		builder.Services.AddSingleton<IListFourniseursServices, ListFourniseursServices>();
-		builder.Services.AddSingleton<IListTransporteurService, ListTransporteurService>();
-		builder.Services.AddSingleton<IListFraisDePortService, ListFraisDePortService>();
-		builder.Services.AddSingleton<IDashBoardCollectionService,DashBoardCollectionService>();
-		
+		builder.Services.AddTransient<IListCommandService, ListCommandService>();
+		builder.Services.AddTransient<IListProductService, ListProductService>();
+		builder.Services.AddTransient<IListCategoryServices, ListCategoryServices>();
+		builder.Services.AddTransient<IListStyleService, ListStyleService>();
+		builder.Services.AddTransient<IListColorsServices, ListColorsServices>();
+		builder.Services.AddTransient<IListSizesServices, ListSizesServices>();
+		builder.Services.AddTransient<IListProductVarianstService, ListProductVariantService>();
+		builder.Services.AddTransient<IListNoteDeFraisServices, ListNoteDeFraisServices>();
+		builder.Services.AddTransient<IListFourniseursServices, ListFourniseursServices>();
+		builder.Services.AddTransient<IListTransporteurService, ListTransporteurService>();
+		builder.Services.AddTransient<IListFraisDePortService, ListFraisDePortService>();
+		builder.Services.AddTransient<IDashBoardCollectionService, DashBoardCollectionService>();
+		builder.Services.AddTransient<IDashboardCommandServices, DashboardCommandServices>();
+
 
 		builder.Services.AddTransient<GetListCollectionsUseCase>();
 		builder.Services.AddTransient<CreateCollectionUseCase>();
@@ -76,46 +77,49 @@ public static class MauiProgram
 		builder.Services.AddTransient<SaveFraisDePortUseCase>();
 		builder.Services.AddTransient<GetListTransporteurUseCase>();
 		builder.Services.AddTransient<GetDashBoardCollectionUseCase>();
+		builder.Services.AddTransient<GetDashboardCommandUseCase>();
 
 
 
-		builder.Services.AddSingleton<LoginPage>();
-		builder.Services.AddSingleton<DashboardPage>();
-		builder.Services.AddSingleton<LoadingPage>();
-		builder.Services.AddSingleton<AllListsPage>();
-		builder.Services.AddSingleton<ListNewCollectionPage>();
-		builder.Services.AddSingleton<ListNewCommandPage>();
-		builder.Services.AddSingleton<ListNewProductPage>();
-		builder.Services.AddSingleton<ListNewProductVariantPage>();
-		builder.Services.AddSingleton<ListNewNoteDeFraisPage>();
-		builder.Services.AddSingleton<ListNewFournisseurPage>();
-		builder.Services.AddSingleton<ListNewFraisDePortPage>();
-		builder.Services.AddSingleton<DashBoardCollectionPage>();
-		
+		builder.Services.AddTransient<LoginPage>();
+		builder.Services.AddTransient<DashboardPage>();
+		builder.Services.AddTransient<LoadingPage>();
+		builder.Services.AddTransient<AllListsPage>();
+		builder.Services.AddTransient<ListNewCollectionPage>();
+		builder.Services.AddTransient<ListNewCommandPage>();
+		builder.Services.AddTransient<ListNewProductPage>();
+		builder.Services.AddTransient<ListNewProductVariantPage>();
+		builder.Services.AddTransient<ListNewNoteDeFraisPage>();
+		builder.Services.AddTransient<ListNewFournisseurPage>();
+		builder.Services.AddTransient<ListNewFraisDePortPage>();
+		builder.Services.AddTransient<DashBoardCollectionPage>();
+		builder.Services.AddTransient<DashBoardCommandPage>();
 
 
 		//View Models
 		builder.Services.AddSingleton<LoginPageViewModel>();
 		builder.Services.AddSingleton<DashboardPageViewModel>();
 		builder.Services.AddSingleton<LoadingPageViewModel>();
-		builder.Services.AddSingleton<AllListsViewModel>();
-		builder.Services.AddSingleton<ListNewCollectionViewModel>();
-		builder.Services.AddSingleton<BottomSheetPopupViewModel>();
-		builder.Services.AddSingleton<ListNewCommandViewModel>();
+		builder.Services.AddTransient<AllListsViewModel>();
+		builder.Services.AddTransient<ListNewCollectionViewModel>();
+		builder.Services.AddTransient<BottomSheetPopupViewModel>();
+		builder.Services.AddTransient<ListNewCommandViewModel>();
 		builder.Services.AddTransient<CollectionFormModel>();
 		builder.Services.AddTransient<CommandFormModel>();
-		builder.Services.AddSingleton<ListNewProductViewModel>();
+		builder.Services.AddTransient<ListNewProductViewModel>();
 		builder.Services.AddTransient<ProductFormModel>();
 		builder.Services.AddTransient<ProductVariantFormModel>();
-		builder.Services.AddSingleton<ListNewProductsVariantViewModel>();
-		builder.Services.AddSingleton<BottomSheetPopupListViewViewModel>();
-		builder.Services.AddSingleton<ListNewNoteDeFraisViewModel>();
-		builder.Services.AddSingleton<NoteDeFraisForModel>();
-		builder.Services.AddSingleton<FournisseurFormModel>();
-		builder.Services.AddSingleton<ListNewFournisseurViewModel>();
-		builder.Services.AddSingleton<FraisDePortFormModel>();
-		builder.Services.AddSingleton<ListNewFraisDePortViewModel>();
-		builder.Services.AddSingleton<DashBoardCollectionViewModel>();
+		builder.Services.AddTransient<ListNewProductsVariantViewModel>();
+		builder.Services.AddTransient<BottomSheetPopupListViewViewModel>();
+		builder.Services.AddTransient<ListNewNoteDeFraisViewModel>();
+		builder.Services.AddTransient<NoteDeFraisForModel>();
+		builder.Services.AddTransient<FournisseurFormModel>();
+		builder.Services.AddTransient<ListNewFournisseurViewModel>();
+		builder.Services.AddTransient<FraisDePortFormModel>();
+		builder.Services.AddTransient<ListNewFraisDePortViewModel>();
+		builder.Services.AddTransient<DashBoardCollectionViewModel>();
+		builder.Services.AddTransient<DashBoardCommandViewModel>();
+
 
 
 

@@ -24,6 +24,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             _getDashBoardCollectionUseCase = getDashBoardCollectionUseCase;
         }
 
+       
         public DashBoardCollection _dashBoardCollection ;
         public DashBoardCollection DashBoardCollection
         {
@@ -107,6 +108,15 @@ namespace Easymakemoney.ViewModels.Dashboard
                     await Application.Current.MainPage.DisplayAlert("Exception", ex.Message, "OK");
                 Console.WriteLine($"Exception: {ex}");
             }
+        }
+        [ICommand]
+            private async void ItemTapped()
+        {
+            if (CollectionId == 0)
+                return;
+
+            // Navigate to the ListNewCommandPage and pass the collection ID
+            await Shell.Current.GoToAsync($"{nameof(DashBoardCommandPage)}?CollectionId={CollectionId}", true);
         }
      
     }
