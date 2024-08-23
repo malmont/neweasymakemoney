@@ -36,3 +36,5 @@ global using Easymakemoney.UseCase.ListFraisDePortUseCase;
 global using Easymakemoney.UseCase.ListTransporteurUseCase;
 global using Easymakemoney.Models.DashbordCollection;
 global using Easymakemoney.UseCase.DashBoardCollectionUseCase;
+global using Easymakemoney.Models.DashboardCommand;
+global using Easymakemoney.UseCase.DashboardCommandUseCase;

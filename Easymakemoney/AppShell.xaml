@@ -6,6 +6,7 @@
     xmlns:startupPages="clr-namespace:Easymakemoney.Views.Startup"
     xmlns:DashboardPages="clr-namespace:Easymakemoney.Views.Dasboard"
     xmlns:Models="clr-namespace:Easymakemoney.Models"
+    xmlns:views="clr-namespace:Easymakemoney.Views.Dasboard"
     Shell.TabBarIsVisible="False"
     xmlns:local="clr-namespace:Easymakemoney">
 
@@ -16,6 +17,7 @@
      <ShellContent Title="Login Page" FlyoutItemIsVisible="False" Shell.FlyoutBehavior="Disabled"
         ContentTemplate="{DataTemplate startupPages:LoginPage}"
         Route="LoginPage" />
+   
 
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems" Route="DashboardPage">
 
@@ -34,6 +36,8 @@
             ContentTemplate="{DataTemplate DashboardPages:DashboardPage}"/>
 
      </FlyoutItem>
+  
+
 
     <Shell.FlyoutFooter >
         <StackLayout Padding="20" HorizontalOptions="Center">

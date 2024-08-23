@@ -1,5 +1,4 @@
-﻿using Microsoft.Maui.Controls;
-using System.Windows.Input;
+﻿
 
 namespace Easymakemoney.ViewModels.Dashboard
 {
@@ -20,7 +19,7 @@ namespace Easymakemoney.ViewModels.Dashboard
         [ICommand]
         async void NavigateTDashboardPage()
         {
-            await Shell.Current.GoToAsync(nameof(DashBoardCollectionPage));
+           await Shell.Current.GoToAsync(nameof(DashBoardCollectionPage)); 
             //await Shell.Current.GoToAsync($"//{nameof(ListNewProductPage)}");
         }
     }

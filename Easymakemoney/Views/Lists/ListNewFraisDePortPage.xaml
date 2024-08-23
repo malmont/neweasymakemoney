@@ -39,7 +39,7 @@
             <components:NavbarContentView Grid.Row="0"
                                         ButtonText="Listes"
                                         ButtonCommand="{Binding ShowBottomSheetPopupListViewCommand}"
-                                        ImageSource="{Binding CollectionImage}"
+                                        ImageButtonSourceList="{Binding CollectionImage}"
                                         ImageButtonSource="boutonaddblanc64.png"
                                         ImageButtonCommand="{Binding ShowBottomSheetCreateCollectionCommand}"
                                         LabelText="COLLECTION"/>
@@ -48,7 +48,7 @@
             <components:NavbarContentView Grid.Row="1"
                                         ButtonText="Liste"
                                         ButtonCommand="{Binding ShowBottomSheetPopupListCommandViewCommand}"
-                                        ImageSource="{Binding CommandImage}"
+                                        ImageButtonSourceList="{Binding CommandImage}"
                                         ImageButtonSource="boutonaddblanc64.png"
                                         ImageButtonCommand="{Binding ShowBottomSheetCreateCommandCommand}"
                                         LabelText="COMMAND"/>
