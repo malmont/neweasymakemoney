@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Dashboard"
+             x:DataType="list:DashBoardProductViewModel"
+             xmlns:x1="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:converters="clr-namespace:Easymakemoney.Converters"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="Easymakemoney.Views.Dasboard.DashBoardProductPage"
+             Title="DashBoardProductPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:CurrencyConverter x:Key="CurrencyConverter"/>
+            <converters:PercentageConverter x:Key="PercentageConverter"/>
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
+            <converters:FirstItemNameConverter x:Key="FirstItemNameConverter"/>
+            <converters:FirstLetterConverter x:Key="FirstLetterConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <ScrollView>
+                <!--children1-->
+                <StackLayout Spacing="0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <components:NavbarContentView Grid.Row="0"
+                                                      ButtonText="Listes"
+                                                      ButtonCommand="{Binding ShowBottomSheetPopupListProductViewCommand}"
+                                                      ImageButtonSourceList="{Binding ProductImage}"
+                                                      ImageButtonSource="boutonaddblanc64.png"
+                                                      ImageButtonCommand="{Binding ShowBottomSheetCreateProductCommand}"
+                                                      LabelText="PRODUCT"/>
+
+                    </Grid>
+                    <!--fin navbar-->
+
+                    <!--fin bouton pour creer une collection-->
+                    <StackLayout Style="{StaticResource HeaderStackLayoutStyle}">
+                        <Image Style="{StaticResource HeaderImageStyle}"/>
+                    </StackLayout>
+
+                    <Image Style="{StaticResource SeparatorImageStyle}"/>
+
+                    <Frame BorderColor="#C4AB4D"
+                           Margin="20,20"
+                           CornerRadius="10"
+                           HasShadow="True">
+                        <Label TextColor="#C4AB4D"
+                               HorizontalTextAlignment="Center"
+                               FontAttributes="Bold"
+                               Text="TABLEAU DE BORD PRODUCT"/>
+                    </Frame>
+
+                    <Frame BorderColor="#C4AB4D"
+                           Margin="20,20"
+                           CornerRadius="10"
+                           HasShadow="True">
+                        <StackLayout Orientation="Horizontal">
+                            <Label TextColor="#C4AB4D"
+                                   Margin="0,0,10,0"
+                                   HorizontalTextAlignment="Center"
+                                   FontAttributes="Bold"
+                                   Text="Name"/>
+                            <Label TextColor="#C4AB4D"
+                                   HorizontalTextAlignment="Center"
+                                   Text="{Binding DashBoardProduct.name}"/>
+                        </StackLayout>
+                    </Frame>
+                    <components:TitreComponent
+                        IconSource="notedefrais.png"
+                        IsExpensesVisible="False"
+                        HeaderText="Commentaire"/>
+
+                    <Frame BorderColor="#C4AB4D"
+                           Margin="20,20"
+                           CornerRadius="10"
+                           HasShadow="True">
+                        <Label TextColor="#C4AB4D"
+                               HorizontalTextAlignment="Center"
+                               FontAttributes="Bold"
+                               Text="{Binding DashBoardProduct.moreinformations}"/>
+                    </Frame>
+                    <components:BudgetOverviewView
+                        IconSource="calculator1.png"
+                        HeaderText="Budget Général"
+                        TotalLabelText="Prix"
+                        TotalValue="{Binding DashBoardProduct.price, Converter={StaticResource CurrencyConverter}}"
+                        ExpensesLabelText="Prix achat"
+                        ExpensesValue="{Binding DashBoardProduct.purchasePrice, Converter={StaticResource CurrencyConverter}}"
+                        RemainingLabelText="Coefficient"
+                        IsExpensesVisible="True"
+                        RemainingValue="{Binding DashBoardProduct.coefficientMultiplier}"/>
+                    <CheckBox BackgroundColor="Transparent"
+                              Color="Transparent"/>
+
+                    <components:TitreComponent
+                        IconSource="barcode.png"
+                        IsExpensesVisible="False"
+                        HeaderText="Barcode"/>
+                    <Frame BorderColor="#C4AB4D"
+                           Margin="20,20"
+                           CornerRadius="10"
+                           HasShadow="True">
+                        <Label TextColor="#C4AB4D"
+                               HorizontalTextAlignment="Center"
+                               FontAttributes="Bold"
+                               Text="{Binding DashBoardProduct.barcode}"/>
+                    </Frame>
+
+                    <Frame BorderColor="#C4AB4D"
+                           Margin="20,20"
+                           CornerRadius="10"
+                           HasShadow="True">
+                        <StackLayout Orientation="Horizontal"
+                                     Spacing="10">
+                            <components:StatusBadgeView Name="Bestseller"
+                                                        IsActive="{Binding DashBoardProduct.isbestseller}"/>
+                            <components:StatusBadgeView Name="New Arrival"
+                                                        IsActive="{Binding DashBoardProduct.isnewarrival}"/>
+                            <components:StatusBadgeView Name="Featured"
+                                                        IsActive="{Binding DashBoardProduct.isfeatured}"/>
+                            <components:StatusBadgeView Name="Special Offer"
+                                                        IsActive="{Binding DashBoardProduct.isspecialoffer}"/>
+                        </StackLayout>
+                    </Frame>
+
+                    <Frame BorderColor="#C4AB4D"
+                           Margin="20,20"
+                           CornerRadius="10"
+                           HasShadow="True">
+                        <Image Source="{Binding DashBoardProduct.image}"
+                               HeightRequest="200"
+                               WidthRequest="200"/>
+                    </Frame>
+
+
+                    <CheckBox BackgroundColor="Transparent"
+                              Color="Transparent"/>
+
+                    <components:TitreComponent
+                        IconSource="barcode.png"
+                        HeaderText="Quantity"
+                        Value="{Binding DashBoardProduct.quantity}"/>
+                    <CheckBox BackgroundColor="Transparent"
+                              Color="Transparent"/>
+                    <components:TitreComponent
+                        IconSource="calendar.png"
+                        HeaderText="Crée le"
+                        Value="{Binding DashBoardProduct.createdAt}"/>
+                    <CheckBox BackgroundColor="Transparent"
+                              Color="Transparent"/>
+                    <components:TitreComponent
+                        IconSource="style.png"
+                        HeaderText="Style"
+                        Value="{Binding DashBoardProduct.style.name}"/>
+                    <CheckBox BackgroundColor="Transparent"
+                              Color="Transparent"/>
+                    <components:TitreComponent
+                        IconSource="style.png"
+                        HeaderText="Categorie"
+                        Value="{Binding DashBoardProduct.category, Converter={StaticResource FirstItemNameConverter}}"/>
+                    <CheckBox BackgroundColor="Transparent"
+                              Color="Transparent"/>
+                    <components:TitreComponent
+                        IconSource="collection.png"
+                        Value="{Binding DashBoardProduct.quantity}"
+                        IsExpensesVisible="True"
+                        HeaderText="Stock Total"/>
+
+                    <CollectionView ItemsSource="{Binding DashBoardProduct.variants}"
+                                    Margin="10,0"
+                                    Grid.ColumnSpan="4">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical"
+                                             Span="3"/>
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x1:ProductVariant">
+                                <Frame BorderColor="LightGray"
+                                       HorizontalOptions="FillAndExpand"
+                                       WidthRequest="90"
+                                       CornerRadius="10"
+                                       HasShadow="True"
+                                       Margin="10"
+                                       Padding="4">
+                                    <StackLayout>
+                                        <!-- Couleur -->
+                                     
+                                        <Frame BorderColor="#C4AB4D"
+                                               HorizontalOptions="Start"
+                                               BackgroundColor="{Binding color.codeHexa}"
+                                               CornerRadius="3"
+                                               WidthRequest="50"
+                                               Padding="10">
+                                        </Frame>
+
+                                        <!-- Taille -->
+                                        <StackLayout Orientation="Horizontal">
+                                            <Frame BorderColor="#C4AB4D"
+                                            Margin="0,3,3,0"
+                                                   BackgroundColor="Green"
+                                                   Padding="1"
+                                                   HeightRequest="25"
+                                                   CornerRadius="5"
+                                                   HasShadow="True">
+                                                <Label Text="Taille : "
+                                                       FontAttributes="Bold"/>
+                                            </Frame>
+                                            <Label  VerticalOptions="End"
+                                                    Text="{Binding size.name, Converter={StaticResource FirstLetterConverter}}"/>
+                                        </StackLayout>
+
+                                        <!-- Stock -->
+                                        <StackLayout Orientation="Horizontal">
+                                            <Frame BorderColor="#C4AB4D"
+                                                    Margin="0,3,3,0"
+                                                   BackgroundColor="Green"
+                                                   Padding="1"
+                                                   HeightRequest="25"
+                                                   CornerRadius="5"
+                                                   HasShadow="True">
+                                                <Label Text="Stock : "
+                                                       FontAttributes="Bold"/>
+                                            </Frame>
+                                            <Label VerticalOptions="End" Text="{Binding stockQuantity}"/>
+                                        </StackLayout>
+                                    </StackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </ScrollView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

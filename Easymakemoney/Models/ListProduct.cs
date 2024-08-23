@@ -1,6 +1,6 @@
 namespace Easymakemoney.Models
 {
-    public class ListProduct
+    public class ListProduct : IListItem
     {
         public int id { get; set; }
         public required string name { get; set; }
@@ -20,9 +20,12 @@ namespace Easymakemoney.Models
         public string? tags { get; set; }
         public string? slug { get; set; }
         public Styles? style { get; set; }
-        public List<ProductVariant>? variants { get; set; }
+        public ObservableCollection<ProductVariant>? variants { get; set; }
 
         public required List<Category> category { get; set; }
-        
+         // Implémentation de l'interface IListItem
+        public int Id => id;
+        public string Name => name;
+        public string Photo => image;
     }
 }
