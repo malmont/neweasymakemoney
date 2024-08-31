@@ -33,7 +33,7 @@
                        BorderColor="#C4AB4D"
                        HorizontalOptions="FillAndExpand">
                     <StackLayout  Orientation="Horizontal"
-                            Padding="10"
+                                  Padding="10"
                                   HorizontalOptions="FillAndExpand"
                                   HeightRequest="70">
                         <StackLayout.GestureRecognizers>
@@ -46,6 +46,11 @@
                                FontAttributes="Bold"
                                Text="ITEMS CALCULTOR"
                                Margin='0,0,20,0'/>
+                        <Image Source="purchase.png"
+                                HeightRequest="40"
+                                WidthRequest="40"
+                                Margin="0,0,20,0"
+                                HorizontalOptions="EndAndExpand"/>
 
                     </StackLayout>
                 </Frame>
@@ -94,6 +99,11 @@
                                FontAttributes="Bold"
                                Text="GESTIONS"
                                Margin='0,0,20,0'/>
+                        <Image Source="notedefrais1.png"
+                                HeightRequest="40"
+                                WidthRequest="40"
+                                Margin="0,0,20,0"
+                                HorizontalOptions="EndAndExpand"/>
                     </StackLayout>
                 </Frame>
 
@@ -105,11 +115,11 @@
                        BorderColor="#C4AB4D"
                        HorizontalOptions="FillAndExpand">
                     <StackLayout  Orientation="Horizontal"
-                            Padding="10"
+                                  Padding="10"
                                   HorizontalOptions="FillAndExpand"
                                   HeightRequest="70">
                         <StackLayout.GestureRecognizers>
-                              <TapGestureRecognizer Command="{Binding NavigateTDashboardPageCommand}"/>
+                            <TapGestureRecognizer Command="{Binding NavigateTDashboardPageCommand}"/>
                         </StackLayout.GestureRecognizers>
 
                         <Label VerticalTextAlignment="Center"
@@ -118,7 +128,11 @@
                                FontAttributes="Bold"
                                Text="DASHBOARD"
                                Margin='0,0,20,0'/>
-
+                        <Image Source="analytics.png"
+                                HeightRequest="40"
+                                WidthRequest="40"
+                                Margin="0,0,20,0"
+                                HorizontalOptions="EndAndExpand"/>
                     </StackLayout>
                 </Frame>
             </StackLayout>

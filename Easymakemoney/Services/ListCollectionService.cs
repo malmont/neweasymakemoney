@@ -12,7 +12,7 @@
 
         public async Task<ObservableCollection<ListCollection>> GetCollectionList()
         {
-            var collections = await _httpService.GetAsync<ObservableCollection<ListCollection>>(CollectionsUrl +"/collections.json");
+            var collections = await _httpService.GetAsync<ObservableCollection<ListCollection>>(CollectionsUrl +"/collections");
             return collections ?? new ObservableCollection<ListCollection>();
         }
 
