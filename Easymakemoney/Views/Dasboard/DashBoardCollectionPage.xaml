@@ -173,12 +173,12 @@
                         IconSource="calculator.png"
                         HeaderText="Frais Généraux"
                         TotalLabelText="Total"
-                        TotalValue="{Binding DashBoardCollection.generalExpenses.totalExpenseCost, Converter={StaticResource CurrencyConverter}}"
+                        TotalValue="{Binding DashBoardCollection.generalExpenses.totalGeneralExpenses, Converter={StaticResource CurrencyConverter}}"
                         ExpensesLabelText="Port"
                         ExpensesValue="{Binding DashBoardCollection.generalExpenses.totalShippingCost, Converter={StaticResource CurrencyConverter}}"
                         RemainingLabelText="Divers"
                         IsExpensesVisible="True"
-                        RemainingValue="{Binding DashBoardCollection.generalExpenses.totalGeneralExpenses, Converter={StaticResource CurrencyConverter}}"/>
+                        RemainingValue= "{Binding DashBoardCollection.generalExpenses.totalExpenseCost, Converter={StaticResource CurrencyConverter}}"/>
                     <CheckBox BackgroundColor="Transparent"
                               Color="Transparent"/>
                     <components:BudgetOverviewView
