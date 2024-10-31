@@ -2,18 +2,15 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "maui: Build Debug",
+            "label": "build",
             "command": "dotnet",
             "type": "process",
             "args": [
                 "build",
-                "-t:Run",
-                "-f",
-                "net8.0-android",
-                "/p:_DeviceName=emulator-5554",
-                "/p:Configuration=Debug"
+                "${workspaceFolder}/Easymakemoney/Easymakemoney.csproj",
+                "-f:net8.0-android"
             ],
-            "problemMatcher": "$msCompile",
+            "problemMatcher": ["$msCompile"],
             "group": {
                 "kind": "build",
                 "isDefault": true

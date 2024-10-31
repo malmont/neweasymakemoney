@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:Statistique="clr-namespace:Easymakemoney.ViewModels.Statistiques"
+             x:DataType="Statistique:StatistiquesViewModel"
+             x:Class="Easymakemoney.Views.Statistiques.StatistiquesPage"
+             Title="StatistiquesPage">
+
+    <ScrollView HorizontalScrollBarVisibility="Always"
+                VerticalScrollBarVisibility="Always">
+        <StackLayout Spacing="0"
+                     Orientation="Vertical"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="FillAndExpand">
+
+            <StackLayout Style="{StaticResource HeaderStackLayoutStyle}">
+                <Image Style="{StaticResource HeaderImageStyle}"/>
+            </StackLayout>
+
+            <Image Style="{StaticResource SeparatorImageStyle}"/>
+
+            <!-- Grid pour les cartes -->
+            <Grid Margin="0,20,0,0"
+                  ColumnSpacing="10"
+                  RowSpacing="10"
+                  HorizontalOptions="Center"
+                  VerticalOptions="Center">
+                
+                <!-- Définition de deux colonnes -->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Définition de quatre lignes -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Utilisation de StatistiqueBadgeView pour chaque carte -->
+                <components:StatistiqueBadgeView Grid.Row="0" Grid.Column="0"
+                                            SourceImage="chiffreaffaire.png"
+                                            Name="Chiffre d'affaires"
+                                            ButtonStatistique="{Binding NavigateToChiffreAffaireCommand}"/>
+
+                <components:StatistiqueBadgeView Grid.Row="0" Grid.Column="1"
+                                            SourceImage="purchasing.png"
+                                            Name="Achats"
+                                            ButtonStatistique="{Binding NavigateToPurchasingCommand}"/>
+
+                <components:StatistiqueBadgeView Grid.Row="1" Grid.Column="0"
+                                            SourceImage="panier.png"
+                                            Name="Panier"
+                                            ButtonStatistique="{Binding NavigateToPanierCommand}"/>
+
+                <components:StatistiqueBadgeView Grid.Row="1" Grid.Column="1"
+                                            SourceImage="stock.png"
+                                            Name="Stock"
+                                            ButtonStatistique="{Binding NavigateToStockCommand}"/>
+
+                <components:StatistiqueBadgeView Grid.Row="2" Grid.Column="0"
+                                            SourceImage="frais.png"
+                                            Name="Frais"
+                                            ButtonStatistique="{Binding NavigateToFraisCommand}"/>
+
+                <components:StatistiqueBadgeView Grid.Row="2" Grid.Column="1"
+                                            SourceImage="caisse.png"
+                                            Name="Caisse"
+                                            ButtonStatistique="{Binding NavigateToCaisseCommand}"/>
+
+                <components:StatistiqueBadgeView Grid.Row="3" Grid.Column="0"
+                                            SourceImage="payment.png"
+                                            Name="Paiements"
+                                            ButtonStatistique="{Binding NavigateToPaymentCommand}"/>
+
+                <components:StatistiqueBadgeView Grid.Row="3" Grid.Column="1"
+                                            SourceImage="fraistotal.png"
+                                            Name="Total Frais"
+                                            ButtonStatistique="{Binding NavigateToFraisTotalCommand}"/>
+            </Grid>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

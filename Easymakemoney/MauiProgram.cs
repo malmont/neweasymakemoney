@@ -1,7 +1,7 @@
 ﻿
 using CommunityToolkit.Maui;
-
 using Microsoft.Extensions.Logging;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 
 namespace Easymakemoney;
 
@@ -13,6 +13,7 @@ public static class MauiProgram
 		builder
 			.UseMauiApp<App>()
 			.UseMauiCommunityToolkit()
+			.UseSkiaSharp()
 			.ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -40,6 +41,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<IListFraisDePortService, ListFraisDePortService>();
 		builder.Services.AddTransient<IDashBoardCollectionService, DashBoardCollectionService>();
 		builder.Services.AddTransient<IDashboardCommandServices, DashboardCommandServices>();
+		builder.Services.AddTransient<IChiffreAffaireService, ChiffreAffaireService>();
 
 
 		builder.Services.AddTransient<GetListCollectionsUseCase>();
@@ -78,6 +80,10 @@ public static class MauiProgram
 		builder.Services.AddTransient<GetListTransporteurUseCase>();
 		builder.Services.AddTransient<GetDashBoardCollectionUseCase>();
 		builder.Services.AddTransient<GetDashboardCommandUseCase>();
+		builder.Services.AddTransient<OrderNumberPage>();
+		builder.Services.AddTransient<PanierMoyenPage>();
+		builder.Services.AddTransient<StockPage>();
+		builder.Services.AddTransient<ChiffreAffaireUseCase>();
 
 
 
@@ -95,6 +101,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<DashBoardCollectionPage>();
 		builder.Services.AddTransient<DashBoardCommandPage>();
 		builder.Services.AddTransient<DashBoardProductPage>();
+		builder.Services.AddTransient<StatistiquesPage>();
+		builder.Services.AddTransient<ChiffresAffairePage>();
 
 
 		//View Models
@@ -121,6 +129,9 @@ public static class MauiProgram
 		builder.Services.AddTransient<DashBoardCollectionViewModel>();
 		builder.Services.AddTransient<DashBoardCommandViewModel>();
 		builder.Services.AddTransient<DashBoardProductViewModel>();
+		builder.Services.AddTransient<StatistiquesViewModel>();
+		builder.Services.AddTransient<StatistiquesDataValueViewmodel>();
+
 
 
 
