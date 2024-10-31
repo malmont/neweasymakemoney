@@ -20,6 +20,11 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("ListNewCollectionPage", typeof(ListNewCollectionPage));
 		Routing.RegisterRoute("DashBoardCommandPage", typeof(DashBoardCommandPage));
 		Routing.RegisterRoute("DashBoardProductPage", typeof(DashBoardProductPage));
+		Routing.RegisterRoute("StatistiquesPage", typeof(StatistiquesPage));
+		Routing.RegisterRoute("ChiffresAffairePage", typeof(ChiffresAffairePage));
+		Routing.RegisterRoute("OrderNumberPage", typeof(OrderNumberPage));
+		Routing.RegisterRoute("PanierMoyenPage", typeof(PanierMoyenPage));
+		Routing.RegisterRoute("StockPage", typeof(StockPage));
     }
 }
 

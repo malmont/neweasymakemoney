@@ -38,3 +38,6 @@ global using Easymakemoney.Models.DashbordCollection;
 global using Easymakemoney.UseCase.DashBoardCollectionUseCase;
 global using Easymakemoney.Models.DashboardCommand;
 global using Easymakemoney.UseCase.DashboardCommandUseCase;
+global using Easymakemoney.ViewModels.Statistiques;
+global using Easymakemoney.Views.Statistiques;
+global using Easymakemoney.UseCase.ChiffreAffaireUseCase;

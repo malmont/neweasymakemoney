@@ -1,0 +1,39 @@
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Easymakemoney.Components"
+             x:Class="Easymakemoney.Components.StatistiqueBadgeView">
+
+    <Frame HasShadow="True"
+           CornerRadius="15"
+           Padding="0"
+           HeightRequest="150"
+           WidthRequest="150"
+           BackgroundColor="#F4F4F8"
+           BorderColor="#C4AB4D"
+           HorizontalOptions="Center">
+        <StackLayout VerticalOptions="Center"
+                     HorizontalOptions="Center"
+                     Padding="10">
+            <!-- Gesture Recognizer to trigger the command on tap -->
+            <StackLayout.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:StatistiqueBadgeView}}, Path=ButtonStatistique}"/>
+            </StackLayout.GestureRecognizers>
+
+            <!-- Centered Image -->
+            <Image Source="{Binding Source={RelativeSource AncestorType={x:Type local:StatistiqueBadgeView}}, Path=SourceImage}"
+                   HeightRequest="70"
+                   WidthRequest="70"
+                   VerticalOptions="CenterAndExpand"
+                   HorizontalOptions="CenterAndExpand"/>
+
+            <!-- Displaying the Name under the image -->
+            <Label Text="{Binding Source={RelativeSource AncestorType={x:Type local:StatistiqueBadgeView}}, Path=Name}"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"
+                   VerticalOptions="End"
+                   Margin="0,10,0,0"
+                   TextColor="#C4AB4D"/>
+        </StackLayout>
+    </Frame>
+
+</ContentView>

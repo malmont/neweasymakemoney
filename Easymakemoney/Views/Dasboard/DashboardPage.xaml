@@ -135,6 +135,34 @@
                                 HorizontalOptions="EndAndExpand"/>
                     </StackLayout>
                 </Frame>
+
+                 <Frame Margin="0,30,0,0"
+                       HasShadow="True"
+                       CornerRadius="10"
+                       Padding="2"
+                       BorderColor="#C4AB4D"
+                       HorizontalOptions="FillAndExpand">
+                    <StackLayout  Orientation="Horizontal"
+                                  Padding="10"
+                                  HorizontalOptions="FillAndExpand"
+                                  HeightRequest="70">
+                        <StackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding NavigateToStatistiquesPageCommand}"/>
+                        </StackLayout.GestureRecognizers>
+
+                        <Label VerticalTextAlignment="Center"
+                               TextColor="#C4AB4D"
+                               HorizontalTextAlignment="End"
+                               FontAttributes="Bold"
+                               Text="DASHBOARD"
+                               Margin='0,0,20,0'/>
+                        <Image Source="analytics.png"
+                                HeightRequest="40"
+                                WidthRequest="40"
+                                Margin="0,0,20,0"
+                                HorizontalOptions="EndAndExpand"/>
+                    </StackLayout>
+                </Frame>
             </StackLayout>
         </StackLayout>
     </ScrollView>

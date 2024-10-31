@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:Statistique="clr-namespace:Easymakemoney.ViewModels.Statistiques"
+             xmlns:converters="clr-namespace:Easymakemoney.Converters"
+             xmlns:x1="clr-namespace:Easymakemoney.Models"
+             x:DataType="Statistique:StatistiquesDataValueViewmodel"
+             xmlns:microcharts="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
+             x:Class="Easymakemoney.Views.Statistiques.ChiffresAffairePage"
+             Title="ChiffresAffairePage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:CurrencyConverter x:Key="CurrencyConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView HorizontalScrollBarVisibility="Always"
+                VerticalScrollBarVisibility="Always">
+
+
+        <StackLayout Spacing="0"
+                     Orientation="Vertical"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="FillAndExpand">
+            <StackLayout Spacing="0"
+                         BackgroundColor="#518faa"
+                         Orientation="Vertical"
+                         HorizontalOptions="FillAndExpand"
+                         VerticalOptions="Start">
+
+                <Frame Margin="10,10"
+                       HasShadow="True"
+                       BackgroundColor="#518faa"
+                       CornerRadius="10"
+                       Padding="1"
+                       HorizontalOptions="Start"
+                       HeightRequest="79">
+                    <StackLayout Margin="2,2"
+                                 Orientation="Horizontal"
+                                 HorizontalOptions="FillAndExpand"
+                                 WidthRequest="380"
+                                 BackgroundColor="#518faa">
+                        <!-- Button for List -->
+                        <StackLayout Margin="2,2,2,2"
+                                     HorizontalOptions="Start"
+                                     VerticalOptions="Center"
+                                     BackgroundColor="#518faa"
+                                     HeightRequest="30"
+                                     WidthRequest="60">
+                            <Frame Margin="1,1"
+                                   HasShadow="True"
+                                   CornerRadius="10"
+                                   Padding="1"
+                                   BackgroundColor="#C4AB4D"
+                                   HeightRequest="30"
+                                   WidthRequest="60"
+                                   HorizontalOptions="Fill">
+                                <Button Text="Période"
+                                        BackgroundColor="#C4AB4D"
+                                        WidthRequest="85"
+                                        HeightRequest="85"
+                                        Command="{Binding ShowBottomSheetPopupListViewCommand}"/>
+                            </Frame>
+                        </StackLayout>
+
+                    </StackLayout>
+                </Frame>
+            </StackLayout>
+
+            <StackLayout Style="{StaticResource HeaderStackLayoutStyle}">
+                <Image Style="{StaticResource HeaderImageStyle}"/>
+            </StackLayout>
+
+            <Image Style="{StaticResource SeparatorImageStyle}"/>
+            <StackLayout Spacing="10"
+                         Padding="10,0"
+                         Orientation="Vertical"
+                         HorizontalOptions="FillAndExpand"
+                         VerticalOptions="FillAndExpand">
+
+                <!-- Vue d'ensemble du budget -->
+                <components:BudgetOverviewView
+                    IconSource="revenue.png"
+                    HeaderText="Valeur chiffre affaire"
+                    TotalLabelText="{Binding CurrentPeriode}"
+                    TotalValue="{Binding CurrentRevenue, Converter={StaticResource CurrencyConverter}}"
+                    ExpensesLabelText="Chiffres affaires semaine dernière"
+                    ExpensesValue="{Binding LastDataValue, Converter={StaticResource CurrencyConverter}}"
+                    RemainingLabelText="{Binding LastPeriode}"
+                    IsExpensesVisible="False"
+                    RemainingValue="{Binding LastDataValue,Converter={StaticResource CurrencyConverter}}"/>
+
+                <!-- Titre pour les recettes journalières de la semaine -->
+                <Frame BorderColor="#C4AB4D"
+                       Margin="25,5,25,0"
+                       CornerRadius="10"
+                       HasShadow="True">
+                    <Label TextColor="#C4AB4D"
+                           HorizontalTextAlignment="Center"
+                           FontAttributes="Bold"
+                           FontSize="18"
+                           Padding="10,5"
+                           Text="{Binding TypeDataValue}"/>
+                </Frame>
+                <!-- CollectionView pour les données journalières avec couleurs alternées -->
+                <CollectionView ItemsSource="{Binding AllDataValue}"
+                                BackgroundColor="transparent"
+                                HorizontalOptions="FillAndExpand"
+                                Margin="20,5,20,0">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="x1:IStatistiqueData">
+                            <components:StatistiqueDataBadgeView Date="{Binding Data1}"
+                                                                 Revenue="{Binding Data2, Converter={StaticResource CurrencyConverter}}"
+                                                                 FrameBackgroundColor="{Binding BackgroundColor}"/>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <microcharts:ChartView Chart="{Binding WeekChart, Mode=TwoWay}"
+                                       Margin="20,5,20,0"
+                                       IsVisible="{Binding IsWeekChartVisible}"
+                                       HeightRequest="200"
+                                       HorizontalOptions="FillAndExpand"/>
+
+                <microcharts:ChartView Chart="{Binding MonthChart, Mode=TwoWay}"
+                                       Margin="20,5,20,0"
+                                       IsVisible="{Binding IsMonthChartVisible}"
+                                       HeightRequest="200"
+                                       HorizontalOptions="FillAndExpand"/>
+
+                <microcharts:ChartView Chart="{Binding YearChart, Mode=TwoWay}"
+                                       Margin="20,5,20,0"
+                                       IsVisible="{Binding IsYearChartVisible}"
+                                       HeightRequest="200"
+                                       HorizontalOptions="FillAndExpand"/>
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
