@@ -1,14 +1,26 @@
+
+
 namespace Easymakemoney.Views.Statistiques
 
 {
     public partial class PanierMoyenPage: ContentPage
     {
-        public PanierMoyenPage(StatistiquesDataValueViewmodel viewModel)
+        private readonly StatistiquesDataValueViewmodel _viewModel;
+        private readonly AverageOrderValueUseCase _averageOrderValueUseCase;
+        public PanierMoyenPage(StatistiquesDataValueViewmodel viewModel, AverageOrderValueUseCase averageOrderValueUseCase)
         {
             InitializeComponent();
-            // var data = useCase.GetData();
-            // viewModel.LoadData(data);
-            this.BindingContext = viewModel;
+            _averageOrderValueUseCase = averageOrderValueUseCase;
+            _viewModel = viewModel;
+             this.BindingContext = _viewModel;
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            var data = await _averageOrderValueUseCase.GetAverageOrderValueStatistics();
+            _viewModel.LoadDataChiffreAffaire(data);
+            _viewModel.UpdateRevenueData(1);
         }
     }
 }

@@ -43,6 +43,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<IDashboardCommandServices, DashboardCommandServices>();
 		builder.Services.AddTransient<IChiffreAffaireService, ChiffreAffaireService>();
 		builder.Services.AddTransient<IOrderCountServices, OrderCountServices>();
+		builder.Services.AddTransient<IAverageOrderValueServices, AverageOrderValueServices>();
+		builder.Services.AddTransient<IStockEvolutionServices, StockEvolutionServices>();
 
 
 		builder.Services.AddTransient<GetListCollectionsUseCase>();
@@ -86,6 +88,9 @@ public static class MauiProgram
 		builder.Services.AddTransient<StockPage>();
 		builder.Services.AddTransient<ChiffreAffaireUseCase>();
 		builder.Services.AddTransient<OrderCountUseCase>();
+		builder.Services.AddTransient<AverageOrderValueUseCase>();
+		builder.Services.AddTransient<StockEvolutionUseCase>();
+		builder.Services.AddTransient<StockValueEvolutionUseCase>();
 
 
 
@@ -134,6 +139,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<StatistiquesViewModel>();
 		builder.Services.AddTransient<StatistiquesDataValueViewmodel>();
 		builder.Services.AddTransient<OrderCountViewModel>();
+		builder.Services.AddTransient<StockEvolutionViewModel>();
+
 
 
 
