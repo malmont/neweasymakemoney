@@ -5,7 +5,7 @@
              xmlns:Statistique="clr-namespace:Easymakemoney.ViewModels.Statistiques"
              xmlns:converters="clr-namespace:Easymakemoney.Converters"
              xmlns:x1="clr-namespace:Easymakemoney.Models"
-             x:DataType="Statistique:StatistiquesDataValueViewmodel"
+             x:DataType="Statistique:StockEvolutionViewModel"
              xmlns:microcharts="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
              x:Class="Easymakemoney.Views.Statistiques.StockPage"
              Title="StockPage">
@@ -82,14 +82,14 @@
                 <!-- Vue d'ensemble du budget -->
                 <components:BudgetOverviewView
                     IconSource="revenue.png"
-                    HeaderText="Valeur chiffre affaire"
-                    TotalLabelText="{Binding CurrentPeriode}"
-                    TotalValue="{Binding CurrentRevenue, Converter={StaticResource CurrencyConverter}}"
-                    ExpensesLabelText="Chiffres affaires semaine dernière"
-                    ExpensesValue="{Binding LastDataValue, Converter={StaticResource CurrencyConverter}}"
-                    RemainingLabelText="{Binding LastPeriode}"
-                    IsExpensesVisible="False"
-                    RemainingValue="{Binding LastDataValue,Converter={StaticResource CurrencyConverter}}"/>
+                    HeaderText="Valeur stock"
+                    TotalLabelText="{Binding StockDataValueCurrentMonth.Month}"
+                    TotalValue="{Binding StockDataValueCurrentMonth.StockValue, Converter={StaticResource CurrencyConverter}}"
+                    ExpensesLabelText="{Binding StockDataValueLastMonth.Month}"
+                    ExpensesValue="{Binding StockDataValueLastMonth.StockValue, Converter={StaticResource CurrencyConverter}}"
+                    RemainingLabelText="{Binding StockDataValueTowMonth.Month}"
+                    IsExpensesVisible="True"
+                    RemainingValue="{Binding StockDataValueTowMonth.StockValue,Converter={StaticResource CurrencyConverter}}"/>
 
                 <!-- Titre pour les recettes journalières de la semaine -->
                 <Frame BorderColor="#C4AB4D"
@@ -101,7 +101,7 @@
                            FontAttributes="Bold"
                            FontSize="18"
                            Padding="10,5"
-                           Text="{Binding TypeDataValue}"/>
+                           Text="{Binding StockCurrentPeriode}"/>
                 </Frame>
                 <!-- CollectionView pour les données journalières avec couleurs alternées -->
                 <CollectionView ItemsSource="{Binding AllDataValue}"
@@ -111,7 +111,7 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="x1:IStatistiqueData">
                             <components:StatistiqueDataBadgeView Date="{Binding Data1}"
-                                                                 Revenue="{Binding Data2, Converter={StaticResource CurrencyConverter}}"
+                                                                 Revenue="{Binding Data2}"
                                                                  FrameBackgroundColor="{Binding BackgroundColor}"/>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>

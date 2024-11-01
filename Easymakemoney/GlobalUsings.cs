@@ -44,3 +44,5 @@ global using Easymakemoney.UseCase.ChiffreAffaireUseCase;
 global using Easymakemoney.Utilities;
 global using Microcharts;
 global using Easymakemoney.UseCase.OrderCountUseCase;
+global using Easymakemoney.UseCase;
+global using Easymakemoney.UseCase.StockEvolutionUseCase;
