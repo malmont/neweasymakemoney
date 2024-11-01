@@ -1,14 +1,27 @@
+
+
 namespace Easymakemoney.Views.Statistiques
 
 {
     public partial class OrderNumberPage: ContentPage
     {
-        public OrderNumberPage(StatistiquesDataValueViewmodel viewModel)
+        private readonly  OrderCountUseCase _orderCountUseCase;
+         private readonly OrderCountViewModel _viewModel;
+        public OrderNumberPage(OrderCountViewModel viewModel, OrderCountUseCase orderCountUseCase)
         {
             InitializeComponent();
-            // var data = useCase.GetData();
-            // viewModel.LoadData(data);
+            _viewModel = viewModel;
             this.BindingContext = viewModel;
+            _orderCountUseCase = orderCountUseCase;
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            var data = await _orderCountUseCase.GetOrderStatistics();
+            _viewModel.LoadOderCount(data);
+            _viewModel.UpdateRevenueData(1);
+        
         }
     }
 }

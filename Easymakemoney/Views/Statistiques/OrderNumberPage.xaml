@@ -3,17 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:components="clr-namespace:Easymakemoney.Components"
              xmlns:Statistique="clr-namespace:Easymakemoney.ViewModels.Statistiques"
-             xmlns:converters="clr-namespace:Easymakemoney.Converters"
              xmlns:x1="clr-namespace:Easymakemoney.Models"
-             x:DataType="Statistique:StatistiquesDataValueViewmodel"
+             x:DataType="Statistique:OrderCountViewModel"
              xmlns:microcharts="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
              x:Class="Easymakemoney.Views.Statistiques.OrderNumberPage"
              Title="OrderNumberPage">
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <converters:CurrencyConverter x:Key="CurrencyConverter"/>
-        </ResourceDictionary>
-    </ContentPage.Resources>
 
     <ScrollView HorizontalScrollBarVisibility="Always"
                 VerticalScrollBarVisibility="Always">
@@ -82,14 +76,14 @@
                 <!-- Vue d'ensemble du budget -->
                 <components:BudgetOverviewView
                     IconSource="revenue.png"
-                    HeaderText="Valeur chiffre affaire"
+                    HeaderText="Commandes complétées"
                     TotalLabelText="{Binding CurrentPeriode}"
-                    TotalValue="{Binding CurrentRevenue, Converter={StaticResource CurrencyConverter}}"
+                    TotalValue="{Binding CurrentRevenue}"
                     ExpensesLabelText="Chiffres affaires semaine dernière"
-                    ExpensesValue="{Binding LastDataValue, Converter={StaticResource CurrencyConverter}}"
+                    ExpensesValue="{Binding LastDataValue}"
                     RemainingLabelText="{Binding LastPeriode}"
                     IsExpensesVisible="False"
-                    RemainingValue="{Binding LastDataValue,Converter={StaticResource CurrencyConverter}}"/>
+                    RemainingValue="{Binding LastDataValue}"/>
 
                 <!-- Titre pour les recettes journalières de la semaine -->
                 <Frame BorderColor="#C4AB4D"
@@ -111,7 +105,7 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="x1:IStatistiqueData">
                             <components:StatistiqueDataBadgeView Date="{Binding Data1}"
-                                                                 Revenue="{Binding Data2, Converter={StaticResource CurrencyConverter}}"
+                                                                 Revenue="{Binding Data2}"
                                                                  FrameBackgroundColor="{Binding BackgroundColor}"/>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
@@ -123,6 +117,142 @@
                                        HeightRequest="200"
                                        HorizontalOptions="FillAndExpand"/>
 
+
+
+                <!-- Vue d'ensemble de dailyCountAchatClient_LivréeForCurrentWeek -->
+                <StackLayout IsVisible="{Binding IsWeekChartVisible}">
+                    <components:BudgetOverviewWhithOutHedearView
+                        TotalLabelText="{Binding CurrentPeriode}"
+                        TotalValue="{Binding CurrentWeekOrderDeliveryValue}"
+                        ExpensesLabelText="Chiffres affaires semaine dernière"
+                        ExpensesValue="{Binding LastDataValue}"
+                        RemainingLabelText="{Binding LastPeriode}"
+                        IsExpensesVisible="False"
+                        RemainingValue="{Binding LastWeekOrderDeliveryValue}"/>
+
+                    <!-- Titre pour les recettes journalières de la semaine -->
+                    <Frame BorderColor="#C4AB4D"
+                           Margin="25,5,25,0"
+                           CornerRadius="10"
+                           HasShadow="True">
+                        <Label TextColor="#C4AB4D"
+                               HorizontalTextAlignment="Center"
+                               FontAttributes="Bold"
+                               FontSize="18"
+                               Padding="10,5"
+                               Text="Commandes délivrées"/>
+                    </Frame>
+                    <!-- CollectionView pour les données journalières avec couleurs alternées -->
+                    <CollectionView ItemsSource="{Binding DailycurrentWeekOrderDelivery}"
+                                    BackgroundColor="transparent"
+                                    HorizontalOptions="FillAndExpand"
+                                    Margin="20,5,20,0">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x1:IStatistiqueData">
+                                <components:StatistiqueDataBadgeView Date="{Binding Data1}"
+                                                                     Revenue="{Binding Data2}"
+                                                                     FrameBackgroundColor="{Binding BackgroundColor}"/>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <microcharts:ChartView Chart="{Binding WeekChartdailyLcurrentWeekOrderCancellation, Mode=TwoWay}"
+                                           Margin="20,5,20,0"
+                                           IsVisible="{Binding IsWeekChartVisible}"
+                                           HeightRequest="200"
+                                           HorizontalOptions="FillAndExpand"/>
+
+
+                    <!-- Vue d'ensemble du budget -->
+                    <components:BudgetOverviewWhithOutHedearView
+                        TotalLabelText="{Binding CurrentPeriode}"
+                        TotalValue="{Binding CurrentWeekOrderCancellationValue}"
+                        ExpensesLabelText="Chiffres affaires semaine dernière"
+                        ExpensesValue="{Binding LastDataValue}"
+                        RemainingLabelText="{Binding LastPeriode}"
+                        IsExpensesVisible="False"
+                        RemainingValue="{Binding LastWeekOrderCancellationValue}"/>
+
+                    <!-- Titre pour les recettes journalières de la semaine -->
+                    <Frame BorderColor="#C4AB4D"
+                           Margin="25,5,25,0"
+                           CornerRadius="10"
+                           HasShadow="True">
+                        <Label TextColor="#C4AB4D"
+                               HorizontalTextAlignment="Center"
+                               FontAttributes="Bold"
+                               FontSize="18"
+                               Padding="10,5"
+                               Text="Commandes annulée"/>
+                    </Frame>
+                    <!-- CollectionView pour les données journalières avec couleurs alternées -->
+                    <CollectionView ItemsSource="{Binding DailyLcurrentWeekOrderCancellation}"
+                                    BackgroundColor="transparent"
+                                    HorizontalOptions="FillAndExpand"
+                                    Margin="20,5,20,0">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x1:IStatistiqueData">
+                                <components:StatistiqueDataBadgeView Date="{Binding Data1}"
+                                                                     Revenue="{Binding Data2}"
+                                                                     FrameBackgroundColor="{Binding BackgroundColor}"/>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <microcharts:ChartView Chart="{Binding WeekChartdailyLcurrentWeekOrderCancellation, Mode=TwoWay}"
+                                           Margin="20,5,20,0"
+                                           IsVisible="{Binding IsWeekChartVisible}"
+                                           HeightRequest="200"
+                                           HorizontalOptions="FillAndExpand"/>
+
+         
+                <!-- Vue d'ensemble du budget -->
+                <components:BudgetOverviewWhithOutHedearView
+                    TotalLabelText="{Binding CurrentPeriode}"
+                    TotalValue="{Binding CurrentWeekReturnOrderCompleteValue}"
+                    ExpensesLabelText="Chiffres affaires semaine dernière"
+                    ExpensesValue="{Binding LastDataValue}"
+                    RemainingLabelText="{Binding LastPeriode}"
+                    IsExpensesVisible="False"
+                    RemainingValue="{Binding LastWeekReturnOrderCompleteValue}"/>
+
+                <!-- Titre pour les recettes journalières de la semaine -->
+                <Frame BorderColor="#C4AB4D"
+                       Margin="25,5,25,0"
+                       CornerRadius="10"
+                       HasShadow="True">
+                    <Label TextColor="#C4AB4D"
+                           HorizontalTextAlignment="Center"
+                           FontAttributes="Bold"
+                           FontSize="18"
+                           Padding="10,5"
+                           Text="Retour"/>
+                </Frame>
+                <!-- CollectionView pour les données journalières avec couleurs alternées -->
+                <CollectionView ItemsSource="{Binding DailycurrentWeekReturnOrderComplete}"
+                                BackgroundColor="transparent"
+                                HorizontalOptions="FillAndExpand"
+                                Margin="20,5,20,0">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="x1:IStatistiqueData">
+                            <components:StatistiqueDataBadgeView Date="{Binding Data1}"
+                                                                 Revenue="{Binding Data2}"
+                                                                 FrameBackgroundColor="{Binding BackgroundColor}"/>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+
+
+                <microcharts:ChartView Chart="{Binding WeekChartdailycurrentWeekReturnOrderComplete, Mode=TwoWay}"
+                                       Margin="20,5,20,0"
+                                       IsVisible="{Binding IsWeekChartVisible}"
+                                       HeightRequest="200"
+                                       HorizontalOptions="FillAndExpand"/>
+
+                 </StackLayout>
+
+ 
                 <microcharts:ChartView Chart="{Binding MonthChart, Mode=TwoWay}"
                                        Margin="20,5,20,0"
                                        IsVisible="{Binding IsMonthChartVisible}"
