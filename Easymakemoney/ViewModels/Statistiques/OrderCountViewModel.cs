@@ -1,7 +1,7 @@
 
 namespace Easymakemoney.ViewModels.Statistiques
 {
-    public partial class StatistiquesDataValueViewmodel : BaseViewModel
+    public partial class OrderCountViewModel : BaseViewModel
     {
         // Propriétés de recettes et périodes
         [ObservableProperty] private double currentDataValueWeek;
@@ -15,12 +15,38 @@ namespace Easymakemoney.ViewModels.Statistiques
         [ObservableProperty] private string currentPeriode;
         [ObservableProperty] private string lastPeriode;
         [ObservableProperty] private string typeDataValue;
+        [ObservableProperty] private double currentWeekOrderDeliveryValue;
+        [ObservableProperty] private double lastWeekOrderDeliveryValue;
+        [ObservableProperty] private double currentWeekOrderCancellationValue;
+        [ObservableProperty] private double lastWeekOrderCancellationValue;
+        [ObservableProperty] private double currentWeekReturnOrderCompleteValue;
+        [ObservableProperty] private double lastWeekReturnOrderCompleteValue;
+
+
+
+
+        [ObservableProperty] private double currentWeekOrderDelivery;
+        [ObservableProperty] private double lastWeekOrderDelivery;
+
+        [ObservableProperty] private double currentWeekOrderCancellation;
+        [ObservableProperty] private double lastWeekOrderCancellation;
+
+        [ObservableProperty] private double currentWeekReturnOrderComplete;
+
+        [ObservableProperty] private double lastWeekReturnOrderComplete;
 
         // Collections de données pour différentes périodes
         [ObservableProperty] private List<IStatistiqueData> dailyDataValueCurrentWeek;
         [ObservableProperty] private List<IStatistiqueData> weeklyDataValueForCurrentMonth;
         [ObservableProperty] private List<IStatistiqueData> monthlyDataValueForCurrentYear;
         [ObservableProperty] private List<IStatistiqueData>? allDataValue;
+
+
+
+        [ObservableProperty] private List<IStatistiqueData> dailycurrentWeekOrderDelivery;
+        [ObservableProperty] private List<IStatistiqueData> dailyLcurrentWeekOrderCancellation;
+
+        [ObservableProperty] private List<IStatistiqueData> dailycurrentWeekReturnOrderComplete;
 
         public int periodeTypeId { get; set; }
         public List<PeriodeType> periodeTypeChoices { get; set; }
@@ -30,13 +56,18 @@ namespace Easymakemoney.ViewModels.Statistiques
         [ObservableProperty] private Chart monthChart;
         [ObservableProperty] private Chart yearChart;
 
+        [ObservableProperty] private Chart weekChartdailycurrentWeekOrderDelivery;
+        [ObservableProperty] private Chart weekChartdailyLcurrentWeekOrderCancellation;
+        
+        [ObservableProperty] private Chart weekChartdailycurrentWeekReturnOrderComplete;
+
         [ObservableProperty] bool isWeekChartVisible;
 
         [ObservableProperty] bool isMonthChartVisible;
 
         [ObservableProperty] bool isYearChartVisible;
 
-        public StatistiquesDataValueViewmodel()
+        public OrderCountViewModel()
         {
 
             periodeTypeChoices = new List<PeriodeType>
@@ -47,26 +78,36 @@ namespace Easymakemoney.ViewModels.Statistiques
             };
 
         }
-        public void LoadDataChiffreAffaire<TDaily, TWeekly, TMonthly>(IAllDataStatistics<TDaily, TWeekly, TMonthly> data)
-            where TDaily : IStatistiqueData
-            where TWeekly : IStatistiqueData
-            where TMonthly : IStatistiqueData
+        public void LoadOderCount(OrderStatistics data)
+
         {
             CurrentPeriode = "Semaine en cours";
             LastPeriode = "Semaine précédente";
-            TypeDataValue = "Recette journalière";
+            TypeDataValue = "Commande journalière";
 
             // Utilisation des propriétés de l'interface IAllDataStatistics
-            CurrentDataValueWeek = data.CurrentWeekData;
-            LastDataValueWeek = data.LastWeekData;
-            CurrentDataValueMonth = data.CurrentMonthData;
-            LastDataValueMonth = data.LastMonthData;
-            CurrentDataValueYear = data.CurrentYearData;
-            LastDataValueYear = data.LastYearData;
+            CurrentDataValueWeek = data.CurrentWeekCountAchatClientCompletee;
+            LastDataValueWeek = data.LastWeekCountAchatClientCompletee;
+            CurrentDataValueMonth = data.CurrentMonthCount;
+            LastDataValueMonth = data.LastMonthCount;
+            CurrentDataValueYear = data.CurrentYearCount;
+            LastDataValueYear = data.LastYearCount;
+            CurrentWeekOrderDelivery = data.CurrentWeekCountAchatClientLivree;
+            LastWeekOrderDelivery = data.LastWeekCountAchatClientLivree;
+            CurrentWeekOrderCancellation = data.CurrentWeekCountAchatClientAnnulation;
+            LastWeekOrderCancellation = data.LastWeekCountAchatClientAnnulation;
+            CurrentWeekReturnOrderComplete = data.CurrentWeekCountRetourClientCompletee;
+            LastWeekReturnOrderComplete = data.LastWeekCountRetourClientCompletee;
 
-            DailyDataValueCurrentWeek = data.DailyDataForCurrentWeek.Cast<IStatistiqueData>().ToList();
-            WeeklyDataValueForCurrentMonth = data.WeeklyDataForCurrentMonth.Cast<IStatistiqueData>().ToList();
-            MonthlyDataValueForCurrentYear = data.MonthlyDataForCurrentYear.Cast<IStatistiqueData>().ToList();
+
+            DailyDataValueCurrentWeek = data.DailyCountAchatClientCompleteeForCurrentWeek.Cast<IStatistiqueData>().ToList();
+            WeeklyDataValueForCurrentMonth = data.WeeklyCountForCurrentMonth.Cast<IStatistiqueData>().ToList();
+            MonthlyDataValueForCurrentYear = data.MonthlyCountForCurrentYear.Cast<IStatistiqueData>().ToList();
+            DailycurrentWeekOrderDelivery = data.DailyCountAchatClientLivreeForCurrentWeek.Cast<IStatistiqueData>().ToList();
+            DailyLcurrentWeekOrderCancellation = data.DailyCountAchatClientAnnulationForCurrentWeek.Cast<IStatistiqueData>().ToList();
+            DailycurrentWeekReturnOrderComplete = data.DailyCountRetourClientCompleteeForCurrentWeek.Cast<IStatistiqueData>().ToList();
+
+
 
             // Appliquer les couleurs alternées
             ApplyAlternateRowColors(DailyDataValueCurrentWeek);
@@ -89,9 +130,18 @@ namespace Easymakemoney.ViewModels.Statistiques
                     LastDataValue = lastDataValueWeek;
                     CurrentPeriode = "Semaine en cours";
                     LastPeriode = "Semaine précédente";
-                    TypeDataValue = "Recette journalière";
-                    WeekChart = ChartGenerator.GenerateChart(AllDataValue); 
+                    TypeDataValue = "Commande complétée";
+                    WeekChart = ChartGenerator.GenerateChart(AllDataValue);
                     IsWeekChartVisible = true;
+                    CurrentWeekOrderDeliveryValue = currentWeekOrderDelivery;
+                    LastWeekOrderDeliveryValue = lastWeekOrderDelivery;
+                    CurrentWeekOrderCancellationValue = currentWeekOrderCancellation;
+                    LastWeekOrderCancellationValue = lastWeekOrderCancellation;
+                    CurrentWeekReturnOrderCompleteValue = currentWeekReturnOrderComplete;
+                    LastWeekReturnOrderCompleteValue = lastWeekReturnOrderComplete;
+                    WeekChartdailycurrentWeekOrderDelivery = ChartGenerator.GenerateChart(dailycurrentWeekOrderDelivery);
+                    WeekChartdailyLcurrentWeekOrderCancellation = ChartGenerator.GenerateChart(dailyLcurrentWeekOrderCancellation);
+                    WeekChartdailycurrentWeekReturnOrderComplete = ChartGenerator.GenerateChart(dailycurrentWeekReturnOrderComplete);
                     break;
 
                 case 2: // Mois
@@ -100,8 +150,8 @@ namespace Easymakemoney.ViewModels.Statistiques
                     LastDataValue = lastDataValueMonth;
                     CurrentPeriode = "Mois en cours";
                     LastPeriode = "Mois précédent";
-                    TypeDataValue = "Recette mensuelle";
-                    MonthChart = ChartGenerator.GenerateChart(AllDataValue); 
+                    TypeDataValue = "Commande mensuelle";
+                    MonthChart = ChartGenerator.GenerateChart(AllDataValue);
                     IsMonthChartVisible = true;
                     break;
 
@@ -111,8 +161,8 @@ namespace Easymakemoney.ViewModels.Statistiques
                     LastDataValue = lastDataValueYear;
                     CurrentPeriode = "Année en cours";
                     LastPeriode = "Année précédente";
-                    TypeDataValue = "Recette annuelle";
-                    YearChart = ChartGenerator.GenerateChart(AllDataValue); 
+                    TypeDataValue = "Commande annuelle";
+                    YearChart = ChartGenerator.GenerateChart(AllDataValue);
                     IsYearChartVisible = true;
                     break;
             }

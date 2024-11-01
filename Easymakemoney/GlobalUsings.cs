@@ -41,3 +41,6 @@ global using Easymakemoney.UseCase.DashboardCommandUseCase;
 global using Easymakemoney.ViewModels.Statistiques;
 global using Easymakemoney.Views.Statistiques;
 global using Easymakemoney.UseCase.ChiffreAffaireUseCase;
+global using Easymakemoney.Utilities;
+global using Microcharts;
+global using Easymakemoney.UseCase.OrderCountUseCase;
