@@ -30,7 +30,7 @@ namespace Easymakemoney.ViewModels.Statistiques
          [ICommand]
         async void NavigateToFrais()
         {
-            await Shell.Current.GoToAsync(nameof(ListNewCollectionPage));
+            await Shell.Current.GoToAsync(nameof(FraisEvolutionEntreprisePage));
         }
          [ICommand]
         async void NavigateToCaisse()

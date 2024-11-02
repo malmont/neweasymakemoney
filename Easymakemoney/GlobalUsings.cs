@@ -46,3 +46,4 @@ global using Microcharts;
 global using Easymakemoney.UseCase.OrderCountUseCase;
 global using Easymakemoney.UseCase;
 global using Easymakemoney.UseCase.StockEvolutionUseCase;
+global using static Easymakemoney.Models.FraisEvolution;

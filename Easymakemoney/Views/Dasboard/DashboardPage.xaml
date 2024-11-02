@@ -156,7 +156,7 @@
                                FontAttributes="Bold"
                                Text="DASHBOARD"
                                Margin='0,0,20,0'/>
-                        <Image Source="analytics.png"
+                        <Image Source="statistique.png"
                                 HeightRequest="40"
                                 WidthRequest="40"
                                 Margin="0,0,20,0"
