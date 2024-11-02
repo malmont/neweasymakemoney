@@ -35,12 +35,12 @@ namespace Easymakemoney.ViewModels.Statistiques
          [ICommand]
         async void NavigateToCaisse()
         {
-            await Shell.Current.GoToAsync(nameof(ListNewCollectionPage));
+            await Shell.Current.GoToAsync(nameof(TransactionCaissePage));
         }
          [ICommand]
         async void NavigateToPayment()
         {
-            await Shell.Current.GoToAsync(nameof(ListNewCollectionPage));
+            await Shell.Current.GoToAsync(nameof(PaiementRemboursementPage));
         }
 
           [ICommand]
