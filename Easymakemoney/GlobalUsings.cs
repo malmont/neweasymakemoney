@@ -47,3 +47,6 @@ global using Easymakemoney.UseCase.OrderCountUseCase;
 global using Easymakemoney.UseCase;
 global using Easymakemoney.UseCase.StockEvolutionUseCase;
 global using static Easymakemoney.Models.FraisEvolution;
+global using Easymakemoney.UseCase.FraisEvolutionUseCase;
+global using Easymakemoney.UseCase.PaiementRemboursementUseCase;
+global using Easymakemoney.UseCase.TransactionCaisseUseCase;

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:Statistique="clr-namespace:Easymakemoney.ViewModels.Statistiques"
+             xmlns:converters="clr-namespace:Easymakemoney.Converters"
+             xmlns:x1="clr-namespace:Easymakemoney.Models"
+             x:DataType="Statistique:TransactionCaisseViewModel"
+             xmlns:microcharts="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
+             x:Class="Easymakemoney.Views.Statistiques.TransactionCaissePage"
+             Title="TransactionCaissePage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:CurrencyConverter x:Key="CurrencyConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView HorizontalScrollBarVisibility="Always"
+                VerticalScrollBarVisibility="Always">
+
+
+        <StackLayout Spacing="0"
+                     Orientation="Vertical"
+                     HorizontalOptions="FillAndExpand"
+                     VerticalOptions="FillAndExpand">
+           
+
+            <StackLayout Style="{StaticResource HeaderStackLayoutStyle}">
+                <Image Style="{StaticResource HeaderImageStyle}"/>
+            </StackLayout>
+
+            <Image Style="{StaticResource SeparatorImageStyle}"/>
+            <StackLayout Spacing="10"
+                         Padding="10,0"
+                         Orientation="Vertical"
+                         HorizontalOptions="FillAndExpand"
+                         VerticalOptions="FillAndExpand">
+
+            
+
+                <!-- Titre pour les recettes journalières de la semaine -->
+                <Frame BorderColor="#C4AB4D"
+                       Margin="25,5,25,0"
+                       CornerRadius="10"
+                       HasShadow="True">
+                    <Label TextColor="#C4AB4D"
+                           HorizontalTextAlignment="Center"
+                           FontAttributes="Bold"
+                           FontSize="18"
+                           Padding="10,5"
+                           Text="Transactions de la caisse"/>
+                </Frame>
+               <CollectionView ItemsSource="{Binding AllTransactions}"
+                                BackgroundColor="Transparent"
+                                HorizontalOptions="FillAndExpand"
+                                Margin="20,5,20,0">
+                    <!-- En-têtes des colonnes -->
+                    <CollectionView.Header>
+                        <Grid ColumnDefinitions="*,*,*"
+                              Padding="5"
+                              ColumnSpacing="10"
+                              BackgroundColor="LightGray">
+                            <Label Text="Amount"
+                                   FontAttributes="Bold"
+                                   FontSize="15"
+                                   TextColor="Black"
+                                   HorizontalTextAlignment="Center"
+                                   Grid.Column="0"/>
+                            <Label Text="transactionDate"
+                                   FontAttributes="Bold"
+                                   FontSize="15"
+                                   TextColor="Black"
+                                   HorizontalTextAlignment="Center"
+                                   Grid.Column="1"/>
+                            <Label Text="transactionType"
+                                   FontAttributes="Bold"
+                                   FontSize="15"
+                                   TextColor="Black"
+                                   HorizontalTextAlignment="Center"
+                                   Grid.Column="2"/>
+                        </Grid>
+
+                    </CollectionView.Header>
+
+                    <!-- Template pour chaque élément de la CollectionView -->
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="x1:TransactionCaisse">
+                            <Frame HasShadow="True"
+                                   CornerRadius="5"
+                                   Padding="5"
+                                   Margin="0,5,0,0"
+                                   BackgroundColor="{Binding BackgroundColor}">
+                                <Grid ColumnDefinitions="*,*,*"
+                                      Padding="5"
+                                      ColumnSpacing="10"
+                                      BackgroundColor="Transparent">
+
+                                    <!-- Colonne Total Frais -->
+                                    <Label Text="{Binding Amount, Converter={StaticResource CurrencyConverter}}"
+                                           FontSize="13"
+                                           TextColor="#E8B805"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalTextAlignment="Center"
+                                           Grid.Column="0"/>
+
+                                    <!-- Colonne Note de Frais -->
+                                    <Label Text="{Binding TransactionDate}"
+                                           FontSize="13"
+                                           TextColor="#6D97A4"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalTextAlignment="Center"
+                                           Grid.Column="1"/>
+
+                                    <!-- Colonne Frais de Port -->
+                                    <Label Text="{Binding TransactionType}"
+                                           FontSize="13"
+                                           TextColor="#9A69E8"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalTextAlignment="Center"
+                                           Grid.Column="2"/>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+             
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
