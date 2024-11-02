@@ -1,5 +1,6 @@
 ﻿
 using CommunityToolkit.Maui;
+using Easymakemoney.UseCase.FraisEvolutionUseCase;
 using Microsoft.Extensions.Logging;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 
@@ -45,6 +46,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<IOrderCountServices, OrderCountServices>();
 		builder.Services.AddTransient<IAverageOrderValueServices, AverageOrderValueServices>();
 		builder.Services.AddTransient<IStockEvolutionServices, StockEvolutionServices>();
+		builder.Services.AddTransient<IFraisEvolutionService, FraisEvolutionService>();
 
 
 		builder.Services.AddTransient<GetListCollectionsUseCase>();
@@ -91,6 +93,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<AverageOrderValueUseCase>();
 		builder.Services.AddTransient<StockEvolutionUseCase>();
 		builder.Services.AddTransient<StockValueEvolutionUseCase>();
+		builder.Services.AddTransient<FraisEvolutionUseCase>();
 
 
 
@@ -110,6 +113,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<DashBoardProductPage>();
 		builder.Services.AddTransient<StatistiquesPage>();
 		builder.Services.AddTransient<ChiffresAffairePage>();
+		builder.Services.AddTransient<FraisEvolutionEntreprisePage>();
 
 
 		//View Models
@@ -140,6 +144,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<StatistiquesDataValueViewmodel>();
 		builder.Services.AddTransient<OrderCountViewModel>();
 		builder.Services.AddTransient<StockEvolutionViewModel>();
+		builder.Services.AddTransient<FraisEvolutionEntrepriseViewModel>();
 
 
 
