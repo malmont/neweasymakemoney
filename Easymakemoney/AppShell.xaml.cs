@@ -28,6 +28,7 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute("FraisEvolutionEntreprisePage", typeof(FraisEvolutionEntreprisePage));
 		Routing.RegisterRoute("PaiementRemboursementPage", typeof(PaiementRemboursementPage));
 		Routing.RegisterRoute("TransactionCaissePage", typeof(TransactionCaissePage));
+		Routing.RegisterRoute("FraisClientTotalViewPage", typeof(FraisClientTotalViewPage));
 		
     }
 }

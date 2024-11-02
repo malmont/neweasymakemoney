@@ -46,7 +46,7 @@ namespace Easymakemoney.ViewModels.Statistiques
           [ICommand]
         async void NavigateToFraisTotal()
         {
-            await Shell.Current.GoToAsync(nameof(ListNewCollectionPage));
+            await Shell.Current.GoToAsync(nameof(FraisClientTotalViewPage));
         }
     }
 }

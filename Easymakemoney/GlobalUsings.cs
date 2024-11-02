@@ -50,3 +50,7 @@ global using static Easymakemoney.Models.FraisEvolution;
 global using Easymakemoney.UseCase.FraisEvolutionUseCase;
 global using Easymakemoney.UseCase.PaiementRemboursementUseCase;
 global using Easymakemoney.UseCase.TransactionCaisseUseCase;
+global using CommunityToolkit.Maui;
+global using Easymakemoney.UseCase.FraisClientTotalUseCase;
+global using Microsoft.Extensions.Logging;
+global using SkiaSharp.Views.Maui.Controls.Hosting;

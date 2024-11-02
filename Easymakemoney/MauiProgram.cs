@@ -1,8 +1,4 @@
 ﻿
-using CommunityToolkit.Maui;
-
-using Microsoft.Extensions.Logging;
-using SkiaSharp.Views.Maui.Controls.Hosting;
 
 namespace Easymakemoney;
 
@@ -49,6 +45,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<IFraisEvolutionService, FraisEvolutionService>();
 		builder.Services.AddTransient<IPaiementRemboursementService, PaiementRemboursementService>();
 		builder.Services.AddTransient<ITransactionCaisseService, TransactionCaisseService>();
+		builder.Services.AddTransient<IFraisClientTotalService, FraisClientTotalService>();
 
 
 		builder.Services.AddTransient<GetListCollectionsUseCase>();
@@ -98,6 +95,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<FraisEvolutionUseCase>();
 		builder.Services.AddTransient<PaiementRemboursementUseCase>();
 		builder.Services.AddTransient<TransactionCaisseUseCase>();
+		builder.Services.AddTransient<GetFraisClientTaxUseCase>();
+		builder.Services.AddTransient<GetFraisClientCarrierUseCase>();
 
 
 
@@ -120,6 +119,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<FraisEvolutionEntreprisePage>();
 		builder.Services.AddTransient<PaiementRemboursementPage>();
 		builder.Services.AddTransient<TransactionCaissePage>();
+		builder.Services.AddTransient<FraisClientTotalViewPage>();
 
 
 		//View Models
@@ -153,6 +153,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<FraisEvolutionEntrepriseViewModel>();
 		builder.Services.AddTransient<PaiementRemboursementViewModel>();
 		builder.Services.AddTransient<TransactionCaisseViewModel>();
+		builder.Services.AddTransient<FraisClientTotalViewModel>();
 
 
 
