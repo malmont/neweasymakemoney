@@ -110,15 +110,22 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
+                <Frame BorderColor="#C4AB4D"   IsVisible="{Binding IsWeekChartVisible}"
+                       Margin="25,5,25,5"
+                       CornerRadius="10"
+                       HasShadow="True">
 
-                <microcharts:ChartView Chart="{Binding WeekChart, Mode=TwoWay}"
-                                       Margin="20,5,20,0"
-                                       IsVisible="{Binding IsWeekChartVisible}"
-                                       HeightRequest="200"
-                                       HorizontalOptions="FillAndExpand"/>
+                    <microcharts:ChartView Chart="{Binding WeekChart, Mode=TwoWay}"
+                                           Margin="5,5,5,5"
+                                         
+                                           HeightRequest="200"
+                                           HorizontalOptions="FillAndExpand"/>
 
 
+                </Frame>
 
+                <BoxView Color="transparent"
+                        HeightRequest="30"/>
                 <!-- Vue d'ensemble de dailyCountAchatClient_LivréeForCurrentWeek -->
                 <StackLayout IsVisible="{Binding IsWeekChartVisible}">
                     <components:BudgetOverviewWhithOutHedearView
@@ -155,14 +162,20 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
+                    <Frame BorderColor="#C4AB4D" IsVisible="{Binding IsWeekChartVisible}"
+                           Margin="25,5,25,0"
+                           CornerRadius="10"
+                           HasShadow="True">
 
-                    <microcharts:ChartView Chart="{Binding WeekChartdailyLcurrentWeekOrderCancellation, Mode=TwoWay}"
-                                           Margin="20,5,20,0"
-                                           IsVisible="{Binding IsWeekChartVisible}"
-                                           HeightRequest="200"
-                                           HorizontalOptions="FillAndExpand"/>
+                        <microcharts:ChartView Chart="{Binding WeekChartdailyLcurrentWeekOrderCancellation, Mode=TwoWay}"
+                                               Margin="5,5,5,5"
+                                               
+                                               HeightRequest="200"
+                                               HorizontalOptions="FillAndExpand"/>
 
-
+                    </Frame>
+                    <BoxView Color="transparent"
+                            HeightRequest="30"/>
                     <!-- Vue d'ensemble du budget -->
                     <components:BudgetOverviewWhithOutHedearView
                         TotalLabelText="{Binding CurrentPeriode}"
@@ -198,72 +211,92 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
+                    <Frame BorderColor="#C4AB4D" IsVisible="{Binding IsWeekChartVisible}"
+                           Margin="25,5,25,0"
+                           CornerRadius="10"
+                           HasShadow="True">
 
-                    <microcharts:ChartView Chart="{Binding WeekChartdailyLcurrentWeekOrderCancellation, Mode=TwoWay}"
-                                           Margin="20,5,20,0"
-                                           IsVisible="{Binding IsWeekChartVisible}"
-                                           HeightRequest="200"
-                                           HorizontalOptions="FillAndExpand"/>
+                        <microcharts:ChartView Chart="{Binding WeekChartdailyLcurrentWeekOrderCancellation, Mode=TwoWay}"
+                                               Margin="5,5,5,5"
+                                               
+                                               HeightRequest="200"
+                                               HorizontalOptions="FillAndExpand"/>
 
-         
-                <!-- Vue d'ensemble du budget -->
-                <components:BudgetOverviewWhithOutHedearView
-                    TotalLabelText="{Binding CurrentPeriode}"
-                    TotalValue="{Binding CurrentWeekReturnOrderCompleteValue}"
-                    ExpensesLabelText="Chiffres affaires semaine dernière"
-                    ExpensesValue="{Binding LastDataValue}"
-                    RemainingLabelText="{Binding LastPeriode}"
-                    IsExpensesVisible="False"
-                    RemainingValue="{Binding LastWeekReturnOrderCompleteValue}"/>
+                    </Frame>
+                    <BoxView Color="transparent"
+                            HeightRequest="30"/>
+                    <!-- Vue d'ensemble du budget -->
+                    <components:BudgetOverviewWhithOutHedearView
+                        TotalLabelText="{Binding CurrentPeriode}"
+                        TotalValue="{Binding CurrentWeekReturnOrderCompleteValue}"
+                        ExpensesLabelText="Chiffres affaires semaine dernière"
+                        ExpensesValue="{Binding LastDataValue}"
+                        RemainingLabelText="{Binding LastPeriode}"
+                        IsExpensesVisible="False"
+                        RemainingValue="{Binding LastWeekReturnOrderCompleteValue}"/>
 
-                <!-- Titre pour les recettes journalières de la semaine -->
+                    <!-- Titre pour les recettes journalières de la semaine -->
+                    <Frame BorderColor="#C4AB4D"
+                           Margin="25,5,25,0"
+                           CornerRadius="10"
+                           HasShadow="True">
+                        <Label TextColor="#C4AB4D"
+                               HorizontalTextAlignment="Center"
+                               FontAttributes="Bold"
+                               FontSize="18"
+                               Padding="10,5"
+                               Text="Retour"/>
+                    </Frame>
+                    <!-- CollectionView pour les données journalières avec couleurs alternées -->
+                    <CollectionView ItemsSource="{Binding DailycurrentWeekReturnOrderComplete}"
+                                    BackgroundColor="transparent"
+                                    HorizontalOptions="FillAndExpand"
+                                    Margin="20,5,20,0">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x1:IStatistiqueData">
+                                <components:StatistiqueDataBadgeView Date="{Binding Data1}"
+                                                                     Revenue="{Binding Data2}"
+                                                                     FrameBackgroundColor="{Binding BackgroundColor}"/>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Frame BorderColor="#C4AB4D"
+                            IsVisible="{Binding IsWeekChartVisible}"
+                           Margin="25,5,25,0"
+                           CornerRadius="10"
+                           HasShadow="True">
+
+                        <microcharts:ChartView Chart="{Binding WeekChartdailycurrentWeekReturnOrderComplete, Mode=TwoWay}"
+                                               Margin="5,5,5,5"
+                                               HeightRequest="200"
+                                               HorizontalOptions="FillAndExpand"/>
+                    </Frame>
+                    <BoxView Color="transparent"
+                            HeightRequest="30"/>
+                </StackLayout>
                 <Frame BorderColor="#C4AB4D"
+                        IsVisible="{Binding IsMonthChartVisible}"
                        Margin="25,5,25,0"
                        CornerRadius="10"
                        HasShadow="True">
-                    <Label TextColor="#C4AB4D"
-                           HorizontalTextAlignment="Center"
-                           FontAttributes="Bold"
-                           FontSize="18"
-                           Padding="10,5"
-                           Text="Retour"/>
+
+                    <microcharts:ChartView Chart="{Binding MonthChart, Mode=TwoWay}"
+                                           Margin="5,5,5,5"
+                                           HeightRequest="200"
+                                           HorizontalOptions="FillAndExpand"/>
                 </Frame>
-                <!-- CollectionView pour les données journalières avec couleurs alternées -->
-                <CollectionView ItemsSource="{Binding DailycurrentWeekReturnOrderComplete}"
-                                BackgroundColor="transparent"
-                                HorizontalOptions="FillAndExpand"
-                                Margin="20,5,20,0">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="x1:IStatistiqueData">
-                            <components:StatistiqueDataBadgeView Date="{Binding Data1}"
-                                                                 Revenue="{Binding Data2}"
-                                                                 FrameBackgroundColor="{Binding BackgroundColor}"/>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                <Frame BorderColor="#C4AB4D"
+                        IsVisible="{Binding IsYearChartVisible}"
+                       Margin="25,5,25,0"
+                       CornerRadius="10"
+                       HasShadow="True">
 
-
-
-                <microcharts:ChartView Chart="{Binding WeekChartdailycurrentWeekReturnOrderComplete, Mode=TwoWay}"
-                                       Margin="20,5,20,0"
-                                       IsVisible="{Binding IsWeekChartVisible}"
-                                       HeightRequest="200"
-                                       HorizontalOptions="FillAndExpand"/>
-
-                 </StackLayout>
-
- 
-                <microcharts:ChartView Chart="{Binding MonthChart, Mode=TwoWay}"
-                                       Margin="20,5,20,0"
-                                       IsVisible="{Binding IsMonthChartVisible}"
-                                       HeightRequest="200"
-                                       HorizontalOptions="FillAndExpand"/>
-
-                <microcharts:ChartView Chart="{Binding YearChart, Mode=TwoWay}"
-                                       Margin="20,5,20,0"
-                                       IsVisible="{Binding IsYearChartVisible}"
-                                       HeightRequest="200"
-                                       HorizontalOptions="FillAndExpand"/>
+                    <microcharts:ChartView Chart="{Binding YearChart, Mode=TwoWay}"
+                                           Margin="5,5,5,5"
+                                           HeightRequest="200"
+                                           HorizontalOptions="FillAndExpand"/>
+                </Frame>
             </StackLayout>
         </StackLayout>
     </ScrollView>

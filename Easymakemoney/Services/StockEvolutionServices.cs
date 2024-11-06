@@ -19,10 +19,10 @@ namespace Easymakemoney.Services
             return stockEvolution ?? null;
         }
 
-        public async Task<StockValueEvolution> GetStockValueEvolution()
+        public async Task<StockValue> GetStockValueEvolution()
         {
             var url = $"{StockEvolutionsUrl}/stock-value";
-            var stockValueEvolution = await _httpService.GetAsync<StockValueEvolution>(url);
+            var stockValueEvolution = await _httpService.GetAsync<StockValue>(url);
             return stockValueEvolution ?? null;
         }
 

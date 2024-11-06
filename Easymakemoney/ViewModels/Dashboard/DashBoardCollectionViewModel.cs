@@ -12,16 +12,20 @@ namespace Easymakemoney.ViewModels.Dashboard
 
         private readonly ListNewCollectionViewModel _listNewCollectionViewModel;
 
+        private readonly GetCollectionCloseUseCase _getCollectionCloseUseCase;
+
         private readonly CollectionFormModel _collectionFormModel;
 
         public DashBoardCollectionViewModel(GetDashBoardCollectionUseCase getDashBoardCollectionUseCase,GetListCollectionsUseCase getListCollectionsUseCase,
-            SaveCollectionUseCase saveCollectionUseCase, ListNewCollectionViewModel listNewCollectionViewModel, CollectionFormModel collectionFormModel)
+            SaveCollectionUseCase saveCollectionUseCase, ListNewCollectionViewModel listNewCollectionViewModel,
+             CollectionFormModel collectionFormModel,GetCollectionCloseUseCase getCollectionCloseUseCase)
         {
             _collectionFormModel = collectionFormModel;
             _listNewCollectionViewModel = listNewCollectionViewModel;
             _saveCollectionUseCase = saveCollectionUseCase;
             _getListCollectionsUseCase = getListCollectionsUseCase;
             _getDashBoardCollectionUseCase = getDashBoardCollectionUseCase;
+            _getCollectionCloseUseCase = getCollectionCloseUseCase;
         }
 
        
@@ -34,12 +38,53 @@ namespace Easymakemoney.ViewModels.Dashboard
 
         public int CollectionId { get; set; }
 
+    
+        public bool _isClosed = false;
+        public bool IsClosed
+        {
+            get => _isClosed;
+            set { _isClosed = value; OnPropertyChanged(nameof(IsClosed)); }
+        }
+
+        public bool _isClosedVisible = false;
+        public bool IsClosedVisible
+        {
+            get => _isClosedVisible;
+            set { _isClosedVisible = value; OnPropertyChanged(nameof(IsClosedVisible)); }
+        }
+
          private string _collectionImage;
         public string CollectionImage
         {
             get => _collectionImage;
             set { _collectionImage = value; OnPropertyChanged(nameof(CollectionImage)); }
         }
+         [ICommand]
+        public async Task CloseCollection()
+        {
+            if (IsBusy)
+                return;
+
+            IsBusy = true;
+            try
+            {
+                var result = await _getCollectionCloseUseCase.GetCollectionClose(CollectionId);
+                if (result != null)
+                {
+                    await Application.Current.MainPage.DisplayAlert("retour", result, "OK");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        
 
 
         public async Task GetDashBoardCollectionAsync(int CollectionId)
@@ -73,7 +118,9 @@ namespace Easymakemoney.ViewModels.Dashboard
                     {
                         this.CollectionId = collection.id;
                         this.CollectionImage = collection.Photo;
+                        this.IsClosed = collection.IsClosed;
                         await this.GetDashBoardCollectionAsync(collection.id);
+                        IsClosedVisible=true;
                     }
                 });
 

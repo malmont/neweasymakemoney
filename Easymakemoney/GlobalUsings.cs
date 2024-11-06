@@ -54,3 +54,4 @@ global using CommunityToolkit.Maui;
 global using Easymakemoney.UseCase.FraisClientTotalUseCase;
 global using Microsoft.Extensions.Logging;
 global using SkiaSharp.Views.Maui.Controls.Hosting;
+global using Easymakemoney.UseCase.CollectionCloseUseCase;

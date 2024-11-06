@@ -78,18 +78,62 @@
                          Orientation="Vertical"
                          HorizontalOptions="FillAndExpand"
                          VerticalOptions="FillAndExpand">
+                <StackLayout>
+                    <Frame BorderColor="#C4AB4D"
+                           Margin="25,5"
+                           Padding="10"
+                           HorizontalOptions="FillAndExpand"
+                           BackgroundColor="#C4AB4D"
+                           CornerRadius="10"
+                           HasShadow="True">
+                        <StackLayout Orientation="Horizontal"
+                                     HorizontalOptions="FillAndExpand"
+                                     HeightRequest="50">
+                            <Image Source="revenue.png"
+                                   HeightRequest="40"
+                                   WidthRequest="40"
+                                   Margin="0,0,10,0"/>
+                            <Label VerticalTextAlignment="Center"
+                                   HorizontalTextAlignment="End"
+                                   FontSize="20"
+                                   FontAttributes="Bold"
+                                   Text="Valeur stock"
+                                   Margin="10"/>
+                        </StackLayout>
+                    </Frame>
 
-                <!-- Vue d'ensemble du budget -->
-                <components:BudgetOverviewView
-                    IconSource="revenue.png"
-                    HeaderText="Valeur stock"
-                    TotalLabelText="{Binding StockDataValueCurrentMonth.Month}"
-                    TotalValue="{Binding StockDataValueCurrentMonth.StockValue, Converter={StaticResource CurrencyConverter}}"
-                    ExpensesLabelText="{Binding StockDataValueLastMonth.Month}"
-                    ExpensesValue="{Binding StockDataValueLastMonth.StockValue, Converter={StaticResource CurrencyConverter}}"
-                    RemainingLabelText="{Binding StockDataValueTowMonth.Month}"
-                    IsExpensesVisible="True"
-                    RemainingValue="{Binding StockDataValueTowMonth.StockValue,Converter={StaticResource CurrencyConverter}}"/>
+                    <StackLayout Margin="0,0"
+                                 Orientation="Horizontal"
+                                 HorizontalOptions="FillAndExpand">
+                        <StackLayout Margin="20,0,20,0"
+                                     HorizontalOptions="FillAndExpand"
+                                     Orientation="Horizontal">
+                            <Frame BorderColor="#C4AB4D"
+                                   Margin="3"
+                                   HorizontalOptions="FillAndExpand"
+                                   CornerRadius="5"
+                                   Padding="2">
+                                <StackLayout HorizontalOptions="FillAndExpand"
+                                             Margin="5,5"
+                                             Orientation="Vertical">
+                                    <Label HorizontalTextAlignment="Center"
+                                           Text="{Binding StockDataValueCurrentMonth.Month}"
+                                           FontSize="13"
+                                           FontAttributes="Bold"/>
+                                    <BoxView Color="Gray"
+                                             HeightRequest="2"
+                                             HorizontalOptions="Fill"/>
+                                    <Label HorizontalOptions="CenterAndExpand"
+                                           Text="{Binding StockDataValueCurrentMonth.StockValue, Converter={StaticResource CurrencyConverter}}"
+                                           FontSize="13"
+                                           TextColor="#E8B805"
+                                           HorizontalTextAlignment="Center"/>
+                                </StackLayout>
+                            </Frame>
+                        </StackLayout>
+
+                    </StackLayout>
+                </StackLayout>
 
                 <!-- Titre pour les recettes journalières de la semaine -->
                 <Frame BorderColor="#C4AB4D"
@@ -116,24 +160,40 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
+                <Frame BorderColor="#C4AB4D" IsVisible="{Binding IsWeekChartVisible}"
+                       Margin="25,5,25,0"
+                       CornerRadius="10"
+                       HasShadow="True">
 
-                <microcharts:ChartView Chart="{Binding WeekChart, Mode=TwoWay}"
-                                       Margin="20,5,20,0"
-                                       IsVisible="{Binding IsWeekChartVisible}"
-                                       HeightRequest="200"
-                                       HorizontalOptions="FillAndExpand"/>
+                    <microcharts:ChartView Chart="{Binding WeekChart, Mode=TwoWay}"
+                                           Margin="5,5,5,5"
+                                           
+                                           HeightRequest="200"
+                                           HorizontalOptions="FillAndExpand"/>
+                </Frame>
 
-                <microcharts:ChartView Chart="{Binding MonthChart, Mode=TwoWay}"
-                                       Margin="20,5,20,0"
-                                       IsVisible="{Binding IsMonthChartVisible}"
-                                       HeightRequest="200"
-                                       HorizontalOptions="FillAndExpand"/>
+                <Frame BorderColor="#C4AB4D"  IsVisible="{Binding IsMonthChartVisible}"
+                       Margin="25,5,25,0"
+                       CornerRadius="10"
+                       HasShadow="True">
 
-                <microcharts:ChartView Chart="{Binding YearChart, Mode=TwoWay}"
-                                       Margin="20,5,20,0"
-                                       IsVisible="{Binding IsYearChartVisible}"
-                                       HeightRequest="200"
-                                       HorizontalOptions="FillAndExpand"/>
+                    <microcharts:ChartView Chart="{Binding MonthChart, Mode=TwoWay}"
+                                           Margin="5,5,5,5"
+                                          
+                                           HeightRequest="200"
+                                           HorizontalOptions="FillAndExpand"/>
+                </Frame>
+                <Frame BorderColor="#C4AB4D"  IsVisible="{Binding IsYearChartVisible}"
+                       Margin="25,5,25,0"
+                       CornerRadius="10"
+                       HasShadow="True">
+
+                    <microcharts:ChartView Chart="{Binding YearChart, Mode=TwoWay}"
+                                           Margin="5,5,5,5"
+                                          
+                                           HeightRequest="200"
+                                           HorizontalOptions="FillAndExpand"/>
+                </Frame>
             </StackLayout>
         </StackLayout>
     </ScrollView>

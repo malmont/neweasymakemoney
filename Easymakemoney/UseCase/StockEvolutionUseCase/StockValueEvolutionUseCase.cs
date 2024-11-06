@@ -9,7 +9,7 @@ namespace Easymakemoney.UseCase.StockEvolutionUseCase
             _stockEvolutionServices = stockEvolutionServices;
         }
 
-        public async Task<StockValueEvolution> GetStockValueEvolution()
+        public async Task<StockValue> GetStockValueEvolution()
         {
             return await _stockEvolutionServices.GetStockValueEvolution();
         }
