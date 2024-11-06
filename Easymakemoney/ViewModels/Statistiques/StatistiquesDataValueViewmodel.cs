@@ -23,7 +23,6 @@ namespace Easymakemoney.ViewModels.Statistiques
         [ObservableProperty] private List<IStatistiqueData>? allDataValue;
 
         public int periodeTypeId { get; set; }
-        public List<PeriodeType> periodeTypeChoices { get; set; }
 
         // Propriétés pour chaque graphique
         [ObservableProperty] private Chart weekChart;
@@ -35,16 +34,12 @@ namespace Easymakemoney.ViewModels.Statistiques
         [ObservableProperty] bool isMonthChartVisible;
 
         [ObservableProperty] bool isYearChartVisible;
+          public List<PeriodeType> PeriodeTypeChoices { get; }
 
         public StatistiquesDataValueViewmodel()
         {
 
-            periodeTypeChoices = new List<PeriodeType>
-            {
-                new PeriodeType { id = 1, typePeriode = "Semaine", photoPeriode = "periode_semaine.png" },
-                new PeriodeType { id = 2, typePeriode = "Mois", photoPeriode = "periode_mois.png" },
-                new PeriodeType { id = 3, typePeriode = "Année", photoPeriode = "periode_annee.png" }
-            };
+           PeriodeTypeChoices = StaticData.StaticData.PeriodeTypeChoices;
 
         }
         public void LoadDataChiffreAffaire<TDaily, TWeekly, TMonthly>(IAllDataStatistics<TDaily, TWeekly, TMonthly> data)
@@ -122,7 +117,7 @@ namespace Easymakemoney.ViewModels.Statistiques
         public async Task ShowBottomSheetPopupListView()
         {
             var viewModel = new BottomSheetPopupListViewViewModel(
-                getItemsFunc: async () => await Task.FromResult(periodeTypeChoices),
+                getItemsFunc: async () => await Task.FromResult(PeriodeTypeChoices),
                 onItemTappedAction: async (item) =>
                 {
                     if (item is PeriodeType periodeType)

@@ -155,11 +155,11 @@
 
                     <components:TitreComponent
                         IconSource="barcode.png"
-                        HeaderText="Quantity"
-                        Value="{Binding DashBoardProduct.quantity}"/>
+                        HeaderText="Stock commandé"
+                        Value="{Binding DisplayedQuantity}"/>
                     <CheckBox BackgroundColor="Transparent"
                               Color="Transparent"/>
-                    <components:TitreComponent
+                    <components:TitreComponent 
                         IconSource="calendar.png"
                         HeaderText="Crée le"
                         Value="{Binding DashBoardProduct.createdAt}"/>
@@ -181,7 +181,7 @@
                         IconSource="collection.png"
                         Value="{Binding DashBoardProduct.quantity}"
                         IsExpensesVisible="True"
-                        HeaderText="Stock Total"/>
+                        HeaderText="Stock en cours"/>
 
                     <CollectionView ItemsSource="{Binding DashBoardProduct.variants}"
                                     Margin="10,0"

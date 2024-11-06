@@ -16,6 +16,7 @@ namespace Easymakemoney.Models
         public bool isspecialoffer { get; set; }
         public string? image { get; set; }
         public int quantity { get; set; }
+        public int? freezeQuantity { get; set; }
         public string? createdAt { get; set; }
         public string? tags { get; set; }
         public string? slug { get; set; }

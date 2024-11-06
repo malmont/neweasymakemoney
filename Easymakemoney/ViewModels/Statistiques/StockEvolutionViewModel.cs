@@ -8,8 +8,6 @@ namespace Easymakemoney.ViewModels.Statistiques
         [ObservableProperty] private string stockCurrentPeriode;
 
         [ObservableProperty] private StockValueData stockDataValueCurrentMonth;
-        [ObservableProperty] private StockValueData stockDataValueLastMonth;
-        [ObservableProperty] private StockValueData stockDataValueTowMonth;
       
 
         // Collections de données pour différentes périodes
@@ -19,7 +17,7 @@ namespace Easymakemoney.ViewModels.Statistiques
         [ObservableProperty] private List<IStatistiqueData>? allDataValue;
 
         public int periodeTypeId { get; set; }
-        public List<PeriodeType> periodeTypeChoices { get; set; }
+
 
         // Propriétés pour chaque graphique
         [ObservableProperty] private Chart weekChart;
@@ -31,19 +29,15 @@ namespace Easymakemoney.ViewModels.Statistiques
         [ObservableProperty] bool isMonthChartVisible;
 
         [ObservableProperty] bool isYearChartVisible;
+        public List<PeriodeType> PeriodeTypeChoices { get; }
 
         public StockEvolutionViewModel()
         {
 
-            periodeTypeChoices = new List<PeriodeType>
-            {
-                new PeriodeType { id = 1, typePeriode = "Semaine", photoPeriode = "periode_semaine.png" },
-                new PeriodeType { id = 2, typePeriode = "Mois", photoPeriode = "periode_mois.png" },
-                new PeriodeType { id = 3, typePeriode = "Année", photoPeriode = "periode_annee.png" }
-            };
+            PeriodeTypeChoices = StaticData.StaticData.PeriodeTypeChoices;
 
         }
-        public void LoadDataChiffreAffaire( StockEvolution data ,StockValueEvolution data1)
+        public void LoadDataChiffreAffaire( StockEvolution data ,StockValue data1)
 
         {
             StockCurrentPeriode = "stock semaine";
@@ -51,9 +45,8 @@ namespace Easymakemoney.ViewModels.Statistiques
             StockMouvementDataValueMonth = data.StockEvolutionMonth.Cast<IStatistiqueData>().ToList();
             StockMouvementDataValueYear = data.StockEvolutionYear.Cast<IStatistiqueData>().ToList();
 
-            StockDataValueCurrentMonth= data1.StockValueCurrentMonth[0];
-            StockDataValueLastMonth= data1.StockValueLastMonth[0];
-            StockDataValueTowMonth= data1.StockValueTwoMonthsAgo[0];
+            StockDataValueCurrentMonth= data1.StockValueCurrent.StockValueCurrentMonth[0];
+           
 
             // Appliquer les couleurs alternées
             ApplyAlternateRowColors(StockMouvementDataValueWeek);
@@ -97,7 +90,7 @@ namespace Easymakemoney.ViewModels.Statistiques
         public async Task ShowBottomSheetPopupListView()
         {
             var viewModel = new BottomSheetPopupListViewViewModel(
-                getItemsFunc: async () => await Task.FromResult(periodeTypeChoices),
+                getItemsFunc: async () => await Task.FromResult(PeriodeTypeChoices),
                 onItemTappedAction: async (item) =>
                 {
                     if (item is PeriodeType periodeType)

@@ -1,5 +1,7 @@
 ﻿
 
+
+
 namespace Easymakemoney;
 
 public static class MauiProgram
@@ -46,6 +48,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<IPaiementRemboursementService, PaiementRemboursementService>();
 		builder.Services.AddTransient<ITransactionCaisseService, TransactionCaisseService>();
 		builder.Services.AddTransient<IFraisClientTotalService, FraisClientTotalService>();
+		builder.Services.AddTransient<ICollectionCloseService, CollectionCloseService>();
 
 
 		builder.Services.AddTransient<GetListCollectionsUseCase>();
@@ -97,6 +100,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<TransactionCaisseUseCase>();
 		builder.Services.AddTransient<GetFraisClientTaxUseCase>();
 		builder.Services.AddTransient<GetFraisClientCarrierUseCase>();
+		builder.Services.AddTransient<GetCollectionCloseUseCase>();
 
 
 

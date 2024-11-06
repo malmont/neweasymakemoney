@@ -38,8 +38,8 @@ namespace Easymakemoney.ViewModels.Statistiques
         {
             periodeTypeChoices = new List<PeriodeType>
             {
-                new PeriodeType { id = 1, typePeriode = "Paiements", photoPeriode = "periode_semaine.png" },
-                new PeriodeType { id = 2, typePeriode = "Remboursement", photoPeriode = "periode_mois.png" },
+                new PeriodeType { id = 1, typePeriode = "Paiements", photoPeriode = "week.png" },
+                new PeriodeType { id = 2, typePeriode = "Remboursement", photoPeriode = "month.png" },
                 
             };
         }

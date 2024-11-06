@@ -9,6 +9,9 @@ namespace Easymakemoney.ViewModels.Dashboard
         private readonly ProductFormModel _productFormModel;
         private readonly SaveProductUseCase _saveProductUseCase;
         private readonly GetListProductsUseCase _getListProductUseCase;
+        
+        [ObservableProperty]
+        private int displayedQuantity;
 
         public DashBoardProductViewModel(ListNewProductViewModel listNewProductViewModel, ProductFormModel productFormModel,
             SaveProductUseCase saveProductUseCase, GetListProductsUseCase getListProductUseCase)
@@ -39,7 +42,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             get => _productImage;
             set { _productImage = value; OnPropertyChanged(nameof(ProductImage)); }
         }
-      
+
         [ICommand]
         public async Task ShowBottomSheetCreateProduct()
         {
@@ -70,14 +73,15 @@ namespace Easymakemoney.ViewModels.Dashboard
             }
             var viewModel = new BottomSheetPopupListViewViewModel(
                 getItemsFunc: async () => await _getListProductUseCase.ExecuteAsync(CommandId),
-                onItemTappedAction:  (item) =>
+                onItemTappedAction: (item) =>
                 {
                     var Product = item as ListProduct;
                     if (Product != null)
                     {
                         this.DashBoardProduct = Product;
                         this.ProductImage = Product.image;
-                      
+                        DisplayedQuantity = Product.freezeQuantity ?? Product.quantity;
+
                     }
                 });
 

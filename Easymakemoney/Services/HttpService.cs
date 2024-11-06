@@ -37,7 +37,7 @@ namespace Easymakemoney.Services
             }
         }
 
-        public async Task<T> PostAsyncWithAuth<T>(string url, object data)
+        public async Task<T> PostAsyncWithAuth<T>(string url, object? data = null)
         {
             var token = _preferenceService.GetUserToken();
             if (string.IsNullOrEmpty(token))
@@ -47,12 +47,18 @@ namespace Easymakemoney.Services
 
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
-            var json = JsonConvert.SerializeObject(data);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            // Si `data` est null, créez une requête sans contenu
+            HttpContent? content = null;
+            if (data != null)
+            {
+                var json = JsonConvert.SerializeObject(data);
+                content = new StringContent(json, Encoding.UTF8, "application/json");
+            }
+
             var response = await _httpClient.PostAsync(url, content);
             var responseJson = await response.Content.ReadAsStringAsync();
 
-            // Ajoutez des journaux pour vérifier la réponse du serveur
+            // Journaux pour vérifier la réponse du serveur
             Debug.WriteLine($"Response Status Code: {response.StatusCode}");
             Debug.WriteLine($"Response Content: {responseJson}");
 
@@ -66,6 +72,7 @@ namespace Easymakemoney.Services
                 return default;
             }
         }
+
 
         public async Task<bool> DeleAsyncWithAuth<T>(string url)
         {

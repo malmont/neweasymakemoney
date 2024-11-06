@@ -49,8 +49,6 @@ namespace Easymakemoney.ViewModels.Statistiques
         [ObservableProperty] private List<IStatistiqueData> dailycurrentWeekReturnOrderComplete;
 
         public int periodeTypeId { get; set; }
-        public List<PeriodeType> periodeTypeChoices { get; set; }
-
         // Propriétés pour chaque graphique
         [ObservableProperty] private Chart weekChart;
         [ObservableProperty] private Chart monthChart;
@@ -58,7 +56,7 @@ namespace Easymakemoney.ViewModels.Statistiques
 
         [ObservableProperty] private Chart weekChartdailycurrentWeekOrderDelivery;
         [ObservableProperty] private Chart weekChartdailyLcurrentWeekOrderCancellation;
-        
+
         [ObservableProperty] private Chart weekChartdailycurrentWeekReturnOrderComplete;
 
         [ObservableProperty] bool isWeekChartVisible;
@@ -66,16 +64,11 @@ namespace Easymakemoney.ViewModels.Statistiques
         [ObservableProperty] bool isMonthChartVisible;
 
         [ObservableProperty] bool isYearChartVisible;
-
+        public List<PeriodeType> PeriodeTypeChoices { get; }
         public OrderCountViewModel()
         {
 
-            periodeTypeChoices = new List<PeriodeType>
-            {
-                new PeriodeType { id = 1, typePeriode = "Semaine", photoPeriode = "periode_semaine.png" },
-                new PeriodeType { id = 2, typePeriode = "Mois", photoPeriode = "periode_mois.png" },
-                new PeriodeType { id = 3, typePeriode = "Année", photoPeriode = "periode_annee.png" }
-            };
+            PeriodeTypeChoices = StaticData.StaticData.PeriodeTypeChoices;
 
         }
         public void LoadOderCount(OrderStatistics data)
@@ -172,7 +165,7 @@ namespace Easymakemoney.ViewModels.Statistiques
         public async Task ShowBottomSheetPopupListView()
         {
             var viewModel = new BottomSheetPopupListViewViewModel(
-                getItemsFunc: async () => await Task.FromResult(periodeTypeChoices),
+                getItemsFunc: async () => await Task.FromResult(PeriodeTypeChoices),
                 onItemTappedAction: async (item) =>
                 {
                     if (item is PeriodeType periodeType)

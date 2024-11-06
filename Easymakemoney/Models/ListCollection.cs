@@ -7,6 +7,8 @@
         public required string startDateCollection { get; set; }
         public required string endDateCollection { get; set; }
         public bool del { get; set; }
+        public bool IsClosed { get; set; } = false;
+
         public required string nomCollection { get; set; }
         public required string photoCollection { get; set; }
         public int userId { get; set; }

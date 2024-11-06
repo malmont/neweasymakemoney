@@ -45,9 +45,57 @@
                                                       LabelText="COLLECTION"/>
                     </Grid>
                     <!--fin navbar-->
-
                     <!--fin bouton pour creer une collection-->
                     <StackLayout Style="{StaticResource HeaderStackLayoutStyle}">
+                        <StackLayout IsVisible="{Binding IsClosedVisible}" >
+                            <!-- Bouton "Close Collection" -->
+                            <Button Text="Close Collection"
+                                    BackgroundColor="#C4AB4D"
+                                    TextColor="White"
+                                    FontSize="20"
+                                    FontAttributes="Bold"
+                                    CornerRadius="10"
+                                    Margin="20,20"
+                                    Command="{Binding CloseCollectionCommand}">
+                                <Button.Triggers>
+                                    <DataTrigger TargetType="Button"
+                                            Binding="{Binding IsClosed}"
+                                            Value="True">
+                                        <Setter Property="IsVisible"
+                                                Value="False"/>
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Button"
+                                            Binding="{Binding IsClosed}"
+                                            Value="False">
+                                        <Setter Property="IsVisible"
+                                                Value="True"/>
+                                    </DataTrigger>
+                                </Button.Triggers>
+                            </Button>
+
+                            <!-- Label "Collection Closed" -->
+                            <Label Text="Collection Close"
+                                   FontSize="20"
+                                   TextColor="Red"
+                                   HorizontalOptions="Center">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label"
+                                            Binding="{Binding IsClosed}"
+                                            Value="True">
+                                        <Setter Property="IsVisible"
+                                                Value="True"/>
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label"
+                                            Binding="{Binding IsClosed}"
+                                            Value="False">
+                                        <Setter Property="IsVisible"
+                                                Value="False"/>
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </StackLayout>
+
+
                         <Image Style="{StaticResource HeaderImageStyle}"/>
                     </StackLayout>
 
@@ -178,7 +226,7 @@
                         ExpensesValue="{Binding DashBoardCollection.generalExpenses.totalShippingCost, Converter={StaticResource CurrencyConverter}}"
                         RemainingLabelText="Divers"
                         IsExpensesVisible="True"
-                        RemainingValue= "{Binding DashBoardCollection.generalExpenses.totalExpenseCost, Converter={StaticResource CurrencyConverter}}"/>
+                        RemainingValue="{Binding DashBoardCollection.generalExpenses.totalExpenseCost, Converter={StaticResource CurrencyConverter}}"/>
                     <CheckBox BackgroundColor="Transparent"
                               Color="Transparent"/>
                     <components:BudgetOverviewView

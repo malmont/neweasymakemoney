@@ -104,20 +104,28 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
+                <Frame BorderColor="#C4AB4D"
+                        IsVisible="{Binding IsmonhthlyTaxesChartVisible}"
+                       Margin="25,5,25,0"
+                       CornerRadius="10"
+                       HasShadow="True">
 
-                <microcharts:ChartView Chart="{Binding MonhthlyTaxesChart, Mode=TwoWay}"
-                                       Margin="20,5,20,0"
-                                       IsVisible="{Binding IsmonhthlyTaxesChartVisible}"
-                                       HeightRequest="200"
-                                       HorizontalOptions="FillAndExpand"/>
+                    <microcharts:ChartView Chart="{Binding MonhthlyTaxesChart, Mode=TwoWay}"
+                                           HeightRequest="200"
+                                           HorizontalOptions="FillAndExpand"/>
+                </Frame>
+                <Frame BorderColor="#C4AB4D"
+                        IsVisible="{Binding IsmonthlyCarrierChartVisible}"
+                       Margin="25,5,25,0"
+                       CornerRadius="10"
+                       HasShadow="True">
 
-                <microcharts:ChartView Chart="{Binding MonthlyCarrierChart, Mode=TwoWay}"
-                                       Margin="20,5,20,0"
-                                       IsVisible="{Binding IsmonthlyCarrierChartVisible}"
-                                       HeightRequest="200"
-                                       HorizontalOptions="FillAndExpand"/>
+                    <microcharts:ChartView Chart="{Binding MonthlyCarrierChart, Mode=TwoWay}"
+                                           HeightRequest="200"
+                                           HorizontalOptions="FillAndExpand"/>
+                </Frame>
 
-               
+
             </StackLayout>
         </StackLayout>
     </ScrollView>

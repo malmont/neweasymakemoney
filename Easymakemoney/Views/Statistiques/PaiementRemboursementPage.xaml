@@ -136,18 +136,27 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
+                <Frame BorderColor="#C4AB4D" IsVisible="{Binding IsPaiementChartVisible}"
+                       Margin="25,5,25,0"
+                       CornerRadius="10"
+                       HasShadow="True">
 
-
-                <microcharts:ChartView Chart="{Binding PaymentChart, Mode=TwoWay}"
-                                       Margin="20,5,20,0"
-                                       IsVisible="{Binding IsPaiementChartVisible}"
-                                       HeightRequest="200"
-                                       HorizontalOptions="FillAndExpand"/>
-                <microcharts:ChartView Chart="{Binding RefundChart, Mode=TwoWay}"
-                                       Margin="20,5,20,0"
-                                       IsVisible="{Binding IsRemboursementChartVisible}"
-                                       HeightRequest="200"
-                                       HorizontalOptions="FillAndExpand"/>
+                    <microcharts:ChartView Chart="{Binding PaymentChart, Mode=TwoWay}"
+                                           Margin="5,5,5,5"
+                                           
+                                           HeightRequest="200"
+                                           HorizontalOptions="FillAndExpand"/>
+                </Frame>
+                <Frame BorderColor="#C4AB4D" IsVisible="{Binding IsRemboursementChartVisible}"
+                       Margin="25,5,25,0"
+                       CornerRadius="10"
+                       HasShadow="True">
+                    <microcharts:ChartView Chart="{Binding RefundChart, Mode=TwoWay}"
+                                            Margin="5,5,5,5"
+                                           
+                                           HeightRequest="200"
+                                           HorizontalOptions="FillAndExpand"/>
+                </Frame>
 
 
             </StackLayout>
