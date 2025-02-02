@@ -3,7 +3,7 @@ namespace Easymakemoney.Models
 {
     public class AverageOrderValueServices : IAverageOrderValueServices
     {
-        private const string AverageOrderValueStatisticsUrl = "https://backend-strapi.online/jeesign/api";
+        private const string AverageOrderValueStatisticsUrl = Configurations.BackendSymfonyUrl;
 
         private readonly IHttpService _httpService;
 

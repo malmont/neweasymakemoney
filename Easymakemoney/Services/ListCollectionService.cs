@@ -2,7 +2,7 @@
 {
     public class ListCollectionService : IListCollectionService
     {
-        private const string CollectionsUrl = "https://backend-strapi.online/jeesign/api";
+        private const string CollectionsUrl = Configurations.BackendSymfonyUrl;
         private readonly IHttpService _httpService;
 
         public ListCollectionService(IHttpService httpService)

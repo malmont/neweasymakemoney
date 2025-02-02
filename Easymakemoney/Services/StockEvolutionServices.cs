@@ -3,7 +3,7 @@ namespace Easymakemoney.Services
 
     public class StockEvolutionServices : IStockEvolutionServices
     {
-        private const string StockEvolutionsUrl = "https://backend-strapi.online/jeesign/api";
+        private const string StockEvolutionsUrl = Configurations.BackendSymfonyUrl;
 
         private readonly IHttpService _httpService;
 

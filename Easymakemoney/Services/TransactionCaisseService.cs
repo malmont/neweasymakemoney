@@ -3,7 +3,7 @@ namespace Easymakemoney.Services
     public class TransactionCaisseService: ITransactionCaisseService
     {
         private readonly IHttpService _httpService;
-        private const string TransactionCaisseUrl = "https://backend-strapi.online/jeesign/api";
+        private const string TransactionCaisseUrl = Configurations.BackendSymfonyUrl;
 
         public TransactionCaisseService(IHttpService httpService)
         {

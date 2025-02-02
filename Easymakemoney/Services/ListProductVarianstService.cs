@@ -3,7 +3,7 @@ namespace Easymakemoney.Services
     public class ListProductVariantService:IListProductVarianstService
 
     {
-        private const string ProductVariantUrl = "https://backend-strapi.online/jeesign/api";
+        private const string ProductVariantUrl = Configurations.BackendSymfonyUrl;
         private readonly IHttpService _httpService;
 
         public ListProductVariantService(IHttpService httpService)

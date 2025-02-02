@@ -2,7 +2,7 @@ namespace Easymakemoney.Services
 {
     public class ListSizesServices:IListSizesServices
     {
-        private const string SizesUrl = "https://backend-strapi.online/jeesign/api";
+        private const string SizesUrl =Configurations.BackendSymfonyUrl;
         private readonly IHttpService _httpService;
 
         public ListSizesServices(IHttpService httpService)

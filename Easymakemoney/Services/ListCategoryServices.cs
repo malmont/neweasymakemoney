@@ -2,7 +2,7 @@ namespace Easymakemoney.Services
 {
   public class ListCategoryServices : IListCategoryServices
   {
-    private const string CategoriesUrl = "https://backend-strapi.online/jeesign/api";
+    private const string CategoriesUrl = Configurations.BackendSymfonyUrl;
     private readonly IHttpService _httpService;
 
     public ListCategoryServices(IHttpService httpService)

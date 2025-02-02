@@ -2,7 +2,7 @@ namespace Easymakemoney.Services
 {
     public class ListNoteDeFraisServices: IListNoteDeFraisServices
     {
-        private const string NoteDeFraisUrl = "https://backend-strapi.online/jeesign/api";
+        private const string NoteDeFraisUrl = Configurations.BackendSymfonyUrl;
            private readonly IHttpService _httpService;
         public ListNoteDeFraisServices(IHttpService httpService)
         {

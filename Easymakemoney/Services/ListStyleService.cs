@@ -3,7 +3,7 @@ namespace Easymakemoney.Services
     public class ListStyleService : IListStyleService
     {
          private readonly IHttpService _httpService;
-        private const string Url = "https://backend-strapi.online/jeesign/api";
+        private const string Url = Configurations.BackendSymfonyUrl;
 
         public ListStyleService(IHttpService httpService)
         {

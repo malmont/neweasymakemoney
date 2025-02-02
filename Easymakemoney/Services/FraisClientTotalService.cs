@@ -2,7 +2,7 @@ namespace Easymakemoney.Services
 {
     public class FraisClientTotalService : IFraisClientTotalService
     {
-        private const string FraisClientTotalUrl = "https://backend-strapi.online/jeesign/api";
+        private const string FraisClientTotalUrl = Configurations.BackendSymfonyUrl;
         private readonly IHttpService _httpService;
 
         public FraisClientTotalService(IHttpService httpService)

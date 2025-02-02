@@ -1,7 +1,4 @@
 ﻿
-
-
-
 namespace Easymakemoney;
 
 public static class MauiProgram

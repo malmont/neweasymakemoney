@@ -4,7 +4,7 @@ namespace Easymakemoney.Services
 {
     public class DashboardCommandServices: IDashboardCommandServices
     {
-        private const string DashBoardCommandUrl = "https://backend-strapi.online/jeesign/api";
+        private const string DashBoardCommandUrl = Configurations.BackendSymfonyUrl;
          private readonly IHttpService _httpService;
 
         public DashboardCommandServices(IHttpService httpService)

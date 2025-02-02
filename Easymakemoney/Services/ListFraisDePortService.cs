@@ -2,7 +2,7 @@ namespace Easymakemoney.Services
 {
     public class ListFraisDePortService: IListFraisDePortService
     {
-        private const string fraisDePortUrl = "https://backend-strapi.online/jeesign/api";
+        private const string fraisDePortUrl = Configurations.BackendSymfonyUrl;
         private readonly IHttpService _httpService;
         public ListFraisDePortService(IHttpService httpService)
         {

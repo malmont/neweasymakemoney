@@ -2,7 +2,7 @@ namespace Easymakemoney.Services
 {
     public class ListFourniseursServices : IListFourniseursServices
     {
-        private const string FourniseursUrl = "https://backend-strapi.online/jeesign/api";
+        private const string FourniseursUrl = Configurations.BackendSymfonyUrl;
         private readonly IHttpService _httpService;
 
         public ListFourniseursServices(IHttpService httpService)

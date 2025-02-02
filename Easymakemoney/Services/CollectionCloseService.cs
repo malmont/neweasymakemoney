@@ -2,7 +2,7 @@ namespace Easymakemoney.Services
 {
     public class CollectionCloseService : ICollectionCloseService
     {
-        private const string CollectionsCloseUrl = "https://backend-strapi.online/jeesign/api";
+        private const string CollectionsCloseUrl = Configurations.BackendSymfonyUrl;
         private readonly IHttpService _httpService;
 
         public CollectionCloseService(IHttpService httpService)
