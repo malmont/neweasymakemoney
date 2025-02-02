@@ -2,7 +2,7 @@
 {
     public class LoginService : ILoginService
     {
-        private const string LoginUrl = "https://backend-strapi.online/jeesign/api/login";
+        private const string LoginUrl = Configurations.BackendSymfonyUrl;
         private readonly IHttpService _httpService;
 
         public LoginService(IHttpService httpService)
@@ -12,7 +12,8 @@
 
         public async Task<LoginResponse> Authenticate(LoginRequest loginRequest)
         {
-            return await _httpService.PostAsyncWithoutAuth<LoginResponse>(LoginUrl, loginRequest);
+            var url = $"{LoginUrl}/login";
+            return await _httpService.PostAsyncWithoutAuth<LoginResponse>(url, loginRequest);
         }
     }
 }

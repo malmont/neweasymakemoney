@@ -2,7 +2,7 @@ namespace Easymakemoney.Services
 {
     public class ListCommandService : IListCommandService
     {
-        private const string CommandesUrl = "https://backend-strapi.online/jeesign/api";
+        private const string CommandesUrl =Configurations.BackendSymfonyUrl;
         private readonly IHttpService _httpService;
 
         public ListCommandService(IHttpService httpService)

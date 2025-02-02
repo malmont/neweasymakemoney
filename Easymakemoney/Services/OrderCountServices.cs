@@ -2,7 +2,7 @@ namespace Easymakemoney.Models
 {
     public class OrderCountServices: IOrderCountServices
     {
-        private const string OrderCoutServicessUrl = "https://backend-strapi.online/jeesign/api";
+        private const string OrderCoutServicessUrl = Configurations.BackendSymfonyUrl;
 
         private readonly IHttpService _httpService;
 

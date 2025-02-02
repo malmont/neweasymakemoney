@@ -2,7 +2,7 @@ namespace Easymakemoney.Services
 {
     public class ListColorsServices: IListColorsServices
     {
-        private const string ColorsUrl = "https://backend-strapi.online/jeesign/api";
+        private const string ColorsUrl = Configurations.BackendSymfonyUrl;
         private readonly IHttpService _httpService;
 
         public ListColorsServices(IHttpService httpService)

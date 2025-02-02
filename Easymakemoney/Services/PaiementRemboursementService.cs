@@ -3,7 +3,7 @@ namespace Easymakemoney.Services
 
     public class PaiementRemboursementService : IPaiementRemboursementService
     {
-        private const string PaiementRemboursementUrl = "https://backend-strapi.online/jeesign/api";
+        private const string PaiementRemboursementUrl = Configurations.BackendSymfonyUrl;
         private readonly IHttpService _httpService;
 
         public PaiementRemboursementService(IHttpService httpService)

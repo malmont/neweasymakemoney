@@ -9,3 +9,4 @@ namespace Easymakemoney.Handlers
 	}
 }
 
+// remplace les customrenderer

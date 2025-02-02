@@ -3,7 +3,7 @@ namespace Easymakemoney.Services
     public class ChiffreAffaireService : IChiffreAffaireService
     {
 
-         private const string RevenueCollectionsUrl = "https://backend-strapi.online/jeesign/api";
+         private const string RevenueCollectionsUrl = Configurations.BackendSymfonyUrl;
         private readonly IHttpService _httpService;
 
         public ChiffreAffaireService(IHttpService httpService)

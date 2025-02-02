@@ -2,7 +2,7 @@ namespace Easymakemoney.Services
 {
     public class FraisEvolutionService: IFraisEvolutionService
     {
-    private const string FraisEvolutionUrl = "https://backend-strapi.online/jeesign/api";
+    private const string FraisEvolutionUrl = Configurations.BackendSymfonyUrl;
      private readonly IHttpService _httpService;
         public FraisEvolutionService(IHttpService httpService)
         {

@@ -18,7 +18,8 @@ namespace Easymakemoney.Models
 
         [JsonProperty("lastWeekCountAchatClientLivrée")]
         public double LastWeekCountAchatClientLivree { get; set; }
-
+ 
+ 
         [JsonProperty("dailyCountAchatClient_LivréeForCurrentWeek")]
         public List<DailyOrderData> DailyCountAchatClientLivreeForCurrentWeek { get; set; } = new();
 

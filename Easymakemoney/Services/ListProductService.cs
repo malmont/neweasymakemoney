@@ -2,7 +2,7 @@ namespace Easymakemoney.Services;
 
 public class ListProductService : IListProductService
 {
-    private const string ProductsUrl = "https://backend-strapi.online/jeesign/api";
+    private const string ProductsUrl = Configurations.BackendSymfonyUrl;
     private readonly IHttpService _httpService;
 
     public ListProductService(IHttpService httpService)
