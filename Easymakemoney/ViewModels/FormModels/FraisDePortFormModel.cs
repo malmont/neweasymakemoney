@@ -11,6 +11,15 @@ namespace Easymakemoney.ViewModels.FormModels
            set { _name = value; OnPropertyChanged(nameof(Name)); }
        }
 
+
+        private double? _prix;
+        public double? Prix
+        {
+            get => _prix;
+            set { _prix = value; OnPropertyChanged(nameof(Prix)); }
+        }
+
+
        private string _facture;
          public string Facture
          {
@@ -51,7 +60,6 @@ namespace Easymakemoney.ViewModels.FormModels
     
             private async void LoadTransporteur()
             {
-                // Call API to get categories and populate the Categories collection
                 var transporteurs = await _getListTransporteurUseCase.ExecuteAsync();
                 Transporteurs.Clear();
                 foreach (var transporteur in transporteurs)

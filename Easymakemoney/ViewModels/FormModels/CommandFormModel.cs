@@ -2,8 +2,8 @@ namespace Easymakemoney.ViewModels.FormModels
 {
     public class CommandFormModel : ObservableObject
     {
-        private float _budget;
-        public float Budget
+        private double? _budget;
+        public double? Budget
         {
             get => _budget;
             set { _budget = value; OnPropertyChanged(nameof(Budget)); }
@@ -44,6 +44,7 @@ namespace Easymakemoney.ViewModels.FormModels
         public CommandFormModel(GetListFournisseursUseCase getListFournisseursUseCase)
         {
             _getListFournisseursUseCase = getListFournisseursUseCase;
+             Date = DateTime.Today; 
             LoadTransporteurs();
         }
 

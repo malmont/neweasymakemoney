@@ -23,6 +23,13 @@ namespace Easymakemoney.Services
             return result != null;
         }
 
+        public async Task<ObservableCollection<TypeFournisseur>> GetTypeFournisseurs()
+        {
+            var url = $"{FourniseursUrl}/type-fournisseurs";
+            var typeFournisseurs = await _httpService.GetAsync<ObservableCollection<TypeFournisseur>>(url);
+            return typeFournisseurs ?? new ObservableCollection<TypeFournisseur>();
+        }
+
         public async Task<bool> DeleteFourniseurs(int id)
         {
             var url = $"{FourniseursUrl}/fournisseurs/{id}";

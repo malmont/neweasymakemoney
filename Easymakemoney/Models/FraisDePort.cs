@@ -4,7 +4,7 @@ namespace Easymakemoney.Models
     {
         public int id { get; set; }
         public required string name { get; set; }
-        public double price { get; set; }
+        public double? price { get; set; }
         public string? facture { get; set; }
         public string? tracknumber { get; set; }
         public required string image { get; set; }

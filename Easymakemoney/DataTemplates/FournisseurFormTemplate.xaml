@@ -6,23 +6,62 @@
     <!-- Command Form Template -->
     <ControlTemplate x:Key="FournisseurFormTemplate">
         <StackLayout>
-            <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Name" Text="{Binding FournisseurForm.Name, Mode=TwoWay}" />
+            <Frame HeightRequest="45"
+                    Margin="10,0,0,10"
+                    Padding="2"
+                    HasShadow="True"
+                    BorderColor="black"
+                    HorizontalOptions="Fill">
+                <handlers:BorderlessEntry Placeholder="Name"
+                        Text="{Binding FournisseurForm.Name, Mode=TwoWay}"/>
             </Frame>
-             <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Photo" Text="{Binding FournisseurForm.Photo, Mode=TwoWay}" />
+
+            <Frame HeightRequest="45"
+                    Margin="10,0,0,10"
+                    Padding="2"
+                    HasShadow="True"
+                    BorderColor="black"
+                    HorizontalOptions="Fill">
+                <handlers:BorderlessEntry Placeholder="Adresse"
+                        Text="{Binding FournisseurForm.Adresse, Mode=TwoWay}"/>
             </Frame>
-              <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Adresse" Text="{Binding FournisseurForm.Adresse, Mode=TwoWay}" />
+            <Frame HeightRequest="45"
+                    Margin="10,0,0,10"
+                    Padding="2"
+                    HasShadow="True"
+                    BorderColor="black"
+                    HorizontalOptions="Fill">
+                <handlers:BorderlessEntry Placeholder="Ville"
+                        Text="{Binding FournisseurForm.Ville, Mode=TwoWay}"/>
             </Frame>
-            <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Ville" Text="{Binding FournisseurForm.Ville, Mode=TwoWay}" />
+            <Frame HeightRequest="45"
+                    Margin="10,0,0,10"
+                    Padding="2"
+                    HasShadow="True"
+                    BorderColor="black"
+                    HorizontalOptions="Fill">
+                <handlers:BorderlessEntry Placeholder="Pays"
+                        Text="{Binding FournisseurForm.Pays, Mode=TwoWay}"/>
             </Frame>
-              <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Pays" Text="{Binding FournisseurForm.Pays, Mode=TwoWay}" />
+            <Frame HeightRequest="45"
+                    Margin="10,0,0,10"
+                    Padding="2"
+                    HasShadow="True"
+                    BorderColor="black"
+                    HorizontalOptions="Fill">
+                <handlers:BorderlessEntry Placeholder="Tel"
+                        Text="{Binding FournisseurForm.Tel, Mode=TwoWay}"/>
             </Frame>
-              <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Tel" Text="{Binding FournisseurForm.Tel, Mode=TwoWay}" />
+            <Frame HeightRequest="45"
+                   Margin="10,0,0,10"
+                   Padding="2"
+                   HasShadow="True"
+                   BorderColor="black"
+                   HorizontalOptions="Fill">
+                <Picker Title="Select typefournisseur"
+                        ItemsSource="{Binding FournisseurForm.TypeFournisseurSelected}"
+                        SelectedItem="{Binding FournisseurForm.SelectedTypeFournisseur}"
+                        ItemDisplayBinding="{Binding name}"/>
             </Frame>
         </StackLayout>
     </ControlTemplate>

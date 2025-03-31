@@ -21,6 +21,14 @@ namespace Easymakemoney.Services
             var result = await _httpService.PostAsyncWithAuth<object>(url, newNoteDeFrais);
             return result != null;
         }
+
+        public async Task<ObservableCollection<TypeNoteDeFrais>> GetTypeNoteDeFrais()
+        {
+            var url = $"{NoteDeFraisUrl}/type-note-de-frais";
+            var typeNoteDeFrais = await _httpService.GetAsync<ObservableCollection<TypeNoteDeFrais>>(url);
+            return typeNoteDeFrais ?? new ObservableCollection<TypeNoteDeFrais>();
+        }
+        
         public async Task<bool> DeleteNoteDeFrais(int id)
         {
             var url = $"{NoteDeFraisUrl}/notes-de-frais/{id}";

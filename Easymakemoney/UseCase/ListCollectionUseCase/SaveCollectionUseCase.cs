@@ -20,7 +20,7 @@ public class SaveCollectionUseCase
         var user = _preferenceService.GetUserId();
         var newCollection = new ListCollection
         {
-            budgetCollection = collectionForm.BudgetCollection,
+            budgetCollection = (collectionForm.BudgetCollection ?? 0) * 100,
             startDateCollection = collectionForm.StartDateCollection.ToString("yyyy-MM-ddTHH:mm:ssZ"),
             endDateCollection = collectionForm.EndDateCollection.ToString("yyyy-MM-ddTHH:mm:ssZ"),
             del = collectionForm.Del,

@@ -14,13 +14,12 @@ public class SaveCommandUseCase
     {
         var newCommand = new ListCommand
         {
-            budget = commandForm.Budget,
+            budget = (commandForm.Budget ?? 0) * 100,
             date = commandForm.Date.ToString("yyyy-MM-ddTHH:mm:ssZ"),
             name = commandForm.Name,
             photo = commandForm.Photo,
             collectionId =  CollectionId,
-            listFournisseur = commandForm.SelectedFournisseurs
-            
+            fournisseur = commandForm.SelectedFournisseurs
         };
 
         var result = await _createCommandUseCase.ExecuteAsync(newCommand, CollectionId);

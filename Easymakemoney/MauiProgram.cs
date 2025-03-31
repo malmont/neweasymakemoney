@@ -98,6 +98,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<GetFraisClientTaxUseCase>();
 		builder.Services.AddTransient<GetFraisClientCarrierUseCase>();
 		builder.Services.AddTransient<GetCollectionCloseUseCase>();
+		builder.Services.AddTransient<GetListTypeFournisseurUseCase>();
+		builder.Services.AddTransient<GestListTypeNoteDeFraisUseCase>();
 
 
 

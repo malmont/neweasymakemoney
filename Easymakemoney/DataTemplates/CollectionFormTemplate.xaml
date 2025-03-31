@@ -54,15 +54,6 @@
                 <Switch.ThumbColor>Red</Switch.ThumbColor>
                 <Switch.OnColor>Green</Switch.OnColor>
             </Switch>
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Photo URL"
-                        Text="{Binding CollectionForm.PhotoCollection, Mode=TwoWay}"/>
-            </Frame>
         </StackLayout>
     </ControlTemplate>
 </ResourceDictionary>
