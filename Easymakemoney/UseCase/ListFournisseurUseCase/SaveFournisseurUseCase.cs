@@ -18,8 +18,8 @@ namespace Easymakemoney.UseCase.ListFournisseurUseCase
                 adresse = FourniseursForm.Adresse,
                 ville = FourniseursForm.Ville,
                 pays = FourniseursForm.Pays,
-                photo = FourniseursForm.Photo,
                 tel = FourniseursForm.Tel,
+                typeFournisseur = FourniseursForm.SelectedTypeFournisseur.id,
             };
 
             return await _createFournisseurUseCase.ExecuteAsync(newFournisseur);

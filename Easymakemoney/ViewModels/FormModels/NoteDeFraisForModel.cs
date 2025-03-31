@@ -16,8 +16,8 @@ namespace Easymakemoney.ViewModels.FormModels
             set { _description = value; OnPropertyChanged(nameof(Description)); }
         }
 
-        private double _montant;
-        public double Montant
+        private double? _montant;
+        public double? Montant
         {
             get => _montant;
             set { _montant = value; OnPropertyChanged(nameof(Montant)); }
@@ -30,13 +30,33 @@ namespace Easymakemoney.ViewModels.FormModels
             set { _date = value; OnPropertyChanged(nameof(Date)); }
         }
 
-        private string _imageNdf;
-        public string ImageNdf
+        public  ObservableCollection<TypeNoteDeFrais> TypeNoteDeFraisSelected { get; set; } = new ObservableCollection<TypeNoteDeFrais>();
+        private TypeNoteDeFrais _selectedTypeNoteDeFrais;
+        public TypeNoteDeFrais SelectedTypeNoteDeFrais
         {
-            get => _imageNdf;
-            set { _imageNdf = value; OnPropertyChanged(nameof(ImageNdf)); }
-
-
+            get => _selectedTypeNoteDeFrais;
+            set { _selectedTypeNoteDeFrais = value; OnPropertyChanged(nameof(SelectedTypeNoteDeFrais)); }
         }
+
+        private readonly GestListTypeNoteDeFraisUseCase _getListTypeNoteDeFraisUseCase;
+
+        public NoteDeFraisForModel(GestListTypeNoteDeFraisUseCase getListTypeNoteDeFraisUseCase)
+        {
+            Date = DateTime.Today; 
+            _getListTypeNoteDeFraisUseCase = getListTypeNoteDeFraisUseCase;
+            LoadTypeNoteDeFraisAsync();
+        }
+        public async Task LoadTypeNoteDeFraisAsync()
+        {
+            var typeNoteDeFrais = await _getListTypeNoteDeFraisUseCase.ExecuteAsync();
+            TypeNoteDeFraisSelected.Clear();
+            foreach (var type in typeNoteDeFrais)
+            {
+                TypeNoteDeFraisSelected.Add(type);
+            }
+        }
+
     }
+  
+        
 }

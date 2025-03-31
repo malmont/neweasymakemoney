@@ -37,15 +37,6 @@
                             Format="yyyy-MM-dd"/>
                 </StackLayout>
             </Frame>
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Photo URL"
-                        Text="{Binding CommandForm.Photo, Mode=TwoWay}"/>
-            </Frame>
 
              <Frame HeightRequest="45"
                     Margin="10,0,0,10"

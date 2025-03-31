@@ -9,20 +9,47 @@
             <!-- <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
                 <handlers:BorderlessEntry Placeholder="Name" Text="{Binding CommandForm.Name, Mode=TwoWay}" />
             </Frame> -->
-            <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Montant" Keyboard="Numeric" Text="{Binding NoteDeFraisForm.Montant, Mode=TwoWay}" />
+            <Frame HeightRequest="45"
+                    Margin="10,0,0,10"
+                    Padding="2"
+                    HasShadow="True"
+                    BorderColor="black"
+                    HorizontalOptions="Fill">
+                <handlers:BorderlessEntry Placeholder="Montant"
+                        Keyboard="Numeric"
+                        Text="{Binding NoteDeFraisForm.Montant, Mode=TwoWay}"/>
             </Frame>
-             <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Description" Text="{Binding NoteDeFraisForm.Description, Mode=TwoWay}" />
+            <Frame HeightRequest="45"
+                    Margin="10,0,0,10"
+                    Padding="2"
+                    HasShadow="True"
+                    BorderColor="black"
+                    HorizontalOptions="Fill">
+                <handlers:BorderlessEntry Placeholder="Description"
+                        Text="{Binding NoteDeFraisForm.Description, Mode=TwoWay}"/>
             </Frame>
-            <Frame HeightRequest="65" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
+            <Frame HeightRequest="65"
+                    Margin="10,0,0,10"
+                    Padding="2"
+                    HasShadow="True"
+                    BorderColor="black"
+                    HorizontalOptions="Fill">
                 <StackLayout>
-                    <Label Text="Date" />
-                    <handlers:BorderlessDatePicker Date="{Binding NoteDeFraisForm.Date, Mode=TwoWay}" Format="yyyy-MM-dd" />
+                    <Label Text="Date"/>
+                    <handlers:BorderlessDatePicker Date="{Binding NoteDeFraisForm.Date, Mode=TwoWay}"
+                            Format="yyyy-MM-dd"/>
                 </StackLayout>
             </Frame>
-            <Frame HeightRequest="45" Margin="10,0,0,10" Padding="2" HasShadow="True" BorderColor="black" HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Photo URL" Text="{Binding NoteDeFraisForm.ImageNdf, Mode=TwoWay}" />
+            <Frame HeightRequest="45"
+                   Margin="10,0,0,10"
+                   Padding="2"
+                   HasShadow="True"
+                   BorderColor="black"
+                   HorizontalOptions="Fill">
+                <Picker Title="Select typefournisseur"
+                        ItemsSource="{Binding NoteDeFraisForm.TypeNoteDeFraisSelected}"
+                        SelectedItem="{Binding NoteDeFraisForm.SelectedTypeNoteDeFrais}"
+                        ItemDisplayBinding="{Binding name}"/>
             </Frame>
         </StackLayout>
     </ControlTemplate>

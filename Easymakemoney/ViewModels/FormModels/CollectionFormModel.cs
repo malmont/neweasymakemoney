@@ -2,8 +2,14 @@ namespace Easymakemoney.ViewModels.FormModels
 {
     public class CollectionFormModel : ObservableObject
     {
-        private float _budgetCollection;
-        public float BudgetCollection
+         public CollectionFormModel()
+        {
+            StartDateCollection = DateTime.Today; // ou DateTime.Now si tu veux l’heure aussi
+            EndDateCollection = DateTime.Today.AddDays(7); // exemple : 1 semaine plus tard
+        }
+
+        private double? _budgetCollection;
+        public double? BudgetCollection
         {
             get => _budgetCollection;
             set { _budgetCollection = value; OnPropertyChanged(nameof(BudgetCollection)); }

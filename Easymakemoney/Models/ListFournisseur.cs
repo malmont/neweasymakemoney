@@ -9,5 +9,6 @@ namespace Easymakemoney.Models
         public string? ville { get; set; }
         public string? pays { get; set; }
         public string? tel { get; set; }
+        public  int? typeFournisseur { get; set; }
     }
 }

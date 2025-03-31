@@ -1,6 +1,6 @@
 namespace Easymakemoney.ViewModels.FormModels
 {
-    public class FournisseurFormModel:ObservableObject
+    public class FournisseurFormModel : ObservableObject
     {
         private string _name;
         public string Name
@@ -42,7 +42,34 @@ namespace Easymakemoney.ViewModels.FormModels
         {
             get => _tel;
             set { _tel = value; OnPropertyChanged(nameof(Tel)); }
-       
-    }
+
+        }
+
+        public ObservableCollection<TypeFournisseur> TypeFournisseurSelected { get; set; } = new ObservableCollection<TypeFournisseur>();
+          
+            private TypeFournisseur _selectedTypeFournisseur;
+            public TypeFournisseur SelectedTypeFournisseur
+            {
+                get => _selectedTypeFournisseur;
+                set { _selectedTypeFournisseur = value; OnPropertyChanged(nameof(SelectedTypeFournisseur)); }
+            }
+    
+            private readonly GetListTypeFournisseurUseCase _getListTypeFournisseurUseCase;
+    
+            public FournisseurFormModel(GetListTypeFournisseurUseCase getListTypeFournisseurUseCase)
+            {
+                _getListTypeFournisseurUseCase = getListTypeFournisseurUseCase;
+                LoadTypeFournisseur();
+            }
+    
+            private async void LoadTypeFournisseur()
+            {
+                var typeFournisseurs = await _getListTypeFournisseurUseCase.ExecuteAsync();
+                TypeFournisseurSelected.Clear();
+                foreach (var typeFournisseur in typeFournisseurs)
+                {
+                    TypeFournisseurSelected.Add(typeFournisseur);
+                }
+            }
     }
 }

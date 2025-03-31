@@ -15,6 +15,16 @@
                 <handlers:BorderlessEntry Placeholder="Name"
                         Text="{Binding FraisDePortForm.Name, Mode=TwoWay}"/>
             </Frame>
+
+             <Frame HeightRequest="45"
+                    Margin="10,0,0,10"
+                    Padding="2"
+                    HasShadow="True"
+                    BorderColor="black"
+                    HorizontalOptions="Fill">
+                <handlers:BorderlessEntry Placeholder="Prix"
+                        Text="{Binding FraisDePortForm.Prix, Mode=TwoWay}"/>
+            </Frame>
             <Frame HeightRequest="45"
                     Margin="10,0,0,10"
                     Padding="2"
@@ -33,15 +43,7 @@
                 <handlers:BorderlessEntry Placeholder="Tracknumber"
                         Text="{Binding FraisDePortForm.Tracknumber, Mode=TwoWay}"/>
             </Frame>
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Image"
-                        Text="{Binding FraisDePortForm.Image, Mode=TwoWay}"/>
-            </Frame>
+
             <Frame HeightRequest="45"
                     Margin="10,0,0,10"
                     Padding="2"

@@ -18,8 +18,9 @@ namespace Easymakemoney.UseCase.ListNoteDeFraisUseCase
             name = NoteDeFraisForm.Name,
             date = NoteDeFraisForm.Date.ToString("yyyy-MM-ddTHH:mm:ssZ"),
             description = NoteDeFraisForm.Description,
-            imageNdf = NoteDeFraisForm.ImageNdf,
-           
+            montant = NoteDeFraisForm.Montant *100,
+            typeNoteDeFraisId = NoteDeFraisForm.SelectedTypeNoteDeFrais.id,
+     
         };
 
         var result = await _createNoteDeFrais.ExecuteAsync(newNoteDeFrais, CollectionId);
