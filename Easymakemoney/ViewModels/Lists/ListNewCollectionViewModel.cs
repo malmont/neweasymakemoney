@@ -25,7 +25,7 @@ namespace Easymakemoney.ViewModels.Lists
         public ICommand ItemTappedCommand { get; }
         public ICommand DeleteCollectionCommand { get; }
 
-        [ICommand]
+        [RelayCommand]
         public async Task GetListCollectionAsync()
         {
             if (IsBusy)
@@ -53,7 +53,7 @@ namespace Easymakemoney.ViewModels.Lists
             }
         }
 
-        [ICommand]
+        [RelayCommand]
         public async Task ShowBottomSheetAsync()
         {
             try

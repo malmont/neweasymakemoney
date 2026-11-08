@@ -10,7 +10,7 @@ public partial class BottomSheetPopupListViewViewModel : ObservableObject
     {
         _getItemsFunc = getItemsFunc;
         _onItemTappedAction = onItemTappedAction;
-        ItemTappedCommand = new RelayCommand<IListItem>(OnItemTapped);
+        ItemTappedCommand = new AsyncRelayCommand<IListItem>(OnItemTapped);
     }
 
     public ICommand ItemTappedCommand { get; }
@@ -34,10 +34,10 @@ public partial class BottomSheetPopupListViewViewModel : ObservableObject
         }
     }
 
-    private void OnItemTapped(IListItem item)
+    private async Task OnItemTapped(IListItem item)
     {
         _onItemTappedAction(item);
-        Cancel();
+        await CancelAsync();
     }
 
     public void SetPopupInstance(Popup popup)
@@ -45,8 +45,5 @@ public partial class BottomSheetPopupListViewViewModel : ObservableObject
         _popup = popup;
     }
 
-    private void Cancel()
-    {
-        _popup.Close();
-    }
+    private Task CancelAsync() => _popup.CloseAsync();
 }

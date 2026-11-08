@@ -138,7 +138,7 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
 
-        [ICommand]
+        [RelayCommand]
         public async Task ShowBottomSheetPopupListView()
         {
             var viewModel = new BottomSheetPopupListViewViewModel(
@@ -158,7 +158,7 @@ namespace Easymakemoney.ViewModels.Lists
             await Application.Current.MainPage.ShowPopupAsync(popup);
         }
 
-        [ICommand]
+        [RelayCommand]
         public async Task ShowBottomSheetPopupListCommandView()
         {
             if (CollectionId == 0)
@@ -184,7 +184,7 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
 
-        [ICommand]
+        [RelayCommand]
         public async Task ShowBottomSheet()
         {
             if (CollectionId == 0)
@@ -219,7 +219,7 @@ namespace Easymakemoney.ViewModels.Lists
             }
         }
 
-        [ICommand]
+        [RelayCommand]
         public async Task ShowBottomSheetCreateCollection()
         {
             try
@@ -248,7 +248,7 @@ namespace Easymakemoney.ViewModels.Lists
             }
         }
 
-        [ICommand]
+        [RelayCommand]
         public async Task ShowBottomSheetCreateCommand()
         {
             if (CollectionId == 0)

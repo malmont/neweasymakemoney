@@ -7,27 +7,27 @@ namespace Easymakemoney.ViewModels.Lists
 		{
             
         }
-        [ICommand]
+        [RelayCommand]
         async void NavigateToCollection()
         {
             await Shell.Current.GoToAsync(nameof(ListNewCollectionPage));
             //await Shell.Current.GoToAsync($"//{nameof(ListNewCollectionPage)}");
         }
-        [ICommand]
+        [RelayCommand]
         async void NavigateToNoteDeFrais()
         {
             await Shell.Current.GoToAsync(nameof(ListNewNoteDeFraisPage));
             //await Shell.Current.GoToAsync($"//{nameof(ListNewProductPage)}");
         }
 
-        [ICommand]
+        [RelayCommand]
           async void NavigateToNoteFournisseur()
         {
             await Shell.Current.GoToAsync(nameof(ListNewFournisseurPage));
             //await Shell.Current.GoToAsync($"//{nameof(ListNewProductPage)}");
         }
 
-        [ICommand]
+        [RelayCommand]
         async void NavigateToFraisDePort()
         {
             await Shell.Current.GoToAsync(nameof(ListNewFraisDePortPage));

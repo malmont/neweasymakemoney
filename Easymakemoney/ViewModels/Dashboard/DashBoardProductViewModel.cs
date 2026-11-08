@@ -43,7 +43,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             set { _productImage = value; OnPropertyChanged(nameof(ProductImage)); }
         }
 
-        [ICommand]
+        [RelayCommand]
         public async Task ShowBottomSheetCreateProduct()
         {
             var viewModel = new BottomSheetPopupViewModel(
@@ -63,7 +63,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             }
         }
 
-        [ICommand]
+        [RelayCommand]
         public async Task ShowBottomSheetPopupListProductView()
         {
             if (CommandId == 0)

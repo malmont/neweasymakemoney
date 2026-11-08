@@ -7,43 +7,43 @@ namespace Easymakemoney.ViewModels.Statistiques
             
         }
 
-         [ICommand]
+         [RelayCommand]
         async void NavigateToChiffreAffaire()
         {
             await Shell.Current.GoToAsync(nameof(ChiffresAffairePage));
         }
-         [ICommand]
+         [RelayCommand]
         async void NavigateToPurchasing()
         {
             await Shell.Current.GoToAsync(nameof(OrderNumberPage));
         }
-         [ICommand]
+         [RelayCommand]
         async void NavigateToPanier()
         {
             await Shell.Current.GoToAsync(nameof(PanierMoyenPage));
         }
-         [ICommand]
+         [RelayCommand]
         async void NavigateToStock()
         {
             await Shell.Current.GoToAsync(nameof(StockPage));
         }
-         [ICommand]
+         [RelayCommand]
         async void NavigateToFrais()
         {
             await Shell.Current.GoToAsync(nameof(FraisEvolutionEntreprisePage));
         }
-         [ICommand]
+         [RelayCommand]
         async void NavigateToCaisse()
         {
             await Shell.Current.GoToAsync(nameof(TransactionCaissePage));
         }
-         [ICommand]
+         [RelayCommand]
         async void NavigateToPayment()
         {
             await Shell.Current.GoToAsync(nameof(PaiementRemboursementPage));
         }
 
-          [ICommand]
+          [RelayCommand]
         async void NavigateToFraisTotal()
         {
             await Shell.Current.GoToAsync(nameof(FraisClientTotalViewPage));

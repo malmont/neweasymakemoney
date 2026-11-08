@@ -16,7 +16,7 @@
         }
 
         #region Commands
-        [ICommand]
+        [RelayCommand]
         async Task LoginAsync()
         {
             if (await _loginUseCase.ExecuteAsync(Email, Password))

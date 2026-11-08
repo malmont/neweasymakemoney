@@ -8,7 +8,20 @@ public static class MauiProgram
 		var builder = MauiApp.CreateBuilder();
 		builder
 			.UseMauiApp<App>()
-			.UseMauiCommunityToolkit()
+			.UseMauiCommunityToolkit(options =>
+			{
+				options.SetPopupDefaults(new DefaultPopupSettings
+				{
+					BackgroundColor = Colors.Transparent,
+					Margin = 0,
+					Padding = 0
+				});
+				options.SetPopupOptionsDefaults(new DefaultPopupOptionsSettings
+				{
+					Shape = null,
+					Shadow = null
+				});
+			})
 			.UseSkiaSharp()
 			.ConfigureFonts(fonts =>
 			{

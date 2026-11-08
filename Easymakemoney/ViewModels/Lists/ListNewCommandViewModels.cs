@@ -82,7 +82,7 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
 
-        [ICommand]
+        [RelayCommand]
         public async Task ShowBottomSheet()
         {
             var viewModel = new BottomSheetPopupViewModel(

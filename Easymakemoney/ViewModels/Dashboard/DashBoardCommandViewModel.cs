@@ -63,7 +63,7 @@ namespace Easymakemoney.ViewModels.Dashboard
                 IsBusy = false;
             }
         }
-        [ICommand]
+        [RelayCommand]
         public async Task ShowBottomSheetCreateCommand()
         {
             if (CollectionId == 0)
@@ -88,7 +88,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             }
         }
 
-        [ICommand]
+        [RelayCommand]
         public async Task ShowBottomSheetPopupListCommandView()
         {
             if (CollectionId == 0)
@@ -113,7 +113,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             await Application.Current.MainPage.ShowPopupAsync(popup);
         }
 
-          [ICommand]
+          [RelayCommand]
             private async void ItemTapped()
         {
             if (CommandId == 0)

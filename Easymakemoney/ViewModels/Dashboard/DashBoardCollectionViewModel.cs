@@ -59,7 +59,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             get => _collectionImage;
             set { _collectionImage = value; OnPropertyChanged(nameof(CollectionImage)); }
         }
-         [ICommand]
+         [RelayCommand]
         public async Task CloseCollection()
         {
             if (IsBusy)
@@ -106,7 +106,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             }
         }
 
-        [ICommand]
+        [RelayCommand]
         public async Task ShowBottomSheetPopupListView()
         {
             var viewModel = new BottomSheetPopupListViewViewModel(
@@ -128,7 +128,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             await Application.Current.MainPage.ShowPopupAsync(popup);
         }
 
-         [ICommand]
+         [RelayCommand]
         public async Task ShowBottomSheetCreateList()
         {
             try
@@ -156,7 +156,7 @@ namespace Easymakemoney.ViewModels.Dashboard
                 Console.WriteLine($"Exception: {ex}");
             }
         }
-        [ICommand]
+        [RelayCommand]
             private async void ItemTapped()
         {
             if (CollectionId == 0)

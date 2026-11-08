@@ -92,7 +92,7 @@ namespace Easymakemoney.ViewModels.Components
             IsProductForm = isProductForm;
             ProductForm = productFormModel;
             SaveCommand = new RelayCommand(Save);
-            CancelCommand = new RelayCommand(Cancel);
+            CancelCommand = new AsyncRelayCommand(CancelAsync);
             _saveFournisseurUseCase = saveFournisseurUseCase;
 
         }
@@ -212,7 +212,7 @@ namespace Easymakemoney.ViewModels.Components
                     if (!result) throw new Exception("Failed to save frais de port.");
                 }
 
-                _popup.Close();
+                await _popup.CloseAsync();
             }
             catch (Exception ex)
             {
@@ -220,9 +220,6 @@ namespace Easymakemoney.ViewModels.Components
                 await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
             }
         }
-        private void Cancel()
-        {
-            _popup.Close();
-        }
+        private Task CancelAsync() => _popup.CloseAsync();
     }
 }
