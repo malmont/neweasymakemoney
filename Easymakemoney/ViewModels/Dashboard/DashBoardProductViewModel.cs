@@ -94,7 +94,7 @@ namespace Easymakemoney.ViewModels.Dashboard
                     {
                         this.DashBoardProduct = Product;
                         this.ProductImage = Product.image;
-                        DisplayedQuantity = Product.freezeQuantity ?? Product.quantity;
+                        DisplayedQuantity = Product.freezeQuantity ?? Product.quantity ?? 0;
 
                     }
                 });
