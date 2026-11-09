@@ -2,7 +2,6 @@ namespace Easymakemoney.Services
 {
     public class ListCommandService : IListCommandService
     {
-        private const string CommandesUrl =Configurations.BackendSymfonyUrl;
         private readonly IHttpService _httpService;
 
         public ListCommandService(IHttpService httpService)
@@ -12,20 +11,20 @@ namespace Easymakemoney.Services
 
         public async Task<ObservableCollection<ListCommand>> GetCommandesList(int id)
         {
-            var url = $"{CommandesUrl}/collections/{id}/commandes";
+            var url = $"collections/{id}/commandes";
             var commandes = await _httpService.GetAsync<ObservableCollection<ListCommand>>(url);
             return commandes ?? new ObservableCollection<ListCommand>();
         }
         public async Task<bool> PostCommandes(ListCommand newCommandes, int id)
         {
-            var url = $"{CommandesUrl}/collections/{id}/commandes";
+            var url = $"collections/{id}/commandes";
             var result = await _httpService.PostAsyncWithAuth<object>(url, newCommandes);
             return result != null;
         }
 
         public async Task<bool> DeleteCommandes(int id)
         {
-            var url = $"{CommandesUrl}/commandes/{id}";
+            var url = $"commandes/{id}";
             var result = await _httpService.DeleAsyncWithAuth<object>(url);
             return result != null;
         }

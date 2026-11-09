@@ -3,8 +3,6 @@ namespace Easymakemoney.Services
 
     public class StockEvolutionServices : IStockEvolutionServices
     {
-        private const string StockEvolutionsUrl = Configurations.BackendSymfonyUrl;
-
         private readonly IHttpService _httpService;
 
         public StockEvolutionServices(IHttpService httpService)
@@ -14,14 +12,14 @@ namespace Easymakemoney.Services
 
         public async Task<StockEvolution> GetStockEvolution()
         {
-            var url = $"{StockEvolutionsUrl}/stock-evolution";
+            var url = "stock-evolution";
             var stockEvolution = await _httpService.GetAsync<StockEvolution>(url);
             return stockEvolution ?? null;
         }
 
         public async Task<StockValue> GetStockValueEvolution()
         {
-            var url = $"{StockEvolutionsUrl}/stock-value";
+            var url = "stock-value";
             var stockValueEvolution = await _httpService.GetAsync<StockValue>(url);
             return stockValueEvolution ?? null;
         }

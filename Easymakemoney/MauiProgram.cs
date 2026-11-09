@@ -1,8 +1,16 @@
 ﻿
+using Easymakemoney.Services.Tenant;
+using Easymakemoney.Services.Site;
+
 namespace Easymakemoney;
 
 public static class MauiProgram
 {
+	private static void ConfigureBackendHttpClient(HttpClient client)
+	{
+		client.BaseAddress = new Uri(Configurations.BackendSymfonyUrl);
+	}
+
 	public static MauiApp CreateMauiApp()
 	{
 		var builder = MauiApp.CreateBuilder();
@@ -31,10 +39,20 @@ public static class MauiProgram
 
 
 
-		builder.Services.AddHttpClient<IHttpService, HttpService>();
+		// Configuration HTTP partagée (L5) et gestionnaire de site
+		builder.Services.AddTransient<TenantHandler>();
+		builder.Services.AddHttpClient<IHttpService, HttpService>(ConfigureBackendHttpClient)
+			.AddHttpMessageHandler<TenantHandler>();
+		builder.Services.AddHttpClient<ISiteService, SiteService>(ConfigureBackendHttpClient)
+			.AddHttpMessageHandler<TenantHandler>();
 
-		builder.Services.AddSingleton<ILoginService, LoginService>();
-		builder.Services.AddSingleton<IListCollectionService, ListCollectionService>();
+		builder.Services.AddSingleton<ITenantStore, TenantStore>();
+		builder.Services.AddSingleton<ISiteDataCleaner, SiteDataCleaner>();
+		builder.Services.AddSingleton<AppShellViewModel>();
+		builder.Services.AddSingleton<AppShell>();
+
+		builder.Services.AddTransient<ILoginService, LoginService>();
+		builder.Services.AddTransient<IListCollectionService, ListCollectionService>();
 		builder.Services.AddSingleton<IJwtService, JwtService>();
 		builder.Services.AddSingleton<IPreferenceService, PreferenceService>();
 		builder.Services.AddTransient<IListCommandService, ListCommandService>();
@@ -116,6 +134,7 @@ public static class MauiProgram
 
 
 
+		builder.Services.AddTransient<ActivationPage>();
 		builder.Services.AddTransient<LoginPage>();
 		builder.Services.AddTransient<DashboardPage>();
 		builder.Services.AddTransient<LoadingPage>();
@@ -139,9 +158,10 @@ public static class MauiProgram
 
 
 		//View Models
-		builder.Services.AddSingleton<LoginPageViewModel>();
-		builder.Services.AddSingleton<DashboardPageViewModel>();
-		builder.Services.AddSingleton<LoadingPageViewModel>();
+		builder.Services.AddTransient<ActivationPageViewModel>();
+		builder.Services.AddTransient<LoginPageViewModel>();
+		builder.Services.AddTransient<DashboardPageViewModel>();
+		builder.Services.AddTransient<LoadingPageViewModel>();
 		builder.Services.AddTransient<AllListsViewModel>();
 		builder.Services.AddTransient<ListNewCollectionViewModel>();
 		builder.Services.AddTransient<BottomSheetPopupViewModel>();

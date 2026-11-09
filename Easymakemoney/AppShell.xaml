@@ -14,6 +14,10 @@
         ContentTemplate="{DataTemplate startupPages:LoadingPage}"
         Route="LoadingPage" />
 
+     <ShellContent FlyoutItemIsVisible="False" Shell.FlyoutBehavior="Disabled"
+        ContentTemplate="{DataTemplate startupPages:ActivationPage}"
+        Route="ActivationPage" />
+
      <ShellContent Title="Login Page" FlyoutItemIsVisible="False" Shell.FlyoutBehavior="Disabled"
         ContentTemplate="{DataTemplate startupPages:LoginPage}"
         Route="LoginPage" />
@@ -40,7 +44,8 @@
 
 
     <Shell.FlyoutFooter >
-        <StackLayout Padding="20" HorizontalOptions="Center">
+        <StackLayout Padding="20" HorizontalOptions="Center" Spacing="10">
+            <Button Text="Changer de site" Command="{Binding ChangeSiteCommand}" BackgroundColor="#512BD4" TextColor="White"/>
             <Button Text="Sign Out" Command="{Binding SignOutCommand}"/>
         </StackLayout>
     </Shell.FlyoutFooter>

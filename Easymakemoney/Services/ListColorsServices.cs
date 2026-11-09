@@ -2,7 +2,6 @@ namespace Easymakemoney.Services
 {
     public class ListColorsServices: IListColorsServices
     {
-        private const string ColorsUrl = Configurations.BackendSymfonyUrl;
         private readonly IHttpService _httpService;
 
         public ListColorsServices(IHttpService httpService)
@@ -12,7 +11,7 @@ namespace Easymakemoney.Services
 
         public async Task<ObservableCollection<ColorsProduct>> GetColorsList()
         {
-            var colors = await _httpService.GetAsync<ObservableCollection<ColorsProduct>>(ColorsUrl +"/colors");
+            var colors = await _httpService.GetAsync<ObservableCollection<ColorsProduct>>("colors");
             return colors ?? new ObservableCollection<ColorsProduct>();
         }
 

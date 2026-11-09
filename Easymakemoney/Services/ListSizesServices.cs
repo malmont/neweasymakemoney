@@ -2,7 +2,6 @@ namespace Easymakemoney.Services
 {
     public class ListSizesServices:IListSizesServices
     {
-        private const string SizesUrl =Configurations.BackendSymfonyUrl;
         private readonly IHttpService _httpService;
 
         public ListSizesServices(IHttpService httpService)
@@ -12,7 +11,7 @@ namespace Easymakemoney.Services
 
         public async Task<ObservableCollection<SizeProduct>> GetSizesList()
         {
-            var sizes = await _httpService.GetAsync<ObservableCollection<SizeProduct>>(SizesUrl +"/sizes");
+            var sizes = await _httpService.GetAsync<ObservableCollection<SizeProduct>>("sizes");
             return sizes ?? new ObservableCollection<SizeProduct>();
         }
    

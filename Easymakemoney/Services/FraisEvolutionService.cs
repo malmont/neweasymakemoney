@@ -2,7 +2,6 @@ namespace Easymakemoney.Services
 {
     public class FraisEvolutionService: IFraisEvolutionService
     {
-    private const string FraisEvolutionUrl = Configurations.BackendSymfonyUrl;
      private readonly IHttpService _httpService;
         public FraisEvolutionService(IHttpService httpService)
         {
@@ -11,7 +10,7 @@ namespace Easymakemoney.Services
 
         public async Task<FraisEvolution> GetFraisEvolutionAsync()
         {
-            var url = $"{FraisEvolutionUrl}/frais/total";
+            var url = "frais/total";
             var fraisEvolution = await _httpService.GetAsync<FraisEvolution>(url);
             return fraisEvolution ?? null;
         }

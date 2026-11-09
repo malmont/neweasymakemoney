@@ -3,10 +3,10 @@ namespace Easymakemoney;
 
 public partial class AppShell : Shell
 {
-	public AppShell()
+	public AppShell(AppShellViewModel viewModel)
 	{
 		InitializeComponent();
-		this.BindingContext = new AppShellViewModel();
+		this.BindingContext = viewModel;
         Routing.RegisterRoute("DashboardPage", typeof(DashboardPage));
 		Routing.RegisterRoute("ListNewProductVariantPage", typeof(ListNewProductVariantPage));
 		Routing.RegisterRoute("ListNewFraisDePortPage", typeof(ListNewFraisDePortPage));

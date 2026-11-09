@@ -2,7 +2,6 @@ namespace Easymakemoney.Services
 {
   public class ListCategoryServices : IListCategoryServices
   {
-    private const string CategoriesUrl = Configurations.BackendSymfonyUrl;
     private readonly IHttpService _httpService;
 
     public ListCategoryServices(IHttpService httpService)
@@ -12,7 +11,7 @@ namespace Easymakemoney.Services
 
     public async Task<ObservableCollection<Category>> GetCategoryList()
     {
-      var categories = await _httpService.GetAsync<ObservableCollection<Category>>(CategoriesUrl + "/category");
+      var categories = await _httpService.GetAsync<ObservableCollection<Category>>("category");
       return categories ?? new ObservableCollection<Category>();
     }
   }

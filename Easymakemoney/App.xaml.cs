@@ -11,7 +11,7 @@ namespace Easymakemoney
         public static UserBasicInfo? UserDetails;
         public static string? Token;
 
-        public App()
+        public App(AppShell shell)
         {
             InitializeComponent();
 
@@ -41,7 +41,7 @@ namespace Easymakemoney
                 }
             });
 
-            MainPage = new AppShell();
+            MainPage = shell;
         }
     }
 }

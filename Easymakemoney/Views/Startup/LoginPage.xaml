@@ -37,6 +37,12 @@
 
         <Button Text="Sign In" WidthRequest="100" CornerRadius="20" HorizontalOptions="Center" Command="{Binding LoginCommand}" />
 
+        <Button Text="Changer de site"
+                TextColor="#50b3f2"
+                BackgroundColor="Transparent"
+                HorizontalOptions="Center"
+                Command="{Binding ChangeSiteCommand}" />
+
         <StackLayout Orientation="Horizontal" Spacing="5" HorizontalOptions="Center">
             <Label Text="Don't have account?" TextColor="Gray" />
             <Label Text="Sign Up here" TextColor="#50b3f2" />
