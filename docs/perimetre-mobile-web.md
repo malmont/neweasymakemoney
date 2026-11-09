@@ -60,6 +60,7 @@ toucher à l'existant. **À confirmer aussi :** l'application e-commerce mobile 
 ## Ordre recommandé
 
 1. Finir l'interface, le lot 3 et l'adaptation aux livraisons G1 à G4.
-2. **Facture → articles, puis photos et fiche IA (lot 5)** : c'est le plus gros gain de temps sur le terrain.
-3. Pilotage mobile et Conseiller IA.
-4. Version web, avec bilan, comptabilité et support.
+2. **Saisie sur le terrain** : facture → articles, justificatifs de voyage, photos et fiche IA (lot 5).
+3. **Prévisionnel de collection** et simulateur de coefficients (voir `propositions-pilotage.md`), puis les frais fixes.
+4. Pilotage mobile et Conseiller IA.
+5. Version web, avec bilan, comptabilité et support.

@@ -3,6 +3,36 @@
 Demande du propriétaire du 09/11/2026 : aller au-delà des chiffres actuels, côté application et backend. Ces propositions partent de
 l'audit des écrans. **Ce qui demande des données de vente par produit reste à confirmer avec le backend** (colonne « Backend »).
 
+## Le cœur de l'application (précision du propriétaire, 09/11/2026)
+
+L'application fait **les deux** : les **statistiques de l'activité**, et la **gestion des collections avec la vision de l'avenir de ses investissements**. Exemple type : en voyage d'affaires, on saisit au fil de l'eau ses
+achats, ses factures et ses frais de voyage, puis tous les frais du mois au retour. On évalue alors si le stock acheté sera rentable avec les
+coefficients de revente, et on ajuste en direct les coefficients et les promotions.
+
+**Priorité n° 1 : le prévisionnel de collection**, une page qui répond à « cette collection sera-t-elle rentable ? » :
+
+| Élément | Contenu |
+|---|---|
+| Investissement total | Achats, frais de port, notes de frais, frais de voyage, **part des frais fixes** |
+| Revenu prévisionnel | Σ quantité × prix de vente prévu |
+| Résultat prévisionnel | Revenu prévisionnel − investissement total, et marge en % |
+| Coefficient minimum | Le coefficient moyen à partir duquel la collection devient rentable |
+| Simulateur en direct | Modifier un coefficient ou une promotion et voir le résultat changer aussitôt, sans rien enregistrer |
+| Alertes | « Pas assez de stock pour que cette collection soit rentable », « Trop de dépenses », « Cette promotion vous fait passer en perte » |
+
+**À ajouter :**
+- **Frais fixes** (confirmé par le propriétaire le 09/11/2026) : salaires des employés, loyer, assurances, abonnements, électricité… Pour chacun : libellé, catégorie,
+  montant en centimes, périodicité (mensuelle, annuelle…), date de début et de fin éventuelle. Saisis une fois, répartis automatiquement sur les
+  collections (règle de départ proposée : au prorata de la durée de chaque collection dans le mois). Rien n'existe aujourd'hui côté backend.
+  **Les salaires sont des données sensibles** : `ROLE_ADMIN` uniquement, et l'IA ne reçoit que des totaux par catégorie, jamais de nom ni de salaire individuel.
+- **Frais de voyage** : une catégorie de note de frais, avec **photo du justificatif lue par l'IA** (même moteur que les factures fournisseur).
+- **Appliquer le coefficient** à un ou plusieurs articles après simulation : ici le prix de vente doit bien être recalculé, contrairement au rattachement. Route
+  dédiée à demander, et le prix de vente ne change qu'après confirmation.
+- **Promotions** : simuler une remise sur une partie du stock, et voir son effet sur le résultat.
+- **Écoulement réel** : à mesure que les ventes arrivent, le prévisionnel se corrige (« au rythme actuel, il restera X articles à la fin de la collection »).
+
+**Le rôle de l'IA** : commenter ce prévisionnel, jamais le calculer, et proposer un conseil chiffré : « Avec un coefficient de 2,4 au lieu de 2,1, vous couvrez vos frais de voyage. »
+
 ## Le constat
 
 Aujourd'hui, l'application **montre des chiffres** : huit pages de statistiques séparées, sans comparaison, sans objectif et sans alerte.
