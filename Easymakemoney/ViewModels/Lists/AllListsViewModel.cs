@@ -35,6 +35,13 @@ namespace Easymakemoney.ViewModels.Lists
             if (Shell.Current is { } shell)
                 await shell.GoToAsync(nameof(ListNewFraisDePortPage));
         }
+
+        [RelayCommand]
+        private async Task NavigateToReprise()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(ReprisePage));
+        }
     }
 }
 

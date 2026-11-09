@@ -116,3 +116,9 @@ Maquette des écrans : https://claude.ai/artifact/8biDay5vzqM3kEKQcz8zU8
 ## LIVRÉ : P2, le 10/11/2026 (`dev` be08147d ; 899 tests verts)
 
 Résultat branché dans le tableau de bord d'une période. Le contrat P3 (reprise d'historique) est en cours de cadrage : simulation, application, annulation, coûts estimés par un coefficient, aucun effet sur le prix, le stock ni la visibilité des articles.
+
+## LIVRÉ : P3, le 10/11/2026 (`dev` 93124fe4 ; 900 tests verts)
+
+`POST /api/gestion/reprise/simulation`, `POST /api/gestion/reprise/appliquer` (`costs`, `estimateCoefficient`), `POST /api/gestion/reprise/annuler`, `GET /api/gestion/reprise`. Priorité des coûts : saisis, `purchase_price`, estimation par coefficient, sinon coût inconnu. Prix, stock, variantes et visibilité ne changent jamais.
+
+Écran « Reprise d'historique » ajouté dans Gestion. **Application et annulation pas encore vérifiées de bout en bout dans l'application** : les périodes fermées du site demo n'ont pas de ventes ; demande faite au backend.

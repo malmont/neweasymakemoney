@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:x1="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             x:DataType="list:RepriseViewModel"
+             x:Class="Easymakemoney.Views.Lists.ReprisePage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Reprise d'historique">
+
+    <ContentPage.Resources>
+        <Style x:Key="RepriseChoice" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimaryTint}" />
+            <Setter Property="TextColor" Value="{DynamicResource ThemePrimary}" />
+            <Setter Property="FontFamily" Value="InterBold" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="HeightRequest" Value="44" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <components:AppHeader Title="Reprise d'historique" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+
+                <!-- Reprise déjà appliquée -->
+                <VerticalStackLayout IsVisible="{Binding IsActive}" Spacing="12">
+                    <components:UiCard Style="{StaticResource UiCard}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="Historique repris" Style="{StaticResource UiTitle}" />
+                            <Label Text="{Binding State.SummaryText}" Style="{StaticResource UiBody}" FontSize="14" />
+                        </VerticalStackLayout>
+                    </components:UiCard>
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Commandes}" Spacing="10">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="x1:RepriseCommande">
+                                <components:UiCard Style="{StaticResource UiCard}">
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                                        <VerticalStackLayout Spacing="2">
+                                            <Label Text="{Binding periodName}" Style="{StaticResource UiTitle}" FontSize="16" />
+                                            <Label Text="{Binding DetailText}" Style="{StaticResource UiBody}" />
+                                        </VerticalStackLayout>
+                                        <Label Grid.Column="1" Text="{Binding InvestmentText}" FontFamily="InterBold" FontSize="15" TextColor="{DynamicResource ThemePrimary}" VerticalOptions="Center" />
+                                    </Grid>
+                                </components:UiCard>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+                <!-- Simulation avant confirmation -->
+                <VerticalStackLayout IsVisible="{Binding ShowSimulation}" Spacing="12">
+                    <Label Text="Donnez un coût à vos ventes passées pour voir la rentabilité de vos anciennes périodes. Rien ne change dans vos prix, votre stock ou vos ventes."
+                           Style="{StaticResource UiBody}" FontSize="14" />
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                        <Button Text="6 mois" Command="{Binding SetMonthsCommand}" CommandParameter="6" Style="{StaticResource RepriseChoice}" />
+                        <Button Grid.Column="1" Text="12 mois" Command="{Binding SetMonthsCommand}" CommandParameter="12" Style="{StaticResource RepriseChoice}" />
+                        <Button Grid.Column="2" Text="24 mois" Command="{Binding SetMonthsCommand}" CommandParameter="24" Style="{StaticResource RepriseChoice}" />
+                    </Grid>
+
+                    <components:UiCard Style="{StaticResource UiCard}">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="{Binding Simulation.PeriodsText}" Style="{StaticResource UiTitle}" />
+                            <components:UiAmountRow Title="{Binding Simulation.ItemsText}" Value="{Binding Simulation.SalesText}" />
+                            <components:UiAmountRow Title="Investissement connu" Value="{Binding Simulation.KnownInvestmentText}" />
+                            <components:UiAmountRow Title="Investissement estimé" Value="{Binding Simulation.EstimatedInvestmentText}" />
+                            <Label Text="{Binding Simulation.UnknownText}" FontFamily="InterSemiBold" FontSize="14" TextColor="#B45309" />
+                        </VerticalStackLayout>
+                    </components:UiCard>
+
+                    <Label Text="Aucune vente à reprendre sur cette durée." IsVisible="{Binding HasNothingToResume}" Style="{StaticResource UiTitle}" FontSize="15" HorizontalOptions="Center" />
+
+                    <components:UiCard Style="{StaticResource UiCard}" IsVisible="{Binding HasSalesToResume}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Coefficient moyen (facultatif)" Style="{StaticResource UiTitle}" FontSize="15" />
+                            <Label Text="Pour les articles sans coût : coût estimé = prix de vente ÷ coefficient. Ces coûts sont marqués « estimés »." Style="{StaticResource UiBody}" />
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                <handlers:BorderlessEntry Text="{Binding CoefficientText}" Placeholder="Par exemple 2,5" Keyboard="Numeric" FontSize="16" />
+                                <Button Grid.Column="1" Text="Calculer" Command="{Binding RefreshCommand}" Style="{StaticResource RepriseChoice}" Padding="14,0" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </components:UiCard>
+
+                    <Label Text="Articles vendus" IsVisible="{Binding HasSalesToResume}" Style="{StaticResource UiTitle}" />
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Products}" Spacing="10">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="x1:RepriseProduct">
+                                <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.EditCostCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                                        <VerticalStackLayout Spacing="3">
+                                            <Label Text="{Binding name}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
+                                            <Label Text="{Binding SoldText}" Style="{StaticResource UiBody}" />
+                                            <Label Text="{Binding CostText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{DynamicResource ThemePrimary}" />
+                                        </VerticalStackLayout>
+                                        <components:UiGlyph Grid.Column="1" IsVisible="{Binding CanEditCost}" Data="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z" />
+                                    </Grid>
+                                </components:UiCard>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                    <Button Text="Afficher plus" IsVisible="{Binding HasMoreProducts}" Command="{Binding LoadMoreCommand}" Style="{StaticResource RepriseChoice}" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Button Grid.Row="2" Text="Reprendre l'historique" IsVisible="{Binding HasSalesToResume}" Command="{Binding ApplyCommand}" Margin="16,8,16,24" HeightRequest="52" CornerRadius="14" FontFamily="InterBold" FontSize="16" BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" />
+        <Button Grid.Row="2" Text="Annuler la reprise" IsVisible="{Binding IsActive}" Command="{Binding CancelCommand}" Margin="16,8,16,24" HeightRequest="52" CornerRadius="14" FontFamily="InterBold" FontSize="16" BackgroundColor="#FEE2E2" TextColor="#B91C1C" />
+    </Grid>
+
+</ContentPage>

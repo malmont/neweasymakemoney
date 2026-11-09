@@ -89,6 +89,7 @@
                             <components:UiAmountRow Title="Ventes d'articles" Value="{Binding PeriodResult.RevenueText}" />
                             <components:UiAmountRow Title="Ventes sans coût connu" Value="{Binding PeriodResult.UnknownRevenueText}" IsVisible="{Binding PeriodResult.HasUnknownRevenue}" />
                             <components:UiAmountRow Title="Coût des articles vendus" Value="{Binding PeriodResult.CogsText}" />
+                            <Label Text="{Binding PeriodResult.EstimatedCogsText}" IsVisible="{Binding PeriodResult.HasEstimatedCogs}" Style="{StaticResource UiBody}" HorizontalOptions="End" />
                             <components:UiAmountRow Title="Marge" Value="{Binding PeriodResult.GrossText}" IsTotal="True" />
                             <components:UiAmountRow Title="Frais de port" Value="{Binding PeriodResult.ShippingText}" />
                             <components:UiAmountRow Title="Notes de frais" Value="{Binding PeriodResult.NotesText}" />

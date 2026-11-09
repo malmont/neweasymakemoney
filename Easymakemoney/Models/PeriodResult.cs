@@ -19,6 +19,8 @@ namespace Easymakemoney.Models
         public string RevenueText => Money(sales.revenue);
         public string UnknownRevenueText => Minus(sales.unknownCostRevenue);
         public string CogsText => Minus(cogs.amount);
+        public string EstimatedCogsText => $"dont {Money(cogs.estimatedAmount)} estimés";
+        public bool HasEstimatedCogs => cogs.estimatedItems > 0;
         public string ShippingText => Minus(expenses.shipping);
         public string NotesText => Minus(expenses.notes);
         public string OtherExpensesText => Minus(OtherExpensesAmount);
@@ -64,6 +66,8 @@ namespace Easymakemoney.Models
     {
         public long amount { get; set; }
         public int unknownCostItems { get; set; }
+        public int estimatedItems { get; set; }
+        public long estimatedAmount { get; set; }
     }
 
     public sealed class PeriodExpenses
