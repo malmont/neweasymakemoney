@@ -82,34 +82,47 @@ namespace Easymakemoney.ViewModels.FormModels
         {
             _getListStyleUseCase = getListStyleUseCase;
             _getListCategoryUseCase = getListCategoryUseCase;
-            SelectImageCommand = new Command(OnSelectImage);
+            SelectImageCommand = new AsyncRelayCommand(OnSelectImage);
             LoadCategories();
             LoadStyles();
         }
 
         private async void LoadCategories()
         {
-            // Call API to get categories and populate the Categories collection
-            var categories = await _getListCategoryUseCase.ExecuteAsync();
-            Categories.Clear();
-            foreach (var category in categories)
+            try
             {
-                Categories.Add(category);
+                // Call API to get categories and populate the Categories collection
+                var categories = await _getListCategoryUseCase.ExecuteAsync();
+                Categories.Clear();
+                foreach (var category in categories)
+                {
+                    Categories.Add(category);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Categories loading failed: {ex.Message}");
             }
         }
 
         private async void LoadStyles()
         {
-          
-            var styles = await _getListStyleUseCase.ExecuteAsync();
-            Styles.Clear();
-            foreach (var style in styles)
+            try
             {
-                Styles.Add(style);
+                var styles = await _getListStyleUseCase.ExecuteAsync();
+                Styles.Clear();
+                foreach (var style in styles)
+                {
+                    Styles.Add(style);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Styles loading failed: {ex.Message}");
             }
         }
 
-        private async void OnSelectImage()
+        private async Task OnSelectImage()
         {
             try
             {

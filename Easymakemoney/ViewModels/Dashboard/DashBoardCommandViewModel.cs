@@ -1,4 +1,6 @@
 
+using Easymakemoney.Services.Dialog;
+
 namespace Easymakemoney.ViewModels.Dashboard
 {
     public partial class DashBoardCommandViewModel : BaseViewModel
@@ -12,16 +14,17 @@ namespace Easymakemoney.ViewModels.Dashboard
         private readonly CommandFormModel _commandFormModel;
 
         private readonly GetDashboardCommandUseCase _getDashboardCommandUseCase;
+        private readonly IDialogService _dialogService;
 
         public DashBoardCommandViewModel(GetDashboardCommandUseCase getDashboardCommandUseCase, ListNewCommandViewModel listNewCommandViewModel, CommandFormModel commandFormModel,
-            SaveCommandUseCase saveCommandUseCase, GetListCommandUseCase getListCommandUseCase)
+            SaveCommandUseCase saveCommandUseCase, GetListCommandUseCase getListCommandUseCase, IDialogService dialogService)
         {
             _commandFormModel = commandFormModel;
             _getListCommandUseCase = getListCommandUseCase;
             _saveCommandUseCase = saveCommandUseCase;
             _listNewCommandViewModel = listNewCommandViewModel;
             _getDashboardCommandUseCase = getDashboardCommandUseCase;
-
+            _dialogService = dialogService;
         }
 
         public DashboardCommand _dashBoardCommand;
@@ -57,6 +60,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
             }
             finally
             {
@@ -68,16 +72,17 @@ namespace Easymakemoney.ViewModels.Dashboard
         {
             if (CollectionId == 0)
             {
-                await Shell.Current.DisplayAlert("Error", "Vous devez choisir obligatoirement une collection", "OK");
+                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une collection");
                 return;
             }
             _listNewCommandViewModel.CollectionId = CollectionId;
             var viewModel = new BottomSheetPopupViewModel(
-            popup: new Popup(),
-            commandViewModel: _listNewCommandViewModel,
-            isCommandForm: true,
-            saveCommandUseCase: _saveCommandUseCase,
-            commandFormModel: _commandFormModel);
+                popup: new Popup(),
+                commandViewModel: _listNewCommandViewModel,
+                isCommandForm: true,
+                saveCommandUseCase: _saveCommandUseCase,
+                commandFormModel: _commandFormModel,
+                dialogService: _dialogService);
 
             var popup = new BottomSheetPopup(viewModel);
             var mainPage = Application.Current?.MainPage;
@@ -93,7 +98,7 @@ namespace Easymakemoney.ViewModels.Dashboard
         {
             if (CollectionId == 0)
             {
-                await Shell.Current.DisplayAlert("Error", "Vous devez choisir obligatoirement une collection", "OK");
+                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une collection");
                 return;
             }
             var viewModel = new BottomSheetPopupListViewViewModel(
@@ -110,17 +115,19 @@ namespace Easymakemoney.ViewModels.Dashboard
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
-            await Application.Current.MainPage.ShowPopupAsync(popup);
+            if (Application.Current?.MainPage != null)
+                await Application.Current.MainPage.ShowPopupAsync(popup);
         }
 
-          [RelayCommand]
-            private async void ItemTapped()
+        [RelayCommand]
+        private async Task ItemTapped()
         {
             if (CommandId == 0)
                 return;
 
             // Navigate to the ListNewCommandPage and pass the collection ID
-            await Shell.Current.GoToAsync($"{nameof(DashBoardProductPage)}?CommandId={CommandId}", true);
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync($"{nameof(DashBoardProductPage)}?CommandId={CommandId}", true);
         }
 
     }

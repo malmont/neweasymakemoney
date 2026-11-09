@@ -1,8 +1,13 @@
 
+using Easymakemoney.Services.Dialog;
+using Easymakemoney.UseCase.PaiementRemboursementUseCase;
+
 namespace Easymakemoney.ViewModels.Statistiques
 {
     public partial class PaiementRemboursementViewModel : BaseViewModel
     {
+        private readonly IDialogService? _dialogService;
+        private readonly PaiementRemboursementUseCase? _paiementRemboursementUseCase;
 
         [ObservableProperty] private double paiementTotalSemaine;
         [ObservableProperty] private double remboursementTotalSemaine;
@@ -34,8 +39,11 @@ namespace Easymakemoney.ViewModels.Statistiques
         [ObservableProperty] bool isPaiementChartVisible;
         [ObservableProperty] bool isRemboursementChartVisible;
    
-        public PaiementRemboursementViewModel()
+        public PaiementRemboursementViewModel(IDialogService? dialogService = null,
+            PaiementRemboursementUseCase? paiementRemboursementUseCase = null)
         {
+            _dialogService = dialogService;
+            _paiementRemboursementUseCase = paiementRemboursementUseCase;
             periodeTypeChoices = new List<PeriodeType>
             {
                 new PeriodeType { id = 1, typePeriode = "Paiements", photoPeriode = "week.png" },
@@ -44,21 +52,51 @@ namespace Easymakemoney.ViewModels.Statistiques
             };
         }
 
-        public void LoadDataPaiement(PaiementRemboursementEvolution data)
+        public async Task LoadPaiementRemboursementStatisticsAsync()
         {
+            if (_paiementRemboursementUseCase == null) return;
+            try
+            {
+                var data = await _paiementRemboursementUseCase.GetPaiementRemboursementEvolutionAsync();
+                LoadDataPaiement(data);
+            }
+            catch (Exception ex)
+            {
+                if (_dialogService != null)
+                    await _dialogService.ShowErrorAsync(ex);
+            }
+        }
+
+        public void LoadDataPaiement(PaiementRemboursementEvolution? data)
+        {
+            if (data == null)
+                return;
+
             // Totaux
-            PaiementTotalSemaine = data.CurrentWeek.PaiementClient.Total;
-            RemboursementTotalSemaine = data.CurrentWeek.RemboursementClient.Total;
+            if (data.CurrentWeek?.PaiementClient != null)
+                PaiementTotalSemaine = data.CurrentWeek.PaiementClient.Total;
+            if (data.CurrentWeek?.RemboursementClient != null)
+                RemboursementTotalSemaine = data.CurrentWeek.RemboursementClient.Total;
 
-            PaiementTotalMois = data.CurrentMonth.PaiementClient;
-            RemboursementTotalMois = data.CurrentMonth.RemboursementClient;
+            if (data.CurrentMonth != null)
+            {
+                PaiementTotalMois = data.CurrentMonth.PaiementClient;
+                RemboursementTotalMois = data.CurrentMonth.RemboursementClient;
+            }
 
-            PaiementTotalAnnee = data.CurrentYear.PaiementClient;
-            RemboursementTotalAnnee = data.CurrentYear.RemboursementClient;
+            if (data.CurrentYear != null)
+            {
+                PaiementTotalAnnee = data.CurrentYear.PaiementClient;
+                RemboursementTotalAnnee = data.CurrentYear.RemboursementClient;
+            }
 
             // Initialisation des collections
-            PaiementQuotidienSemaine = data.CurrentWeek.PaiementClient.Daily.Cast<IStatistiqueData>().ToList();
-            RemboursementQuotidienSemaine = data.CurrentWeek.RemboursementClient.Daily.Cast<IStatistiqueData>().ToList();
+            PaiementQuotidienSemaine = data.CurrentWeek?.PaiementClient?.Daily != null
+                ? data.CurrentWeek.PaiementClient.Daily.Cast<IStatistiqueData>().ToList()
+                : new List<IStatistiqueData>();
+            RemboursementQuotidienSemaine = data.CurrentWeek?.RemboursementClient?.Daily != null
+                ? data.CurrentWeek.RemboursementClient.Daily.Cast<IStatistiqueData>().ToList()
+                : new List<IStatistiqueData>();
 
             TransactionLabel = "Paiements";
             
@@ -107,7 +145,8 @@ namespace Easymakemoney.ViewModels.Statistiques
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
-            await Application.Current.MainPage.ShowPopupAsync(popup);
+            if (Application.Current?.MainPage != null)
+                await Application.Current.MainPage.ShowPopupAsync(popup);
         }
 
         private void ApplyAlternateRowColors<T>(List<T> dataList) where T : class

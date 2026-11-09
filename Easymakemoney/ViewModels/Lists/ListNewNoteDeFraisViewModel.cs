@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using Easymakemoney.Services.Dialog;
 
 namespace Easymakemoney.ViewModels.Lists
 {
@@ -17,11 +18,13 @@ namespace Easymakemoney.ViewModels.Lists
         private readonly SaveCollectionUseCase _saveCollectionUseCase;
 
         private readonly SaveNoteDeFraisUseCase _saveNoteDeFraisUseCase;
+        private readonly IDialogService _dialogService;
 
         public ListNewNoteDeFraisViewModel(GetListCollectionsUseCase getListCollectionsUseCase,
          GetListNoteDeFraisUseCase getListNoteDeFraisUseCase, DeleteNoteDeFraisUseCase deleteNoteDeFraisUseCase,
           SaveNoteDeFraisUseCase saveNoteDeFraisUseCase, NoteDeFraisForModel noteDeFraisForModel, SaveCollectionUseCase saveCollectionUseCase,
-          ListNewCollectionViewModel listNewCollectionViewModel, CollectionFormModel collectionFormModel)
+          ListNewCollectionViewModel listNewCollectionViewModel, CollectionFormModel collectionFormModel,
+          IDialogService dialogService)
         {
             _collectionFormModel = collectionFormModel;
             _listNewCollectionViewModel = listNewCollectionViewModel;
@@ -31,8 +34,9 @@ namespace Easymakemoney.ViewModels.Lists
             _deleteNoteDeFraisUseCase = deleteNoteDeFraisUseCase;
             _saveNoteDeFraisUseCase = saveNoteDeFraisUseCase;
             _noteDeFraisForModel = noteDeFraisForModel;
-            DeleteNoteDefraisCommand = new RelayCommand<NoteDeFrais>(DeleteNoteDeFrais);
-            ItemTappedNoteDeFrais = new RelayCommand<NoteDeFrais>(OnItemTapped);
+            _dialogService = dialogService;
+            DeleteNoteDefraisCommand = new AsyncRelayCommand<NoteDeFrais>(DeleteNoteDeFrais);
+            ItemTappedNoteDeFrais = new AsyncRelayCommand<NoteDeFrais>(OnItemTapped);
 
         }
 
@@ -69,7 +73,7 @@ namespace Easymakemoney.ViewModels.Lists
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                await Shell.Current.DisplayAlert("Error", "Unable to get note de frais", "OK");
+                await _dialogService.ShowErrorAsync(ex);
             }
             finally
             {
@@ -77,25 +81,52 @@ namespace Easymakemoney.ViewModels.Lists
             }
         }
 
-        private async void DeleteNoteDeFrais(NoteDeFrais noteDeFrais)
+        private async Task DeleteNoteDeFrais(NoteDeFrais? noteDeFrais)
         {
             if (noteDeFrais == null)
                 return;
 
-            if (await _deleteNoteDeFraisUseCase.ExecuteAsync(noteDeFrais.id))
+            if (IsBusy)
+                return;
+
+            bool confirmed = await _dialogService.ConfirmAsync(
+                "Confirmation",
+                "Êtes-vous sûr de vouloir supprimer cette note de frais ?",
+                "Supprimer",
+                "Annuler");
+            if (!confirmed)
+                return;
+
+            IsBusy = true;
+            try
             {
-                ListNoteDeFrais.Remove(noteDeFrais);
+                var result = await _deleteNoteDeFraisUseCase.ExecuteAsync(noteDeFrais.id);
+                if (result)
+                {
+                    ListNoteDeFrais.Remove(noteDeFrais);
+                    await _dialogService.ShowInfoAsync("Note de frais supprimée avec succès.");
+                }
+                else
+                {
+                    await _dialogService.ShowInfoAsync("Échec de la suppression de la note de frais.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", "Unable to delete note de frais", "OK");
+                Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
-        private async void OnItemTapped(NoteDeFrais noteDeFrais)
+        private async Task OnItemTapped(NoteDeFrais? noteDeFrais)
         {
             if (noteDeFrais == null)
                 return;
+            await Task.CompletedTask;
         }
 
 
@@ -116,7 +147,8 @@ namespace Easymakemoney.ViewModels.Lists
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
-            await Application.Current.MainPage.ShowPopupAsync(popup);
+            if (Application.Current?.MainPage != null)
+                await Application.Current.MainPage.ShowPopupAsync(popup);
         }
 
         [RelayCommand]
@@ -124,15 +156,16 @@ namespace Easymakemoney.ViewModels.Lists
         {
             if (CollectionId == 0)
             {
-                await Shell.Current.DisplayAlert("Error", "Vous devez choisir obligatoirement une collection", "OK");
+                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une collection");
                 return;
             }
             var viewModel = new BottomSheetPopupViewModel(
-            popup: new Popup(),
-            noteDeFraisViewModel: this,
-            isNoteDeFraisForm: true,
-            saveNoteDeFraisUseCase: _saveNoteDeFraisUseCase,
-            noteDeFraisForm: _noteDeFraisForModel);
+                popup: new Popup(),
+                noteDeFraisViewModel: this,
+                isNoteDeFraisForm: true,
+                saveNoteDeFraisUseCase: _saveNoteDeFraisUseCase,
+                noteDeFraisForm: _noteDeFraisForModel,
+                dialogService: _dialogService);
 
             var popup = new BottomSheetPopup(viewModel);
             var mainPage = Application.Current?.MainPage;
@@ -153,7 +186,8 @@ namespace Easymakemoney.ViewModels.Lists
                     saveCollectionUseCase: _saveCollectionUseCase,
                     isCollectionForm: true,
                     collectionViewModel: _listNewCollectionViewModel,
-                    collectionFormModel: _collectionFormModel);
+                    collectionFormModel: _collectionFormModel,
+                    dialogService: _dialogService);
 
                 var popup = new BottomSheetPopup(viewModel);
                 var mainPage = Application.Current?.MainPage;
@@ -161,13 +195,11 @@ namespace Easymakemoney.ViewModels.Lists
                 {
                     Console.WriteLine("AShowPopupAsync");
                     await mainPage.ShowPopupAsync(popup);
-
                 }
             }
             catch (Exception ex)
             {
-                if (Application.Current?.MainPage != null)
-                    await Application.Current.MainPage.DisplayAlert("Exception", ex.Message, "OK");
+                await _dialogService.ShowErrorAsync(ex);
                 Console.WriteLine($"Exception: {ex}");
             }
         }

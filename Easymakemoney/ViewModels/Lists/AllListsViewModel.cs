@@ -7,35 +7,34 @@ namespace Easymakemoney.ViewModels.Lists
 		{
             
         }
+
         [RelayCommand]
-        async void NavigateToCollection()
+        private async Task NavigateToCollection()
         {
-            await Shell.Current.GoToAsync(nameof(ListNewCollectionPage));
-            //await Shell.Current.GoToAsync($"//{nameof(ListNewCollectionPage)}");
-        }
-        [RelayCommand]
-        async void NavigateToNoteDeFrais()
-        {
-            await Shell.Current.GoToAsync(nameof(ListNewNoteDeFraisPage));
-            //await Shell.Current.GoToAsync($"//{nameof(ListNewProductPage)}");
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(ListNewCollectionPage));
         }
 
         [RelayCommand]
-          async void NavigateToNoteFournisseur()
+        private async Task NavigateToNoteDeFrais()
         {
-            await Shell.Current.GoToAsync(nameof(ListNewFournisseurPage));
-            //await Shell.Current.GoToAsync($"//{nameof(ListNewProductPage)}");
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(ListNewNoteDeFraisPage));
         }
 
         [RelayCommand]
-        async void NavigateToFraisDePort()
+        private async Task NavigateToNoteFournisseur()
         {
-            await Shell.Current.GoToAsync(nameof(ListNewFraisDePortPage));
-            //await Shell.Current.GoToAsync($"//{nameof(ListNewProductPage)}");
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(ListNewFournisseurPage));
         }
 
-        
-       
+        [RelayCommand]
+        private async Task NavigateToFraisDePort()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(ListNewFraisDePortPage));
+        }
     }
 }
 

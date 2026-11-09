@@ -41,6 +41,22 @@ Parcours sur le mobile, depuis une commande :
 
 **À instruire avec le backend :** route d'extraction, format des lignes, tailles et couleurs quand la facture les détaille, taxes, conservation du fichier.
 
+## Choisir où un article est vendu (demande du propriétaire, 09/11/2026)
+
+Après la création d'un article, depuis une commande ou non, le gérant décide où il est en ligne : **site web, application mobile, caisse**.
+Disponible sur le mobile comme sur le web, en lot si possible.
+
+**Relevé dans le backend (`origin/dev`) :**
+- `Product` porte déjà `isWeb`, `isPos` et `isLandingPage` ;
+- `POST /api/products/ai/create` accepte `channels {web, pos, landing}` ;
+- `POST /api/commandes/{id}/products` et la route de rattachement ne reçoivent pas ces canaux ;
+- `PATCH /api/products/{id}` existe (API Platform) mais sans contrôle dédié : **à ne pas utiliser**.
+
+**À demander au backend :** une route dédiée, par exemple `PATCH /api/products/{id}/channels {web, pos, landing}` et sa version en lot, à ajouter sans
+toucher à l'existant. **À confirmer aussi :** l'application e-commerce mobile suit-elle `isWeb`, ou faut-il un canal mobile distinct ?
+
+**Rappel : le web fait tout**, y compris les articles sans commande et la création d'articles à partir d'une commande.
+
 ## Ordre recommandé
 
 1. Finir l'interface, le lot 3 et l'adaptation aux livraisons G1 à G4.

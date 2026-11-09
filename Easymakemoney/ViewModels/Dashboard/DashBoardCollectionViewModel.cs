@@ -1,5 +1,7 @@
 
 
+using Easymakemoney.Services.Dialog;
+
 namespace Easymakemoney.ViewModels.Dashboard
 {
     public partial class DashBoardCollectionViewModel:BaseViewModel
@@ -15,10 +17,12 @@ namespace Easymakemoney.ViewModels.Dashboard
         private readonly GetCollectionCloseUseCase _getCollectionCloseUseCase;
 
         private readonly CollectionFormModel _collectionFormModel;
+        private readonly IDialogService _dialogService;
 
         public DashBoardCollectionViewModel(GetDashBoardCollectionUseCase getDashBoardCollectionUseCase,GetListCollectionsUseCase getListCollectionsUseCase,
             SaveCollectionUseCase saveCollectionUseCase, ListNewCollectionViewModel listNewCollectionViewModel,
-             CollectionFormModel collectionFormModel,GetCollectionCloseUseCase getCollectionCloseUseCase)
+             CollectionFormModel collectionFormModel,GetCollectionCloseUseCase getCollectionCloseUseCase,
+             IDialogService dialogService)
         {
             _collectionFormModel = collectionFormModel;
             _listNewCollectionViewModel = listNewCollectionViewModel;
@@ -26,6 +30,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             _getListCollectionsUseCase = getListCollectionsUseCase;
             _getDashBoardCollectionUseCase = getDashBoardCollectionUseCase;
             _getCollectionCloseUseCase = getCollectionCloseUseCase;
+            _dialogService = dialogService;
         }
 
        
@@ -71,12 +76,13 @@ namespace Easymakemoney.ViewModels.Dashboard
                 var result = await _getCollectionCloseUseCase.GetCollectionClose(CollectionId);
                 if (result != null)
                 {
-                    await Application.Current.MainPage.DisplayAlert("retour", result, "OK");
+                    await _dialogService.ShowInfoAsync(result);
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
             }
             finally
             {
@@ -88,7 +94,8 @@ namespace Easymakemoney.ViewModels.Dashboard
 
 
         public async Task GetDashBoardCollectionAsync(int CollectionId)
-        {if (IsBusy)
+        {
+            if (IsBusy)
                 return;
 
             IsBusy = true;
@@ -99,6 +106,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
             }
             finally
             {
@@ -125,7 +133,8 @@ namespace Easymakemoney.ViewModels.Dashboard
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
-            await Application.Current.MainPage.ShowPopupAsync(popup);
+            if (Application.Current?.MainPage != null)
+                await Application.Current.MainPage.ShowPopupAsync(popup);
         }
 
          [RelayCommand]
@@ -138,7 +147,8 @@ namespace Easymakemoney.ViewModels.Dashboard
                     saveCollectionUseCase: _saveCollectionUseCase,
                     isCollectionForm: true,
                     collectionViewModel: _listNewCollectionViewModel,
-                    collectionFormModel: _collectionFormModel);
+                    collectionFormModel: _collectionFormModel,
+                    dialogService: _dialogService);
 
                 var popup = new BottomSheetPopup(viewModel);
                 var mainPage = Application.Current?.MainPage;
@@ -146,24 +156,23 @@ namespace Easymakemoney.ViewModels.Dashboard
                 {
                     Console.WriteLine("AShowPopupAsync");
                     await mainPage.ShowPopupAsync(popup);
-
                 }
             }
             catch (Exception ex)
             {
-                if (Application.Current?.MainPage != null)
-                    await Application.Current.MainPage.DisplayAlert("Exception", ex.Message, "OK");
+                await _dialogService.ShowErrorAsync(ex);
                 Console.WriteLine($"Exception: {ex}");
             }
         }
         [RelayCommand]
-            private async void ItemTapped()
+        private async Task ItemTapped()
         {
             if (CollectionId == 0)
                 return;
 
             // Navigate to the ListNewCommandPage and pass the collection ID
-            await Shell.Current.GoToAsync($"{nameof(DashBoardCommandPage)}?CollectionId={CollectionId}", true);
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync($"{nameof(DashBoardCommandPage)}?CollectionId={CollectionId}", true);
         }
      
     }

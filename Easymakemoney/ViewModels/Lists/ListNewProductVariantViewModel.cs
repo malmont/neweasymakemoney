@@ -1,16 +1,20 @@
 using System.Windows.Input;
+using Easymakemoney.Services.Dialog;
+
 namespace Easymakemoney.ViewModels.Lists
 {
     public partial class ListNewProductsVariantViewModel : BaseViewModel
     {
         public ListNewProductsVariantViewModel(GetListProductsVariantUseCase getListProductsVariantUseCase, DeleteProductsVariantUseCase deleteProductsVariantUseCase
-          , SaveProductvariantUseCase saveProductvariantUseCase, ProductVariantFormModel productVariantFormModel)
+          , SaveProductvariantUseCase saveProductvariantUseCase, ProductVariantFormModel productVariantFormModel,
+          IDialogService dialogService)
         {
             _getListProductsVariantUseCase = getListProductsVariantUseCase;
             _deleteProductsVariantUseCase = deleteProductsVariantUseCase;
             _saveProductvariantUseCase = saveProductvariantUseCase;
             _productVariantFormModel = productVariantFormModel;
-            DeleteProductVariantCommand = new RelayCommand<ProductVariant>(DeleteProductVariant);
+            _dialogService = dialogService;
+            DeleteProductVariantCommand = new AsyncRelayCommand<ProductVariant>(DeleteProductVariant);
         }
 
 
@@ -19,6 +23,7 @@ namespace Easymakemoney.ViewModels.Lists
         private readonly ProductVariantFormModel _productVariantFormModel;
 
         private readonly SaveProductvariantUseCase _saveProductvariantUseCase;
+        private readonly IDialogService _dialogService;
 
         public ObservableCollection<ProductVariant> ListProductVariants { get; set; } = new ObservableCollection<ProductVariant>();
 
@@ -46,7 +51,7 @@ namespace Easymakemoney.ViewModels.Lists
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                await Shell.Current.DisplayAlert("Error", "Unable to get product variants", "OK");
+                await _dialogService.ShowErrorAsync(ex);
             }
             finally
             {
@@ -62,7 +67,8 @@ namespace Easymakemoney.ViewModels.Lists
                 productVariantViewModel: this,
                 isProductVariantForm: true,
                 productVariantForm: _productVariantFormModel,
-                saveProductvariantUseCase: _saveProductvariantUseCase);
+                saveProductvariantUseCase: _saveProductvariantUseCase,
+                dialogService: _dialogService);
 
             var popup = new BottomSheetPopup(viewModel);
             var mainPage = Application.Current?.MainPage;
@@ -73,9 +79,20 @@ namespace Easymakemoney.ViewModels.Lists
             }
         }
 
-        private async void DeleteProductVariant(ProductVariant productVariant)
+        private async Task DeleteProductVariant(ProductVariant? productVariant)
         {
+            if (productVariant == null)
+                return;
+
             if (IsBusy)
+                return;
+
+            bool confirmed = await _dialogService.ConfirmAsync(
+                "Confirmation",
+                "Êtes-vous sûr de vouloir supprimer cette variante ?",
+                "Supprimer",
+                "Annuler");
+            if (!confirmed)
                 return;
 
             IsBusy = true;
@@ -85,12 +102,17 @@ namespace Easymakemoney.ViewModels.Lists
                 if (result)
                 {
                     ListProductVariants.Remove(productVariant);
+                    await _dialogService.ShowInfoAsync("Variante supprimée avec succès.");
+                }
+                else
+                {
+                    await _dialogService.ShowInfoAsync("Échec de la suppression de la variante.");
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                await Shell.Current.DisplayAlert("Error", "Unable to delete product variant", "OK");
+                await _dialogService.ShowErrorAsync(ex);
             }
             finally
             {

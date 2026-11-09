@@ -46,7 +46,7 @@ namespace Easymakemoney.ViewModels.Startup
                 var tenant = await _tenantStore.GetTenantAsync();
                 if (tenant == null)
                 {
-                    await Shell.Current.GoToAsync("//ActivationPage");
+                    await NavigateAsync("//ActivationPage");
                     return;
                 }
 
@@ -56,7 +56,7 @@ namespace Easymakemoney.ViewModels.Startup
             catch (Exception ex)
             {
                 Debug.WriteLine($"[LoadingPageViewModel] Erreur initialisation startup : {ex.Message}");
-                await Shell.Current.GoToAsync("//ActivationPage");
+                await NavigateAsync("//ActivationPage");
                 return;
             }
 
@@ -117,7 +117,7 @@ namespace Easymakemoney.ViewModels.Startup
                 // Cas 1 : pas de session (aucun jeton ni refresh token)
                 if (string.IsNullOrWhiteSpace(token) && string.IsNullOrWhiteSpace(refreshToken))
                 {
-                    await Shell.Current.GoToAsync("//LoginPage");
+                    await NavigateAsync("//LoginPage");
                     return;
                 }
 
@@ -132,7 +132,7 @@ namespace Easymakemoney.ViewModels.Startup
                         {
                             AppShell.Current.FlyoutHeader = new FlyoutHeaderControl(user);
                         }
-                        await Shell.Current.GoToAsync("//DashboardPage");
+                        await NavigateAsync("//DashboardPage");
                         return;
                     }
                 }
@@ -149,14 +149,14 @@ namespace Easymakemoney.ViewModels.Startup
                         {
                             AppShell.Current.FlyoutHeader = new FlyoutHeaderControl(user);
                         }
-                        await Shell.Current.GoToAsync("//DashboardPage");
+                        await NavigateAsync("//DashboardPage");
                         return;
                     }
 
                     if (refreshResult.Status == RefreshStatus.Rejected)
                     {
                         // Refus serveur (400 ou 401) : TokenRefresher a purgé la session
-                        await Shell.Current.GoToAsync("//LoginPage");
+                        await NavigateAsync("//LoginPage");
                         return;
                     }
 
@@ -166,16 +166,24 @@ namespace Easymakemoney.ViewModels.Startup
                     {
                         AppShell.Current.FlyoutHeader = new FlyoutHeaderControl(cachedUser);
                     }
-                    await Shell.Current.GoToAsync("//DashboardPage");
+                    await NavigateAsync("//DashboardPage");
                     return;
                 }
 
-                await Shell.Current.GoToAsync("//LoginPage");
+                await NavigateAsync("//LoginPage");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"[LoadingPageViewModel] Erreur contrôle session : {ex.Message}");
-                await Shell.Current.GoToAsync("//LoginPage");
+                await NavigateAsync("//LoginPage");
+            }
+        }
+
+        private static async Task NavigateAsync(string route)
+        {
+            if (Shell.Current is { } shell)
+            {
+                await shell.GoToAsync(route);
             }
         }
     }

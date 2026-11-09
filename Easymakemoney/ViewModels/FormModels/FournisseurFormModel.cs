@@ -64,11 +64,18 @@ namespace Easymakemoney.ViewModels.FormModels
     
             private async void LoadTypeFournisseur()
             {
-                var typeFournisseurs = await _getListTypeFournisseurUseCase.ExecuteAsync();
-                TypeFournisseurSelected.Clear();
-                foreach (var typeFournisseur in typeFournisseurs)
+                try
                 {
-                    TypeFournisseurSelected.Add(typeFournisseur);
+                    var typeFournisseurs = await _getListTypeFournisseurUseCase.ExecuteAsync();
+                    TypeFournisseurSelected.Clear();
+                    foreach (var typeFournisseur in typeFournisseurs)
+                    {
+                        TypeFournisseurSelected.Add(typeFournisseur);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"LoadTypeFournisseur failed: {ex.Message}");
                 }
             }
     }

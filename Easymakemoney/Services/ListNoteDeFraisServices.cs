@@ -17,8 +17,8 @@ namespace Easymakemoney.Services
         public async Task<bool> PostNoteDeFrais(NoteDeFrais newNoteDeFrais, int id)
         {
             var url = $"collections/{id}/notes-de-frais";
-            var result = await _httpService.PostAsyncWithAuth<object>(url, newNoteDeFrais);
-            return result != null;
+            await _httpService.PostAsyncWithAuth<object>(url, newNoteDeFrais);
+            return true;
         }
 
         public async Task<ObservableCollection<TypeNoteDeFrais>> GetTypeNoteDeFrais()
@@ -32,7 +32,7 @@ namespace Easymakemoney.Services
         {
             var url = $"notes-de-frais/{id}";
             var result = await _httpService.DeleAsyncWithAuth<object>(url);
-            return result != null;
+            return result;
         }
   
       

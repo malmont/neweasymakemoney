@@ -18,15 +18,15 @@ namespace Easymakemoney.Services
         public async Task<bool> PostCommandes(ListCommand newCommandes, int id)
         {
             var url = $"collections/{id}/commandes";
-            var result = await _httpService.PostAsyncWithAuth<object>(url, newCommandes);
-            return result != null;
+            await _httpService.PostAsyncWithAuth<object>(url, newCommandes);
+            return true;
         }
 
         public async Task<bool> DeleteCommandes(int id)
         {
             var url = $"commandes/{id}";
             var result = await _httpService.DeleAsyncWithAuth<object>(url);
-            return result != null;
+            return result;
         }
     }
 }

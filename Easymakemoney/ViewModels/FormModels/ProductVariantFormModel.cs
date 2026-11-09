@@ -44,23 +44,37 @@ namespace Easymakemoney.ViewModels.FormModels
 
         private async void LoadColors()
         {
-            // Call API to get categories and populate the Categories collection
-            var colors = await _getListColorsUseCase.GetListColors();
-            Colors.Clear();
-            foreach (var color in colors)
+            try
             {
-                Colors.Add(color);
+                // Call API to get categories and populate the Categories collection
+                var colors = await _getListColorsUseCase.GetListColors();
+                Colors.Clear();
+                foreach (var color in colors)
+                {
+                    Colors.Add(color);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"LoadColors failed: {ex.Message}");
             }
         }
 
         private async void LoadSizes()
         {
-            // Call API to get categories and populate the Categories collection
-            var sizes = await _getListSizesUseCase.GetListSizes();
-            Sizes.Clear();
-            foreach (var size in sizes)
+            try
             {
-                Sizes.Add(size);
+                // Call API to get categories and populate the Categories collection
+                var sizes = await _getListSizesUseCase.GetListSizes();
+                Sizes.Clear();
+                foreach (var size in sizes)
+                {
+                    Sizes.Add(size);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"LoadSizes failed: {ex.Message}");
             }
         }
     }

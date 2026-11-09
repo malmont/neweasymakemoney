@@ -17,15 +17,15 @@
 
         public async Task<bool> PostCollection(ListCollection newCollection)
         {
-            var result = await _httpService.PostAsyncWithAuth<object>("createcollections", newCollection);
-            return result != null;
+            await _httpService.PostAsyncWithAuth<object>("createcollections", newCollection);
+            return true;
         }
 
         public async Task<bool> DeleteCollection(int id)
         {
             var url = $"collections/{id}";
             var result = await _httpService.DeleAsyncWithAuth<object>(url);
-            return result != null;
+            return result;
         }
     }
 }

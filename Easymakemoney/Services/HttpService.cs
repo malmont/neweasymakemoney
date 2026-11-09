@@ -1,5 +1,9 @@
 // Service d'accès HTTP
+using System.Globalization;
+using System.Net;
 using System.Text;
+using Easymakemoney.Models.Api;
+using Easymakemoney.Services.Api;
 using Easymakemoney.Services.Auth;
 
 namespace Easymakemoney.Services
@@ -15,16 +19,19 @@ namespace Easymakemoney.Services
 
         public async Task<T> GetAsync<T>(string url)
         {
-            var response = await _httpClient.GetAsync(url);
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            HttpResponseMessage response;
+            try
             {
-                var json = await response.Content.ReadAsStringAsync();
-                var deserializeJson = JsonConvert.DeserializeObject<T>(json);
-                return deserializeJson ?? default;
+                response = await _httpClient.GetAsync(url);
             }
-            else
+            catch (Exception ex) when (ex is HttpRequestException or IOException or OperationCanceledException or TimeoutException)
             {
-                return default;
+                throw ApiException.NoConnection(ex);
+            }
+
+            using (response)
+            {
+                return await HandleResponseAsync<T>(response);
             }
         }
 
@@ -37,32 +44,44 @@ namespace Easymakemoney.Services
                 content = new StringContent(json, Encoding.UTF8, "application/json");
             }
 
-            var response = await _httpClient.PostAsync(url, content);
-            var responseJson = await response.Content.ReadAsStringAsync();
-
-            Debug.WriteLine($"Response Status Code: {response.StatusCode}");
-
-            if (response.StatusCode == System.Net.HttpStatusCode.OK || response.StatusCode == System.Net.HttpStatusCode.Created)
+            HttpResponseMessage response;
+            try
             {
-                var deserializeJson = JsonConvert.DeserializeObject<T>(responseJson);
-                return deserializeJson ?? default;
+                response = await _httpClient.PostAsync(url, content);
             }
-            else
+            catch (Exception ex) when (ex is HttpRequestException or IOException or OperationCanceledException or TimeoutException)
             {
-                return default;
+                throw ApiException.NoConnection(ex);
+            }
+
+            using (response)
+            {
+                return await HandleResponseAsync<T>(response);
             }
         }
 
         public async Task<bool> DeleAsyncWithAuth<T>(string url)
         {
-            var response = await _httpClient.DeleteAsync(url);
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
+            HttpResponseMessage response;
+            try
             {
-                return true;
+                response = await _httpClient.DeleteAsync(url);
             }
-            else
+            catch (Exception ex) when (ex is HttpRequestException or IOException or OperationCanceledException or TimeoutException)
             {
-                return false;
+                throw ApiException.NoConnection(ex);
+            }
+
+            using (response)
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+
+                var responseJson = await response.Content.ReadAsStringAsync();
+                var apiError = ApiError.FromHttpResponse(responseJson, response.StatusCode, response.Headers);
+                throw new ApiException(apiError, response.StatusCode);
             }
         }
 
@@ -77,19 +96,19 @@ namespace Easymakemoney.Services
             };
             request.SetSkipAuth(true);
 
-            var response = await _httpClient.SendAsync(request);
-            var responseJson = await response.Content.ReadAsStringAsync();
-
-            Debug.WriteLine($"Response Status Code: {response.StatusCode}");
-
-            if (response.StatusCode == System.Net.HttpStatusCode.OK || response.StatusCode == System.Net.HttpStatusCode.Created)
+            HttpResponseMessage response;
+            try
             {
-                var deserializeJson = JsonConvert.DeserializeObject<T>(responseJson);
-                return deserializeJson ?? default;
+                response = await _httpClient.SendAsync(request);
             }
-            else
+            catch (Exception ex) when (ex is HttpRequestException or IOException or OperationCanceledException or TimeoutException)
             {
-                return default;
+                throw ApiException.NoConnection(ex);
+            }
+
+            using (response)
+            {
+                return await HandleResponseAsync<T>(response);
             }
         }
 
@@ -99,20 +118,23 @@ namespace Easymakemoney.Services
 
             content.Add(new StringContent(data.name), "name");
             content.Add(new StringContent(data.description), "description");
-            content.Add(new StringContent(data.purchasePrice.ToString()), "purchasePrice");
-            content.Add(new StringContent(data.coefficientMultiplier.ToString()), "coefficientMultiplier");
+
+            // Règle 4 bis : prix d'achat envoyé en entier centimes avec CultureInfo.InvariantCulture
+            var purchasePriceCents = (long)Math.Round(data.purchasePrice * 100);
+            content.Add(new StringContent(purchasePriceCents.ToString(CultureInfo.InvariantCulture)), "purchasePrice");
+            content.Add(new StringContent(data.coefficientMultiplier.ToString(CultureInfo.InvariantCulture)), "coefficientMultiplier");
 
             if (data.category != null && data.category.Count > 0)
             {
                 foreach (var category in data.category)
                 {
-                    content.Add(new StringContent(category.id.ToString()), "category_ids[]");
+                    content.Add(new StringContent(category.id.ToString(CultureInfo.InvariantCulture)), "category_ids[]");
                 }
             }
 
             if (data.style != null)
             {
-                content.Add(new StringContent(data.style.id.ToString()), "style_id");
+                content.Add(new StringContent(data.style.id.ToString(CultureInfo.InvariantCulture)), "style_id");
             }
 
             if (fileStream != null)
@@ -121,20 +143,44 @@ namespace Easymakemoney.Services
                 content.Add(streamContent, "image", fileName);
             }
 
-            var response = await _httpClient.PostAsync(url, content);
-            var responseJson = await response.Content.ReadAsStringAsync();
-
-            Debug.WriteLine($"Response Status Code: {response.StatusCode}");
-
-            if (response.StatusCode == System.Net.HttpStatusCode.OK || response.StatusCode == System.Net.HttpStatusCode.Created)
+            HttpResponseMessage response;
+            try
             {
+                response = await _httpClient.PostAsync(url, content);
+            }
+            catch (Exception ex) when (ex is HttpRequestException or IOException or OperationCanceledException or TimeoutException)
+            {
+                throw ApiException.NoConnection(ex);
+            }
+
+            using (response)
+            {
+                return await HandleResponseAsync<T>(response);
+            }
+        }
+
+        private static async Task<T> HandleResponseAsync<T>(HttpResponseMessage response)
+        {
+            if (response.IsSuccessStatusCode)
+            {
+                if (response.StatusCode == HttpStatusCode.NoContent)
+                {
+                    return default!;
+                }
+
+                var responseJson = await response.Content.ReadAsStringAsync();
+                if (string.IsNullOrWhiteSpace(responseJson))
+                {
+                    return default!;
+                }
+
                 var deserializeJson = JsonConvert.DeserializeObject<T>(responseJson);
-                return deserializeJson ?? default;
+                return deserializeJson ?? default!;
             }
-            else
-            {
-                return default;
-            }
+
+            var errorJson = await response.Content.ReadAsStringAsync();
+            var apiError = ApiError.FromHttpResponse(errorJson, response.StatusCode, response.Headers);
+            throw new ApiException(apiError, response.StatusCode);
         }
     }
 }

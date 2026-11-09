@@ -1,5 +1,5 @@
 using System.Windows.Input;
-
+using Easymakemoney.Services.Dialog;
 
 namespace Easymakemoney.ViewModels.Lists
 {
@@ -10,18 +10,21 @@ namespace Easymakemoney.ViewModels.Lists
         private readonly ProductFormModel _productFormModel;
 
         private readonly SaveProductUseCase _saveProductUseCase;
+        private readonly IDialogService _dialogService;
 
         public ObservableCollection<ListProduct> ListProducts { get; set; } = new ObservableCollection<ListProduct>();
 
         public ListNewProductViewModel(GetListProductsUseCase getListProductsUseCase, ProductFormModel productFormModel, 
-        SaveProductUseCase saveProductUseCase, DeleteProductsUseCase deleteProductUseCase)
+        SaveProductUseCase saveProductUseCase, DeleteProductsUseCase deleteProductUseCase,
+        IDialogService dialogService)
         {
             _saveProductUseCase = saveProductUseCase;
             _getListProductsUseCase = getListProductsUseCase;
             _deleteProductUseCase = deleteProductUseCase;
             _productFormModel = productFormModel;
-            DeleteProductCommand = new RelayCommand<ListProduct>(DeleteProduct);
-            ItemTappedProductsVariants = new RelayCommand<ListProduct>(OnItemTapped);
+            _dialogService = dialogService;
+            DeleteProductCommand = new AsyncRelayCommand<ListProduct>(DeleteProduct);
+            ItemTappedProductsVariants = new AsyncRelayCommand<ListProduct>(OnItemTapped);
         }
         public ICommand ItemTappedProductsVariants { get; }
 
@@ -46,7 +49,7 @@ namespace Easymakemoney.ViewModels.Lists
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                await Shell.Current.DisplayAlert("Error", "Unable to get products", "OK");
+                await _dialogService.ShowErrorAsync(ex);
             }
             finally
             {
@@ -58,12 +61,13 @@ namespace Easymakemoney.ViewModels.Lists
         public async Task ShowBottomSheet()
         {
             var viewModel = new BottomSheetPopupViewModel(
-            popup: new Popup(),
-            isProductForm: true,
-            productViewModel: this,
-            saveProductUseCase: _saveProductUseCase,
-            productFormModel: _productFormModel
-        );
+                popup: new Popup(),
+                isProductForm: true,
+                productViewModel: this,
+                saveProductUseCase: _saveProductUseCase,
+                productFormModel: _productFormModel,
+                dialogService: _dialogService
+            );
 
             var popup = new BottomSheetPopup(viewModel);
             var mainPage = Application.Current?.MainPage;
@@ -73,18 +77,30 @@ namespace Easymakemoney.ViewModels.Lists
                 await mainPage.ShowPopupAsync(popup);
             }
         }
-        private async void OnItemTapped (ListProduct product)
+        private async Task OnItemTapped (ListProduct? product)
         {
-          if (product == null)
+            if (product == null)
                 return;
 
             // Navigate to the ListNewCommandPage and pass the collection ID
-            await Shell.Current.GoToAsync($"{nameof(ListNewProductVariantPage)}?ProductId={product.id}", true);
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync($"{nameof(ListNewProductVariantPage)}?ProductId={product.id}", true);
         }
 
-        private async void DeleteProduct(ListProduct product)
+        private async Task DeleteProduct(ListProduct? product)
         {
+            if (product == null)
+                return;
+
             if (IsBusy)
+                return;
+
+            bool confirmed = await _dialogService.ConfirmAsync(
+                "Confirmation",
+                "Êtes-vous sûr de vouloir supprimer ce produit ?",
+                "Supprimer",
+                "Annuler");
+            if (!confirmed)
                 return;
 
             IsBusy = true;
@@ -94,12 +110,17 @@ namespace Easymakemoney.ViewModels.Lists
                 if (result)
                 {
                     ListProducts.Remove(product);
+                    await _dialogService.ShowInfoAsync("Produit supprimé avec succès.");
+                }
+                else
+                {
+                    await _dialogService.ShowInfoAsync("Échec de la suppression du produit.");
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                await Shell.Current.DisplayAlert("Error", "Unable to delete product", "OK");
+                await _dialogService.ShowErrorAsync(ex);
             }
             finally
             {

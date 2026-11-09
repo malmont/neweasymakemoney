@@ -3,6 +3,7 @@ using Easymakemoney.Services.Tenant;
 using Easymakemoney.Services.Site;
 using Easymakemoney.Services.Auth;
 using Easymakemoney.Services.Session;
+using Easymakemoney.Services.Dialog;
 
 namespace Easymakemoney;
 
@@ -69,6 +70,7 @@ public static class MauiProgram
 		builder.Services.AddSingleton<ISessionExpiryNotifier, SessionExpiryNotifier>();
 		builder.Services.AddSingleton<ITokenRefresher, TokenRefresher>();
 		builder.Services.AddSingleton<IAuthFlowService, AuthFlowService>();
+		builder.Services.AddSingleton<IDialogService, DialogService>();
 		builder.Services.AddSingleton<AppShellViewModel>();
 		builder.Services.AddSingleton<AppShell>();
 

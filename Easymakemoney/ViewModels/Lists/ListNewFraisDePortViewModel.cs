@@ -1,4 +1,6 @@
 
+using Easymakemoney.Services.Dialog;
+
 namespace Easymakemoney.ViewModels.Lists
 {
     public partial class ListNewFraisDePortViewModel : BaseViewModel
@@ -25,6 +27,7 @@ namespace Easymakemoney.ViewModels.Lists
         private readonly GetListCommandUseCase _getListCommandUseCase;
 
         private readonly CommandFormModel _commandFormModel;
+        private readonly IDialogService _dialogService;
 
         public ListNewFraisDePortViewModel(GetListCollectionsUseCase getListCollectionsUseCase,
             GetListFraisDePortUseCase getListFraisDePortUseCase, DeleteFraisDePortUseCase deleteFraisDePortUseCase,
@@ -32,7 +35,7 @@ namespace Easymakemoney.ViewModels.Lists
             SaveCollectionUseCase saveCollectionUseCase, ListNewCollectionViewModel listNewCollectionViewModel,
             CollectionFormModel collectionFormModel, ListNewCommandViewModel listNewCommandViewModel,
             SaveCommandUseCase saveCommandUseCase, GetListCommandUseCase getListCommandUseCase,
-            CommandFormModel commandFormModel)
+            CommandFormModel commandFormModel, IDialogService dialogService)
         {
             _commandFormModel = commandFormModel;
             _getListCommandUseCase = getListCommandUseCase;
@@ -46,8 +49,9 @@ namespace Easymakemoney.ViewModels.Lists
             _deleteFraisDePortUseCase = deleteFraisDePortUseCase;
             _saveFraisDePortUseCase = saveFraisDePortUseCase;
             _fraisDePortFormModel = fraisDePortFormModel;
-            DeleteFraisDePortCommand = new RelayCommand<FraisDePort>(DeleteFraisDePort);
-            ItemTappedFraisDePort = new RelayCommand<FraisDePort>(OnItemTapped);
+            _dialogService = dialogService;
+            DeleteFraisDePortCommand = new AsyncRelayCommand<FraisDePort>(DeleteFraisDePort);
+            ItemTappedFraisDePort = new AsyncRelayCommand<FraisDePort>(OnItemTapped);
         }
         public ObservableCollection<FraisDePort> ListFraisDePorts { get; set; } = new ObservableCollection<FraisDePort>();
 
@@ -102,7 +106,7 @@ namespace Easymakemoney.ViewModels.Lists
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
+                await _dialogService.ShowErrorAsync(e);
             }
             finally
             {
@@ -110,20 +114,40 @@ namespace Easymakemoney.ViewModels.Lists
             }
         }
 
-        private async void DeleteFraisDePort(FraisDePort fraisDePort)
+        private async Task DeleteFraisDePort(FraisDePort? fraisDePort)
         {
+            if (fraisDePort == null)
+                return;
+
             if (IsBusy)
                 return;
+
+            bool confirmed = await _dialogService.ConfirmAsync(
+                "Confirmation",
+                "Êtes-vous sûr de vouloir supprimer ce frais de port ?",
+                "Supprimer",
+                "Annuler");
+            if (!confirmed)
+                return;
+
             IsBusy = true;
             try
             {
-                await _deleteFraisDePortUseCase.ExecuteAsync(fraisDePort.id);
-                ListFraisDePorts.Remove(fraisDePort);
+                var result = await _deleteFraisDePortUseCase.ExecuteAsync(CommandId);
+                if (result)
+                {
+                    ListFraisDePorts.Remove(fraisDePort);
+                    await _dialogService.ShowInfoAsync("Frais de port supprimé avec succès.");
+                }
+                else
+                {
+                    await _dialogService.ShowInfoAsync("Échec de la suppression du frais de port.");
+                }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-                throw;
+                await _dialogService.ShowErrorAsync(e);
             }
             finally
             {
@@ -131,10 +155,11 @@ namespace Easymakemoney.ViewModels.Lists
             }
         }
 
-        private async void OnItemTapped(FraisDePort fraisDePort)
+        private async Task OnItemTapped(FraisDePort? fraisDePort)
         {
             if (fraisDePort == null)
                 return;
+            await Task.CompletedTask;
         }
 
 
@@ -155,7 +180,8 @@ namespace Easymakemoney.ViewModels.Lists
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
-            await Application.Current.MainPage.ShowPopupAsync(popup);
+            if (Application.Current?.MainPage != null)
+                await Application.Current.MainPage.ShowPopupAsync(popup);
         }
 
         [RelayCommand]
@@ -163,7 +189,7 @@ namespace Easymakemoney.ViewModels.Lists
         {
             if (CollectionId == 0)
             {
-                await Shell.Current.DisplayAlert("Error", "Vous devez choisir obligatoirement une collection", "OK");
+                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une collection");
                 return;
             }
             var viewModel = new BottomSheetPopupListViewViewModel(
@@ -180,7 +206,8 @@ namespace Easymakemoney.ViewModels.Lists
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
-            await Application.Current.MainPage.ShowPopupAsync(popup);
+            if (Application.Current?.MainPage != null)
+                await Application.Current.MainPage.ShowPopupAsync(popup);
         }
 
 
@@ -189,26 +216,27 @@ namespace Easymakemoney.ViewModels.Lists
         {
             if (CollectionId == 0)
             {
-                await Shell.Current.DisplayAlert("Error", "Vous devez choisir obligatoirement une collection", "OK");
+                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une collection");
                 return;
             }
             if (CommandId == 0)
             {
-                await Shell.Current.DisplayAlert("Error", "Vous devez choisir obligatoirement une commande", "OK");
+                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une commande");
                 return;
             }
 
             if (ListFraisDePorts.Count > 0)
             {
-                await Shell.Current.DisplayAlert("Error", "Vous avez déjà un frais de port pour cette commande", "OK");
+                await _dialogService.ShowInfoAsync("Un frais de port existe déjà pour cette commande.");
                 return;
             }
             var viewModel = new BottomSheetPopupViewModel(
-            popup: new Popup(),
-            fraisDePortViewModel: this,
-            isFraisDePortForm: true,
-            saveFraisDePortUseCase: _saveFraisDePortUseCase,
-            fraisDePortForm: _fraisDePortFormModel);
+                popup: new Popup(),
+                fraisDePortViewModel: this,
+                isFraisDePortForm: true,
+                saveFraisDePortUseCase: _saveFraisDePortUseCase,
+                fraisDePortForm: _fraisDePortFormModel,
+                dialogService: _dialogService);
 
             var popup = new BottomSheetPopup(viewModel);
             var mainPage = Application.Current?.MainPage;
@@ -229,7 +257,8 @@ namespace Easymakemoney.ViewModels.Lists
                     saveCollectionUseCase: _saveCollectionUseCase,
                     isCollectionForm: true,
                     collectionViewModel: _listNewCollectionViewModel,
-                    collectionFormModel: _collectionFormModel);
+                    collectionFormModel: _collectionFormModel,
+                    dialogService: _dialogService);
 
                 var popup = new BottomSheetPopup(viewModel);
                 var mainPage = Application.Current?.MainPage;
@@ -237,13 +266,11 @@ namespace Easymakemoney.ViewModels.Lists
                 {
                     Console.WriteLine("AShowPopupAsync");
                     await mainPage.ShowPopupAsync(popup);
-
                 }
             }
             catch (Exception ex)
             {
-                if (Application.Current?.MainPage != null)
-                    await Application.Current.MainPage.DisplayAlert("Exception", ex.Message, "OK");
+                await _dialogService.ShowErrorAsync(ex);
                 Console.WriteLine($"Exception: {ex}");
             }
         }
@@ -253,16 +280,17 @@ namespace Easymakemoney.ViewModels.Lists
         {
             if (CollectionId == 0)
             {
-                await Shell.Current.DisplayAlert("Error", "Vous devez choisir obligatoirement une collection", "OK");
+                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une collection");
                 return;
             }
             _listNewCommandViewModel.CollectionId = CollectionId;
             var viewModel = new BottomSheetPopupViewModel(
-            popup: new Popup(),
-            commandViewModel: _listNewCommandViewModel,
-            isCommandForm: true,
-            saveCommandUseCase: _saveCommandUseCase,
-            commandFormModel: _commandFormModel);
+                popup: new Popup(),
+                commandViewModel: _listNewCommandViewModel,
+                isCommandForm: true,
+                saveCommandUseCase: _saveCommandUseCase,
+                commandFormModel: _commandFormModel,
+                dialogService: _dialogService);
 
             var popup = new BottomSheetPopup(viewModel);
             var mainPage = Application.Current?.MainPage;

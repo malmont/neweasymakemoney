@@ -13,8 +13,11 @@ namespace Easymakemoney.UseCase.ListFraisDePortUseCase
         {
             var newFraisDePort = new ObservableCollection<FraisDePort>();
             var listFraisDePort = await _listFraisDePortService.GetListFraisDePort(commandId);
-            newFraisDePort.Add(listFraisDePort);
-            return newFraisDePort??null;
+            if (listFraisDePort != null)
+            {
+                newFraisDePort.Add(listFraisDePort);
+            }
+            return newFraisDePort;
         }
     }
 }
