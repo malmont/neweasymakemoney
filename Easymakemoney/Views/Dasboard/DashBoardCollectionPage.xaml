@@ -14,6 +14,7 @@
         <ResourceDictionary>
             <converters:CurrencyConverter x:Key="CurrencyConverter"/>
             <converters:PercentageConverter x:Key="PercentageConverter"/>
+            <converters:IsoDateConverter x:Key="IsoDateConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -114,12 +115,12 @@
                     IconSource="calendar.png"
                     HeaderText="Durée de la collection"
                     TotalLabelText="Début"
-                    TotalValue="{Binding DashBoardCollection.collectionDuration.startDate}"
+                    TotalValue="{Binding DashBoardCollection.collectionDuration.startDate, Converter={StaticResource IsoDateConverter}}"
                     ExpensesLabelText="Fin"
-                    ExpensesValue="{Binding DashBoardCollection.collectionDuration.endDate}"
+                    ExpensesValue="{Binding DashBoardCollection.collectionDuration.endDate, Converter={StaticResource IsoDateConverter}}"
                     RemainingLabelText="Durée"
                     IsExpensesVisible="True"
-                    RemainingValue="{Binding DashBoardCollection.collectionDuration.days}"/>
+                    RemainingValue="{Binding DashBoardCollection.collectionDuration.days, StringFormat='{0} jours'}"/>
                 <components:UiCard Style="{StaticResource UiCard}">
                     <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
                         <Image Source="online.png"

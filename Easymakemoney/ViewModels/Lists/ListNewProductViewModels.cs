@@ -1,5 +1,6 @@
 using System.Windows.Input;
 using Easymakemoney.Services.Dialog;
+using Easymakemoney.UseCase.ProductAttachmentUseCase;
 
 namespace Easymakemoney.ViewModels.Lists
 {
@@ -10,14 +11,16 @@ namespace Easymakemoney.ViewModels.Lists
         private readonly ProductFormModel _productFormModel;
 
         private readonly SaveProductUseCase _saveProductUseCase;
+        private readonly DetachProductUseCase _detachProductUseCase;
         private readonly IDialogService _dialogService;
 
         public ObservableCollection<ListProduct> ListProducts { get; set; } = new ObservableCollection<ListProduct>();
 
         public ListNewProductViewModel(GetListProductsUseCase getListProductsUseCase, ProductFormModel productFormModel, 
         SaveProductUseCase saveProductUseCase, DeleteProductsUseCase deleteProductUseCase,
-        IDialogService dialogService)
+        DetachProductUseCase detachProductUseCase, IDialogService dialogService)
         {
+            _detachProductUseCase = detachProductUseCase;
             _saveProductUseCase = saveProductUseCase;
             _getListProductsUseCase = getListProductsUseCase;
             _deleteProductUseCase = deleteProductUseCase;
@@ -85,6 +88,50 @@ namespace Easymakemoney.ViewModels.Lists
             // Navigate to the ListNewCommandPage and pass the collection ID
             if (Shell.Current is { } shell)
                 await shell.GoToAsync($"{nameof(ListNewProductVariantPage)}?ProductId={product.id}", true);
+        }
+
+        [RelayCommand]
+        private async Task OpenAttachProducts()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync($"{nameof(AttachProductsPage)}?CommandId={CommandId}", true);
+        }
+
+        [RelayCommand]
+        private async Task DetachProduct(ListProduct? product)
+        {
+            if (product == null || IsBusy)
+                return;
+
+            bool confirmed = await _dialogService.ConfirmAsync(
+                "Retirer de la commande",
+                "L'article quitte cette commande, mais il reste en vente.",
+                "Retirer",
+                "Annuler");
+            if (!confirmed)
+                return;
+
+            IsBusy = true;
+            try
+            {
+                if (await _detachProductUseCase.ExecuteAsync(CommandId, product.id))
+                {
+                    ListProducts.Remove(product);
+                }
+                else
+                {
+                    await _dialogService.ShowInfoAsync("Échec du retrait de l'article.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private async Task DeleteProduct(ListProduct? product)

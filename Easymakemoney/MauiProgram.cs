@@ -79,6 +79,10 @@ public static class MauiProgram
 		builder.Services.AddSingleton<IJwtService, JwtService>();
 		builder.Services.AddTransient<IListCommandService, ListCommandService>();
 		builder.Services.AddTransient<IListProductService, ListProductService>();
+		builder.Services.AddTransient<IProductAttachmentService, ProductAttachmentService>();
+		builder.Services.AddTransient<Easymakemoney.UseCase.ProductAttachmentUseCase.GetAvailableProductsUseCase>();
+		builder.Services.AddTransient<Easymakemoney.UseCase.ProductAttachmentUseCase.AttachProductsUseCase>();
+		builder.Services.AddTransient<Easymakemoney.UseCase.ProductAttachmentUseCase.DetachProductUseCase>();
 		builder.Services.AddTransient<IListCategoryServices, ListCategoryServices>();
 		builder.Services.AddTransient<IListStyleService, ListStyleService>();
 		builder.Services.AddTransient<IListColorsServices, ListColorsServices>();
@@ -165,6 +169,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<ListNewCollectionPage>();
 		builder.Services.AddTransient<ListNewCommandPage>();
 		builder.Services.AddTransient<ListNewProductPage>();
+		builder.Services.AddTransient<AttachProductsPage>();
 		builder.Services.AddTransient<ListNewProductVariantPage>();
 		builder.Services.AddTransient<ListNewNoteDeFraisPage>();
 		builder.Services.AddTransient<ListNewFournisseurPage>();
@@ -193,6 +198,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<CollectionFormModel>();
 		builder.Services.AddTransient<CommandFormModel>();
 		builder.Services.AddTransient<ListNewProductViewModel>();
+		builder.Services.AddTransient<AttachProductsViewModel>();
 		builder.Services.AddTransient<ProductFormModel>();
 		builder.Services.AddTransient<ProductVariantFormModel>();
 		builder.Services.AddTransient<ListNewProductsVariantViewModel>();

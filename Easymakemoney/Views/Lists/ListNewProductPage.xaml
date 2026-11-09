@@ -17,10 +17,27 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,Auto,*">
         <components:AppHeader Title="Produits" />
 
-        <CollectionView Grid.Row="1" ItemsSource="{Binding ListProducts}" SelectionMode="None" Margin="16,8,16,0">
+        <Border Grid.Row="1"
+                Margin="16,12,16,0"
+                Padding="12"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 12"
+                BackgroundColor="{DynamicResource ThemePrimaryTint}"
+                SemanticProperties.Description="Ajouter des articles existants">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding OpenAttachProductsCommand}" />
+            </Border.GestureRecognizers>
+            <Label Text="Ajouter des articles existants"
+                   FontFamily="InterBold"
+                   FontSize="15"
+                   TextColor="{DynamicResource ThemePrimary}"
+                   HorizontalTextAlignment="Center" />
+        </Border>
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding ListProducts}" SelectionMode="None" Margin="16,8,16,0">
             <CollectionView.EmptyView>
                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="10" Padding="24,80">
                     <Label Text="Aucun produit" FontFamily="InterBold" FontSize="20" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="Center" />
@@ -32,6 +49,9 @@
                     <SwipeView Margin="0,0,0,10">
                         <SwipeView.RightItems>
                             <SwipeItems Mode="Reveal">
+                                <SwipeItem Text="Retirer" BackgroundColor="#475569"
+                                           Command="{Binding Path=BindingContext.DetachProductCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                           CommandParameter="{Binding .}" />
                                 <SwipeItem Text="Supprimer" BackgroundColor="#B91C1C"
                                            Command="{Binding Path=BindingContext.DeleteProductCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
                                            CommandParameter="{Binding .}" />
@@ -60,7 +80,7 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <Border Grid.Row="1" WidthRequest="60" HeightRequest="60" StrokeThickness="0" StrokeShape="RoundRectangle 18"
+        <Border Grid.Row="2" WidthRequest="60" HeightRequest="60" StrokeThickness="0" StrokeShape="RoundRectangle 18"
                 BackgroundColor="{DynamicResource ThemePrimary}" HorizontalOptions="End" VerticalOptions="End" Margin="16,0,16,28"
                 SemanticProperties.Description="Ajouter un produit">
             <Border.GestureRecognizers>

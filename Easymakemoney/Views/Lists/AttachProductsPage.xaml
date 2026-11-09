@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:x1="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             x:DataType="list:AttachProductsViewModel"
+             x:Class="Easymakemoney.Views.Lists.AttachProductsPage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Articles existants">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <components:AppHeader Title="Articles existants" />
+
+        <components:UiCard Grid.Row="1" Style="{StaticResource UiCard}" Padding="14,4" Margin="16,12,16,0">
+            <handlers:BorderlessEntry Text="{Binding SearchText}"
+                   Placeholder="Rechercher un nom, un code…"
+                   ReturnType="Search"
+                   ClearButtonVisibility="WhileEditing"
+                   FontSize="16" />
+        </components:UiCard>
+
+        <VerticalStackLayout Grid.Row="2" IsVisible="{Binding ShowEmptyState}" VerticalOptions="Center" Spacing="10" Padding="24,0">
+            <Label Text="{Binding EmptyTitle}" FontFamily="InterBold" FontSize="20" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="2"
+                        ItemsSource="{Binding Products}"
+                        SelectionMode="None"
+                        Margin="16,8,16,0"
+                        RemainingItemsThreshold="5"
+                        RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="x1:AvailableProduct">
+                    <!-- Le crayon est posé à côté de la carte, et non dedans, pour qu'un appui ne déclenche qu'une seule action -->
+                    <Grid Margin="0,0,0,10">
+                        <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Path=BindingContext.ToggleProductCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                      CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="Auto,*,44,28" ColumnSpacing="12">
+                                <components:UiThumb Grid.Column="0" Source="{Binding image}" Icon="M20 12l-8 8-9-9V3h8l9 9zM7.5 7.5h.01" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                    <Label Text="{Binding name}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding CostText}" FontFamily="InterBold" FontSize="14" TextColor="{DynamicResource ThemePrimary}" LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding PriceText}" Style="{StaticResource UiBody}" LineBreakMode="TailTruncation" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="3"
+                                        IsVisible="{Binding IsSelected}"
+                                        WidthRequest="28"
+                                        HeightRequest="28"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 14"
+                                        VerticalOptions="Center"
+                                        BackgroundColor="{DynamicResource ThemePrimary}">
+                                    <Path Data="M6 12l4 4 8-8"
+                                          Stroke="{DynamicResource ThemeOnPrimary}"
+                                          StrokeThickness="2.4"
+                                          StrokeLineCap="Round"
+                                          StrokeLineJoin="Round"
+                                          WidthRequest="24"
+                                          HeightRequest="24"
+                                          Aspect="None"
+                                          HorizontalOptions="Center"
+                                          VerticalOptions="Center" />
+                                </Border>
+                            </Grid>
+                        </components:UiCard>
+
+                        <Border Margin="0,0,54,0"
+                                WidthRequest="44"
+                                HeightRequest="44"
+                                HorizontalOptions="End"
+                                VerticalOptions="Center"
+                                StrokeThickness="0"
+                                BackgroundColor="Transparent"
+                                SemanticProperties.Description="Modifier le coût d'achat">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Path=BindingContext.EditCostCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                      CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Path Data="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"
+                                  Style="{StaticResource UiIcon}"
+                                  HorizontalOptions="Center"
+                                  VerticalOptions="Center" />
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Button Grid.Row="3"
+                IsVisible="{Binding HasSelection}"
+                Text="{Binding ConfirmText}"
+                Command="{Binding ConfirmCommand}"
+                Margin="16,8,16,24"
+                HeightRequest="52"
+                CornerRadius="14"
+                FontFamily="InterBold"
+                FontSize="16"
+                BackgroundColor="{DynamicResource ThemePrimary}"
+                TextColor="{DynamicResource ThemeOnPrimary}" />
+    </Grid>
+</ContentPage>
