@@ -121,4 +121,4 @@ Résultat branché dans le tableau de bord d'une période. Le contrat P3 (repris
 
 `POST /api/gestion/reprise/simulation`, `POST /api/gestion/reprise/appliquer` (`costs`, `estimateCoefficient`), `POST /api/gestion/reprise/annuler`, `GET /api/gestion/reprise`. Priorité des coûts : saisis, `purchase_price`, estimation par coefficient, sinon coût inconnu. Prix, stock, variantes et visibilité ne changent jamais.
 
-Écran « Reprise d'historique » ajouté dans Gestion. **Application et annulation pas encore vérifiées de bout en bout dans l'application** : les périodes fermées du site demo n'ont pas de ventes ; demande faite au backend.
+Écran « Reprise d'historique » ajouté dans Gestion. Simulation, coefficient, application et annulation vérifiés de bout en bout sur le site demo, le 10/11/2026 (Hiver 2025-2026 : 1 299,98 − 708,18 = 591,80, puis − 998,00 = − 406,20).

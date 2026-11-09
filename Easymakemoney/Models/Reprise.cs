@@ -57,7 +57,7 @@ namespace Easymakemoney.Models
         public bool CanEditCost => costSource != "commande";
 
         public string SoldText =>
-            $"{quantitySold} vendus · {SiteCurrency.FormatCents(revenue, CultureInfo.CurrentCulture)}";
+            $"{quantitySold} vendu{(quantitySold > 1 ? "s" : string.Empty)} · {SiteCurrency.FormatCents(revenue, CultureInfo.CurrentCulture)}";
 
         public string CostText
         {
