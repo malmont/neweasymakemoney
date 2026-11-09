@@ -3,8 +3,11 @@ namespace Easymakemoney;
 
 public partial class AppShell : Shell
 {
-	public AppShell(AppShellViewModel viewModel)
+	private readonly Easymakemoney.Services.Theme.ISiteBrandingService _branding;
+
+	public AppShell(AppShellViewModel viewModel, Easymakemoney.Services.Theme.ISiteBrandingService branding)
 	{
+		_branding = branding;
 		InitializeComponent();
 		this.BindingContext = viewModel;
         Routing.RegisterRoute("DashboardPage", typeof(DashboardPage));
@@ -31,6 +34,12 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute("FraisClientTotalViewPage", typeof(FraisClientTotalViewPage));
 		
     }
+
+	protected override void OnNavigated(ShellNavigatedEventArgs args)
+	{
+		base.OnNavigated(args);
+		_ = _branding.EnsureLoadedAsync();
+	}
 }
 
 

@@ -2,168 +2,22 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:dashboard="clr-namespace:Easymakemoney.ViewModels.Dashboard"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
              x:DataType="dashboard:DashboardPageViewModel"
              x:Class="Easymakemoney.Views.Dasboard.DashboardPage"
-             Title="DashboardPage">
+             Style="{StaticResource UiPage}"
+             Title="Accueil">
 
-    <ScrollView HorizontalScrollBarVisibility="Always"
-                VerticalScrollBarVisibility="Always">
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader IsRoot="True" />
 
-        <StackLayout Spacing="0"
-                     Orientation="Vertical"
-                     HorizontalOptions="FillAndExpand"
-                     VerticalOptions="FillAndExpand">
-
-            <StackLayout Style="{StaticResource HeaderStackLayoutStyle}">
-                <Image Style="{StaticResource HeaderImageStyle}"/>
-            </StackLayout>
-
-            <Image Style="{StaticResource SeparatorImageStyle}"/>
-
-            <StackLayout Margin="30,0"
-                         Orientation="Vertical"
-                         HorizontalOptions="FillAndExpand"
-                         VerticalOptions="FillAndExpand">
-
-
-                <Frame Margin="0,30,0,0"
-                       HasShadow="True"
-                       CornerRadius="10"
-                       Padding="2"
-                       BorderColor="#C4AB4D"
-                       HorizontalOptions="FillAndExpand">
-                    <StackLayout  Orientation="Horizontal"
-                                  Padding="10"
-                                  HorizontalOptions="FillAndExpand"
-                                  HeightRequest="70">
-                        <StackLayout.GestureRecognizers>
-                            <TapGestureRecognizer/>
-                        </StackLayout.GestureRecognizers>
-
-                        <Label VerticalTextAlignment="Center"
-                               TextColor="#C4AB4D"
-                               HorizontalTextAlignment="End"
-                               FontAttributes="Bold"
-                               Text="ITEMS CALCULTOR"
-                               Margin='0,0,20,0'/>
-                        <Image Source="purchase.png"
-                                HeightRequest="40"
-                                WidthRequest="40"
-                                Margin="0,0,20,0"
-                                HorizontalOptions="EndAndExpand"/>
-
-                    </StackLayout>
-                </Frame>
-
-                <!-- <Frame Margin="0,30,0,0"
-                       HasShadow="True"
-                       CornerRadius="10"
-                       Padding="2"
-                       BorderColor="#C4AB4D"
-                       HorizontalOptions="FillAndExpand">
-                    <StackLayout  Orientation="Horizontal"
-                            Padding="10"
-                                  HorizontalOptions="FillAndExpand"
-                                  HeightRequest="70">
-                        <StackLayout.GestureRecognizers>
-                            <TapGestureRecognizer/>
-                        </StackLayout.GestureRecognizers>
-
-                        <Label VerticalTextAlignment="Center"
-                               TextColor="#C4AB4D"
-                               HorizontalTextAlignment="End"
-                               FontAttributes="Bold"
-                               Text="COLLECTIONS"
-                               Margin='0,0,20,0'/>
-
-                    </StackLayout>
-                </Frame> -->
-
-                <Frame Margin="0,30,0,0"
-                       HasShadow="True"
-                       CornerRadius="10"
-                       Padding="2"
-                       BorderColor="#C4AB4D"
-                       HorizontalOptions="FillAndExpand">
-                    <StackLayout  Orientation="Horizontal"
-                                  Padding="10"
-                                  HorizontalOptions="FillAndExpand"
-                                  HeightRequest="70">
-                        <StackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding NavigateToAllListsPageCommand}"/>
-                        </StackLayout.GestureRecognizers>
-
-                        <Label VerticalTextAlignment="Center"
-                               TextColor="#C4AB4D"
-                               HorizontalTextAlignment="End"
-                               FontAttributes="Bold"
-                               Text="GESTIONS"
-                               Margin='0,0,20,0'/>
-                        <Image Source="notedefrais1.png"
-                                HeightRequest="40"
-                                WidthRequest="40"
-                                Margin="0,0,20,0"
-                                HorizontalOptions="EndAndExpand"/>
-                    </StackLayout>
-                </Frame>
-
-
-                <Frame Margin="0,30,0,0"
-                       HasShadow="True"
-                       CornerRadius="10"
-                       Padding="2"
-                       BorderColor="#C4AB4D"
-                       HorizontalOptions="FillAndExpand">
-                    <StackLayout  Orientation="Horizontal"
-                                  Padding="10"
-                                  HorizontalOptions="FillAndExpand"
-                                  HeightRequest="70">
-                        <StackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding NavigateTDashboardPageCommand}"/>
-                        </StackLayout.GestureRecognizers>
-
-                        <Label VerticalTextAlignment="Center"
-                               TextColor="#C4AB4D"
-                               HorizontalTextAlignment="End"
-                               FontAttributes="Bold"
-                               Text="DASHBOARD"
-                               Margin='0,0,20,0'/>
-                        <Image Source="analytics.png"
-                                HeightRequest="40"
-                                WidthRequest="40"
-                                Margin="0,0,20,0"
-                                HorizontalOptions="EndAndExpand"/>
-                    </StackLayout>
-                </Frame>
-
-                 <Frame Margin="0,30,0,0"
-                       HasShadow="True"
-                       CornerRadius="10"
-                       Padding="2"
-                       BorderColor="#C4AB4D"
-                       HorizontalOptions="FillAndExpand">
-                    <StackLayout  Orientation="Horizontal"
-                                  Padding="10"
-                                  HorizontalOptions="FillAndExpand"
-                                  HeightRequest="70">
-                        <StackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding NavigateToStatistiquesPageCommand}"/>
-                        </StackLayout.GestureRecognizers>
-
-                        <Label VerticalTextAlignment="Center"
-                               TextColor="#C4AB4D"
-                               HorizontalTextAlignment="End"
-                               FontAttributes="Bold"
-                               Text="DASHBOARD"
-                               Margin='0,0,20,0'/>
-                        <Image Source="statistique.png"
-                                HeightRequest="40"
-                                WidthRequest="40"
-                                Margin="0,0,20,0"
-                                HorizontalOptions="EndAndExpand"/>
-                    </StackLayout>
-                </Frame>
-            </StackLayout>
-        </StackLayout>
-    </ScrollView>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16,24" Spacing="12">
+                <Label Text="Accueil" Style="{StaticResource UiH1}" Margin="0,0,0,8" />
+                <components:UiTile Command="{Binding NavigateToAllListsPageCommand}" Icon="M4 6h16M4 12h16M4 18h10" Title="Gestion" Text="Collections, fournisseurs, notes de frais et frais de port" />
+                <components:UiTile Command="{Binding NavigateTDashboardPageCommand}" Icon="M4 20V10M10 20V4M16 20v-7M22 20H2" Title="Tableau de bord" Text="Budget, dépenses et durée de chaque collection" />
+                <components:UiTile Command="{Binding NavigateToStatistiquesPageCommand}" Icon="M3 17l6-6 4 4 8-8M15 7h6v6" Title="Statistiques" Text="Chiffre d’affaires, achats, panier, stock, frais et caisse" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

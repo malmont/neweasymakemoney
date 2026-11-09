@@ -37,6 +37,10 @@ public static class MauiProgram
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+				fonts.AddFont("Inter-Regular.ttf", "Inter");
+				fonts.AddFont("Inter-Medium.ttf", "InterMedium");
+				fonts.AddFont("Inter-SemiBold.ttf", "InterSemiBold");
+				fonts.AddFont("Inter-Bold.ttf", "InterBold");
 			});
 
 
@@ -58,6 +62,7 @@ public static class MauiProgram
 			.AddHttpMessageHandler<TenantHandler>();
 
 		builder.Services.AddSingleton<ITenantStore, TenantStore>();
+		builder.Services.AddSingleton<Easymakemoney.Services.Theme.ISiteBrandingService, Easymakemoney.Services.Theme.SiteBrandingService>();
 		builder.Services.AddSingleton<ISiteDataCleaner, SiteDataCleaner>();
 		builder.Services.AddSingleton<ISessionService, SessionService>();
 		builder.Services.AddSingleton<IPendingLoginStore, PendingLoginStore>();

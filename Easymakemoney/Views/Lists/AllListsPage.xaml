@@ -2,97 +2,22 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
              x:DataType="list:AllListsViewModel"
              x:Class="Easymakemoney.Views.Lists.AllListsPage"
-             Title="AllListsPage">
-        <ContentPage.Content>
-                <ScrollView HorizontalScrollBarVisibility="Always"
-                            VerticalScrollBarVisibility="Always">
-                        <StackLayout  Spacing="0"
-                                      Orientation="Vertical"
-                                      HorizontalOptions="FillAndExpand"
-                                      VerticalOptions="FillAndExpand">
+             Style="{StaticResource UiPage}"
+             Title="Gestion">
 
-                                <StackLayout  BackgroundColor="#518faa"
-                                              Orientation="Vertical"
-                                              HorizontalOptions="FillAndExpand"
-                                              VerticalOptions="Start">
-                                        <Image  Margin="0,35,0,0"
-                                                Source="logo.png"
-                                                Aspect="AspectFit"
-                                                HeightRequest="200"/>
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Gestion" />
 
-                                </StackLayout >
-
-                                <Image Source="lab_separator.png"
-                                       Aspect="AspectFill"/>
-
-                                <StackLayout Margin="10"
-                                             Spacing="0"
-                                             Orientation="Vertical"
-                                             HorizontalOptions="FillAndExpand"
-                                             VerticalOptions="FillAndExpand">
-                                        <StackLayout Margin="10,10"
-                                                     Orientation="Horizontal"
-                                                     HorizontalOptions="FillAndExpand"
-                                                     VerticalOptions="Start">
-  
-                                                <Button
-                                                        BorderColor="#C4AB4D"
-                                                        Style="{StaticResource boutonLabStyle}"
-                                                        Text="COLLECTIONS"
-                                                        Command="{Binding NavigateToCollectionCommand}"/>
-                                                <Button  BorderColor="#C4AB4D"
-                                                         Style="{StaticResource boutonLabStyle}"
-                                                         Text="FOURNISSEURS"
-                                                         Command="{Binding NavigateToNoteFournisseurCommand}"/>
-
-                                                <!-- 
-                                                <Button  BorderColor="#C4AB4D"
-                                                                Style="{StaticResource boutonLabStyle}"
-                                                        Text="COMMANDES"/> -->
-
-                                        </StackLayout>
-
-                                        <StackLayout Margin="10,10"
-                                                     Orientation="Horizontal"
-                                                     HorizontalOptions="FillAndExpand"
-                                                     VerticalOptions="Start">
-                                                <Button  BorderColor="#C4AB4D"
-                                                         Command="{Binding NavigateToNoteDeFraisCommand}"
-                                                         Style="{StaticResource boutonLabStyle}"
-                                                         Text="NOTES DE FRAIS"/>
-
-                                                <!-- <Button BorderColor="#C4AB4D"
-                                                                Style="{StaticResource boutonLabStyle}"
-                                                                Text="PRODUITS"/> -->
-
-                                                 <Button
-                                                        Style="{StaticResource boutonLabStyle}"
-                                                        Text="FRAIS DE PORT"
-                                                        Command="{Binding NavigateToFraisDePortCommand}"/>
-
-                                        </StackLayout>
-
-                                        <StackLayout Margin="10,10"
-                                                     Orientation="Horizontal"
-                                                     HorizontalOptions="FillAndExpand"
-                                                     VerticalOptions="Start">
-
-
-
-                                               
-                                                <Button HorizontalOptions="CenterAndExpand"
-                                                        WidthRequest="335"
-                                                        BorderColor="#C4AB4D"
-                                                        Style="{StaticResource boutonLabStyle}"
-                                                        Text="SIMULATEUR"/>
-
-                                        </StackLayout>
-
-
-                                </StackLayout >
-                        </StackLayout>
-                </ScrollView>
-        </ContentPage.Content>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <components:UiTile Command="{Binding NavigateToCollectionCommand}" Icon="M3 7l9-4 9 4-9 4-9-4zM3 12l9 4 9-4M3 17l9 4 9-4" Title="Collections" Text="Commandes et produits par collection" />
+                <components:UiTile Command="{Binding NavigateToNoteFournisseurCommand}" Icon="M3 21V8l9-5 9 5v13M9 21v-7h6v7" Title="Fournisseurs" Text="Coordonnées et type de fournisseur" />
+                <components:UiTile Command="{Binding NavigateToNoteDeFraisCommand}" Icon="M6 3h9l4 4v14H6zM9 12h7M9 16h7" Title="Notes de frais" Text="Dépenses rattachées aux collections" />
+                <components:UiTile Command="{Binding NavigateToFraisDePortCommand}" Icon="M3 6h11v11H3zM14 10h4l3 3v4h-7M7 20a2 2 0 100-4 2 2 0 000 4zM17 20a2 2 0 100-4 2 2 0 000 4z" Title="Frais de port" Text="Transport des commandes" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>
