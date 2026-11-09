@@ -4,95 +4,117 @@
                     xmlns:controls="clr-namespace:Easymakemoney.Controls"
                     xmlns:handlers="clr-namespace:Easymakemoney.Handlers">
 
-    <!-- Product Form Template -->
+    <Style x:Key="FormLabel" TargetType="Label">
+        <Setter Property="FontFamily" Value="InterMedium" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="TextColor" Value="{StaticResource UiTextSecondary}" />
+    </Style>
+    <Style x:Key="FormField" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+        <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="MinimumHeightRequest" Value="48" />
+        <Setter Property="Padding" Value="12,0" />
+    </Style>
+    <Style x:Key="FormEntry" TargetType="handlers:BorderlessEntry">
+        <Setter Property="FontFamily" Value="Inter" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource UiTextMuted}" />
+        <Setter Property="VerticalOptions" Value="Fill" />
+    </Style>
+    <Style x:Key="FormPicker" TargetType="Picker">
+        <Setter Property="FontFamily" Value="Inter" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+        <Setter Property="TitleColor" Value="{StaticResource UiTextMuted}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="VerticalOptions" Value="Fill" />
+    </Style>
+
+    <!-- Formulaire de produit -->
     <ControlTemplate x:Key="ProductFormTemplate">
-        <StackLayout>
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Product Name"
-                        Text="{Binding ProductForm.Name, Mode=TwoWay}"/>
-            </Frame>
-            <Frame HeightRequest="65"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Description"
-                        Text="{Binding ProductForm.Description, Mode=TwoWay}"/>
-            </Frame>
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Purchase Price"
-                        Text="{Binding ProductForm.PurchasePrice, Mode=TwoWay}"
-                        Keyboard="Numeric"/>
-            </Frame>
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Coefficient Multiplier"
-                        Text="{Binding ProductForm.CoefficientMultiplier, Mode=TwoWay}"
-                        Keyboard="Numeric"/>
-            </Frame>
-
-            <!-- Picker for selecting a category -->
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <Picker Title="Select Category"
-                        ItemsSource="{Binding ProductForm.Categories}"
-                        SelectedItem="{Binding ProductForm.SelectedCategory}"
-                        ItemDisplayBinding="{Binding name}"/>
-            </Frame>
-
-            <!-- Picker for selecting a Styles -->
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <Picker Title="Select Style"
-                        ItemsSource="{Binding ProductForm.Styles}"
-                        SelectedItem="{Binding ProductForm.SelectedStyles}"
-                        ItemDisplayBinding="{Binding name}"/>
-            </Frame>
-
-            <!-- Button to select an image -->
-            <Button Text="Select Image"
-                    Command="{Binding ProductForm.SelectImageCommand}"/>
-
-            <!-- Optional: Display the selected image -->
-            <Frame HasShadow="True"
-                   Padding="1"
-                   Grid.Row="0"
-                   Grid.RowSpan="3"
-                   CornerRadius="10"
-                   BackgroundColor="Gray">
-                <Image Aspect="Fill"
-                       Margin="1,1"
-                       WidthRequest="60"
-                       HeightRequest="50"
-                       Source="{Binding ProductForm.ImagePath}">
-                </Image>
-            </Frame>
+        <VerticalStackLayout Spacing="12">
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Nom du produit" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                              Placeholder="Nom du produit"
+                                              Text="{Binding ProductForm.Name, Mode=TwoWay}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Description" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                              Placeholder="Description"
+                                              Text="{Binding ProductForm.Description, Mode=TwoWay}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Prix d'achat" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                              Placeholder="Prix d'achat"
+                                              Keyboard="Numeric"
+                                              Text="{Binding ProductForm.PurchasePrice, Mode=TwoWay}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Coefficient multiplicateur" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                              Placeholder="Coefficient multiplicateur"
+                                              Keyboard="Numeric"
+                                              Text="{Binding ProductForm.CoefficientMultiplier, Mode=TwoWay}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Catégorie" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <Picker Style="{StaticResource FormPicker}"
+                            Title="Sélectionner une catégorie"
+                            ItemsSource="{Binding ProductForm.Categories}"
+                            SelectedItem="{Binding ProductForm.SelectedCategory}"
+                            ItemDisplayBinding="{Binding name}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Style" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <Picker Style="{StaticResource FormPicker}"
+                            Title="Sélectionner un style"
+                            ItemsSource="{Binding ProductForm.Styles}"
+                            SelectedItem="{Binding ProductForm.SelectedStyles}"
+                            ItemDisplayBinding="{Binding name}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Image du produit" Style="{StaticResource FormLabel}" />
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                    <Button Text="Choisir une image"
+                            Command="{Binding ProductForm.SelectImageCommand}"
+                            BackgroundColor="{DynamicResource ThemePrimaryTint}"
+                            TextColor="{DynamicResource ThemePrimary}"
+                            FontFamily="InterSemiBold"
+                            FontSize="14"
+                            CornerRadius="12"
+                            HeightRequest="48" />
+                    <!-- Vignette de l'image choisie -->
+                    <Border Grid.Column="1"
+                            WidthRequest="48"
+                            HeightRequest="48"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12"
+                            BackgroundColor="{StaticResource UiBackground}">
+                        <Image Aspect="AspectFill"
+                               Source="{Binding ProductForm.ImagePath}" />
+                    </Border>
+                </Grid>
+            </VerticalStackLayout>
             <!-- <Image Source="{Binding ProductForm.ImagePath}"
                     HeightRequest="100"
                     Margin="10"/> -->
-        </StackLayout>
+        </VerticalStackLayout>
     </ControlTemplate>
 </ResourceDictionary>

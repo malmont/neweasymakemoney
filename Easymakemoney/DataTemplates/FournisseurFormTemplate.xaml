@@ -3,66 +3,87 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                     xmlns:handlers="clr-namespace:Easymakemoney.Handlers">
 
-    <!-- Command Form Template -->
-    <ControlTemplate x:Key="FournisseurFormTemplate">
-        <StackLayout>
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Name"
-                        Text="{Binding FournisseurForm.Name, Mode=TwoWay}"/>
-            </Frame>
+    <Style x:Key="FormLabel" TargetType="Label">
+        <Setter Property="FontFamily" Value="InterMedium" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="TextColor" Value="{StaticResource UiTextSecondary}" />
+    </Style>
+    <Style x:Key="FormField" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+        <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="MinimumHeightRequest" Value="48" />
+        <Setter Property="Padding" Value="12,0" />
+    </Style>
+    <Style x:Key="FormEntry" TargetType="handlers:BorderlessEntry">
+        <Setter Property="FontFamily" Value="Inter" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource UiTextMuted}" />
+        <Setter Property="VerticalOptions" Value="Fill" />
+    </Style>
+    <Style x:Key="FormPicker" TargetType="Picker">
+        <Setter Property="FontFamily" Value="Inter" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+        <Setter Property="TitleColor" Value="{StaticResource UiTextMuted}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="VerticalOptions" Value="Fill" />
+    </Style>
 
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Adresse"
-                        Text="{Binding FournisseurForm.Adresse, Mode=TwoWay}"/>
-            </Frame>
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Ville"
-                        Text="{Binding FournisseurForm.Ville, Mode=TwoWay}"/>
-            </Frame>
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Pays"
-                        Text="{Binding FournisseurForm.Pays, Mode=TwoWay}"/>
-            </Frame>
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Tel"
-                        Text="{Binding FournisseurForm.Tel, Mode=TwoWay}"/>
-            </Frame>
-            <Frame HeightRequest="45"
-                   Margin="10,0,0,10"
-                   Padding="2"
-                   HasShadow="True"
-                   BorderColor="black"
-                   HorizontalOptions="Fill">
-                <Picker Title="Select typefournisseur"
-                        ItemsSource="{Binding FournisseurForm.TypeFournisseurSelected}"
-                        SelectedItem="{Binding FournisseurForm.SelectedTypeFournisseur}"
-                        ItemDisplayBinding="{Binding name}"/>
-            </Frame>
-        </StackLayout>
+    <!-- Formulaire de fournisseur -->
+    <ControlTemplate x:Key="FournisseurFormTemplate">
+        <VerticalStackLayout Spacing="12">
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Nom" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                              Placeholder="Nom"
+                                              Text="{Binding FournisseurForm.Name, Mode=TwoWay}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Adresse" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                              Placeholder="Adresse"
+                                              Text="{Binding FournisseurForm.Adresse, Mode=TwoWay}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Ville" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                              Placeholder="Ville"
+                                              Text="{Binding FournisseurForm.Ville, Mode=TwoWay}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Pays" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                              Placeholder="Pays"
+                                              Text="{Binding FournisseurForm.Pays, Mode=TwoWay}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Téléphone" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                              Placeholder="Téléphone"
+                                              Text="{Binding FournisseurForm.Tel, Mode=TwoWay}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Type de fournisseur" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <Picker Style="{StaticResource FormPicker}"
+                            Title="Sélectionner un type de fournisseur"
+                            ItemsSource="{Binding FournisseurForm.TypeFournisseurSelected}"
+                            SelectedItem="{Binding FournisseurForm.SelectedTypeFournisseur}"
+                            ItemDisplayBinding="{Binding name}" />
+                </Border>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
     </ControlTemplate>
 </ResourceDictionary>

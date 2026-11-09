@@ -4,79 +4,58 @@
                     xmlns:local="clr-namespace:Easymakemoney.Models"
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <!-- Generic Form Template -->
-   <ControlTemplate x:Key="CollectionFormListViewTemplate">
-    <StackLayout>
-        <ScrollView>
-            <StackLayout Spacing="0">
-                <!-- Utilisation de Items au lieu de ListCollections -->
-                <CollectionView ItemsSource="{Binding Items}" HeightRequest="500" SelectionMode="None">
-                    <CollectionView.ItemTemplate>
-                        <!-- Utilisation d'un IListItem générique -->
-                         <DataTemplate x:DataType="local:IListItem">
-                            <Grid Padding="10">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <Frame BorderColor="#C4AB4D"
-                                       Padding="10"
-                                       BackgroundColor="Transparent"
-                                       CornerRadius="10"
-                                       HasShadow="True">
-                                    <StackLayout Orientation="Horizontal"
-                                                 WidthRequest="200">
-                                        <StackLayout Orientation="Horizontal"
-                                                     WidthRequest="150">
-                                            <Frame HasShadow="True"
-                                                   Padding="1"
-                                                   Grid.Row="0"
-                                                   Grid.RowSpan="3"
-                                                   CornerRadius="10"
-                                                   BackgroundColor="Gray">
-                                                <!-- Assurez-vous que votre IListItem a une propriété d'image -->
-                                                <Image Aspect="Fill"
-                                                       Margin="1,1"
-                                                       WidthRequest="60"
-                                                       HeightRequest="50"
+    <!-- Liste de sélection générique -->
+    <ControlTemplate x:Key="CollectionFormListViewTemplate">
+        <StackLayout>
+            <ScrollView>
+                <StackLayout Spacing="0">
+                    <!-- Utilisation de Items au lieu de ListCollections -->
+                    <CollectionView ItemsSource="{Binding Items}" HeightRequest="500" SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <!-- Utilisation d'un IListItem générique -->
+                            <DataTemplate x:DataType="local:IListItem">
+                                <Grid Padding="0,0,0,10">
+                                    <Border BackgroundColor="{StaticResource UiSurface}"
+                                            Stroke="{StaticResource UiBorder}"
+                                            StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 14">
+                                        <Grid ColumnDefinitions="Auto,*">
+                                            <Border Margin="10"
+                                                    WidthRequest="52"
+                                                    HeightRequest="52"
+                                                    StrokeThickness="0"
+                                                    StrokeShape="RoundRectangle 12"
+                                                    BackgroundColor="{StaticResource UiBackground}">
+                                                <Image Aspect="AspectFill"
                                                        Source="{Binding Photo}">
-                                                      <Image.GestureRecognizers>
-                                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type toolkit:Popup}}}"
-                                                                                  CommandParameter="{Binding .}"/>
-                                                        </Image.GestureRecognizers>
-                                                </Image>
-                                            </Frame>
-                                            <Label VerticalOptions="Center"
-                                                   Grid.Column="2"
-                                                   Grid.Row="1"
-                                                   LineBreakMode="TailTruncation"
-                                                   TextColor="Black"
-                                                   Margin="10,0,20,0"
-                                                   FontSize="Small"
-                                                   WidthRequest="70"
-                                                   Text="{Binding Name}">
-                                                 <Label.GestureRecognizers>
+                                                    <Image.GestureRecognizers>
                                                         <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type toolkit:Popup}}}"
                                                                               CommandParameter="{Binding .}"/>
-                                                    </Label.GestureRecognizers>
+                                                    </Image.GestureRecognizers>
+                                                </Image>
+                                            </Border>
+                                            <Label Grid.Column="1"
+                                                   Padding="2,0,12,0"
+                                                   VerticalTextAlignment="Center"
+                                                   LineBreakMode="TailTruncation"
+                                                   FontFamily="InterMedium"
+                                                   FontSize="15"
+                                                   TextColor="{StaticResource UiTextPrimary}"
+                                                   Text="{Binding Name}">
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type toolkit:Popup}}}"
+                                                                          CommandParameter="{Binding .}"/>
+                                                </Label.GestureRecognizers>
                                             </Label>
-                                        </StackLayout>
-                                    </StackLayout>
-                                </Frame>
-                            </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </StackLayout>
-        </ScrollView>
-    </StackLayout>
-</ControlTemplate>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </ScrollView>
+        </StackLayout>
+    </ControlTemplate>
 
 </ResourceDictionary>

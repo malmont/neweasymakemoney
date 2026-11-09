@@ -3,57 +3,68 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                     xmlns:handlers="clr-namespace:Easymakemoney.Handlers">
 
-    <!-- Collection Form Template -->
+    <Style x:Key="FormLabel" TargetType="Label">
+        <Setter Property="FontFamily" Value="InterMedium" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="TextColor" Value="{StaticResource UiTextSecondary}" />
+    </Style>
+    <Style x:Key="FormField" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+        <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="MinimumHeightRequest" Value="48" />
+        <Setter Property="Padding" Value="12,0" />
+    </Style>
+    <Style x:Key="FormEntry" TargetType="handlers:BorderlessEntry">
+        <Setter Property="FontFamily" Value="Inter" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource UiTextMuted}" />
+        <Setter Property="VerticalOptions" Value="Fill" />
+    </Style>
+    <Style x:Key="FormDate" TargetType="handlers:BorderlessDatePicker">
+        <Setter Property="FontFamily" Value="Inter" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+        <Setter Property="VerticalOptions" Value="Fill" />
+    </Style>
+
+    <!-- Formulaire de collection -->
     <ControlTemplate x:Key="CollectionFormTemplate">
-        <StackLayout>
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Collection Name"
-                        Text="{Binding CollectionForm.NomCollection, Mode=TwoWay}"/>
-            </Frame>
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Budget"
-                        Keyboard="Numeric"
-                        Text="{Binding CollectionForm.BudgetCollection, Mode=TwoWay}"/>
-            </Frame>
-            <Frame HeightRequest="65"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <StackLayout>
-                    <Label Text="Start Date"/>
-                    <handlers:BorderlessDatePicker Date="{Binding CollectionForm.StartDateCollection, Mode=TwoWay}"
-                            Format="yyyy-MM-dd"/>
-                </StackLayout>
-            </Frame>
-            <Frame HeightRequest="65"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <StackLayout>
-                    <Label Text="End Date"/>
-                    <handlers:BorderlessDatePicker Date="{Binding CollectionForm.EndDateCollection, Mode=TwoWay}"
-                            Format="yyyy-MM-dd"/>
-                </StackLayout>
-            </Frame>
-            <Switch IsToggled="{Binding CollectionForm.Del, Mode=TwoWay}"
-                    HorizontalOptions="Start">
-                <Switch.ThumbColor>Red</Switch.ThumbColor>
-                <Switch.OnColor>Green</Switch.OnColor>
-            </Switch>
-        </StackLayout>
+        <VerticalStackLayout Spacing="12">
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Nom de la collection" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                              Placeholder="Nom de la collection"
+                                              Text="{Binding CollectionForm.NomCollection, Mode=TwoWay}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Budget" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                              Placeholder="Budget"
+                                              Keyboard="Numeric"
+                                              Text="{Binding CollectionForm.BudgetCollection, Mode=TwoWay}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Date de début" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessDatePicker Style="{StaticResource FormDate}"
+                                                   Date="{Binding CollectionForm.StartDateCollection, Mode=TwoWay}"
+                                                   Format="dd/MM/yyyy" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Date de fin" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessDatePicker Style="{StaticResource FormDate}"
+                                                   Date="{Binding CollectionForm.EndDateCollection, Mode=TwoWay}"
+                                                   Format="dd/MM/yyyy" />
+                </Border>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
     </ControlTemplate>
 </ResourceDictionary>

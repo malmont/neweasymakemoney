@@ -2,6 +2,7 @@
 <toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:components="clr-namespace:Easymakemoney.Components"
                x:Class="Easymakemoney.Components.BottomSheetPopup"
                BackgroundColor="Transparent"
                BindingContext="{Binding .}">
@@ -20,14 +21,16 @@
     </toolkit:Popup.Resources>
 
     <ScrollView>
-        <Frame BackgroundColor="White"
-               Padding="20"
-               VerticalOptions="EndAndExpand"
-               WidthRequest="300"
-               CornerRadius="10"
-               Margin="20, 0">
+        <Border BackgroundColor="{StaticResource UiSurface}"
+                Stroke="{StaticResource UiBorder}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 24"
+                Padding="16"
+                VerticalOptions="EndAndExpand"
+                WidthRequest="340"
+                Margin="8,0">
 
-            <StackLayout BackgroundColor="Transparent">
+            <VerticalStackLayout Spacing="12">
                 <!-- <Label Text="{Binding IsCollectionForm, Converter={StaticResource BoolToCollectionCommandTextConverter}}"
                        FontSize="Large"
                        HorizontalOptions="Center"/> -->
@@ -52,19 +55,35 @@
                 <ContentView ControlTemplate="{StaticResource NoteDeFraisFormTermplate}"
                              IsVisible="{Binding IsNoteDeFraisForm}"/>
 
-                              <!-- Founisseur Form -->
+                <!-- Founisseur Form -->
                 <ContentView ControlTemplate="{StaticResource FournisseurFormTemplate}"
                              IsVisible="{Binding IsFournisseurForm}"/>
 
                 <ContentView ControlTemplate="{StaticResource FraisDePortFormTemplate}"
-                             IsVisible="{Binding IsFraisDePortForm}"/>            
+                             IsVisible="{Binding IsFraisDePortForm}"/>
 
-                <Button Text="Save"
-                        Margin="0, 20, 0, 20"
-                        Command="{Binding SaveCommand}"/>
-                <Button Text="Cancel"
-                        Command="{Binding CancelCommand}"/>
-            </StackLayout>
-        </Frame>
+                <!-- Button.CornerRadius est un int : le rayon du thème (double) passe par UiCard. -->
+                <components:UiCard Radius="{DynamicResource ThemeButtonRadius}"
+                                   BackgroundColor="{DynamicResource ThemePrimary}"
+                                   StrokeThickness="0"
+                                   Padding="0"
+                                   Margin="0,8,0,0">
+                    <Button Text="Enregistrer"
+                            Command="{Binding SaveCommand}"
+                            BackgroundColor="Transparent"
+                            TextColor="{DynamicResource ThemeOnPrimary}"
+                            FontFamily="InterSemiBold"
+                            FontSize="16"
+                            HeightRequest="52" />
+                </components:UiCard>
+                <Button Text="Annuler"
+                        Command="{Binding CancelCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource UiTextSecondary}"
+                        FontFamily="InterMedium"
+                        FontSize="15"
+                        HeightRequest="48" />
+            </VerticalStackLayout>
+        </Border>
     </ScrollView>
 </toolkit:Popup>

@@ -15,18 +15,20 @@
     </toolkit:Popup.Resources>
 
     <ScrollView>
-        <Frame BackgroundColor="White"
-               Padding="20"
-               VerticalOptions="EndAndExpand"
-               WidthRequest="300"
-               CornerRadius="30"
-               Margin="20, 0">
+        <Border BackgroundColor="{StaticResource UiSurface}"
+                Stroke="{StaticResource UiBorder}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 24"
+                Padding="16"
+                VerticalOptions="EndAndExpand"
+                WidthRequest="340"
+                Margin="8,0">
 
             <StackLayout BackgroundColor="Transparent">
                 <!-- CollectionListView Form -->
                 <ContentView ControlTemplate="{StaticResource CollectionFormListViewTemplate}"/>
 
             </StackLayout>
-        </Frame>
+        </Border>
     </ScrollView>
 </toolkit:Popup>

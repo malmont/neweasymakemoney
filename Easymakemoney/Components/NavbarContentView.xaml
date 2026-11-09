@@ -4,82 +4,52 @@
              xmlns:local="clr-namespace:Easymakemoney.Components"
              x:Class="Easymakemoney.Components.NavbarContentView">
     <ContentView.Content>
-        <StackLayout Spacing="0"
-                     BackgroundColor="#518faa"
-                     Orientation="Vertical"
-                     HorizontalOptions="FillAndExpand"
-                     VerticalOptions="Start">
+        <local:UiCard Style="{StaticResource UiCard}"
+                      Margin="16,12,16,0"
+                      Padding="12"
+                      VerticalOptions="Start">
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12">
+                <!-- Bouton d'ouverture de la liste -->
+                <Button Text="{Binding ButtonText, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
+                        Command="{Binding ButtonCommand, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
+                        BackgroundColor="{DynamicResource ThemePrimaryTint}"
+                        TextColor="{DynamicResource ThemePrimary}"
+                        FontFamily="InterSemiBold"
+                        FontSize="14"
+                        CornerRadius="12"
+                        MinimumHeightRequest="44"
+                        VerticalOptions="Center"
+                        LineBreakMode="TailTruncation" />
 
-            <Frame Margin="10,10"
-                   HasShadow="True"
-                   BackgroundColor="#518faa"
-                   CornerRadius="10"
-                   Padding="1"
-                   HorizontalOptions="Start"
-                   HeightRequest="79">
-                <StackLayout Margin="2,2"
-                             Orientation="Horizontal"
-                             HorizontalOptions="FillAndExpand"
-                             WidthRequest="380"
-                             BackgroundColor="#518faa">
-                    <!-- Button for List -->
-                    <StackLayout Margin="2,2,2,2"
-                                 HorizontalOptions="Start"
-                                 VerticalOptions="Center"
-                                 BackgroundColor="#518faa"
-                                 HeightRequest="30"
-                                 WidthRequest="60">
-                        <Frame Margin="1,1"
-                               HasShadow="True"
-                               CornerRadius="10"
-                               Padding="1"
-                               BackgroundColor="#C4AB4D"
-                               HeightRequest="30"
-                               WidthRequest="60"
-                               HorizontalOptions="Fill">
-                            <Button Text="{Binding ButtonText, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
-                                    BackgroundColor="#C4AB4D"
-                                    WidthRequest="65"
-                                    HeightRequest="65"
-                                    Command="{Binding ButtonCommand, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"/>
-                        </Frame>
-                    </StackLayout>
-                    <!-- Image Frame -->
-                    <Frame HasShadow="True"
-                           CornerRadius="10"
-                           Padding="4"
-                           BackgroundColor="#C4AB4D"
-                           HorizontalOptions="EndAndExpand">
-                        <ImageButton Source="{Binding ImageButtonSourceList, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
-                               Aspect="AspectFill"
-                               HeightRequest="50"
-                               WidthRequest="70"
-                                Command="{Binding ImageButtonCommandList, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"/>
-                    </Frame>
-                    <!-- Action Button and Label -->
-                    <StackLayout HeightRequest="65"
-                                 Margin="30,0"
-                                 IsVisible="true"
-                                 WidthRequest="95"
-                                 AbsoluteLayout.LayoutFlags="PositionProportional"
-                                 AbsoluteLayout.LayoutBounds=".95,.95,80,60"
-                                 HorizontalOptions="EndAndExpand"
-                                 VerticalOptions="End">
-                        <ImageButton Source="{Binding ImageButtonSource, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
-                                     WidthRequest="40"
-                                     HeightRequest="40"
-                                     Command="{Binding ImageButtonCommand, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"/>
+                <!-- Vignette de l'élément sélectionné -->
+                <Border Grid.Column="1"
+                        WidthRequest="48"
+                        HeightRequest="48"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 12"
+                        BackgroundColor="{StaticResource UiBackground}"
+                        VerticalOptions="Center">
+                    <ImageButton Source="{Binding ImageButtonSourceList, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
+                                 Command="{Binding ImageButtonCommandList, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
+                                 Aspect="AspectFill"
+                                 BackgroundColor="Transparent" />
+                </Border>
 
-                        <Label Text="{Binding LabelText, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
-                               FontSize="Small"
-                               VerticalTextAlignment="Center"
-                               VerticalOptions="Center"
-                               HorizontalOptions="Center"
-                               Margin="0,0,10,0"
-                               TextColor="#C4AB4D"/>
-                    </StackLayout>
-                </StackLayout>
-            </Frame>
-        </StackLayout>
+                <!-- Action d'ajout -->
+                <VerticalStackLayout Grid.Column="2" Spacing="2" VerticalOptions="Center">
+                    <ImageButton Source="{Binding ImageButtonSource, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
+                                 Command="{Binding ImageButtonCommand, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
+                                 WidthRequest="40"
+                                 HeightRequest="40"
+                                 HorizontalOptions="Center"
+                                 BackgroundColor="Transparent" />
+                    <Label Text="{Binding LabelText, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
+                           Style="{StaticResource UiBody}"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"
+                           LineBreakMode="NoWrap" />
+                </VerticalStackLayout>
+            </Grid>
+        </local:UiCard>
     </ContentView.Content>
 </ContentView>

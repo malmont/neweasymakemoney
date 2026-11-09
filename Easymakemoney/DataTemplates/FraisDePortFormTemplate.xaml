@@ -3,77 +3,95 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                     xmlns:handlers="clr-namespace:Easymakemoney.Handlers">
 
-    <!-- Command Form Template -->
+    <Style x:Key="FormLabel" TargetType="Label">
+        <Setter Property="FontFamily" Value="InterMedium" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="TextColor" Value="{StaticResource UiTextSecondary}" />
+    </Style>
+    <Style x:Key="FormField" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+        <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="MinimumHeightRequest" Value="48" />
+        <Setter Property="Padding" Value="12,0" />
+    </Style>
+    <Style x:Key="FormEntry" TargetType="handlers:BorderlessEntry">
+        <Setter Property="FontFamily" Value="Inter" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource UiTextMuted}" />
+        <Setter Property="VerticalOptions" Value="Fill" />
+    </Style>
+    <Style x:Key="FormPicker" TargetType="Picker">
+        <Setter Property="FontFamily" Value="Inter" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+        <Setter Property="TitleColor" Value="{StaticResource UiTextMuted}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="VerticalOptions" Value="Fill" />
+    </Style>
+
+    <!-- Formulaire de frais de port -->
     <ControlTemplate x:Key="FraisDePortFormTemplate">
-        <StackLayout>
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Name"
-                        Text="{Binding FraisDePortForm.Name, Mode=TwoWay}"/>
-            </Frame>
-
-             <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Prix"
-                        Text="{Binding FraisDePortForm.Prix, Mode=TwoWay}"/>
-            </Frame>
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Facture"
-                        Text="{Binding FraisDePortForm.Facture, Mode=TwoWay}"/>
-            </Frame>
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Tracknumber"
-                        Text="{Binding FraisDePortForm.Tracknumber, Mode=TwoWay}"/>
-            </Frame>
-
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Pays"
-                        Text="{Binding FraisDePortForm.Pays, Mode=TwoWay}"/>
-            </Frame>
-            <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <handlers:BorderlessEntry Placeholder="Tel"
-                        Text="{Binding FraisDePortForm.Tel, Mode=TwoWay}"/>
-            </Frame>
-
-             <Frame HeightRequest="45"
-                    Margin="10,0,0,10"
-                    Padding="2"
-                    HasShadow="True"
-                    BorderColor="black"
-                    HorizontalOptions="Fill">
-                <Picker Title="Select Transporteurs"
-                        ItemsSource="{Binding FraisDePortForm.Transporteurs}"
-                        SelectedItem="{Binding FraisDePortForm.SelectedTransporteur}"
-                        ItemDisplayBinding="{Binding name}"/>
-            </Frame>
-        </StackLayout>
+        <VerticalStackLayout Spacing="12">
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Nom" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                              Placeholder="Nom"
+                                              Text="{Binding FraisDePortForm.Name, Mode=TwoWay}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Prix" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                              Placeholder="Prix"
+                                              Text="{Binding FraisDePortForm.Prix, Mode=TwoWay}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Facture" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                              Placeholder="Facture"
+                                              Text="{Binding FraisDePortForm.Facture, Mode=TwoWay}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Numéro de suivi" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                              Placeholder="Numéro de suivi"
+                                              Text="{Binding FraisDePortForm.Tracknumber, Mode=TwoWay}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Pays" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                              Placeholder="Pays"
+                                              Text="{Binding FraisDePortForm.Pays, Mode=TwoWay}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Téléphone" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                              Placeholder="Téléphone"
+                                              Text="{Binding FraisDePortForm.Tel, Mode=TwoWay}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Transporteur" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <Picker Style="{StaticResource FormPicker}"
+                            Title="Sélectionner un transporteur"
+                            ItemsSource="{Binding FraisDePortForm.Transporteurs}"
+                            SelectedItem="{Binding FraisDePortForm.SelectedTransporteur}"
+                            ItemDisplayBinding="{Binding name}" />
+                </Border>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
     </ControlTemplate>
 </ResourceDictionary>

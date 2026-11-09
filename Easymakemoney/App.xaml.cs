@@ -41,6 +41,16 @@ namespace Easymakemoney
             // Règle M10 : forcer le thème clair pour éviter le texte blanc sur fond blanc en mode sombre
             UserAppTheme = AppTheme.Light;
 
+            // Pas de cadre natif : le champ est dessiné par son Border dans les formulaires
+            Microsoft.Maui.Handlers.PickerHandler.Mapper.AppendToMapping("UiBorderlessPicker", (handler, view) =>
+            {
+#if ANDROID
+                handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
+#elif IOS
+                handler.PlatformView.BorderStyle = UIKit.UITextBorderStyle.None;
+#endif
+            });
+
             MainPage = shell;
         }
     }
