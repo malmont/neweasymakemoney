@@ -1,4 +1,6 @@
 
+using Easymakemoney.Utilities;
+
 namespace Easymakemoney.Models
 {
     public class FraisEvolution
@@ -30,7 +32,7 @@ namespace Easymakemoney.Models
             [JsonProperty("total_frais")]
             public FraisDetails TotalFrais { get; set; }
 
-            public string PeriodLabel => Month;
+            public string PeriodLabel => MonthHelper.FormatMonthName(Month);
             private Color _backgroundColor = Colors.LightGray.WithAlpha(0.3f);
 
             public Color BackgroundColor

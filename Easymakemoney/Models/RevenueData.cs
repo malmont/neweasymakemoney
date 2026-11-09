@@ -1,5 +1,7 @@
 
 
+using Easymakemoney.Utilities;
+
 namespace Easymakemoney.Models
 {
     public class DailyRevenueData : IStatistiqueData
@@ -49,7 +51,7 @@ namespace Easymakemoney.Models
             set => _backgroundColor = value; 
         }
 
-        public string Data1 => Month;
+        public string Data1 => MonthHelper.FormatMonthName(Month);
         public double Data2 => Revenue;
     }
 
@@ -81,7 +83,7 @@ namespace Easymakemoney.Models
 
         public Color BackgroundColor { get; set; } = Colors.LightGray.WithAlpha(0.3f);
 
-        public string Data1 => Month;
+        public string Data1 => MonthHelper.FormatMonthName(Month);
         public double Data2 => OrderCount;
     }
 
@@ -114,7 +116,7 @@ namespace Easymakemoney.Models
 
         public Color BackgroundColor { get; set; } = Colors.LightGray.WithAlpha(0.3f);
 
-        public string Data1 => Month;
+        public string Data1 => MonthHelper.FormatMonthName(Month);
         public double Data2 => AverageOrderValue;
     }
 
