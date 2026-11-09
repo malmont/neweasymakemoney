@@ -48,7 +48,7 @@ public class TokenRefresher : ITokenRefresher
             var payload = new RefreshTokenRequest
             {
                 refresh_token = refreshToken,
-                platform = "mobile"
+                platform = "admin"
             };
 
             var json = JsonConvert.SerializeObject(payload);
