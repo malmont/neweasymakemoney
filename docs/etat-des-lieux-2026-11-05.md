@@ -221,6 +221,22 @@ après les lots du backend. Cadrage : [futur-module-assistance.md](futur-module-
    frais, produits, variantes) et les 8 pages de statistiques. Pour chaque fonctionnalité : ce qu'elle fait, ce qui
    gêne, et les améliorations possibles. Support de discussion : `docs/revue-fonctionnalites.md`. Les améliorations
    retenues formeront de nouveaux lots, après le lot 4.
+4. **Interface modernisée, en gardant la vision actuelle (demande du propriétaire, 08/11/2026).** On garde
+   l'identité : logo IIZI manager, violet `#512BD4`, organisation des écrans. On modernise le reste :
+   - cartes en `Border` à la place de `Frame` ;
+   - typographie, espacements et couleurs harmonisés dans une charte commune (`Styles.xaml`) ;
+   - textes en français partout ;
+   - états de chargement et messages d'erreur soignés ;
+   - mode sombre en option.
+
+   Méthode :
+   - **audit visuel**, avec une capture de chaque écran sur le téléphone du propriétaire ;
+   - **proposition de charte**, à faire valider par le propriétaire ;
+   - **mise en œuvre écran par écran par Gemini.**
+
+   L'audit se fait en même temps que la revue des fonctionnalités (point 3), puisque les deux touchent les mêmes
+   écrans. Il en va de même pour la refonte des popups prévue par la revue d'architecture. Support :
+   `docs/revue-ui.md`.
 
 ## 7. Questions ouvertes (à trancher par le propriétaire ou le backend)
 
