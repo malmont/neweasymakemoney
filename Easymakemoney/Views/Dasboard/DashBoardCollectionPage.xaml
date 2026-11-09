@@ -65,6 +65,55 @@
                             Command="{Binding ReopenCollectionCommand}" />
                 </VerticalStackLayout>
 
+                <VerticalStackLayout IsVisible="{Binding HasPeriodResult}" Spacing="10">
+                    <components:UiCard Style="{StaticResource UiCard}">
+                        <VerticalStackLayout Spacing="8">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Résultat de la période" Style="{StaticResource UiBody}" />
+                                <Label Grid.Column="1" Text="Chiffres figés" IsVisible="{Binding PeriodResult.frozen}" Style="{StaticResource UiBody}" FontFamily="InterSemiBold" />
+                            </Grid>
+                            <Label Text="{Binding PeriodResult.NetText}" FontFamily="InterBold" FontSize="30" TextColor="{DynamicResource ThemePrimary}">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding PeriodResult.IsLoss}" Value="True">
+                                        <Setter Property="TextColor" Value="#B91C1C" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                            <Label Text="{Binding PeriodResult.NetRateText}" IsVisible="{Binding PeriodResult.HasNetRate}" FontFamily="InterSemiBold" FontSize="13" TextColor="#15803D">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding PeriodResult.IsLoss}" Value="True">
+                                        <Setter Property="TextColor" Value="#B91C1C" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                            <components:UiAmountRow Title="Ventes d'articles" Value="{Binding PeriodResult.RevenueText}" />
+                            <components:UiAmountRow Title="Ventes sans coût connu" Value="{Binding PeriodResult.UnknownRevenueText}" IsVisible="{Binding PeriodResult.HasUnknownRevenue}" />
+                            <components:UiAmountRow Title="Coût des articles vendus" Value="{Binding PeriodResult.CogsText}" />
+                            <components:UiAmountRow Title="Marge" Value="{Binding PeriodResult.GrossText}" IsTotal="True" />
+                            <components:UiAmountRow Title="Frais de port" Value="{Binding PeriodResult.ShippingText}" />
+                            <components:UiAmountRow Title="Notes de frais" Value="{Binding PeriodResult.NotesText}" />
+                            <components:UiAmountRow Title="Autres frais" Value="{Binding PeriodResult.OtherExpensesText}" IsVisible="{Binding PeriodResult.HasOtherExpenses}" />
+                            <components:UiAmountRow Title="Résultat" Value="{Binding PeriodResult.NetText}" IsTotal="True" />
+                        </VerticalStackLayout>
+                    </components:UiCard>
+                    <components:UiCard Style="{StaticResource UiCard}">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="Investi en stock pendant la période" Style="{StaticResource UiBody}" />
+                            <Label Text="{Binding PeriodResult.InvestmentText}" FontFamily="InterBold" FontSize="20" TextColor="{StaticResource UiTextPrimary}" />
+                        </VerticalStackLayout>
+                    </components:UiCard>
+                    <components:UiCard Style="{StaticResource UiCard}" IsVisible="{Binding PeriodResult.HasUnknownCost}">
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="{Binding PeriodResult.UnknownCostTitle}" Style="{StaticResource UiTitle}" FontSize="15" TextColor="#B45309" />
+                            <Label Text="{Binding PeriodResult.UnknownCostDetail}" Style="{StaticResource UiBody}" />
+                        </VerticalStackLayout>
+                    </components:UiCard>
+                    <Grid ColumnDefinitions="*,Auto" Padding="4,0" IsVisible="{Binding PeriodResult.HasOtherRevenue}">
+                        <Label Text="Autres revenus (location, abonnement)" Style="{StaticResource UiBody}" />
+                        <Label Grid.Column="1" Text="{Binding PeriodResult.OtherRevenueText}" Style="{StaticResource UiBody}" />
+                    </Grid>
+                </VerticalStackLayout>
+
                 <Label Text="Tableau de bord principal" Style="{StaticResource UiTitle}"/>
 
                 <components:BudgetOverviewView

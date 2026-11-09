@@ -103,6 +103,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<ITransactionCaisseService, TransactionCaisseService>();
 		builder.Services.AddTransient<IFraisClientTotalService, FraisClientTotalService>();
 		builder.Services.AddTransient<ICollectionCloseService, CollectionCloseService>();
+		builder.Services.AddTransient<IPeriodResultService, PeriodResultService>();
+		builder.Services.AddTransient<Easymakemoney.UseCase.PeriodResultUseCase.GetPeriodResultUseCase>();
 
 
 		builder.Services.AddTransient<GetListCollectionsUseCase>();

@@ -112,3 +112,7 @@ Contraintes : ajouts uniquement, aucune régression pour les autres applications
 - Une période fermée ignore les rattachements et coûts posés après son échéance, quelle que soit la date de première lecture.
 
 Maquette des écrans : https://claude.ai/artifact/8biDay5vzqM3kEKQcz8zU8
+
+## LIVRÉ : P2, le 10/11/2026 (`dev` be08147d ; 899 tests verts)
+
+Résultat branché dans le tableau de bord d'une période. Le contrat P3 (reprise d'historique) est en cours de cadrage : simulation, application, annulation, coûts estimés par un coefficient, aucun effet sur le prix, le stock ni la visibilité des articles.

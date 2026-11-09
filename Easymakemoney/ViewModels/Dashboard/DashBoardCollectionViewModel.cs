@@ -17,13 +17,16 @@ namespace Easymakemoney.ViewModels.Dashboard
         private readonly GetCollectionCloseUseCase _getCollectionCloseUseCase;
 
         private readonly CollectionFormModel _collectionFormModel;
+        private readonly Easymakemoney.UseCase.PeriodResultUseCase.GetPeriodResultUseCase _getPeriodResultUseCase;
         private readonly IDialogService _dialogService;
 
         public DashBoardCollectionViewModel(GetDashBoardCollectionUseCase getDashBoardCollectionUseCase,GetListCollectionsUseCase getListCollectionsUseCase,
             SaveCollectionUseCase saveCollectionUseCase, ListNewCollectionViewModel listNewCollectionViewModel,
              CollectionFormModel collectionFormModel,GetCollectionCloseUseCase getCollectionCloseUseCase,
+             Easymakemoney.UseCase.PeriodResultUseCase.GetPeriodResultUseCase getPeriodResultUseCase,
              IDialogService dialogService)
         {
+            _getPeriodResultUseCase = getPeriodResultUseCase;
             _collectionFormModel = collectionFormModel;
             _listNewCollectionViewModel = listNewCollectionViewModel;
             _saveCollectionUseCase = saveCollectionUseCase;
@@ -84,6 +87,29 @@ namespace Easymakemoney.ViewModels.Dashboard
         [NotifyPropertyChangedFor(nameof(CanClose))]
         private bool isReopened;
 
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasPeriodResult))]
+        private PeriodResult? periodResult;
+
+        public bool HasPeriodResult => PeriodResult != null;
+
+        private async Task LoadPeriodResultAsync()
+        {
+            PeriodResult = null;
+            if (!IsPeriod)
+                return;
+
+            try
+            {
+                PeriodResult = await _getPeriodResultUseCase.ExecuteAsync(CollectionId);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
+            }
+        }
+
         // Une période se clôture seule : le bouton ne sert qu'aux collections manuelles et aux périodes rouvertes.
         public bool CanClose => !IsClosed && (!IsPeriod || IsReopened);
         public string CloseButtonText => IsPeriod ? "Clôturer la période" : "Clôturer la collection";
@@ -122,6 +148,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             }
 
             await GetDashBoardCollectionAsync(CollectionId);
+            await LoadPeriodResultAsync();
         }
          [RelayCommand]
         public async Task CloseCollection()
@@ -136,6 +163,7 @@ namespace Easymakemoney.ViewModels.Dashboard
                 await _dialogService.ShowInfoAsync(IsPeriod ? "Période clôturée" : "Collection clôturée");
                 await GetDashBoardCollectionAsync(CollectionId);
                 IsClosed = true;
+                await LoadPeriodResultAsync();
             }
             catch (Exception ex)
             {
@@ -189,6 +217,7 @@ namespace Easymakemoney.ViewModels.Dashboard
                         this.IsPeriod = collection.IsPeriod;
                         this.IsReopened = collection.reopenedAt != null;
                         await this.GetDashBoardCollectionAsync(collection.id);
+                        await this.LoadPeriodResultAsync();
                         IsClosedVisible=true;
                     }
                 });
