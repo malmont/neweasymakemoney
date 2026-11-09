@@ -62,3 +62,41 @@ Tous les montants deviennent des **entiers en centimes**, en entrée et en sorti
 - la lecture d'erreur doit accepter `fields` en plus de `errors` et `violations` ;
 - l'affichage des montants doit passer à la **devise du site** (`currency`), au lieu de la culture de l'appareil ;
 - la nouvelle interface ne doit écrire aucune devise en dur.
+
+## Précisions du backend (09/11/2026)
+
+- **G1** : `1250` et `1250.0` valent 1250 centimes ; refusés : `12.5`, `"1250"` en chaîne, négatif, absent quand il est requis.
+  Passer les modèles en entiers (`long`) : les réponses rendront des entiers. Les ÷100 en lecture et ×100 en écriture restent valables.
+- **`currency`** figure dans chaque réponse portant un montant, y compris `stock-value` et `stock-evolution`. On formate avec cette
+  devise, et la culture de l'appareil pour la langue seulement.
+- **Inchangées** : `products/{id}/variants`, `product-variants/{id}`, `sizes`, `colors`, `category`, `styles`, `caisse/transactions`.
+- **G2** : `close` commande et collection répondent 200 avec un objet JSON (le tableau de bord figé). L'application lit aujourd'hui une
+  chaîne : à adapter à la livraison.
+- **G3** : `month` devient un **entier JSON 1..12** dans `chiffre-affaires`, `panier-moyen`, `nombre-commandes`, `frais/total`, `taxes/monthly`
+  et `carrier/statistics`. L'application lit une chaîne : à adapter. `date` reste une chaîne ISO, `week` un entier. Clés accentuées de
+  `nombre-commandes` inchangées.
+- **G4** : les 4 `POST` répondent 201 avec l'objet créé ; les champs en trop restent ignorés.
+- **`carrier_count` est bien un montant en centimes** (correctif du backend du 09/11, somme des prix de transport du mois) : garder le ÷100. G3 ajoutera `shippingAmount` (même valeur) à côté, sans retirer la clé.
+- **Quantité produit** : `product.quantity` est recalculée par le backend (Σ `stockQuantity` des variantes) à chaque création, modification ou suppression d'une variante. Rien à changer côté application. Un produit sans variante reste à 0. En G4, `quantity` devient facultatif sur `POST commandes/{id}/products` : pas de champ à l'écran tant qu'on passe par les variantes.
+
+## LIVRÉ : G1, le 09/11/2026 (en production, tous les sites ; 885 tests verts)
+
+- Conforme à l'annonce. Acceptés : `1250`, `1250.0`, et la chaîne `"1250"` (multipart). Refusés : `12.5`, `"12.50"`, texte, négatif.
+- Erreur : 422 `{"error":"VALIDATION_FAILED","code":"VALIDATION_FAILED","message":…,"fields":{"budget":"MUST_BE_INTEGER_CENTS"}}`. Autres codes de `fields` : `REQUIRED`, `INVALID_DATE`, `INVALID_ID`, `MUST_BE_NUMBER`.
+- `currency` : sur chaque élément de `collections`, `…/commandes`, `…/notes-de-frais`, sur l'objet `frais-de-port`, à la racine des tableaux de bord, `chiffre-affaires`, `panier-moyen`, `payments/statistics`, `frais/total`, `taxes/monthly`, `stock-value`, `stock-evolution`.
+- Défauts corrigés : `DELETE commandes/{id}/frais-de-port` ne supprime plus la commande ; `POST dashboard/collection/{id}/close` fonctionne (réponse `{"message":…}` jusqu'à G2).
+
+**À faire côté application** (après le lot 3) :
+1. arrondir à l'entier les 4 écritures ×100 (`Save*UseCase`), sinon `12,345` est refusé ;
+2. lire `fields` dans `ApiError` ;
+3. afficher la devise du site au lieu de la culture de l'appareil ;
+4. `POST …/close` : voir le point de vigilance de G2.
+
+## G2 : précisions avant livraison (09/11/2026)
+
+- `tauxMarge` = marge / `stockValue` × 100 ; `tauxMarque` = marge / `usedBudget` × 100 (`usedBudget` = coût d'achat + frais de port + notes de frais). Arrondis à 2 décimales, comme `averageMultiplier`.
+- Ajoutés : `purchaseCost` (= `totalItemCost`) et `currency` dans les tableaux de bord.
+- `stockValue` = Σ coût × quantité × coefficient, pour la commande comme pour la collection.
+- `close` commande ou collection → 200 avec le tableau de bord figé ; 409 `ALREADY_CLOSED`.
+
+**Point de vigilance côté application :** `CollectionCloseService` lit la réponse en `string`. Un objet JSON (déjà `{"message":…}` depuis G1) fait échouer la lecture alors que la clôture a réussi. À corriger avec le lot d'adaptation G1 : ne plus lire le corps, afficher « Collection clôturée », et recharger le tableau de bord.
