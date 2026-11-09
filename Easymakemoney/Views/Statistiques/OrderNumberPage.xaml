@@ -26,7 +26,7 @@
                         Padding="20,0"
                         HorizontalOptions="Start"/>
                 <components:BudgetOverviewView
-                    IconSource="revenue.png"
+                    IconSource="chiffreaffaire.png"
                     HeaderText="Commandes complétées"
                     TotalLabelText="{Binding CurrentPeriode}"
                     TotalValue="{Binding CurrentRevenue}"
@@ -74,7 +74,7 @@
                         </CollectionView>
                     </components:UiCard>
                     <components:UiCard Style="{StaticResource UiCard}" IsVisible="{Binding IsWeekChartVisible}">
-                        <microcharts:ChartView Chart="{Binding WeekChartdailyLcurrentWeekOrderCancellation, Mode=TwoWay}"
+                        <microcharts:ChartView Chart="{Binding WeekChartdailycurrentWeekOrderDelivery, Mode=TwoWay}"
                                                HeightRequest="200"
                                                HorizontalOptions="Fill"/>
                     </components:UiCard>

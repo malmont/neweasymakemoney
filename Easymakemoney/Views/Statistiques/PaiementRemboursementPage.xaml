@@ -32,7 +32,7 @@
                         Padding="20,0"
                         HorizontalOptions="Start"/>
                 <components:BudgetOverviewView
-                    IconSource="revenue.png"
+                    IconSource="chiffreaffaire.png"
                     HeaderText="Vue d’ensemble des transactions"
                     TotalLabelText="Paiement hebdomadaire"
                     TotalValue="{Binding PaiementTotalSemaine, Converter={StaticResource CurrencyConverter}}"
@@ -42,20 +42,20 @@
                     IsExpensesVisible="False"
                     RemainingValue="{Binding RemboursementTotalSemaine, Converter={StaticResource CurrencyConverter}}"/>
                 <components:BudgetOverviewView
-                    IconSource="revenue.png"
+                    IconSource="chiffreaffaire.png"
                     HeaderText="Vue d’ensemble des transactions"
                     TotalLabelText="Paiement mensuel"
-                    TotalValue="{Binding PaiementTotalMois}"
+                    TotalValue="{Binding PaiementTotalMois, Converter={StaticResource CurrencyConverter}}"
                     ExpensesLabelText="Remboursement mensuel"
                     ExpensesValue="{Binding RemboursementTotalMois, Converter={StaticResource CurrencyConverter}}"
                     RemainingLabelText="Remboursement mensuel"
                     IsExpensesVisible="False"
                     RemainingValue="{Binding RemboursementTotalMois, Converter={StaticResource CurrencyConverter}}"/>
                 <components:BudgetOverviewView
-                    IconSource="revenue.png"
+                    IconSource="chiffreaffaire.png"
                     HeaderText="Vue d’ensemble des transactions"
                     TotalLabelText="Paiement annuel"
-                    TotalValue="{Binding PaiementTotalAnnee}"
+                    TotalValue="{Binding PaiementTotalAnnee, Converter={StaticResource CurrencyConverter}}"
                     ExpensesLabelText="Remboursement annuel"
                     ExpensesValue="{Binding RemboursementTotalAnnee, Converter={StaticResource CurrencyConverter}}"
                     RemainingLabelText="Remboursement annuel"

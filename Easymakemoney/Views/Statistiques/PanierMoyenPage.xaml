@@ -32,8 +32,8 @@
                         Padding="20,0"
                         HorizontalOptions="Start"/>
                 <components:BudgetOverviewView
-                    IconSource="revenue.png"
-                    HeaderText="Valeur du chiffre d’affaires"
+                    IconSource="chiffreaffaire.png"
+                    HeaderText="Valeur du panier moyen"
                     TotalLabelText="{Binding CurrentPeriode}"
                     TotalValue="{Binding CurrentRevenue, Converter={StaticResource CurrencyConverter}}"
                     ExpensesLabelText="Chiffre d’affaires semaine dernière"

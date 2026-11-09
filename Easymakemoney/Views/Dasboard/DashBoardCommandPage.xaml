@@ -27,7 +27,7 @@
                                       ImageButtonSource="boutonaddblanc64.png"
                                       ImageButtonCommand="{Binding ShowBottomSheetCreateCommandCommand}"
                                       ImageButtonCommandList="{Binding ItemTappedCommand}"
-                                      LabelText="COLLECTION"/>
+                                      LabelText="COMMANDE"/>
 
         <ScrollView Grid.Row="2">
             <VerticalStackLayout Padding="16" Spacing="12">

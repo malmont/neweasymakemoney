@@ -32,7 +32,7 @@
                         Padding="20,0"
                         HorizontalOptions="Start"/>
                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                    <Image Source="revenue.png"
+                    <Image Source="chiffreaffaire.png"
                            WidthRequest="24"
                            HeightRequest="24"
                            VerticalOptions="Center"/>

@@ -32,7 +32,7 @@
                         Padding="20,0"
                         HorizontalOptions="Start"/>
                 <components:BudgetOverviewView
-                    IconSource="revenue.png"
+                    IconSource="chiffreaffaire.png"
                     HeaderText="Valeur du chiffre d’affaires"
                     TotalLabelText="{Binding CurrentPeriode}"
                     TotalValue="{Binding CurrentRevenue, Converter={StaticResource CurrencyConverter}}"
