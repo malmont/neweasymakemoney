@@ -1,9 +1,9 @@
-﻿namespace Easymakemoney.Models
+namespace Easymakemoney.Models
 {
     public class ListCollection : IListItem
     {
         public int id { get; set; }
-        public double? budgetCollection { get; set; }
+        public long? budgetCollection { get; set; }
         public required string startDateCollection { get; set; }
         public required string endDateCollection { get; set; }
         public bool del { get; set; }

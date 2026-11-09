@@ -9,11 +9,11 @@ namespace Easymakemoney.Services
             _httpService = httpService;
         }
 
-        public async Task<string> GetCollectionClose(int CollectionId)
+        public async Task<bool> CloseCollectionAsync(int collectionId)
         {
-            var url = $"dashboard/collection/{CollectionId}/close";
-            var collectionClose = await _httpService.PostAsyncWithAuth<string>(url,null);
-            return collectionClose ?? null;
+            var url = $"dashboard/collection/{collectionId}/close";
+            await _httpService.PostAsyncWithAuth<object>(url, null);
+            return true;
         }
     }
 

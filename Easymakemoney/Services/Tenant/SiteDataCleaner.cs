@@ -1,6 +1,7 @@
 // Règle de nettoyage
 using System.Diagnostics;
 using Easymakemoney.Services.Session;
+using Easymakemoney.Utilities;
 
 namespace Easymakemoney.Services.Tenant;
 
@@ -33,5 +34,6 @@ public class SiteDataCleaner : ISiteDataCleaner
 
         await _sessionService.ClearSessionAsync();
         _tenantStore.ClearMemory();
+        SiteCurrency.Reset();
     }
 }

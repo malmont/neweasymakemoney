@@ -14,7 +14,7 @@ public class SaveCommandUseCase
     {
         var newCommand = new ListCommand
         {
-            budget = (commandForm.Budget ?? 0) * 100,
+            budget = (long)Math.Round((commandForm.Budget ?? 0) * 100),
             date = commandForm.Date.ToString("yyyy-MM-ddTHH:mm:ssZ"),
             name = commandForm.Name,
             photo = commandForm.Photo,

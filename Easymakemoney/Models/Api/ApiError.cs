@@ -110,6 +110,20 @@ public class ApiError
                         }
                     }
                 }
+
+                // Extraction des erreurs de validation par champ (format backend G1 "fields")
+                var fieldsToken = jObject["fields"];
+                if (fieldsToken is JObject jFields)
+                {
+                    foreach (var prop in jFields.Properties())
+                    {
+                        var rawField = prop.Name;
+                        var errorCode = prop.Value?.ToString() ?? string.Empty;
+                        var friendlyPath = TranslateFieldName(rawField);
+                        var friendlyMessage = TranslateValidationCode(errorCode);
+                        validationErrors.Add(new ApiValidationError { Path = friendlyPath, Message = friendlyMessage });
+                    }
+                }
             }
             catch
             {
@@ -136,6 +150,36 @@ public class ApiError
         };
     }
 
+    public static string TranslateFieldName(string field)
+    {
+        return field switch
+        {
+            "budget" or "budgetCollection" => "Budget",
+            "nomCollection" or "name" => "Nom",
+            "date" => "Date",
+            "montant" => "Montant",
+            "price" => "Prix",
+            "transporteur" or "transporteur.id" => "Transporteur",
+            "fournisseur" or "fournisseur.id" => "Fournisseur",
+            "typeNoteDeFraisId" => "Type",
+            "coefficientMultiplier" => "Coefficient",
+            _ => string.Empty
+        };
+    }
+
+    public static string TranslateValidationCode(string errorCode)
+    {
+        return errorCode switch
+        {
+            "MUST_BE_INTEGER_CENTS" => "Montant invalide.",
+            "REQUIRED" => "Ce champ est obligatoire.",
+            "MUST_BE_NUMBER" => "Ce champ doit être un nombre valide.",
+            "INVALID_DATE" => "La date est invalide.",
+            "INVALID_ID" => "L'identifiant est invalide.",
+            _ => !string.IsNullOrWhiteSpace(errorCode) ? errorCode : "Valeur invalide."
+        };
+    }
+
     public static string GetFallbackMessage(string code, HttpStatusCode statusCode, int? retryAfterSeconds)
     {
         return code switch
@@ -146,6 +190,8 @@ public class ApiError
             "TENANT_NOT_FOUND" => "Site introuvable.",
             "TENANT_HOST_MISSING" => "Saisissez le code du site.",
             "RATE_LIMITED" or "TOO_MANY_ATTEMPTS" => $"Trop de tentatives. Veuillez patienter {retryAfterSeconds ?? 60} secondes.",
+            "VALIDATION_FAILED" => "Données non valides.",
+            "ALREADY_CLOSED" => "Cet élément est déjà clôturé.",
             _ => (int)statusCode switch
             {
                 429 => $"Trop de tentatives. Veuillez patienter {retryAfterSeconds ?? 60} secondes.",

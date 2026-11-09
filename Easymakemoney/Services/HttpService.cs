@@ -2,9 +2,11 @@
 using System.Globalization;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using Easymakemoney.Models.Api;
 using Easymakemoney.Services.Api;
 using Easymakemoney.Services.Auth;
+using Easymakemoney.Utilities;
 
 namespace Easymakemoney.Services
 {
@@ -174,6 +176,8 @@ namespace Easymakemoney.Services
                     return default!;
                 }
 
+                UpdateSiteCurrencyFromJson(responseJson);
+
                 var deserializeJson = JsonConvert.DeserializeObject<T>(responseJson);
                 return deserializeJson ?? default!;
             }
@@ -181,6 +185,55 @@ namespace Easymakemoney.Services
             var errorJson = await response.Content.ReadAsStringAsync();
             var apiError = ApiError.FromHttpResponse(errorJson, response.StatusCode, response.Headers);
             throw new ApiException(apiError, response.StatusCode);
+        }
+
+        private static void UpdateSiteCurrencyFromJson(string json)
+        {
+            try
+            {
+                using var doc = JsonDocument.Parse(json);
+                var root = doc.RootElement;
+                if (root.ValueKind == JsonValueKind.Object)
+                {
+                    if (TryExtractCurrency(root, out var code))
+                    {
+                        SiteCurrency.SetCurrency(code);
+                    }
+                }
+                else if (root.ValueKind == JsonValueKind.Array && root.GetArrayLength() > 0)
+                {
+                    var first = root[0];
+                    if (first.ValueKind == JsonValueKind.Object && TryExtractCurrency(first, out var code))
+                    {
+                        SiteCurrency.SetCurrency(code);
+                    }
+                }
+            }
+            catch
+            {
+                // Ne bloque jamais la désérialisation
+            }
+        }
+
+        private static bool TryExtractCurrency(JsonElement element, out string? currencyCode)
+        {
+            foreach (var property in element.EnumerateObject())
+            {
+                if (property.NameEquals("currency") || property.NameEquals("Currency"))
+                {
+                    if (property.Value.ValueKind == JsonValueKind.String)
+                    {
+                        var val = property.Value.GetString();
+                        if (!string.IsNullOrWhiteSpace(val))
+                        {
+                            currencyCode = val.Trim();
+                            return true;
+                        }
+                    }
+                }
+            }
+            currencyCode = null;
+            return false;
         }
     }
 }

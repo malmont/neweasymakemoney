@@ -2,6 +2,6 @@ namespace Easymakemoney.Services
 {
     public interface ICollectionCloseService
     {
-        Task<string> GetCollectionClose(int CollectionId);
+        Task<bool> CloseCollectionAsync(int collectionId);
     }
 }
