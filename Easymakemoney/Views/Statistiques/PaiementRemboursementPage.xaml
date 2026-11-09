@@ -8,82 +8,33 @@
              x:DataType="Statistique:PaiementRemboursementViewModel"
              xmlns:microcharts="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
              x:Class="Easymakemoney.Views.Statistiques.PaiementRemboursementPage"
-             Title="Paiement et Remboursement">
-
+             Style="{StaticResource UiPage}"
+             Title="Paiements et remboursements">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:CurrencyConverter x:Key="CurrencyConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <ScrollView HorizontalScrollBarVisibility="Always"
-                VerticalScrollBarVisibility="Always">
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Paiements et remboursements"/>
 
-        <StackLayout Spacing="0"
-                     Orientation="Vertical"
-                     HorizontalOptions="FillAndExpand"
-                     VerticalOptions="FillAndExpand">
-            <StackLayout Spacing="0"
-                         BackgroundColor="#518faa"
-                         Orientation="Vertical"
-                         HorizontalOptions="FillAndExpand"
-                         VerticalOptions="Start">
-
-                <Frame Margin="10,10"
-                       HasShadow="True"
-                       BackgroundColor="#518faa"
-                       CornerRadius="10"
-                       Padding="1"
-                       HorizontalOptions="Start"
-                       HeightRequest="79">
-                    <StackLayout Margin="2,2"
-                                 Orientation="Horizontal"
-                                 HorizontalOptions="FillAndExpand"
-                                 WidthRequest="380"
-                                 BackgroundColor="#518faa">
-                        <!-- Button for List -->
-                        <StackLayout Margin="2,2,2,2"
-                                     HorizontalOptions="Start"
-                                     VerticalOptions="Center"
-                                     BackgroundColor="#518faa"
-                                     HeightRequest="30"
-                                     WidthRequest="60">
-                            <Frame Margin="1,1"
-                                   HasShadow="True"
-                                   CornerRadius="10"
-                                   Padding="1"
-                                   BackgroundColor="#C4AB4D"
-                                   HeightRequest="30"
-                                   WidthRequest="60"
-                                   HorizontalOptions="Fill">
-                                <Button Text="Période"
-                                        BackgroundColor="#C4AB4D"
-                                        WidthRequest="85"
-                                        HeightRequest="85"
-                                        Command="{Binding ShowBottomSheetPopupListViewCommand}"/>
-                            </Frame>
-                        </StackLayout>
-
-                    </StackLayout>
-                </Frame>
-            </StackLayout>
-
-            <StackLayout Style="{StaticResource HeaderStackLayoutStyle}">
-                <Image Style="{StaticResource HeaderImageStyle}"/>
-            </StackLayout>
-
-            <Image Style="{StaticResource SeparatorImageStyle}"/>
-            <StackLayout Spacing="10"
-                         Padding="10,0"
-                         Orientation="Vertical"
-                         HorizontalOptions="FillAndExpand"
-                         VerticalOptions="FillAndExpand">
-
-                <!-- Vue d'ensemble du paiement et remboursement annuels -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <Button Text="Période"
+                        Command="{Binding ShowBottomSheetPopupListViewCommand}"
+                        BackgroundColor="{DynamicResource ThemePrimaryTint}"
+                        TextColor="{DynamicResource ThemePrimary}"
+                        FontFamily="InterSemiBold"
+                        FontSize="14"
+                        CornerRadius="12"
+                        MinimumHeightRequest="44"
+                        Padding="20,0"
+                        HorizontalOptions="Start"/>
                 <components:BudgetOverviewView
                     IconSource="revenue.png"
-                    HeaderText="Vue d'ensemble des transactions"
-                    TotalLabelText="Paeiement hendomadaire"
+                    HeaderText="Vue d’ensemble des transactions"
+                    TotalLabelText="Paiement hebdomadaire"
                     TotalValue="{Binding PaiementTotalSemaine, Converter={StaticResource CurrencyConverter}}"
                     ExpensesLabelText="Remboursement hebdomadaire"
                     ExpensesValue="{Binding RemboursementTotalSemaine, Converter={StaticResource CurrencyConverter}}"
@@ -92,8 +43,8 @@
                     RemainingValue="{Binding RemboursementTotalSemaine, Converter={StaticResource CurrencyConverter}}"/>
                 <components:BudgetOverviewView
                     IconSource="revenue.png"
-                    HeaderText="Vue d'ensemble des transactions"
-                    TotalLabelText="Paeiement Mensuel"
+                    HeaderText="Vue d’ensemble des transactions"
+                    TotalLabelText="Paiement mensuel"
                     TotalValue="{Binding PaiementTotalMois}"
                     ExpensesLabelText="Remboursement mensuel"
                     ExpensesValue="{Binding RemboursementTotalMois, Converter={StaticResource CurrencyConverter}}"
@@ -102,7 +53,7 @@
                     RemainingValue="{Binding RemboursementTotalMois, Converter={StaticResource CurrencyConverter}}"/>
                 <components:BudgetOverviewView
                     IconSource="revenue.png"
-                    HeaderText="Vue d'ensemble des transactions"
+                    HeaderText="Vue d’ensemble des transactions"
                     TotalLabelText="Paiement annuel"
                     TotalValue="{Binding PaiementTotalAnnee}"
                     ExpensesLabelText="Remboursement annuel"
@@ -110,56 +61,29 @@
                     RemainingLabelText="Remboursement annuel"
                     IsExpensesVisible="False"
                     RemainingValue="{Binding RemboursementTotalAnnee, Converter={StaticResource CurrencyConverter}}"/>
-
-                <!-- Affichage hebdomadaire des paiements quotidiens -->
-                <Frame BorderColor="#C4AB4D"
-                       Margin="25,5,25,0"
-                       CornerRadius="10"
-                       HasShadow="True">
-                    <Label TextColor="#C4AB4D"
-                           HorizontalTextAlignment="Center"
-                           FontAttributes="Bold"
-                           FontSize="18"
-                           Padding="10,5"
-                           Text="{Binding TransactionLabel}"/>
-                </Frame>
-
-                <CollectionView ItemsSource="{Binding Transaction}"
-                                BackgroundColor="transparent"
-                                HorizontalOptions="FillAndExpand"
-                                Margin="20,5,20,0">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="x1:IStatistiqueData">
-                            <components:StatistiqueDataBadgeView Date="{Binding Data1}"
-                                                                 Revenue="{Binding Data2, Converter={StaticResource CurrencyConverter}}"
-                                                                 FrameBackgroundColor="{Binding BackgroundColor}"/>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-                <Frame BorderColor="#C4AB4D" IsVisible="{Binding IsPaiementChartVisible}"
-                       Margin="25,5,25,0"
-                       CornerRadius="10"
-                       HasShadow="True">
-
+                <Label Text="{Binding TransactionLabel}" Style="{StaticResource UiTitle}"/>
+                <components:UiCard Style="{StaticResource UiCard}" Padding="16,4">
+                    <CollectionView ItemsSource="{Binding Transaction}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x1:IStatistiqueData">
+                                <components:StatistiqueDataBadgeView Date="{Binding Data1}"
+                                                                     Revenue="{Binding Data2, Converter={StaticResource CurrencyConverter}}"
+                                                                     FrameBackgroundColor="{Binding BackgroundColor}"/>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </components:UiCard>
+                <components:UiCard Style="{StaticResource UiCard}" IsVisible="{Binding IsPaiementChartVisible}">
                     <microcharts:ChartView Chart="{Binding PaymentChart, Mode=TwoWay}"
-                                           Margin="5,5,5,5"
-                                           
                                            HeightRequest="200"
-                                           HorizontalOptions="FillAndExpand"/>
-                </Frame>
-                <Frame BorderColor="#C4AB4D" IsVisible="{Binding IsRemboursementChartVisible}"
-                       Margin="25,5,25,0"
-                       CornerRadius="10"
-                       HasShadow="True">
+                                           HorizontalOptions="Fill"/>
+                </components:UiCard>
+                <components:UiCard Style="{StaticResource UiCard}" IsVisible="{Binding IsRemboursementChartVisible}">
                     <microcharts:ChartView Chart="{Binding RefundChart, Mode=TwoWay}"
-                                            Margin="5,5,5,5"
-                                           
                                            HeightRequest="200"
-                                           HorizontalOptions="FillAndExpand"/>
-                </Frame>
-
-
-            </StackLayout>
-        </StackLayout>
-    </ScrollView>
+                                           HorizontalOptions="Fill"/>
+                </components:UiCard>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

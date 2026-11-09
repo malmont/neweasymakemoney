@@ -8,81 +8,32 @@
              x:DataType="Statistique:FraisEvolutionEntrepriseViewModel"
              xmlns:microcharts="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
              x:Class="Easymakemoney.Views.Statistiques.FraisEvolutionEntreprisePage"
-             Title="FraisEvolutionEntreprisePage">
+             Style="{StaticResource UiPage}"
+             Title="Frais">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:CurrencyConverter x:Key="CurrencyConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <ScrollView HorizontalScrollBarVisibility="Always"
-                VerticalScrollBarVisibility="Always">
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Frais"/>
 
-
-        <StackLayout Spacing="0"
-                     Orientation="Vertical"
-                     HorizontalOptions="FillAndExpand"
-                     VerticalOptions="FillAndExpand">
-            <StackLayout Spacing="0"
-                         BackgroundColor="#518faa"
-                         Orientation="Vertical"
-                         HorizontalOptions="FillAndExpand"
-                         VerticalOptions="Start">
-
-                <Frame Margin="10,10"
-                       HasShadow="True"
-                       BackgroundColor="#518faa"
-                       CornerRadius="10"
-                       Padding="1"
-                       HorizontalOptions="Start"
-                       HeightRequest="79">
-                    <StackLayout Margin="2,2"
-                                 Orientation="Horizontal"
-                                 HorizontalOptions="FillAndExpand"
-                                 WidthRequest="380"
-                                 BackgroundColor="#518faa">
-                        <!-- Button for List -->
-                        <StackLayout Margin="2,2,2,2"
-                                     HorizontalOptions="Start"
-                                     VerticalOptions="Center"
-                                     BackgroundColor="#518faa"
-                                     HeightRequest="30"
-                                     WidthRequest="60">
-                            <Frame Margin="1,1"
-                                   HasShadow="True"
-                                   CornerRadius="10"
-                                   Padding="1"
-                                   BackgroundColor="#C4AB4D"
-                                   HeightRequest="30"
-                                   WidthRequest="60"
-                                   HorizontalOptions="Fill">
-                                <Button Text="Période"
-                                        BackgroundColor="#C4AB4D"
-                                        WidthRequest="85"
-                                        HeightRequest="85"
-                                        Command="{Binding ShowBottomSheetPopupListViewCommand}"/>
-                            </Frame>
-                        </StackLayout>
-
-                    </StackLayout>
-                </Frame>
-            </StackLayout>
-
-            <StackLayout Style="{StaticResource HeaderStackLayoutStyle}">
-                <Image Style="{StaticResource HeaderImageStyle}"/>
-            </StackLayout>
-
-            <Image Style="{StaticResource SeparatorImageStyle}"/>
-            <StackLayout Spacing="10"
-                         Padding="10,0"
-                         Orientation="Vertical"
-                         HorizontalOptions="FillAndExpand"
-                         VerticalOptions="FillAndExpand">
-
-                <!-- Vue d'ensemble du budget -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <Button Text="Période"
+                        Command="{Binding ShowBottomSheetPopupListViewCommand}"
+                        BackgroundColor="{DynamicResource ThemePrimaryTint}"
+                        TextColor="{DynamicResource ThemePrimary}"
+                        FontFamily="InterSemiBold"
+                        FontSize="14"
+                        CornerRadius="12"
+                        MinimumHeightRequest="44"
+                        Padding="20,0"
+                        HorizontalOptions="Start"/>
                 <components:BudgetOverviewView
                     IconSource="revenue.png"
-                    HeaderText="Valeur frais entreprise"
+                    HeaderText="Valeur des frais de l’entreprise"
                     TotalLabelText="Frais total"
                     TotalValue="{Binding TotalFraisAnnee, Converter={StaticResource CurrencyConverter}}"
                     ExpensesLabelText="Note de frais"
@@ -90,109 +41,57 @@
                     RemainingLabelText="Frais de port"
                     IsExpensesVisible="True"
                     RemainingValue="{Binding FraisDePortAnnee,Converter={StaticResource CurrencyConverter}}"/>
-
-                <!-- Titre pour les recettes journalières de la semaine -->
-                <Frame BorderColor="#C4AB4D"
-                       Margin="25,5,25,0"
-                       CornerRadius="10"
-                       HasShadow="True">
-                    <Label TextColor="#C4AB4D"
-                           HorizontalTextAlignment="Center"
-                           FontAttributes="Bold"
-                           FontSize="18"
-                           Padding="10,5"
-                           Text="{Binding PeriodeFrais}"/>
-                </Frame>
-                <!-- CollectionView pour les données journalières avec couleurs alternées -->
-                <CollectionView ItemsSource="{Binding AllFraisValue}"
-                                BackgroundColor="Transparent"
-                                HorizontalOptions="FillAndExpand"
-                                Margin="20,5,20,0">
-                    <!-- En-têtes des colonnes -->
-                    <CollectionView.Header>
-                        <Grid ColumnDefinitions="*,*,*,*"
-                              Padding="5"
-                              ColumnSpacing="10"
-                              BackgroundColor="LightGray">
-                            <Label Text="Période"
-                                   FontAttributes="Bold"
-                                   FontSize="15"
-                                   TextColor="Black"
-                                   HorizontalTextAlignment="Center"
-                                   Grid.Column="0"/>
-                            <Label Text="Total"
-                                   FontAttributes="Bold"
-                                   FontSize="15"
-                                   TextColor="Black"
-                                   HorizontalTextAlignment="Center"
-                                   Grid.Column="1"/>
-                            <Label Text="Note de Frais"
-                                   FontAttributes="Bold"
-                                   FontSize="15"
-                                   TextColor="Black"
-                                   HorizontalTextAlignment="Center"
-                                   Grid.Column="2"/>
-                            <Label Text="Frais de Port"
-                                   FontAttributes="Bold"
-                                   FontSize="15"
-                                   TextColor="Black"
-                                   HorizontalTextAlignment="Center"
-                                   Grid.Column="3"/>
-                        </Grid>
-
-                    </CollectionView.Header>
-
-                    <!-- Template pour chaque élément de la CollectionView -->
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="x1:IFraisData">
-                            <Frame HasShadow="True"
-                                   CornerRadius="5"
-                                   Padding="5"
-                                   Margin="0,5,0,0"
-                                   BackgroundColor="{Binding BackgroundColor}">
-                                <Grid ColumnDefinitions="*,*,*,*"
-                                      Padding="5"
-                                      ColumnSpacing="10"
-                                      BackgroundColor="Transparent">
-
-                                    <!-- Colonne Période -->
-                                    <Label Text="{Binding PeriodLabel}"
-                                           FontSize="13"
-                                           TextColor="#333333"
-                                           HorizontalTextAlignment="Center"
-                                           VerticalTextAlignment="Center"
-                                           Grid.Column="0"/>
-
-                                    <!-- Colonne Total Frais -->
-                                    <Label Text="{Binding TotalFrais.Total, Converter={StaticResource CurrencyConverter}}"
-                                           FontSize="13"
-                                           TextColor="#E8B805"
-                                           HorizontalTextAlignment="Center"
-                                           VerticalTextAlignment="Center"
-                                           Grid.Column="1"/>
-
-                                    <!-- Colonne Note de Frais -->
-                                    <Label Text="{Binding TotalFrais.NoteDeFrais, Converter={StaticResource CurrencyConverter}}"
-                                           FontSize="13"
-                                           TextColor="#6D97A4"
-                                           HorizontalTextAlignment="Center"
-                                           VerticalTextAlignment="Center"
-                                           Grid.Column="2"/>
-
-                                    <!-- Colonne Frais de Port -->
-                                    <Label Text="{Binding TotalFrais.FraisDePort, Converter={StaticResource CurrencyConverter}}"
-                                           FontSize="13"
-                                           TextColor="#9A69E8"
-                                           HorizontalTextAlignment="Center"
-                                           VerticalTextAlignment="Center"
-                                           Grid.Column="3"/>
+                <Label Text="{Binding PeriodeFrais}" Style="{StaticResource UiTitle}"/>
+                <components:UiCard Style="{StaticResource UiCard}" Padding="16,4">
+                    <CollectionView ItemsSource="{Binding AllFraisValue}">
+                        <CollectionView.Header>
+                            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="8" Padding="0,10">
+                                <Label Text="Période" FontFamily="InterSemiBold" FontSize="12" TextColor="{StaticResource UiTextMuted}" HorizontalTextAlignment="Start" Grid.Column="0"/>
+                                <Label Text="Total" FontFamily="InterSemiBold" FontSize="12" TextColor="{StaticResource UiTextMuted}" HorizontalTextAlignment="End" Grid.Column="1"/>
+                                <Label Text="Note de frais" FontFamily="InterSemiBold" FontSize="12" TextColor="{StaticResource UiTextMuted}" HorizontalTextAlignment="End" Grid.Column="2"/>
+                                <Label Text="Frais de port" FontFamily="InterSemiBold" FontSize="12" TextColor="{StaticResource UiTextMuted}" HorizontalTextAlignment="End" Grid.Column="3"/>
+                            </Grid>
+                        </CollectionView.Header>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x1:IFraisData">
+                                <Grid RowDefinitions="Auto,Auto"
+                                      BackgroundColor="{Binding BackgroundColor}">
+                                    <Grid ColumnDefinitions="*,*,*,*"
+                                          ColumnSpacing="8"
+                                          MinimumHeightRequest="44">
+                                        <Label Text="{Binding PeriodLabel}"
+                                               Style="{StaticResource UiBody}"
+                                               VerticalTextAlignment="Center"
+                                               Grid.Column="0"/>
+                                        <Label Text="{Binding TotalFrais.Total, Converter={StaticResource CurrencyConverter}}"
+                                               FontFamily="InterSemiBold"
+                                               FontSize="13"
+                                               TextColor="{DynamicResource ThemePrimary}"
+                                               HorizontalTextAlignment="End"
+                                               VerticalTextAlignment="Center"
+                                               Grid.Column="1"/>
+                                        <Label Text="{Binding TotalFrais.NoteDeFrais, Converter={StaticResource CurrencyConverter}}"
+                                               FontFamily="InterSemiBold"
+                                               FontSize="13"
+                                               TextColor="{StaticResource UiTextPrimary}"
+                                               HorizontalTextAlignment="End"
+                                               VerticalTextAlignment="Center"
+                                               Grid.Column="2"/>
+                                        <Label Text="{Binding TotalFrais.FraisDePort, Converter={StaticResource CurrencyConverter}}"
+                                               FontFamily="InterSemiBold"
+                                               FontSize="13"
+                                               TextColor="{StaticResource UiTextPrimary}"
+                                               HorizontalTextAlignment="End"
+                                               VerticalTextAlignment="Center"
+                                               Grid.Column="3"/>
+                                    </Grid>
+                                    <BoxView Grid.Row="1" HeightRequest="1" Color="#F1F5F9"/>
                                 </Grid>
-                            </Frame>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-
-            </StackLayout>
-        </StackLayout>
-    </ScrollView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </components:UiCard>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

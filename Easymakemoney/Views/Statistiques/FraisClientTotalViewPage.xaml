@@ -8,125 +8,52 @@
              x:DataType="Statistique:FraisClientTotalViewModel"
              xmlns:microcharts="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
              x:Class="Easymakemoney.Views.Statistiques.FraisClientTotalViewPage"
-             Title="FraisClientTotalViewPage">
+             Style="{StaticResource UiPage}"
+             Title="Frais clients">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:CurrencyConverter x:Key="CurrencyConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <ScrollView HorizontalScrollBarVisibility="Always"
-                VerticalScrollBarVisibility="Always">
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Frais clients"/>
 
-
-        <StackLayout Spacing="0"
-                     Orientation="Vertical"
-                     HorizontalOptions="FillAndExpand"
-                     VerticalOptions="FillAndExpand">
-            <StackLayout Spacing="0"
-                         BackgroundColor="#518faa"
-                         Orientation="Vertical"
-                         HorizontalOptions="FillAndExpand"
-                         VerticalOptions="Start">
-
-                <Frame Margin="10,10"
-                       HasShadow="True"
-                       BackgroundColor="#518faa"
-                       CornerRadius="10"
-                       Padding="1"
-                       HorizontalOptions="Start"
-                       HeightRequest="79">
-                    <StackLayout Margin="2,2"
-                                 Orientation="Horizontal"
-                                 HorizontalOptions="FillAndExpand"
-                                 WidthRequest="380"
-                                 BackgroundColor="#518faa">
-                        <!-- Button for List -->
-                        <StackLayout Margin="2,2,2,2"
-                                     HorizontalOptions="Start"
-                                     VerticalOptions="Center"
-                                     BackgroundColor="#518faa"
-                                     HeightRequest="30"
-                                     WidthRequest="60">
-                            <Frame Margin="1,1"
-                                   HasShadow="True"
-                                   CornerRadius="10"
-                                   Padding="1"
-                                   BackgroundColor="#C4AB4D"
-                                   HeightRequest="30"
-                                   WidthRequest="60"
-                                   HorizontalOptions="Fill">
-                                <Button Text="Période"
-                                        BackgroundColor="#C4AB4D"
-                                        WidthRequest="85"
-                                        HeightRequest="85"
-                                        Command="{Binding ShowBottomSheetPopupListViewCommand}"/>
-                            </Frame>
-                        </StackLayout>
-
-                    </StackLayout>
-                </Frame>
-            </StackLayout>
-
-            <StackLayout Style="{StaticResource HeaderStackLayoutStyle}">
-                <Image Style="{StaticResource HeaderImageStyle}"/>
-            </StackLayout>
-
-            <Image Style="{StaticResource SeparatorImageStyle}"/>
-            <StackLayout Spacing="10"
-                         Padding="10,0"
-                         Orientation="Vertical"
-                         HorizontalOptions="FillAndExpand"
-                         VerticalOptions="FillAndExpand">
-
-                <!-- Titre pour les recettes journalières de la semaine -->
-                <Frame BorderColor="#C4AB4D"
-                       Margin="25,5,25,0"
-                       CornerRadius="10"
-                       HasShadow="True">
-                    <Label TextColor="#C4AB4D"
-                           HorizontalTextAlignment="Center"
-                           FontAttributes="Bold"
-                           FontSize="18"
-                           Padding="10,5"
-                           Text="{Binding TitreFraisMonth}"/>
-                </Frame>
-                <!-- CollectionView pour les données journalières avec couleurs alternées -->
-                <CollectionView ItemsSource="{Binding FraisTotal}"
-                                BackgroundColor="transparent"
-                                HorizontalOptions="FillAndExpand"
-                                Margin="20,5,20,0">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="x1:IStatistiqueData">
-                            <components:StatistiqueDataBadgeView Date="{Binding Data1}"
-                                                                 Revenue="{Binding Data2, Converter={StaticResource CurrencyConverter}}"
-                                                                 FrameBackgroundColor="{Binding BackgroundColor}"/>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-                <Frame BorderColor="#C4AB4D"
-                        IsVisible="{Binding IsmonhthlyTaxesChartVisible}"
-                       Margin="25,5,25,0"
-                       CornerRadius="10"
-                       HasShadow="True">
-
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <Button Text="Période"
+                        Command="{Binding ShowBottomSheetPopupListViewCommand}"
+                        BackgroundColor="{DynamicResource ThemePrimaryTint}"
+                        TextColor="{DynamicResource ThemePrimary}"
+                        FontFamily="InterSemiBold"
+                        FontSize="14"
+                        CornerRadius="12"
+                        MinimumHeightRequest="44"
+                        Padding="20,0"
+                        HorizontalOptions="Start"/>
+                <Label Text="{Binding TitreFraisMonth}" Style="{StaticResource UiTitle}"/>
+                <components:UiCard Style="{StaticResource UiCard}" Padding="16,4">
+                    <CollectionView ItemsSource="{Binding FraisTotal}">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="x1:IStatistiqueData">
+                                <components:StatistiqueDataBadgeView Date="{Binding Data1}"
+                                                                     Revenue="{Binding Data2, Converter={StaticResource CurrencyConverter}}"
+                                                                     FrameBackgroundColor="{Binding BackgroundColor}"/>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </components:UiCard>
+                <components:UiCard Style="{StaticResource UiCard}" IsVisible="{Binding IsmonhthlyTaxesChartVisible}">
                     <microcharts:ChartView Chart="{Binding MonhthlyTaxesChart, Mode=TwoWay}"
                                            HeightRequest="200"
-                                           HorizontalOptions="FillAndExpand"/>
-                </Frame>
-                <Frame BorderColor="#C4AB4D"
-                        IsVisible="{Binding IsmonthlyCarrierChartVisible}"
-                       Margin="25,5,25,0"
-                       CornerRadius="10"
-                       HasShadow="True">
-
+                                           HorizontalOptions="Fill"/>
+                </components:UiCard>
+                <components:UiCard Style="{StaticResource UiCard}" IsVisible="{Binding IsmonthlyCarrierChartVisible}">
                     <microcharts:ChartView Chart="{Binding MonthlyCarrierChart, Mode=TwoWay}"
                                            HeightRequest="200"
-                                           HorizontalOptions="FillAndExpand"/>
-                </Frame>
-
-
-            </StackLayout>
-        </StackLayout>
-    </ScrollView>
+                                           HorizontalOptions="Fill"/>
+                </components:UiCard>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

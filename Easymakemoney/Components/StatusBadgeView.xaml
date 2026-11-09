@@ -10,16 +10,18 @@
         </ResourceDictionary>
     </ContentView.Resources>
 
-    <Frame Padding="3"
-           CornerRadius="10"
-           BackgroundColor="Transparent"
-           BorderColor="{Binding IsActive, Converter={StaticResource BoolToColorConverter}, Source={RelativeSource AncestorType={x:Type local:StatusBadgeView}}}">
+    <Border Padding="8,6"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 10"
+            BackgroundColor="Transparent"
+            Stroke="{Binding IsActive, Converter={StaticResource BoolToColorConverter}, Source={RelativeSource AncestorType={x:Type local:StatusBadgeView}}}">
         <Label Text="{Binding Name, Source={RelativeSource AncestorType={x:Type local:StatusBadgeView}}}"
                TextColor="{Binding IsActive, Converter={StaticResource BoolToColorConverter}, Source={RelativeSource AncestorType={x:Type local:StatusBadgeView}}}"
+               FontFamily="InterSemiBold"
                FontSize="12"
-               FontAttributes="Bold"
+               HorizontalTextAlignment="Center"
                HorizontalOptions="Center"
                VerticalOptions="Center"/>
-    </Frame>
+    </Border>
 
 </ContentView>

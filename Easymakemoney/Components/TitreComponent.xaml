@@ -4,44 +4,44 @@
              xmlns:local="clr-namespace:Easymakemoney.Components"
              x:Class="Easymakemoney.Components.TitreComponent">
 
-    <Frame BorderColor="#C4AB4D"
-           Margin="25,5"
-           Padding="10"
-           HorizontalOptions="FillAndExpand"
-           BackgroundColor="#C4AB4D"
-           CornerRadius="10"
-           HasShadow="True">
-        <StackLayout Orientation="Horizontal"
-                     HorizontalOptions="FillAndExpand"
-                     HeightRequest="60">
-            <Image Source="{Binding IconSource, Source={RelativeSource AncestorType={x:Type local:TitreComponent}}}"   
-                   HeightRequest="40"
-                   WidthRequest="40"
-                   HorizontalOptions="Start"
-                   Margin="0,0,10,0"/>
-            <Label VerticalTextAlignment="Center"
-                   HorizontalTextAlignment="End"
-                   TextColor="white"
-                   FontSize="20"
-                   FontAttributes="Bold"
-                   Text="{Binding HeaderText, Source={RelativeSource AncestorType={x:Type local:TitreComponent}}}"   
-                   Margin="10"/>
-            <Frame BorderColor="#C4AB4D"  IsVisible="{Binding IsExpensesVisible, Source={RelativeSource AncestorType={x:Type local:TitreComponent}}}"
-                   Padding="5"
-                   HorizontalOptions="EndAndExpand"
-                   BackgroundColor="black"
-                   CornerRadius="10"
-                   HasShadow="True">
-                <Label VerticalTextAlignment="Center"
-                       HorizontalTextAlignment="Center"
-                       HorizontalOptions="FillAndExpand"
-                       FontSize="14"
-                       TextColor="white"
-                       FontAttributes="Bold"
-                       Text="{Binding Value, Source={RelativeSource AncestorType={x:Type local:TitreComponent}}}"   
-                       Margin="10"/>
-            </Frame>
-        </StackLayout>
-    </Frame>
+    <!-- Avec valeur : tuile blanche. Sans valeur : simple titre de section. -->
+    <local:UiCard Style="{StaticResource UiCard}">
+        <local:UiCard.Triggers>
+            <DataTrigger TargetType="local:UiCard"
+                         Binding="{Binding IsExpensesVisible, Source={RelativeSource AncestorType={x:Type local:TitreComponent}}}"
+                         Value="False">
+                <Setter Property="BackgroundColor" Value="Transparent"/>
+                <Setter Property="StrokeThickness" Value="0"/>
+                <Setter Property="Padding" Value="0"/>
+            </DataTrigger>
+        </local:UiCard.Triggers>
+
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+            <Image Source="{Binding IconSource, Source={RelativeSource AncestorType={x:Type local:TitreComponent}}}"
+                   WidthRequest="24"
+                   HeightRequest="24"
+                   VerticalOptions="Center"/>
+
+            <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                <Label Text="{Binding HeaderText, Source={RelativeSource AncestorType={x:Type local:TitreComponent}}}"
+                       Style="{StaticResource UiBody}">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label"
+                                     Binding="{Binding IsExpensesVisible, Source={RelativeSource AncestorType={x:Type local:TitreComponent}}}"
+                                     Value="False">
+                            <Setter Property="FontFamily" Value="InterSemiBold"/>
+                            <Setter Property="FontSize" Value="17"/>
+                            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}"/>
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+                <Label IsVisible="{Binding IsExpensesVisible, Source={RelativeSource AncestorType={x:Type local:TitreComponent}}}"
+                       Text="{Binding Value, Source={RelativeSource AncestorType={x:Type local:TitreComponent}}}"
+                       FontFamily="InterBold"
+                       FontSize="22"
+                       TextColor="{StaticResource UiTextPrimary}"/>
+            </VerticalStackLayout>
+        </Grid>
+    </local:UiCard>
 
 </ContentView>

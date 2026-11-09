@@ -5,92 +5,58 @@
              x:Class="Easymakemoney.Components.BudgetOverviewWhithOutHedearView">
 
        <ContentView.Content>
-              <StackLayout>
-                     <StackLayout Margin="0,0"
-                                  Orientation="Horizontal"
-                                  HorizontalOptions="FillAndExpand">
-                            <StackLayout Margin="25,0,0,0"
-                                         HorizontalOptions="FillAndExpand"
-                                         Orientation="Horizontal">
-                                   <Frame BorderColor="#C4AB4D"
-                                          Margin="3"
-                                          HorizontalOptions="FillAndExpand"
-                                          CornerRadius="5"
-                                          Padding="2">
-                                          <StackLayout HorizontalOptions="FillAndExpand"
-                                                       Margin="5,5"
-                                                       Orientation="Vertical">
-                                                 <Label HorizontalTextAlignment="Center"
-                                                        Text="{Binding TotalLabelText, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewWhithOutHedearView}}}"
-                                                        FontSize="13"
-                                                        FontAttributes="Bold"/>
-                                                 <BoxView Color="Gray"
-                                                          HeightRequest="2"
-                                                          HorizontalOptions="Fill"/>
-                                                 <Label HorizontalOptions="CenterAndExpand"
-                                                        Text="{Binding TotalValue, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewWhithOutHedearView}}}"
-                                                        FontSize="13"
-                                                        TextColor="#E8B805"
-                                                        HorizontalTextAlignment="Center"/>
-                                          </StackLayout>
-                                   </Frame>
-                            </StackLayout>
-
-                            <StackLayout Margin="0"
-                                          IsVisible="{Binding IsExpensesVisible, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewWhithOutHedearView}}}"
-                                         HorizontalOptions="FillAndExpand"
-                                         Orientation="Horizontal">
-                                   <Frame BorderColor="#C4AB4D"
-                                          Margin="3"
-                                          HorizontalOptions="FillAndExpand"
-                                          CornerRadius="5"
-                                          Padding="2">
-                                          <StackLayout HorizontalOptions="FillAndExpand"
-                                                       Margin="5,5"
-                                                       Orientation="Vertical">
-                                                 <Label Text="{Binding ExpensesLabelText, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewWhithOutHedearView}}}"
-                                                        HorizontalTextAlignment="Center"
-                                                        FontSize="13"
-                                                        FontAttributes="Bold"/>
-                                                 <BoxView Color="Gray"
-                                                          HeightRequest="2"
-                                                          HorizontalOptions="Fill"/>
-                                                 <Label HorizontalOptions="CenterAndExpand"
-                                                        Text="{Binding ExpensesValue, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewWhithOutHedearView}}}"
-                                                        FontSize="13"
-                                                        TextColor="#E8B805"
-                                                        HorizontalTextAlignment="Center"/>
-                                          </StackLayout>
-                                   </Frame>
-                            </StackLayout>
-
-                            <StackLayout Margin="0,0,25,0"
-                                         HorizontalOptions="FillAndExpand"
-                                         Orientation="Horizontal">
-                                   <Frame BorderColor="#C4AB4D"
-                                          Margin="3"
-                                          HorizontalOptions="FillAndExpand"
-                                          CornerRadius="5"
-                                          Padding="2">
-                                          <StackLayout HorizontalOptions="FillAndExpand"
-                                                       Margin="5,5"
-                                                       Orientation="Vertical">
-                                                 <Label Text="{Binding RemainingLabelText, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewWhithOutHedearView}}}"
-                                                        HorizontalTextAlignment="Center"
-                                                        FontSize="13"
-                                                        FontAttributes="Bold"/>
-                                                 <BoxView Color="Gray"
-                                                          HeightRequest="2"
-                                                          HorizontalOptions="Fill"/>
-                                                 <Label HorizontalOptions="CenterAndExpand"
-                                                        Text="{Binding RemainingValue, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewWhithOutHedearView}}}"
-                                                        FontSize="13"
-                                                        TextColor="#E8B805"
-                                                        HorizontalTextAlignment="Center"/>
-                                          </StackLayout>
-                                   </Frame>
-                            </StackLayout>
-                     </StackLayout>
-              </StackLayout>
+              <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+                     <Grid.Triggers>
+                            <DataTrigger TargetType="Grid"
+                                         Binding="{Binding IsExpensesVisible, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewWhithOutHedearView}}}"
+                                         Value="False">
+                                   <Setter Property="RowSpacing" Value="0"/>
+                            </DataTrigger>
+                     </Grid.Triggers>
+              <local:UiCard Style="{StaticResource UiCard}" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+                     <local:UiCard.Triggers>
+                            <DataTrigger TargetType="local:UiCard"
+                                         Binding="{Binding IsExpensesVisible, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewWhithOutHedearView}}}"
+                                         Value="False">
+                                   <Setter Property="Grid.ColumnSpan" Value="1"/>
+                            </DataTrigger>
+                     </local:UiCard.Triggers>
+                     <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding TotalLabelText, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewWhithOutHedearView}}}"
+                                   Style="{StaticResource UiBody}"/>
+                            <Label Text="{Binding TotalValue, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewWhithOutHedearView}}}"
+                                   FontFamily="InterBold"
+                                   FontSize="22"
+                                   TextColor="{DynamicResource ThemePrimary}"/>
+                     </VerticalStackLayout>
+              </local:UiCard>
+              <local:UiCard Style="{StaticResource UiCard}" Grid.Row="1" Grid.Column="0" IsVisible="{Binding IsExpensesVisible, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewWhithOutHedearView}}}">
+                     <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding ExpensesLabelText, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewWhithOutHedearView}}}"
+                                   Style="{StaticResource UiBody}"/>
+                            <Label Text="{Binding ExpensesValue, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewWhithOutHedearView}}}"
+                                   FontFamily="InterBold"
+                                   FontSize="22"
+                                   TextColor="{StaticResource UiTextPrimary}"/>
+                     </VerticalStackLayout>
+              </local:UiCard>
+              <local:UiCard Style="{StaticResource UiCard}" Grid.Row="1" Grid.Column="1">
+                     <local:UiCard.Triggers>
+                            <DataTrigger TargetType="local:UiCard"
+                                         Binding="{Binding IsExpensesVisible, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewWhithOutHedearView}}}"
+                                         Value="False">
+                                   <Setter Property="Grid.Row" Value="0"/>
+                            </DataTrigger>
+                     </local:UiCard.Triggers>
+                     <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding RemainingLabelText, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewWhithOutHedearView}}}"
+                                   Style="{StaticResource UiBody}"/>
+                            <Label Text="{Binding RemainingValue, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewWhithOutHedearView}}}"
+                                   FontFamily="InterBold"
+                                   FontSize="22"
+                                   TextColor="{StaticResource UiTextPrimary}"/>
+                     </VerticalStackLayout>
+              </local:UiCard>
+              </Grid>
        </ContentView.Content>
 </ContentView>
