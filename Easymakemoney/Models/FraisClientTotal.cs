@@ -1,4 +1,6 @@
 
+using Easymakemoney.Utilities;
+
 namespace Easymakemoney.Models
 {
 
@@ -10,7 +12,7 @@ namespace Easymakemoney.Models
         [JsonProperty("total_tax")]
         public double TotalTax { get; set; }
 
-        public string Data1 => Month;
+        public string Data1 => MonthHelper.FormatMonthName(Month);
         public double Data2 => TotalTax;
         public Color BackgroundColor { get; set; } = Colors.Transparent;
     }
@@ -23,7 +25,7 @@ namespace Easymakemoney.Models
         [JsonProperty("carrier_count")]
         public double CarrierCount { get; set; }
 
-        public string Data1 => Month;
+        public string Data1 => MonthHelper.FormatMonthName(Month);
         public double Data2 => CarrierCount;
         public Color BackgroundColor { get; set; } = Colors.Transparent;
     }
