@@ -20,83 +20,76 @@
     <Grid RowDefinitions="Auto,Auto,*">
         <components:AppHeader Title="Frais de port" />
 
-        <Grid Grid.Row="1" RowDefinitions="Auto,Auto">
-            <components:NavbarContentView Grid.Row="0"
-                                          ButtonText="Listes"
-                                          ButtonCommand="{Binding ShowBottomSheetPopupListViewCommand}"
-                                          ImageButtonSourceList="{Binding CollectionImage}"
-                                          ImageButtonSource="boutonaddblanc64.png"
-                                          ImageButtonCommand="{Binding ShowBottomSheetCreateCollectionCommand}"
-                                          LabelText="Collection"
-                                          PlaceholderText="Choisir une collection"
-                                          Icon="M3 7l9-4 9 4-9 4-9-4zM3 12l9 4 9-4M3 17l9 4 9-4"
-                                          ValueText="{Binding CollectionName}"/>
+        <components:NavbarContentView Grid.Row="1"
+                                      ButtonCommand="{Binding ShowBottomSheetPopupListViewCommand}"
+                                      ImageButtonSourceList="{Binding CollectionImage}"
+                                      HideCreate="True"
+                                      LabelText="Collection"
+                                      PlaceholderText="Choisir une collection"
+                                      Icon="M3 7l9-4 9 4-9 4-9-4zM3 12l9 4 9-4M3 17l9 4 9-4"
+                                      ValueText="{Binding CollectionName}"/>
 
-            <components:NavbarContentView Grid.Row="1"
-                                          ButtonText="Liste"
-                                          ButtonCommand="{Binding ShowBottomSheetPopupListCommandViewCommand}"
-                                          ImageButtonSourceList="{Binding CommandImage}"
-                                          ImageButtonSource="boutonaddblanc64.png"
-                                          ImageButtonCommand="{Binding ShowBottomSheetCreateCommandCommand}"
-                                          LabelText="Commande"
-                                          PlaceholderText="Choisir une commande"
-                                          Icon="M3 7l9-4 9 4v10l-9 4-9-4V7zM3 7l9 4 9-4M12 11v10"
-                                          ValueText="{Binding CommandName}"/>
-        </Grid>
+        <VerticalStackLayout Grid.Row="2" IsVisible="{Binding ShowEmptyState}" VerticalOptions="Center" Spacing="10" Padding="24,0">
+            <Label Text="{Binding EmptyTitle}" FontFamily="InterBold" FontSize="20" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="Center" />
+            <Label Text="{Binding EmptyMessage}" Style="{StaticResource UiBody}" FontSize="15" HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
 
-        <CollectionView Grid.Row="2" ItemsSource="{Binding ListFraisDePorts}" SelectionMode="None" Margin="16,8,16,0">
-            <CollectionView.EmptyView>
-                <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="10" Padding="24,80">
-                    <Label Text="Aucun frais de port" FontFamily="InterBold" FontSize="20" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="Center" />
-                    <Label Text="Choisissez une collection et une commande, puis touchez + pour en créer un." Style="{StaticResource UiBody}" FontSize="15" HorizontalTextAlignment="Center" />
-                </VerticalStackLayout>
-            </CollectionView.EmptyView>
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Rows}" SelectionMode="None" Margin="16,8,16,0">
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="x1:FraisDePort">
-                    <SwipeView Margin="0,0,0,10">
-                        <SwipeView.RightItems>
-                            <SwipeItems Mode="Reveal">
-                                <SwipeItem Text="Supprimer" BackgroundColor="#B91C1C"
-                                           Command="{Binding Path=BindingContext.DeleteFraisDePortCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
-                                           CommandParameter="{Binding .}" />
-                            </SwipeItems>
-                        </SwipeView.RightItems>
-                        <!-- Fond opaque : le rouge de la suppression ne doit pas apparaître dans les coins arrondis au repos -->
-                        <Grid BackgroundColor="{StaticResource UiBackground}">
-                            <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                <DataTemplate x:DataType="x1:FraisDePortCommandeRow">
+                    <components:UiCard Style="{StaticResource UiCard}" Padding="14" Margin="0,0,0,10">
+                        <VerticalStackLayout Spacing="12">
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                <components:UiThumb Grid.Column="0" Source="{Binding Image}" Icon="M3 6h11v11H3zM14 10h4l3 3v4h-7M7 20a2 2 0 100-4 2 2 0 000 4zM17 20a2 2 0 100-4 2 2 0 000 4z" />
+                                <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                    <Label Text="{Binding CommandeName}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding DetailText}" Style="{StaticResource UiBody}" LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding Price, Converter={StaticResource CurrencyConverter}}"
+                                           IsVisible="{Binding HasFrais}"
+                                           FontFamily="InterBold"
+                                           FontSize="15"
+                                           TextColor="{DynamicResource ThemePrimary}" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="2"
+                                        IsVisible="{Binding HasFrais}"
+                                        WidthRequest="44"
+                                        HeightRequest="44"
+                                        StrokeThickness="0"
+                                        BackgroundColor="Transparent"
+                                        VerticalOptions="Center"
+                                        SemanticProperties.Description="Supprimer le frais de port">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.DeleteFraisDePortCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Path Data="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"
+                                          Style="{StaticResource UiIcon}"
+                                          Stroke="#B91C1C"
+                                          HorizontalOptions="Center"
+                                          VerticalOptions="Center" />
+                                </Border>
+                            </Grid>
+
+                            <Border IsVisible="{Binding CanAddFrais}"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 12"
+                                    Padding="12"
+                                    BackgroundColor="{DynamicResource ThemePrimaryTint}"
+                                    SemanticProperties.Description="Ajouter un frais de port">
                                 <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedFraisDePort, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.AddFraisCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
                                                           CommandParameter="{Binding .}" />
                                 </Border.GestureRecognizers>
-                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                                    <components:UiThumb Grid.Column="0" Source="{Binding image}" Icon="M3 6h11v11H3zM14 10h4l3 3v4h-7M7 20a2 2 0 100-4 2 2 0 000 4zM17 20a2 2 0 100-4 2 2 0 000 4z" />
-                                    <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
-                                        <Label Text="{Binding name}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
-                                        <Label Style="{StaticResource UiBody}" LineBreakMode="TailTruncation">
-                                            <Label.FormattedText>
-                                                <FormattedString>
-                                                    <Span Text="Transporteur : " />
-                                                    <Span Text="{Binding transporteur.name}" />
-                                                </FormattedString>
-                                            </Label.FormattedText>
-                                        </Label>
-                                    </VerticalStackLayout>
-                                </Grid>
-                            </components:UiCard>
-                        </Grid>
-                    </SwipeView>
+                                <Label Text="Ajouter un frais de port"
+                                       FontFamily="InterBold"
+                                       FontSize="15"
+                                       TextColor="{DynamicResource ThemePrimary}"
+                                       HorizontalTextAlignment="Center" />
+                            </Border>
+                        </VerticalStackLayout>
+                    </components:UiCard>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-
-        <Border Grid.Row="2" WidthRequest="60" HeightRequest="60" StrokeThickness="0" StrokeShape="RoundRectangle 18"
-                BackgroundColor="{DynamicResource ThemePrimary}" HorizontalOptions="End" VerticalOptions="End" Margin="16,0,16,28"
-                SemanticProperties.Description="Ajouter un frais de port">
-            <Border.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding ShowBottomSheetCommand}" />
-            </Border.GestureRecognizers>
-            <Path Data="M12 5v14M5 12h14" Stroke="{DynamicResource ThemeOnPrimary}" StrokeThickness="2.4" StrokeLineCap="Round"
-                  WidthRequest="24" HeightRequest="24" Aspect="None" HorizontalOptions="Center" VerticalOptions="Center" />
-        </Border>
     </Grid>
 </ContentPage>

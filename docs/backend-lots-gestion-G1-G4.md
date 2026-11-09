@@ -141,3 +141,15 @@ Tous les montants deviennent des **entiers en centimes**, en entrée et en sorti
 **Données demo enrichies :** 4 collections (2 figées, 2 ouvertes), 8 commandes fournisseurs, 50 produits dont 36 d'exemple, 8 frais de port, 11 notes de frais, 53 commandes clients. Tout en centimes.
 
 **Côté application :** rien d'obligatoire. La pagination, les filtres et l'export restent à brancher dans les écrans.
+
+## LIVRÉ : G6, le 09/11/2026 (`dev` 7f3fa2c8 ; 893 tests verts ; en production, tous les sites) : devise d'achat par fournisseur
+
+- **Fournisseur :** `currency` facultatif (CAD, EUR ou USD ; sinon 422 `INVALID_CURRENCY`) sur `POST /api/fournisseurs`. En lecture : `purchaseCurrency` (la sienne, `null` = devise du site) et `currency` (devise de ses commandes).
+- **Commande :** la devise du fournisseur est figée à la création. Si elle diffère de celle du site, `exchangeRate` (décimal > 0, 1 unité de devise d'achat = taux en devise du site) est obligatoire sur `POST /api/collections/{id}/commandes` (sinon 422 `EXCHANGE_RATE_REQUIRED`). En lecture : `currency`, `siteCurrency`, `exchangeRate`.
+- **`PATCH /api/commandes/{id}`** (`budget`, `name`, `date`, `exchangeRate`, tous facultatifs) : 200 avec la commande, 409 `COMMANDE_CLOSED`, 422 `NOT_APPLICABLE` ou `MUST_BE_POSITIVE`.
+- **Montants d'une commande en devise :** budget, coûts d'achat rattachés et prix du frais de port sont dans la devise de la commande.
+- **Tableaux de bord :** toujours en devise du site, montants convertis par le taux ; `dashboard/commande/{id}` gagne `purchase` (`null`, ou `{currency, exchangeRate, generalBudget, purchaseCost, shippingCost}`).
+- **Export CSV :** montants convertis, colonnes « Devise d'achat » et « Taux » ajoutées en fin.
+- **Rattachement :** en devise étrangère, `purchasePrice` est obligatoire sur chaque ligne (422, code `PURCHASE_PRICE_REQUIRED`, chemin `products[i].purchasePrice`).
+
+**Côté application :** rien d'obligatoire tant qu'aucun fournisseur n'a de devise. À adapter : champ devise du fournisseur, taux à la création d'une commande, affichage dans la devise de la commande.

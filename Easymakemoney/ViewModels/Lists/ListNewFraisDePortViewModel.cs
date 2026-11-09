@@ -1,131 +1,133 @@
 
 using Easymakemoney.Services.Dialog;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Easymakemoney.ViewModels.Lists
 {
     public partial class ListNewFraisDePortViewModel : BaseViewModel
     {
-        private readonly GetListFraisDePortUseCase _getListFraisDePortUseCase;
+        private const int MaxConcurrentRequests = 4;
 
-        private readonly DeleteFraisDePortUseCase _deleteFraisDePortUseCase;
-
-        private readonly FraisDePortFormModel _fraisDePortFormModel;
-
-        private readonly SaveFraisDePortUseCase _saveFraisDePortUseCase;
         private readonly GetListCollectionsUseCase _getListCollectionsUseCase;
-
-        private readonly CollectionFormModel _collectionFormModel;
-
-        private readonly ListNewCollectionViewModel _listNewCollectionViewModel;
-
-        private readonly SaveCollectionUseCase _saveCollectionUseCase;
-
-        private readonly ListNewCommandViewModel _listNewCommandViewModel;
-
-        private readonly SaveCommandUseCase _saveCommandUseCase;
-
         private readonly GetListCommandUseCase _getListCommandUseCase;
-
-        private readonly CommandFormModel _commandFormModel;
+        private readonly GetListFraisDePortUseCase _getListFraisDePortUseCase;
+        private readonly DeleteFraisDePortUseCase _deleteFraisDePortUseCase;
+        private readonly SaveFraisDePortUseCase _saveFraisDePortUseCase;
+        private readonly IServiceProvider _services;
         private readonly IDialogService _dialogService;
 
+        // Une seule réponse doit remplir l'écran : celle de la dernière collection choisie.
+        private int _loadVersion;
+
         public ListNewFraisDePortViewModel(GetListCollectionsUseCase getListCollectionsUseCase,
-            GetListFraisDePortUseCase getListFraisDePortUseCase, DeleteFraisDePortUseCase deleteFraisDePortUseCase,
-            SaveFraisDePortUseCase saveFraisDePortUseCase, FraisDePortFormModel fraisDePortFormModel,
-            SaveCollectionUseCase saveCollectionUseCase, ListNewCollectionViewModel listNewCollectionViewModel,
-            CollectionFormModel collectionFormModel, ListNewCommandViewModel listNewCommandViewModel,
-            SaveCommandUseCase saveCommandUseCase, GetListCommandUseCase getListCommandUseCase,
-            CommandFormModel commandFormModel, IDialogService dialogService)
+            GetListCommandUseCase getListCommandUseCase, GetListFraisDePortUseCase getListFraisDePortUseCase,
+            DeleteFraisDePortUseCase deleteFraisDePortUseCase, SaveFraisDePortUseCase saveFraisDePortUseCase,
+            IServiceProvider services, IDialogService dialogService)
         {
-            _commandFormModel = commandFormModel;
-            _getListCommandUseCase = getListCommandUseCase;
-            _saveCommandUseCase = saveCommandUseCase;
-            _listNewCommandViewModel = listNewCommandViewModel;
-            _collectionFormModel = collectionFormModel;
-            _listNewCollectionViewModel = listNewCollectionViewModel;
-            _saveCollectionUseCase = saveCollectionUseCase;
             _getListCollectionsUseCase = getListCollectionsUseCase;
+            _getListCommandUseCase = getListCommandUseCase;
             _getListFraisDePortUseCase = getListFraisDePortUseCase;
             _deleteFraisDePortUseCase = deleteFraisDePortUseCase;
             _saveFraisDePortUseCase = saveFraisDePortUseCase;
-            _fraisDePortFormModel = fraisDePortFormModel;
+            _services = services;
             _dialogService = dialogService;
-            DeleteFraisDePortCommand = new AsyncRelayCommand<FraisDePort>(DeleteFraisDePort);
-            ItemTappedFraisDePort = new AsyncRelayCommand<FraisDePort>(OnItemTapped);
         }
-        public ObservableCollection<FraisDePort> ListFraisDePorts { get; set; } = new ObservableCollection<FraisDePort>();
 
-        public ICommand ItemTappedFraisDePort { get; }
+        public ObservableCollection<FraisDePortCommandeRow> Rows { get; } = new ObservableCollection<FraisDePortCommandeRow>();
 
         public int CollectionId { get; set; }
 
-        public int CommandId { get; set; }
+        /// <summary>Commande visée par le formulaire d'ajout en cours.</summary>
+        public int CommandId { get; private set; }
 
-
-
-        private string _collectionImage;
-        public string CollectionImage
-        {
-            get => _collectionImage;
-            set { _collectionImage = value; OnPropertyChanged(nameof(CollectionImage)); }
-        }
+        [ObservableProperty]
+        private string? collectionImage;
 
         [ObservableProperty]
         private string? collectionName;
 
-        private string _commandImage;
-
-        public string CommandImage
-        {
-            get => _commandImage;
-            set { _commandImage = value; OnPropertyChanged(nameof(CommandImage)); }
-        }
+        [ObservableProperty]
+        private bool showEmptyState = true;
 
         [ObservableProperty]
-        private string? commandName;
+        private string emptyTitle = "Choisissez une collection";
 
-
-        public ICommand DeleteFraisDePortCommand { get; }
+        [ObservableProperty]
+        private string emptyMessage = "Ses commandes apparaîtront ici, avec leurs frais de port.";
 
         public async Task GetListFraisDePort()
         {
-            if (IsBusy)
-                return;
+            var version = ++_loadVersion;
+            Rows.Clear();
 
-            ListFraisDePorts.Clear();
+            if (CollectionId == 0)
+            {
+                SetEmptyState("Choisissez une collection", "Ses commandes apparaîtront ici, avec leurs frais de port.");
+                return;
+            }
+
+            SetEmptyState("Chargement…", string.Empty);
+            IsBusy = true;
 
             try
             {
-                var listFraisDePort = await _getListFraisDePortUseCase.ExecuteAsync(CommandId);
+                var commandes = await _getListCommandUseCase.ExecuteAsync(CollectionId);
+                using var gate = new SemaphoreSlim(MaxConcurrentRequests);
+                var rows = await Task.WhenAll((commandes ?? new ObservableCollection<ListCommand>())
+                    .Select(commande => LoadRowAsync(commande, gate)));
 
-                if (listFraisDePort != null)
+                if (version != _loadVersion)
+                    return;
+
+                foreach (var row in rows)
                 {
-                    foreach (var fraisDePort in listFraisDePort)
-                    {
-                        if (fraisDePort != null)
-                        {
-                            ListFraisDePorts.Add(fraisDePort);
-                        }
-                    }
+                    Rows.Add(row);
                 }
+
+                SetEmptyState("Aucune commande", "Cette collection n'a pas encore de commande.");
+                ShowEmptyState = Rows.Count == 0;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                if (version != _loadVersion)
+                    return;
+
+                SetEmptyState("Chargement impossible", "Choisissez de nouveau la collection pour réessayer.");
                 await _dialogService.ShowErrorAsync(e);
             }
             finally
             {
-                IsBusy = false;
+                if (version == _loadVersion)
+                    IsBusy = false;
             }
         }
 
-        private async Task DeleteFraisDePort(FraisDePort? fraisDePort)
+        private async Task<FraisDePortCommandeRow> LoadRowAsync(ListCommand commande, SemaphoreSlim gate)
         {
-            if (fraisDePort == null)
-                return;
+            await gate.WaitAsync();
+            try
+            {
+                var frais = await _getListFraisDePortUseCase.ExecuteAsync(commande.id);
+                return new FraisDePortCommandeRow { Commande = commande, Frais = frais.FirstOrDefault() };
+            }
+            finally
+            {
+                gate.Release();
+            }
+        }
 
-            if (IsBusy)
+        private void SetEmptyState(string title, string message)
+        {
+            EmptyTitle = title;
+            EmptyMessage = message;
+            ShowEmptyState = true;
+        }
+
+        [RelayCommand]
+        private async Task DeleteFraisDePort(FraisDePortCommandeRow? row)
+        {
+            if (row?.Frais == null || IsBusy)
                 return;
 
             bool confirmed = await _dialogService.ConfirmAsync(
@@ -139,35 +141,53 @@ namespace Easymakemoney.ViewModels.Lists
             IsBusy = true;
             try
             {
-                var result = await _deleteFraisDePortUseCase.ExecuteAsync(CommandId);
-                if (result)
-                {
-                    ListFraisDePorts.Remove(fraisDePort);
-                    await _dialogService.ShowInfoAsync("Frais de port supprimé avec succès.");
-                }
-                else
+                var result = await _deleteFraisDePortUseCase.ExecuteAsync(row.Commande.id);
+                if (!result)
                 {
                     await _dialogService.ShowInfoAsync("Échec de la suppression du frais de port.");
+                    return;
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 await _dialogService.ShowErrorAsync(e);
+                return;
             }
             finally
             {
                 IsBusy = false;
             }
+
+            await GetListFraisDePort();
+            await _dialogService.ShowInfoAsync("Frais de port supprimé avec succès.");
         }
 
-        private async Task OnItemTapped(FraisDePort? fraisDePort)
+        [RelayCommand]
+        private async Task AddFrais(FraisDePortCommandeRow? row)
         {
-            if (fraisDePort == null)
+            if (row == null || row.HasFrais || IsBusy)
                 return;
-            await Task.CompletedTask;
-        }
 
+            CommandId = row.Commande.id;
+
+            // Un formulaire neuf à chaque ajout : rien ne reste de la commande précédente.
+            var viewModel = new BottomSheetPopupViewModel(
+                popup: new Popup(),
+                fraisDePortViewModel: this,
+                isFraisDePortForm: true,
+                saveFraisDePortUseCase: _saveFraisDePortUseCase,
+                fraisDePortForm: _services.GetRequiredService<FraisDePortFormModel>(),
+                dialogService: _dialogService);
+
+            var popup = new BottomSheetPopup(viewModel);
+            var mainPage = Application.Current?.MainPage;
+
+            if (mainPage != null)
+            {
+                await mainPage.ShowPopupAsync(popup);
+            }
+        }
 
         [RelayCommand]
         public async Task ShowBottomSheetPopupListView()
@@ -176,13 +196,12 @@ namespace Easymakemoney.ViewModels.Lists
                 getItemsFunc: async () => await _getListCollectionsUseCase.ExecuteAsync(),
                 onItemTappedAction: async (item) =>
                 {
-                    var collection = item as ListCollection;
-                    if (collection != null)
+                    if (item is ListCollection collection)
                     {
-                        this.CollectionId = collection.id;
-                        this.CollectionImage = collection.Photo;
-                        this.CollectionName = collection.Name;
-                        // await this.GetListFournisseursAsync();
+                        CollectionId = collection.id;
+                        CollectionImage = collection.Photo;
+                        CollectionName = collection.Name;
+                        await GetListFraisDePort();
                     }
                 });
 
@@ -190,129 +209,5 @@ namespace Easymakemoney.ViewModels.Lists
             if (Application.Current?.MainPage != null)
                 await Application.Current.MainPage.ShowPopupAsync(popup);
         }
-
-        [RelayCommand]
-        public async Task ShowBottomSheetPopupListCommandView()
-        {
-            if (CollectionId == 0)
-            {
-                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une collection");
-                return;
-            }
-            var viewModel = new BottomSheetPopupListViewViewModel(
-                getItemsFunc: async () => await _getListCommandUseCase.ExecuteAsync(CollectionId),
-                onItemTappedAction: async (item) =>
-                {
-                    var command = item as ListCommand;
-                    if (command != null)
-                    {
-                        this.CommandId = command.id;
-                        this.CommandImage = command.Photo;
-                        this.CommandName = command.Name;
-                        await this.GetListFraisDePort();
-                    }
-                });
-
-            var popup = new BottomSheetPopupListView(viewModel);
-            if (Application.Current?.MainPage != null)
-                await Application.Current.MainPage.ShowPopupAsync(popup);
-        }
-
-
-        [RelayCommand]
-        public async Task ShowBottomSheet()
-        {
-            if (CollectionId == 0)
-            {
-                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une collection");
-                return;
-            }
-            if (CommandId == 0)
-            {
-                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une commande");
-                return;
-            }
-
-            if (ListFraisDePorts.Count > 0)
-            {
-                await _dialogService.ShowInfoAsync("Un frais de port existe déjà pour cette commande.");
-                return;
-            }
-            var viewModel = new BottomSheetPopupViewModel(
-                popup: new Popup(),
-                fraisDePortViewModel: this,
-                isFraisDePortForm: true,
-                saveFraisDePortUseCase: _saveFraisDePortUseCase,
-                fraisDePortForm: _fraisDePortFormModel,
-                dialogService: _dialogService);
-
-            var popup = new BottomSheetPopup(viewModel);
-            var mainPage = Application.Current?.MainPage;
-
-            if (mainPage != null)
-            {
-                await mainPage.ShowPopupAsync(popup);
-            }
-        }
-
-        [RelayCommand]
-        public async Task ShowBottomSheetCreateCollection()
-        {
-            try
-            {
-                var viewModel = new BottomSheetPopupViewModel(
-                    popup: new Popup(),
-                    saveCollectionUseCase: _saveCollectionUseCase,
-                    isCollectionForm: true,
-                    collectionViewModel: _listNewCollectionViewModel,
-                    collectionFormModel: _collectionFormModel,
-                    dialogService: _dialogService);
-
-                var popup = new BottomSheetPopup(viewModel);
-                var mainPage = Application.Current?.MainPage;
-                if (mainPage != null)
-                {
-                    Console.WriteLine("AShowPopupAsync");
-                    await mainPage.ShowPopupAsync(popup);
-                }
-            }
-            catch (Exception ex)
-            {
-                await _dialogService.ShowErrorAsync(ex);
-                Console.WriteLine($"Exception: {ex}");
-            }
-        }
-
-        [RelayCommand]
-        public async Task ShowBottomSheetCreateCommand()
-        {
-            if (CollectionId == 0)
-            {
-                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une collection");
-                return;
-            }
-            _listNewCommandViewModel.CollectionId = CollectionId;
-            var viewModel = new BottomSheetPopupViewModel(
-                popup: new Popup(),
-                commandViewModel: _listNewCommandViewModel,
-                isCommandForm: true,
-                saveCommandUseCase: _saveCommandUseCase,
-                commandFormModel: _commandFormModel,
-                dialogService: _dialogService);
-
-            var popup = new BottomSheetPopup(viewModel);
-            var mainPage = Application.Current?.MainPage;
-
-            if (mainPage != null)
-            {
-                await mainPage.ShowPopupAsync(popup);
-            }
-        }
-
-
-
-
     }
 }
-
-
