@@ -4,85 +4,116 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
              xmlns:vm="clr-namespace:Easymakemoney.ViewModels.Startup"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
              x:Class="Easymakemoney.Views.Startup.OtpPage"
              x:DataType="vm:OtpPageViewModel"
+             x:Name="OtpRoot"
+             Style="{StaticResource UiPage}"
              Shell.NavBarIsVisible="False"
              Shell.FlyoutBehavior="Disabled"
              Title="Code de sécurité">
 
     <ContentPage.Resources>
         <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DataTemplates/CollectionFormTemplate.xaml" />
+            </ResourceDictionary.MergedDictionaries>
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
     <ScrollView>
-        <VerticalStackLayout Spacing="25" Padding="30,40" VerticalOptions="Center">
+        <VerticalStackLayout Padding="16,24" Spacing="20" VerticalOptions="Center">
 
-            <Image Source="logo.png" HeightRequest="120" WidthRequest="120" HorizontalOptions="Center" />
-
-            <VerticalStackLayout Spacing="8">
-                <Label Text="Double facteur" FontSize="26" FontAttributes="Bold" TextColor="#512BD4" HorizontalTextAlignment="Center" />
-                <Label Text="Un code de confirmation a été envoyé à l'adresse :"
-                       FontSize="14" TextColor="Gray" HorizontalTextAlignment="Center" />
-                <Label Text="{Binding Email}"
-                       FontSize="15" FontAttributes="Bold" TextColor="#1F2937" HorizontalTextAlignment="Center" />
+            <!-- Identité du site : ces liaisons visent la page (Source), pas le ViewModel. -->
+            <VerticalStackLayout x:DataType="{x:Null}" Spacing="10" HorizontalOptions="Center">
+                <Border WidthRequest="64" HeightRequest="64" HorizontalOptions="Center"
+                        BackgroundColor="{DynamicResource ThemePrimaryTint}" StrokeThickness="0" StrokeShape="RoundRectangle 16">
+                    <Grid>
+                        <Label Text="{Binding Branding.Initial, Source={x:Reference OtpRoot}}"
+                               IsVisible="{Binding Branding.HasNoLogo, Source={x:Reference OtpRoot}}"
+                               FontFamily="InterBold" FontSize="26" TextColor="{DynamicResource ThemePrimary}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Grid IsVisible="{Binding Branding.HasLogo, Source={x:Reference OtpRoot}}"
+                              BackgroundColor="{StaticResource UiSurface}" Padding="4">
+                            <Image Source="{Binding Branding.LogoUrl, Source={x:Reference OtpRoot}}" Aspect="AspectFit" />
+                        </Grid>
+                    </Grid>
+                </Border>
+                <Label Text="{Binding Branding.SiteName, Source={x:Reference OtpRoot}}" Style="{StaticResource UiTitle}"
+                       HorizontalTextAlignment="Center" LineBreakMode="TailTruncation" />
             </VerticalStackLayout>
 
-            <!-- Message d'erreur -->
-            <Border IsVisible="{Binding HasErrorMessage}"
-                    BackgroundColor="#FDE8E8"
-                    Stroke="#F87171"
-                    StrokeShape="RoundRectangle 8"
-                    Padding="12">
-                <Label Text="{Binding ErrorMessage}" TextColor="#B91C1C" FontSize="14" HorizontalTextAlignment="Center" />
-            </Border>
+            <components:UiCard Style="{StaticResource UiCard}">
+                <VerticalStackLayout Spacing="16">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Double facteur" Style="{StaticResource UiH1}" HorizontalTextAlignment="Center" />
+                        <Label Text="Un code de confirmation a été envoyé à l'adresse :" Style="{StaticResource UiBody}" FontSize="14" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding Email}" Style="{StaticResource UiTitle}" FontSize="15" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
 
-            <!-- Indicateur d'activité -->
-            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#512BD4" HeightRequest="30" WidthRequest="30" />
-
-            <!-- Zone de saisie du code OTP -->
-            <Border Stroke="#E5E7EB"
-                    StrokeShape="RoundRectangle 12"
-                    BackgroundColor="White"
-                    Padding="20">
-                <VerticalStackLayout Spacing="15">
-                    <Label Text="Code de vérification" FontSize="16" FontAttributes="Bold" TextColor="#374151" />
-                    <Label Text="Saisissez le code reçu par courriel" FontSize="12" TextColor="Gray" />
-
-                    <Border HeightRequest="50"
-                            Padding="12,0"
-                            Stroke="#D1D5DB"
-                            StrokeShape="RoundRectangle 8">
-                        <handlers:BorderlessEntry Placeholder="Ex. 123456"
-                                                  Keyboard="Numeric"
-                                                  HorizontalTextAlignment="Center"
-                                                  FontSize="20"
-                                                  Text="{Binding OtpCode}"
-                                                  VerticalOptions="Center" />
+                    <!-- Message d'erreur -->
+                    <Border IsVisible="{Binding HasErrorMessage}"
+                            BackgroundColor="#FDE8E8"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="12">
+                        <Label Text="{Binding ErrorMessage}" FontFamily="Inter" FontSize="14" TextColor="#B91C1C" HorizontalTextAlignment="Center" />
                     </Border>
 
-                    <Button Text="Valider"
-                            Command="{Binding VerifyOtpCommand}"
-                            BackgroundColor="#512BD4"
-                            TextColor="White"
-                            CornerRadius="8"
-                            IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+                    <!-- Indicateur d'activité -->
+                    <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" HeightRequest="30" WidthRequest="30" />
+
+                    <!-- Zone de saisie du code OTP -->
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Code de vérification" Style="{StaticResource FormLabel}" />
+                        <Label Text="Saisissez le code reçu par courriel" Style="{StaticResource UiBody}" />
+                        <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                            <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                                      Placeholder="Ex. 123456"
+                                                      Keyboard="Numeric"
+                                                      HorizontalTextAlignment="Center"
+                                                      FontSize="20"
+                                                      Text="{Binding OtpCode}" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Button.CornerRadius est un int : le rayon du thème (double) passe par UiCard. -->
+                    <components:UiCard Radius="{DynamicResource ThemeButtonRadius}"
+                                       BackgroundColor="{DynamicResource ThemePrimary}"
+                                       StrokeThickness="0"
+                                       Padding="0"
+                                       Margin="0,4,0,0">
+                        <Button Text="Valider"
+                                Command="{Binding VerifyOtpCommand}"
+                                BackgroundColor="Transparent"
+                                TextColor="{DynamicResource ThemeOnPrimary}"
+                                FontFamily="InterSemiBold"
+                                FontSize="16"
+                                HeightRequest="52"
+                                IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+                    </components:UiCard>
                 </VerticalStackLayout>
-            </Border>
+            </components:UiCard>
 
             <!-- Actions secondaires -->
-            <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+            <VerticalStackLayout Spacing="4" HorizontalOptions="Center">
                 <Button Text="Renvoyer le code"
-                        TextColor="#50b3f2"
-                        BackgroundColor="Transparent"
                         Command="{Binding ResendOtpCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="{DynamicResource ThemePrimary}"
+                        FontFamily="InterMedium"
+                        FontSize="15"
+                        MinimumHeightRequest="44"
                         IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
 
                 <Button Text="Retour à la connexion"
-                        TextColor="Gray"
-                        BackgroundColor="Transparent"
                         Command="{Binding BackCommand}"
+                        BackgroundColor="Transparent"
+                        TextColor="{StaticResource UiTextSecondary}"
+                        FontFamily="InterMedium"
+                        FontSize="15"
+                        MinimumHeightRequest="44"
                         IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
             </VerticalStackLayout>
 

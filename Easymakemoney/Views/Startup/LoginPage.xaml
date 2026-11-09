@@ -1,57 +1,102 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-              xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
              x:Class="Easymakemoney.Views.Startup.LoginPage"
-              Shell.NavBarIsVisible="False"
-              Shell.FlyoutBehavior="Disabled"
+             x:Name="LoginRoot"
+             Style="{StaticResource UiPage}"
+             Shell.NavBarIsVisible="False"
+             Shell.FlyoutBehavior="Disabled"
              Title="Connexion">
-     <VerticalStackLayout 
-            Spacing="25" 
-            Padding="30,0" 
-            VerticalOptions="Center">
 
-        <Image Source="logo.png" HeightRequest="150" WidthRequest="150" />
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DataTemplates/CollectionFormTemplate.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
-        <VerticalStackLayout Spacing="5">
-            <Label Text="Bienvenue" FontSize="28" TextColor="Gray" HorizontalTextAlignment="Center" />
-            <Label Text="Connexion à votre compte" FontSize="18" TextColor="Gray" HorizontalTextAlignment="Center" />
+    <ScrollView>
+        <VerticalStackLayout Padding="16,24" Spacing="20" VerticalOptions="Center">
+
+            <!-- Identité du site -->
+            <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+                <Border WidthRequest="64" HeightRequest="64" HorizontalOptions="Center"
+                        BackgroundColor="{DynamicResource ThemePrimaryTint}" StrokeThickness="0" StrokeShape="RoundRectangle 16">
+                    <Grid>
+                        <Label Text="{Binding Branding.Initial, Source={x:Reference LoginRoot}}"
+                               IsVisible="{Binding Branding.HasNoLogo, Source={x:Reference LoginRoot}}"
+                               FontFamily="InterBold" FontSize="26" TextColor="{DynamicResource ThemePrimary}"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                        <Grid IsVisible="{Binding Branding.HasLogo, Source={x:Reference LoginRoot}}"
+                              BackgroundColor="{StaticResource UiSurface}" Padding="4">
+                            <Image Source="{Binding Branding.LogoUrl, Source={x:Reference LoginRoot}}" Aspect="AspectFit" />
+                        </Grid>
+                    </Grid>
+                </Border>
+                <Label Text="{Binding Branding.SiteName, Source={x:Reference LoginRoot}}" Style="{StaticResource UiTitle}"
+                       HorizontalTextAlignment="Center" LineBreakMode="TailTruncation" />
+            </VerticalStackLayout>
+
+            <components:UiCard Style="{StaticResource UiCard}">
+                <VerticalStackLayout Spacing="16">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Bienvenue" Style="{StaticResource UiH1}" HorizontalTextAlignment="Center" />
+                        <Label Text="Connexion à votre compte" Style="{StaticResource UiBody}" FontSize="15" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+
+                    <!-- Message d'erreur -->
+                    <Border IsVisible="{Binding HasErrorMessage}"
+                            BackgroundColor="#FDE8E8"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="12">
+                        <Label Text="{Binding ErrorMessage}" FontFamily="Inter" FontSize="14" TextColor="#B91C1C" HorizontalTextAlignment="Center" />
+                    </Border>
+
+                    <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" HeightRequest="30" WidthRequest="30" />
+
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Adresse e-mail" Style="{StaticResource FormLabel}" />
+                        <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                            <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Adresse e-mail" Keyboard="Email" Text="{Binding Email}" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="Mot de passe" Style="{StaticResource FormLabel}" />
+                        <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                            <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Mot de passe" IsPassword="True" Text="{Binding Password}" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- Button.CornerRadius est un int : le rayon du thème (double) passe par UiCard. -->
+                    <components:UiCard Radius="{DynamicResource ThemeButtonRadius}"
+                                       BackgroundColor="{DynamicResource ThemePrimary}"
+                                       StrokeThickness="0"
+                                       Padding="0"
+                                       Margin="0,4,0,0">
+                        <Button Text="Se connecter"
+                                Command="{Binding LoginCommand}"
+                                BackgroundColor="Transparent"
+                                TextColor="{DynamicResource ThemeOnPrimary}"
+                                FontFamily="InterSemiBold"
+                                FontSize="16"
+                                HeightRequest="52" />
+                    </components:UiCard>
+                </VerticalStackLayout>
+            </components:UiCard>
+
+            <Button Text="Changer de site"
+                    Command="{Binding ChangeSiteCommand}"
+                    BackgroundColor="Transparent"
+                    TextColor="{DynamicResource ThemePrimary}"
+                    FontFamily="InterMedium"
+                    FontSize="15"
+                    MinimumHeightRequest="44"
+                    HorizontalOptions="Center" />
         </VerticalStackLayout>
-
-        <Border IsVisible="{Binding HasErrorMessage}"
-                BackgroundColor="#FDE8E8"
-                Stroke="#F87171"
-                StrokeShape="RoundRectangle 8"
-                Padding="12">
-            <Label Text="{Binding ErrorMessage}" TextColor="#B91C1C" FontSize="14" HorizontalTextAlignment="Center" />
-        </Border>
-
-        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#512BD4" HeightRequest="30" WidthRequest="30" />
-
-        <StackLayout Orientation="Horizontal">
-            <Frame ZIndex="1" HasShadow="True" BorderColor="White" HeightRequest="56" WidthRequest="56" CornerRadius="28">
-                <Image Source="user.png" HeightRequest="20" WidthRequest="20" />
-            </Frame>
-            <Frame HeightRequest="45" Margin="-20,0,0,0" Padding="0" HasShadow="True" BorderColor="White"  HorizontalOptions="FillAndExpand">
-                <handlers:BorderlessEntry  Margin="20,0,0,0" VerticalOptions="Center" Placeholder="Adresse e-mail" Keyboard="Email" Text="{Binding Email}"/>
-            </Frame>
-        </StackLayout>
-
-        <StackLayout Orientation="Horizontal">
-            <Frame ZIndex="1" HasShadow="True" BorderColor="White" HeightRequest="56" WidthRequest="56" CornerRadius="28">
-                <Image Source="lock.png" HeightRequest="20" WidthRequest="20" />
-            </Frame>
-            <Frame HeightRequest="45" Margin="-20,0,0,0" Padding="0" HasShadow="True" BorderColor="White"  HorizontalOptions="FillAndExpand">
-                <handlers:BorderlessEntry Margin="20,0,0,0" VerticalOptions="Center" Placeholder="Mot de passe" IsPassword="True" Text="{Binding Password}"/>
-            </Frame>
-        </StackLayout>
-
-        <Button Text="Se connecter" WidthRequest="140" CornerRadius="20" HorizontalOptions="Center" Command="{Binding LoginCommand}" />
-
-        <Button Text="Changer de site"
-                TextColor="#50b3f2"
-                BackgroundColor="Transparent"
-                HorizontalOptions="Center"
-                Command="{Binding ChangeSiteCommand}" />
-    </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>
