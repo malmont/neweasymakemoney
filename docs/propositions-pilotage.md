@@ -136,3 +136,41 @@ Un conseiller qui commente les chiffres et propose des actions. **Présentation 
 2. **Commencer par l'écran Pilotage** (proposition 1), avec **une route agrégée dédiée** côté backend, sans toucher aux routes existantes.
 3. **Puis la rentabilité et le stock** (propositions 2 et 3), qui apportent le plus de valeur à un gérant.
 4. **Puis la trésorerie.**
+
+## Guide de période par l'IA et volet publicité (demande du propriétaire, 10/11/2026)
+
+Le Conseiller IA devient un **guide qui accompagne le gérant tout au long de la période**, pendant le voyage d'achat comme pendant la vente, pour que la période soit rentable.
+
+### Ce que le guide fait à chaque moment
+
+| Moment | Ce qu'il propose |
+|---|---|
+| **Voyage d'achat** | Budget restant, marge prévue de chaque achat, coefficient conseillé, alerte si la trésorerie de l'entreprise est tendue |
+| **Pendant la vente** | Hausse de prix sur ce qui part vite, promotion sur ce qui ne part pas, relance d'une publicité qui a bien marché |
+| **Fin de période** | Écouler le stock restant : quels articles, à quel prix, pour quelle marge |
+| **Clôture** | Bilan de la période et leçons à reprendre pour la même période l'année suivante |
+
+### Une vision globale, même là où l'écran ne l'affiche pas
+
+Le guide lit toute l'entreprise, y compris ce que la gestion n'affiche pas ou seulement en lecture : locations, abonnements, frais fixes, trésorerie. Ces données restent hors du résultat de période. Elles servent à ajuster le conseil, par exemple : « la période est bonne, mais la trésorerie ne permet pas de nouvel achat avant le mois prochain ». Les salaires n'y entrent qu'en total, jamais par personne.
+
+### Forme d'un conseil
+
+Chaque conseil donne une action, son effet estimé en argent, son niveau de confiance et ses sources. Après application, le guide mesure ce qui s'est passé : « hausse de 5 % appliquée le 12 : marge +340 $ ». Les règles de `Conseiller IA` restent valables : le backend calcule tous les chiffres, l'IA les explique et propose, rien ne s'applique sans confirmation du gérant, aucune donnée personnelle.
+
+### Volet publicité
+
+**Nouvelle dépense « Campagne publicitaire »** : canal (Meta, Google, affichage, radio, influence…), dates, montant, articles ou commandes visés si le gérant le souhaite. Elle se classe dans sa période par sa date, compte dans les frais du résultat, et suit la règle des périodes clôturées.
+
+**Rentabilité perçue après chaque campagne :** ventes et marge pendant la campagne, comparées à une période de référence de même durée juste avant, et montant gagné pour 1 $ investi.
+
+**À afficher honnêtement :** c'est une **estimation**. La saison ou une autre campagne peuvent expliquer une hausse. Des campagnes qui se chevauchent sont mesurées ensemble.
+
+**Plus tard :** liens de suivi sur l'e-commerce et connexion aux régies publicitaires pour une mesure plus précise. On commence par la saisie à la main.
+
+### Ordre conseillé
+
+1. Périodes : P1, P2, P3.
+2. Volet publicité, simple et utile tout de suite.
+3. Prévisionnel de commande et simulateur de coefficients et de promotions.
+4. Guide IA, qui a besoin de tous ces chiffres pour donner de vrais conseils.
