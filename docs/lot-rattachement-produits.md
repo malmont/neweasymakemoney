@@ -53,6 +53,16 @@ pose toujours `purchasePrice`, donc elle changerait les chiffres de toutes les c
 - **`purchasePrice` du corps est en centimes**, convention de la plateforme ;
 - **règle du propriétaire** : si une évolution est trop complexe à faire cohabiter avec un autre projet, on crée un endpoint dédié plutôt que de modifier l'existant.
 
+## Livré sur demo le 09/11/2026 (`origin/dev`, commit `758fc176`) : contrat final
+
+Montants en centimes, `ROLE_ADMIN`. Suite de tests du backend verte (881).
+
+- `GET /api/commandes/products/disponibles?q=&page=1&limit=30&locale=fr` → `{items: [{id, name, code, barcode, image, price, purchasePrice, coefficientMultiplier, quantity, categories: [{id, name}]}], total, page, limit}`. `limit` plafonné à 100.
+- `POST /api/commandes/{id}/products/rattacher` `{products: [{productId, purchasePrice?, coefficientMultiplier?, quantity?}]}`, tout ou rien → 200 `{attached: [{productId, name, commandeCostCents, coefficientMultiplier, quantity, price}], commande: {id, usedBudget, remainingBudget}}`. `coefficientMultiplier` est seulement renvoyé, jamais écrit sur le produit ; `quantity` est écrite si elle est fournie.
+- Refus : 422 `VALIDATION_FAILED` `{errors: [{path, message}]}` ; 404 `COMMANDE_NOT_FOUND` ; 404 `PRODUCT_NOT_FOUND` `{context: {productId}}` ; 409 `COMMANDE_CLOSED` ; 409 `PRODUCT_ALREADY_ATTACHED` `{context: {productId, commandeId}}`. Produit déjà dans la même commande : accepté (met à jour coût et quantité).
+- `DELETE /api/commandes/{id}/products/{productId}` → 204 ; 404 `PRODUCT_NOT_IN_COMMANDE` ; 409 `COMMANDE_CLOSED`. Prix, prix d'achat, coefficient et variantes intacts.
+- **Tableaux de bord** (décision du propriétaire du 09/11, annoncée par le backend) : coût d'achat `commande_cost_cents ?? purchase_price ?? price`, valeur de stock = coût × quantité × coefficient. Les chiffres des commandes ouvertes changent, vers les bonnes valeurs ; les commandes closes ne bougent pas.
+
 ## Côté application (première analyse)
 
 - depuis une commande, un écran « Ajouter des produits existants » : recherche, sélection multiple, puis saisie du prix
