@@ -17,6 +17,19 @@ transmis. Les routes de gestion existent toujours, réservées à `ROLE_ADMIN`, 
 La connexion est fragile : sans `platform`, il faut `ROLE_USER_INTERNET`, et l'écran de code (OTP) des administrateurs
 n'existe pas.
 
+## Suivi des corrections (mis à jour le 08/11/2026)
+
+| Lot | État | Ce qui est réglé |
+|---|---|---|
+| 0. Plateforme | Android validé, sur `main` (`8231da8`). iOS et Mac Catalyst en attente de Xcode 27.1 | .NET 10, CommunityToolkit.Mvvm 8, CommunityToolkit.Maui 15 (popups v2), Microcharts.Maui 2.0.0.3 |
+| 1. Socle multi-tenant | **Validé**, sur `main` (`b434ea2`). Essayé sur émulateur et sur téléphone, avec le site demo | **B1 réglé** : écran d'activation (clé `IZ-ADM-…` ou code du site, puis confirmation), `TenantContext` en `SecureStorage`, `X-Tenant-Host` sur chaque requête, aucune requête sans site, revérification au démarrage, « Changer de site », adresse de l'API en un seul endroit. `ApplicationId` passé à `com.arkanoamedia.gestion` |
+| 2. Connexion et session | En cours : plan de Gemini attendu (`docs/gemini/lot-2-consigne.md`) | B2 et B3 : `platform: "admin"`, écran OTP, session en `SecureStorage`, rafraîchissement du jeton, déconnexion |
+| 3. Routes et erreurs | À venir | B4, codes 2xx et 204, les 7 suppressions qui rendent toujours `true` |
+| 4. Tests et recette | À venir | |
+
+Ce qu'il reste de la connexion fragile décrite dans le verdict est traité au lot 2. Le détail de chaque lot se trouve
+dans `docs/gemini/`.
+
 ## 1. Les routes de l'application confrontées au backend
 
 | Appel (`Services/*.cs`) | Route backend | Accès | État |
