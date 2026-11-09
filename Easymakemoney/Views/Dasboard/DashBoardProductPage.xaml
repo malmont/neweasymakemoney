@@ -29,7 +29,10 @@
                                       ImageButtonSourceList="{Binding ProductImage}"
                                       ImageButtonSource="boutonaddblanc64.png"
                                       ImageButtonCommand="{Binding ShowBottomSheetCreateProductCommand}"
-                                      LabelText="PRODUIT"/>
+                                      LabelText="Produit"
+                                      PlaceholderText="Choisir un produit"
+                                      Icon="M20 12l-8 8-9-9V3h8l9 9zM7.5 7.5h.01"
+                                      ValueText="{Binding ProductName}"/>
 
         <ScrollView Grid.Row="2">
             <VerticalStackLayout Padding="16" Spacing="12">

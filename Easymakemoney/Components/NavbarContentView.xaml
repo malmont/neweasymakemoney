@@ -4,52 +4,84 @@
              xmlns:local="clr-namespace:Easymakemoney.Components"
              x:Class="Easymakemoney.Components.NavbarContentView">
     <ContentView.Content>
-        <local:UiCard Style="{StaticResource UiCard}"
-                      Margin="16,12,16,0"
-                      Padding="12"
-                      VerticalOptions="Start">
-            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12">
-                <!-- Bouton d'ouverture de la liste -->
-                <Button Text="{Binding ButtonText, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
-                        Command="{Binding ButtonCommand, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
-                        BackgroundColor="{DynamicResource ThemePrimaryTint}"
-                        TextColor="{DynamicResource ThemePrimary}"
-                        FontFamily="InterSemiBold"
-                        FontSize="14"
-                        CornerRadius="12"
-                        MinimumHeightRequest="44"
-                        VerticalOptions="Center"
-                        LineBreakMode="TailTruncation" />
+        <Grid Margin="16,12,16,0" VerticalOptions="Start">
+            <!-- Toute la carte ouvre la liste de sélection -->
+            <local:UiCard Style="{StaticResource UiCard}" Padding="12">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ButtonCommand, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}" />
+                </Border.GestureRecognizers>
+                <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                    <local:UiThumb Margin="0,0,12,0"
+                                   Source="{Binding ImageButtonSourceList, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
+                                   Icon="{Binding Icon, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}" />
 
-                <!-- Vignette de l'élément sélectionné -->
-                <Border Grid.Column="1"
-                        WidthRequest="48"
-                        HeightRequest="48"
-                        StrokeThickness="0"
-                        StrokeShape="RoundRectangle 12"
-                        BackgroundColor="{StaticResource UiBackground}"
-                        VerticalOptions="Center">
-                    <ImageButton Source="{Binding ImageButtonSourceList, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
-                                 Command="{Binding ImageButtonCommandList, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
-                                 Aspect="AspectFill"
-                                 BackgroundColor="Transparent" />
-                </Border>
+                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                        <Label Text="{Binding LabelText, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
+                               Style="{StaticResource UiBody}"
+                               LineBreakMode="TailTruncation" />
+                        <Label x:Name="ValueLabel"
+                               Text="{Binding ValueText, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
+                               Style="{StaticResource UiTitle}"
+                               FontSize="16"
+                               LineBreakMode="TailTruncation" />
+                        <Label x:Name="PlaceholderLabel"
+                               Text="{Binding PlaceholderText, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
+                               Style="{StaticResource UiBody}"
+                               FontSize="16"
+                               TextColor="{StaticResource UiTextMuted}"
+                               LineBreakMode="TailTruncation" />
+                    </VerticalStackLayout>
 
-                <!-- Action d'ajout -->
-                <VerticalStackLayout Grid.Column="2" Spacing="2" VerticalOptions="Center">
-                    <ImageButton Source="{Binding ImageButtonSource, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
-                                 Command="{Binding ImageButtonCommand, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
-                                 WidthRequest="40"
-                                 HeightRequest="40"
-                                 HorizontalOptions="Center"
-                                 BackgroundColor="Transparent" />
-                    <Label Text="{Binding LabelText, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}"
-                           Style="{StaticResource UiBody}"
-                           HorizontalOptions="Center"
-                           HorizontalTextAlignment="Center"
-                           LineBreakMode="NoWrap" />
-                </VerticalStackLayout>
+                    <Path Grid.Column="2"
+                          Margin="12,0,0,0"
+                          Data="M9 6l6 6-6 6"
+                          Stroke="{StaticResource UiTextMuted}"
+                          StrokeThickness="2"
+                          StrokeLineCap="Round"
+                          StrokeLineJoin="Round"
+                          WidthRequest="24"
+                          HeightRequest="24"
+                          Aspect="None"
+                          VerticalOptions="Center" />
+
+                    <!-- Réserve la place du bouton d'ajout, posé par-dessus la carte -->
+                    <Grid x:Name="CreateSpacer" Grid.Column="3" WidthRequest="56" />
+                </Grid>
+            </local:UiCard>
+
+            <!-- Sur les tableaux de bord, la vignette ouvre le détail de l'élément choisi.
+                 Ces zones sont posées à côté de la carte, et non dedans, pour qu'un appui ne déclenche qu'une seule action. -->
+            <Grid x:Name="ThumbTapArea"
+                  IsVisible="False"
+                  Margin="13,0,0,0"
+                  WidthRequest="48"
+                  HeightRequest="48"
+                  HorizontalOptions="Start"
+                  VerticalOptions="Center"
+                  BackgroundColor="Transparent">
+                <Grid.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnThumbTapped" />
+                </Grid.GestureRecognizers>
             </Grid>
-        </local:UiCard>
+
+            <Border x:Name="CreateButton"
+                    Margin="0,0,13,0"
+                    WidthRequest="44"
+                    HeightRequest="44"
+                    HorizontalOptions="End"
+                    VerticalOptions="Center"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 12"
+                    BackgroundColor="{DynamicResource ThemePrimaryTint}"
+                    SemanticProperties.Description="{Binding LabelText, StringFormat='Ajouter : {0}', Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ImageButtonCommand, Source={RelativeSource AncestorType={x:Type local:NavbarContentView}}}" />
+                </Border.GestureRecognizers>
+                <Path Data="M12 5v14M5 12h14"
+                      Style="{StaticResource UiIcon}"
+                      HorizontalOptions="Center"
+                      VerticalOptions="Center" />
+            </Border>
+        </Grid>
     </ContentView.Content>
 </ContentView>

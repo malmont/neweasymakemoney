@@ -37,23 +37,23 @@
                                            CommandParameter="{Binding .}" />
                             </SwipeItems>
                         </SwipeView.RightItems>
-                        <components:UiCard Style="{StaticResource UiCard}" Padding="14">
-                            <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedFournisseur, Source={x:Reference Page}, x:DataType=ContentPage}"
-                                                      CommandParameter="{Binding .}" />
-                            </Border.GestureRecognizers>
-                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                                <Border Grid.Column="0" WidthRequest="48" HeightRequest="48" StrokeThickness="0" StrokeShape="RoundRectangle 10"
-                                        BackgroundColor="{StaticResource UiBorder}" VerticalOptions="Center">
-                                    <Image Source="{Binding photo}" Aspect="AspectFill" />
-                                </Border>
-                                <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
-                                    <Label Text="{Binding name}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
-                                    <Label Text="{Binding ville, StringFormat='Ville : {0}'}" Style="{StaticResource UiBody}" LineBreakMode="TailTruncation" />
-                                    <Label Text="{Binding pays, StringFormat='Pays : {0}'}" Style="{StaticResource UiBody}" LineBreakMode="TailTruncation" />
-                                </VerticalStackLayout>
-                            </Grid>
-                        </components:UiCard>
+                        <!-- Fond opaque : le rouge de la suppression ne doit pas apparaître dans les coins arrondis au repos -->
+                        <Grid BackgroundColor="{StaticResource UiBackground}">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedFournisseur, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                    <components:UiThumb Grid.Column="0" Source="{Binding photo}" Icon="M3 21V8l9-5 9 5v13M9 21v-7h6v7" />
+                                    <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                        <Label Text="{Binding name}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
+                                        <Label Text="{Binding ville, StringFormat='Ville : {0}'}" Style="{StaticResource UiBody}" LineBreakMode="TailTruncation" />
+                                        <Label Text="{Binding pays, StringFormat='Pays : {0}'}" Style="{StaticResource UiBody}" LineBreakMode="TailTruncation" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </components:UiCard>
+                        </Grid>
                     </SwipeView>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

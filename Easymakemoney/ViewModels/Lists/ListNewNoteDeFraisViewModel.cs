@@ -54,6 +54,9 @@ namespace Easymakemoney.ViewModels.Lists
             set { _collectionImage = value; OnPropertyChanged(nameof(CollectionImage)); }
         }
 
+        [ObservableProperty]
+        private string? collectionName;
+
         public async Task GetListNoteDeFraisAsync()
         {
             if (IsBusy)
@@ -142,6 +145,7 @@ namespace Easymakemoney.ViewModels.Lists
                     {
                         this.CollectionId = collection.id;
                         this.CollectionImage = collection.Photo;
+                        this.CollectionName = collection.Name;
                         await this.GetListNoteDeFraisAsync();
                     }
                 });

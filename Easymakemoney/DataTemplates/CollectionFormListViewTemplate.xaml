@@ -2,6 +2,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
                     xmlns:local="clr-namespace:Easymakemoney.Models"
+                    xmlns:components="clr-namespace:Easymakemoney.Components"
                     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <!-- Liste de sélection générique -->
@@ -20,20 +21,14 @@
                                             StrokeThickness="1"
                                             StrokeShape="RoundRectangle 14">
                                         <Grid ColumnDefinitions="Auto,*">
-                                            <Border Margin="10"
-                                                    WidthRequest="52"
-                                                    HeightRequest="52"
-                                                    StrokeThickness="0"
-                                                    StrokeShape="RoundRectangle 12"
-                                                    BackgroundColor="{StaticResource UiBackground}">
-                                                <Image Aspect="AspectFill"
-                                                       Source="{Binding Photo}">
-                                                    <Image.GestureRecognizers>
-                                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type toolkit:Popup}}}"
-                                                                              CommandParameter="{Binding .}"/>
-                                                    </Image.GestureRecognizers>
-                                                </Image>
-                                            </Border>
+                                            <components:UiThumb Margin="12"
+                                                                Source="{Binding Photo}"
+                                                                Icon="M3 7l9-4 9 4-9 4-9-4zM3 12l9 4 9-4M3 17l9 4 9-4">
+                                                <components:UiThumb.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={RelativeSource AncestorType={x:Type toolkit:Popup}}}"
+                                                                          CommandParameter="{Binding .}"/>
+                                                </components:UiThumb.GestureRecognizers>
+                                            </components:UiThumb>
                                             <Label Grid.Column="1"
                                                    Padding="2,0,12,0"
                                                    VerticalTextAlignment="Center"

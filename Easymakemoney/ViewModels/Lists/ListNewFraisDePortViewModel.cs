@@ -70,6 +70,9 @@ namespace Easymakemoney.ViewModels.Lists
             set { _collectionImage = value; OnPropertyChanged(nameof(CollectionImage)); }
         }
 
+        [ObservableProperty]
+        private string? collectionName;
+
         private string _commandImage;
 
         public string CommandImage
@@ -77,6 +80,9 @@ namespace Easymakemoney.ViewModels.Lists
             get => _commandImage;
             set { _commandImage = value; OnPropertyChanged(nameof(CommandImage)); }
         }
+
+        [ObservableProperty]
+        private string? commandName;
 
 
         public ICommand DeleteFraisDePortCommand { get; }
@@ -175,6 +181,7 @@ namespace Easymakemoney.ViewModels.Lists
                     {
                         this.CollectionId = collection.id;
                         this.CollectionImage = collection.Photo;
+                        this.CollectionName = collection.Name;
                         // await this.GetListFournisseursAsync();
                     }
                 });
@@ -201,6 +208,7 @@ namespace Easymakemoney.ViewModels.Lists
                     {
                         this.CommandId = command.id;
                         this.CommandImage = command.Photo;
+                        this.CommandName = command.Name;
                         await this.GetListFraisDePort();
                     }
                 });

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Reprend le thème MAUI du même nom (10.0.110) et ajoute les icônes sombres dans la barre d'état. -->
+    <style name="Maui.MainTheme.NoActionBar" parent="Maui.MainTheme">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="android:actionModeBackground">?attr/colorPrimary</item>
+        <item name="android:actionModeStyle">@style/ActionMode</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

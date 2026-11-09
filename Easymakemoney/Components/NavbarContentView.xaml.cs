@@ -19,10 +19,25 @@ namespace Easymakemoney.Components
             BindableProperty.Create(nameof(ImageButtonCommand), typeof(ICommand), typeof(NavbarContentView));
 
         public static readonly BindableProperty ImageButtonCommandListProperty =
-            BindableProperty.Create(nameof(ImageButtonCommandList), typeof(ICommand), typeof(NavbarContentView));
+            BindableProperty.Create(nameof(ImageButtonCommandList), typeof(ICommand), typeof(NavbarContentView),
+                propertyChanged: (bindable, _, value) => ((NavbarContentView)bindable).ThumbTapArea.IsVisible = value != null);
 
         public static readonly BindableProperty LabelTextProperty =
             BindableProperty.Create(nameof(LabelText), typeof(string), typeof(NavbarContentView), default(string));
+
+        public static readonly BindableProperty ValueTextProperty =
+            BindableProperty.Create(nameof(ValueText), typeof(string), typeof(NavbarContentView), default(string),
+                propertyChanged: (bindable, _, _) => ((NavbarContentView)bindable).UpdateValueState());
+
+        public static readonly BindableProperty PlaceholderTextProperty =
+            BindableProperty.Create(nameof(PlaceholderText), typeof(string), typeof(NavbarContentView), default(string));
+
+        public static readonly BindableProperty IconProperty =
+            BindableProperty.Create(nameof(Icon), typeof(string), typeof(NavbarContentView), default(string));
+
+        public static readonly BindableProperty HideCreateProperty =
+            BindableProperty.Create(nameof(HideCreate), typeof(bool), typeof(NavbarContentView), false,
+                propertyChanged: (bindable, _, value) => ((NavbarContentView)bindable).UpdateCreateVisibility((bool)value));
 
         public string ButtonText
         {
@@ -66,9 +81,57 @@ namespace Easymakemoney.Components
             set => SetValue(LabelTextProperty, value);
         }
 
+        public string ValueText
+        {
+            get => (string)GetValue(ValueTextProperty);
+            set => SetValue(ValueTextProperty, value);
+        }
+
+        public string PlaceholderText
+        {
+            get => (string)GetValue(PlaceholderTextProperty);
+            set => SetValue(PlaceholderTextProperty, value);
+        }
+
+        public string Icon
+        {
+            get => (string)GetValue(IconProperty);
+            set => SetValue(IconProperty, value);
+        }
+
+        public bool HideCreate
+        {
+            get => (bool)GetValue(HideCreateProperty);
+            set => SetValue(HideCreateProperty, value);
+        }
+
         public NavbarContentView()
         {
             InitializeComponent();
+            UpdateValueState();
+        }
+
+        private void UpdateValueState()
+        {
+            var hasValue = !string.IsNullOrWhiteSpace(ValueText);
+            ValueLabel.IsVisible = hasValue;
+            PlaceholderLabel.IsVisible = !hasValue;
+        }
+
+        private void UpdateCreateVisibility(bool hideCreate)
+        {
+            CreateButton.IsVisible = !hideCreate;
+            CreateSpacer.IsVisible = !hideCreate;
+        }
+
+        // Sans élément choisi, le détail n'a rien à ouvrir : la vignette ouvre alors la liste, comme le reste de la carte.
+        private void OnThumbTapped(object? sender, TappedEventArgs e)
+        {
+            var command = string.IsNullOrWhiteSpace(ValueText) ? ButtonCommand : ImageButtonCommandList;
+            if (command?.CanExecute(null) == true)
+            {
+                command.Execute(null);
+            }
         }
     }
 }

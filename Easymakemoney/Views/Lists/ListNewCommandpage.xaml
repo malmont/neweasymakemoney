@@ -37,31 +37,31 @@
                                            CommandParameter="{Binding .}" />
                             </SwipeItems>
                         </SwipeView.RightItems>
-                        <components:UiCard Style="{StaticResource UiCard}" Padding="14">
-                            <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedProducts, Source={x:Reference Page}, x:DataType=ContentPage}"
-                                                      CommandParameter="{Binding .}" />
-                            </Border.GestureRecognizers>
-                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                                <Border Grid.Column="0" WidthRequest="48" HeightRequest="48" StrokeThickness="0" StrokeShape="RoundRectangle 10"
-                                        BackgroundColor="{StaticResource UiBorder}" VerticalOptions="Center">
-                                    <Image Source="{Binding photo}" Aspect="AspectFill" />
-                                </Border>
-                                <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
-                                    <Label Text="{Binding name}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
-                                    <HorizontalStackLayout Spacing="4">
-                                        <Label Text="Budget :" Style="{StaticResource UiBody}" VerticalOptions="Center">
-                                            <Label.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
-                                                                      CommandParameter="{Binding .}" />
-                                            </Label.GestureRecognizers>
-                                        </Label>
-                                        <Label Text="{Binding budget, Converter={StaticResource CurrencyConverter}}" FontFamily="InterSemiBold" FontSize="14"
-                                               TextColor="{DynamicResource ThemePrimary}" LineBreakMode="TailTruncation" VerticalOptions="Center" />
-                                    </HorizontalStackLayout>
-                                </VerticalStackLayout>
-                            </Grid>
-                        </components:UiCard>
+                        <!-- Fond opaque : le rouge de la suppression ne doit pas apparaître dans les coins arrondis au repos -->
+                        <Grid BackgroundColor="{StaticResource UiBackground}">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedProducts, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                    <components:UiThumb Grid.Column="0" Source="{Binding photo}" Icon="M3 7l9-4 9 4v10l-9 4-9-4V7zM3 7l9 4 9-4M12 11v10" />
+                                    <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                        <Label Text="{Binding name}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
+                                        <HorizontalStackLayout Spacing="4">
+                                            <Label Text="Budget :" Style="{StaticResource UiBody}" VerticalOptions="Center">
+                                                <Label.GestureRecognizers>
+                                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                                          CommandParameter="{Binding .}" />
+                                                </Label.GestureRecognizers>
+                                            </Label>
+                                            <Label Text="{Binding budget, Converter={StaticResource CurrencyConverter}}" FontFamily="InterSemiBold" FontSize="14"
+                                                   TextColor="{DynamicResource ThemePrimary}" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </components:UiCard>
+                        </Grid>
                     </SwipeView>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

@@ -45,6 +45,9 @@ namespace Easymakemoney.ViewModels.Dashboard
             set { _productImage = value; OnPropertyChanged(nameof(ProductImage)); }
         }
 
+        [ObservableProperty]
+        private string? productName;
+
         [RelayCommand]
         public async Task ShowBottomSheetCreateProduct()
         {
@@ -94,6 +97,7 @@ namespace Easymakemoney.ViewModels.Dashboard
                     {
                         this.DashBoardProduct = Product;
                         this.ProductImage = Product.image;
+                        this.ProductName = Product.Name;
                         DisplayedQuantity = Product.freezeQuantity ?? Product.quantity ?? 0;
 
                     }

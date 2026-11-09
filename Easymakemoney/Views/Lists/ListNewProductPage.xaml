@@ -37,24 +37,24 @@
                                            CommandParameter="{Binding .}" />
                             </SwipeItems>
                         </SwipeView.RightItems>
-                        <components:UiCard Style="{StaticResource UiCard}" Padding="14">
-                            <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedProductsVariants, Source={x:Reference Page}, x:DataType=ContentPage}"
-                                                      CommandParameter="{Binding .}" />
-                            </Border.GestureRecognizers>
-                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                                <Border Grid.Column="0" WidthRequest="48" HeightRequest="48" StrokeThickness="0" StrokeShape="RoundRectangle 10"
-                                        BackgroundColor="{StaticResource UiBorder}" VerticalOptions="Center">
-                                    <Image Source="{Binding image}" Aspect="AspectFill" />
-                                </Border>
-                                <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
-                                    <Label Text="{Binding name}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
-                                    <Label Text="{Binding quantity, StringFormat='Stock : {0}'}" Style="{StaticResource UiBody}" />
-                                    <Label Text="{Binding price, StringFormat='Prix : {0}', Converter={StaticResource CurrencyConverter}}"
-                                           FontFamily="InterSemiBold" FontSize="14" TextColor="{DynamicResource ThemePrimary}" LineBreakMode="TailTruncation" />
-                                </VerticalStackLayout>
-                            </Grid>
-                        </components:UiCard>
+                        <!-- Fond opaque : le rouge de la suppression ne doit pas apparaître dans les coins arrondis au repos -->
+                        <Grid BackgroundColor="{StaticResource UiBackground}">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.ItemTappedProductsVariants, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                    <components:UiThumb Grid.Column="0" Source="{Binding image}" Icon="M20 12l-8 8-9-9V3h8l9 9zM7.5 7.5h.01" />
+                                    <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
+                                        <Label Text="{Binding name}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
+                                        <Label Text="{Binding quantity, StringFormat='Stock : {0}'}" Style="{StaticResource UiBody}" />
+                                        <Label Text="{Binding price, StringFormat='Prix : {0}', Converter={StaticResource CurrencyConverter}}"
+                                               FontFamily="InterSemiBold" FontSize="14" TextColor="{DynamicResource ThemePrimary}" LineBreakMode="TailTruncation" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </components:UiCard>
+                        </Grid>
                     </SwipeView>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

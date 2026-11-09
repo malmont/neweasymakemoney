@@ -46,6 +46,9 @@ namespace Easymakemoney.ViewModels.Dashboard
             set { _commandImage = value; OnPropertyChanged(nameof(CommandImage)); }
         }
 
+        [ObservableProperty]
+        private string? commandName;
+
 
         public async Task GetDashboardCommandAsync(int CommandId)
         {
@@ -110,6 +113,7 @@ namespace Easymakemoney.ViewModels.Dashboard
                     {
                         this.CommandId = command.id;
                         this.CommandImage = command.Photo;
+                        this.CommandName = command.Name;
                         await this.GetDashboardCommandAsync(command.id);
                     }
                 });

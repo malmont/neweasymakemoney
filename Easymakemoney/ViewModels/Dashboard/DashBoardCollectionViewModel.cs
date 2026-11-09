@@ -64,6 +64,9 @@ namespace Easymakemoney.ViewModels.Dashboard
             get => _collectionImage;
             set { _collectionImage = value; OnPropertyChanged(nameof(CollectionImage)); }
         }
+
+        [ObservableProperty]
+        private string? collectionName;
          [RelayCommand]
         public async Task CloseCollection()
         {
@@ -125,6 +128,7 @@ namespace Easymakemoney.ViewModels.Dashboard
                     {
                         this.CollectionId = collection.id;
                         this.CollectionImage = collection.Photo;
+                        this.CollectionName = collection.Name;
                         this.IsClosed = collection.IsClosed;
                         await this.GetDashBoardCollectionAsync(collection.id);
                         IsClosedVisible=true;
