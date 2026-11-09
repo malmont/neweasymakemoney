@@ -48,6 +48,10 @@ pose toujours `purchasePrice`, donc elle changerait les chiffres de toutes les c
   (colonne nullable) et l'unité convertie ;
 - uniquement des ajouts : routes et formats existants intacts, migration sans réécriture des données ;
 - test prouvant que le tableau de bord d'une commande existante rend les mêmes valeurs avant et après.
+- **conception retenue par le backend** : colonne nullable `product.commande_cost_cents`, posée seulement par `rattacher` (depuis `purchasePrice` en unités monétaires, converti en centimes ; à défaut `product.price`), et lecture `commande_cost_cents ?? price`. Elle vaut `null` pour tout l'existant, donc aucun chiffre ne bouge ;
+- **le rattachement ne doit jamais recalculer le prix de vente** : `Product::setPurchasePrice` recalcule `price`, donc la route n'écrit que `commande`, `commande_cost_cents` et, s'il est donné, `quantity` ;
+- **`purchasePrice` du corps est en centimes**, convention de la plateforme ;
+- **règle du propriétaire** : si une évolution est trop complexe à faire cohabiter avec un autre projet, on crée un endpoint dédié plutôt que de modifier l'existant.
 
 ## Côté application (première analyse)
 

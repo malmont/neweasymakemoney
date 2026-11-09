@@ -86,6 +86,25 @@ Aujourd'hui, toute erreur du serveur disparaît : `HttpService` rend `default`, 
 - `BottomSheetPopupViewModel.Save` : une erreur affiche le message et **laisse le popup ouvert**, avec les données saisies.
 - Corrige les 3 CS8602 de `LoadingPageViewModel.cs`.
 
+### 4 bis. Faits du backend reçus le 09/11/2026 (à intégrer)
+
+Confirmés par la session « appli degestion backend », sur `origin/dev` :
+
+- **`DELETE commandes/{commandId}/frais-de-port`** répond **204, sans corps**, même si la commande n'a aucun frais : l'appel est
+  idempotent. 404 seulement si la commande n'existe pas. `frais-de-port/{id}` n'existe pas.
+- **Une commande a au plus un frais de port.** `GET commandes/{id}/frais-de-port` rend un seul objet, et **404
+  `{"error": "No shipping cost…"}` quand il n'y en a pas : ce n'est pas une erreur**. Avec `ApiException`, ce cas doit donner
+  « aucun frais de port », sans message d'erreur.
+- **`POST` sur une commande qui a déjà un frais** échoue en 500 (contrainte unique), et répond 201 sans l'objet créé. L'écran ne
+  doit pas proposer l'ajout quand un frais existe : changer de frais, c'est supprimer puis créer.
+- **Bug existant à corriger, prix d'achat des produits** : la plateforme stocke `purchase_price` et `price` **en centimes**, et
+  `Product::setPurchasePrice` recalcule le prix de vente. Or `ProductFormModel` envoie le prix **tel que saisi**, et
+  `HttpService.PostMultipartAsyncWithAuth` utilise `data.purchasePrice.ToString()`, qui dépend de la langue de l'appareil
+  (« 12,5 » sur un appareil français : erreur 500). Corrige les deux :
+  - envoyer un **entier en centimes** (`Math.Round(valeur * 100)`), avec `CultureInfo.InvariantCulture` ;
+  - vérifier où le prix d'achat est relu et affiché, et diviser par 100 à cet endroit. Liste ces endroits dans le plan ;
+  - **ne pas toucher au prix des frais de port** : le formulaire envoie déjà `Prix * 100`.
+
 ### 5. Vérification
 
 - Compiler Android (`-t:Rebuild`), compter les avertissements, et contrôler l'encodage contre `feature/lot-2-session`.
