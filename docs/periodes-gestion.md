@@ -65,3 +65,33 @@ Contraintes : ajouts uniquement, aucune régression pour les autres applications
 4. **Résultat d'une période** : ventes, coût des articles vendus, frais, montant investi, en devise du site (taux de chaque commande, lot G6).
 5. **Reprise d'historique** : simulation, application, annulation, et état « coût inconnu ». Aujourd'hui, le coût retombe sur `commande_cost_cents ?? purchasePrice ?? price` : un article sans coût est compté à son prix de vente, ce qui fausserait la marge.
 6. **À confirmer** : comment les locations et les abonnements sont enregistrés aujourd'hui, et de quelles dates et montants on dispose.
+
+## Contrat du lot P1, amendé (backend, 09-10/11/2026, annoncé avant le code)
+
+**Modèle :** une période est une collection avec `kind: "period"` (les autres : `"manual"`). Champs ajoutés sur chaque collection : `kind`, `periodKey`, `status` (`open` ou `closed`), `closedAt`, `reopenedAt` ; `isClosed` reste présent.
+
+**Réglage :** clé `gestion.periods` de `GET/PUT /api/site/features` : `quarterly` (défaut), `semester`, `monthly`. Un changement prend effet à la fin de la période en cours, sans chevauchement.
+
+**Création à la lecture :** toutes les périodes manquantes sont créées, depuis la plus ancienne activité du site (24 mois au plus) jusqu'à la suivante. Création idempotente, index unique sur `period_key`.
+
+**État :** `open` tant qu'aujourd'hui ≤ fin + 15 jours, en jours civils dans le fuseau du site, ou après réouverture. Chiffres figés à la première lecture d'une période fermée.
+
+| Route | Effet |
+|---|---|
+| `GET /api/periodes`, `GET /api/periodes/courante` | Liste (filtres G5) et période en cours |
+| `GET /api/collections?kind=manual\|period` | Sans `kind` : les deux, chacune avec son `kind` |
+| `POST /api/commandes` | `{budget, date, name, fournisseur{id}, exchangeRate?}` : 201, classée par sa date |
+| `POST /api/notes-de-frais` | `{description, montant, date, typeNoteDeFraisId}` : 201, classée par sa date |
+| `PATCH /api/periodes/{id}` | `{budget?}` : 200 ; 409 `PERIOD_CLOSED` |
+| `PATCH /api/collections/{id}` | `{budget?, nomCollection?}` : nom pour une manuelle seulement ; 409 `COLLECTION_CLOSED` |
+| `POST /api/dashboard/collection/{id}/reopen` | 200 ; 409 `NOT_CLOSED` |
+| `POST /api/dashboard/collection/{id}/close` | 409 `ALREADY_CLOSED` si déjà fermée |
+| `GET /api/dashboard/collections-combined?kind=` | `manual` par défaut, jamais les deux ensemble |
+
+**Écritures refusées (409 `PERIOD_CLOSED`, avec `periodId` et `periodKey`) :** création de commande et de note ; `POST` et `DELETE` de `frais-de-port` ; `POST` de `products` et `products/rattacher` ; `DELETE` d'un produit de commande ; `PATCH` et `DELETE` de `commandes/{id}` (date déplacée vers ou depuis une période fermée incluse) ; `PUT` et `DELETE` de `notes-de-frais/{id}`.
+
+**Autres refus :** `DELETE /api/collections/{id}` sur une période : 409 `PERIOD_NOT_DELETABLE`.
+
+**À adapter côté application, après « LIVRÉ » :** traduire `PERIOD_CLOSED` et `PERIOD_NOT_DELETABLE`, libellé « Période », lecture seule si `status = closed`, création de commande et de note par la date, combiné avec `kind=period`, modification du budget.
+
+**À suivre :** P2 (résultat de période, locations et abonnements à part si le propriétaire le confirme) et P3 (reprise d'historique), chacun annoncé avant son code.
