@@ -131,3 +131,13 @@ Tous les montants deviennent des **entiers en centimes**, en entrée et en sorti
 **Compatibilité avec le lot 3 :** rien d'indispensable à changer. Les 2xx sont des succès, le corps des créations n'est plus lu, 204 et le `null` des frais de port sont traités, et les codes d'erreur remontent par `ApiError`. Le message du serveur s'affiche ; à vérifier qu'il est en français pour les nouveaux codes.
 
 **G4 livré le 09/11/2026** (`dev` bd6d1c2d, 888 tests verts), conforme au contrat ci-dessus. Prochaine annonce du backend : jeu de données demo (`app:gestion:seed-demo`), pour tester avec des collections, commandes, frais et notes de frais réels.
+
+## LIVRÉ : G5, le 09/11/2026 (`dev` 6e0c2fe7 ; 892 tests verts ; en production, tous les sites)
+
+- `GET /api/collections?status=open|closed|deleted|all&q=&page=&limit=` et `GET /api/fournisseurs?q=&page=&limit=` : corps inchangé sans `page` ni `limit` ; avec, la page demandée et les en-têtes `X-Total-Count`, `X-Page`, `X-Limit`. `status` invalide : 422.
+- `GET /api/gestion/exports/achats.csv?from=&to=&collectionId=` : CSV séparé par `;`, avec BOM et virgule décimale ; `Content-Disposition: attachment; filename=achats_<from>_<to>.csv` ; 422 `INVALID_DATE` ou `BEFORE_FROM`.
+- API Platform : seule `DELETE /api/commandes/{id}` subsiste (`GET /api/commandes` : 404). L'application n'appelle aucune des routes retirées.
+
+**Données demo enrichies :** 4 collections (2 figées, 2 ouvertes), 8 commandes fournisseurs, 50 produits dont 36 d'exemple, 8 frais de port, 11 notes de frais, 53 commandes clients. Tout en centimes.
+
+**Côté application :** rien d'obligatoire. La pagination, les filtres et l'export restent à brancher dans les écrans.
