@@ -86,6 +86,8 @@ Les captures sont prises sur le téléphone du propriétaire, avec la version du
   - un élément coupé sur le bord droit ;
   - un grand vide dans le bas de l'écran.
 
+**Sur iPhone (simulateur iOS 27.2) :** les boutons et l'en-tête sont identiques. Les barres verticales bleues et l'élément coupé à droite n'y apparaissent pas : ces deux défauts sont propres à Android. La barre de titre est blanche et le menu s'ouvre par un bouton rond.
+
 **Pistes :**
 - un en-tête aux couleurs du site : logo de `app-profile` sur fond neutre, couleur `primaryColor`, sinon le violet ;
 - un titre en français (« Accueil ») et le nom du site ;
@@ -94,6 +96,70 @@ Les captures sont prises sur le téléphone du propriétaire, avec la version du
 - le bouton sans action à retirer ou à définir, après décision du propriétaire ;
 - les barres et l'élément coupé à corriger.
 
+
+### Écran 2 : « Gestions », menu des listes (`Views/Lists/AllListsPage.xaml`)
+
+**Constats (iPhone, iOS 27.2) :**
+- **Titre technique** : « AllListsPage ».
+- **Le logo prend environ un tiers de l'écran**, plus grand encore que sur l'accueil.
+- **Texte doré sur bouton bleu pétrole** : contraste très faible, c'est l'écran le moins lisible jusqu'ici.
+- **Boutons d'un autre style que l'accueil** : pleins et sans icône, alors que l'accueil a des cartes blanches avec
+  icône. Les deux écrans ne semblent pas appartenir à la même application.
+- **Grille irrégulière** : 2 × 2, puis un bouton « SIMULATEUR » seul, de largeur différente.
+- **Texte en majuscules**, et moitié basse de l'écran vide.
+
+**Pistes :**
+- le même composant de tuile qu'à l'accueil, avec une icône par liste ;
+- un en-tête réduit, ou le logo seulement sur l'accueil ;
+- le titre « Gestion » ;
+- une couleur de texte qui passe les seuils de contraste.
+
+### Écran 3 : listes (collections, fournisseurs)
+
+**Constats (iPhone, iOS 27.2) :**
+- **Le logo occupe l'écran** et le titre reste technique (« ListNewCollectionPage »).
+- **Liste vide sans aucun message** sur le site demo. On ne peut pas savoir s'il n'y a pas de données ou si l'appel a
+  échoué : `HttpService` rend une liste vide dans les deux cas (corrigé au lot 3).
+- **Bouton « + » en dégradé brillant**, au style daté.
+- **Listes remplies pas encore vues** : le site demo n'en montre aucune, et l'audit n'y crée rien.
+
+### Écran 4 : formulaire d'ajout (popup, collection)
+
+**Constats :**
+- L'ouverture, l'apparence et la fermeture du popup v2 fonctionnent (contrôle du lot 0).
+- **Tout est en anglais** : « Collection Name », « Budget », « Start Date », « End Date », « Save », « Cancel ».
+- **Interrupteur rouge sans libellé**, dont on ignore la signification.
+- **Champs à bordure noire épaisse** et dates dans des cases trop hautes.
+- « Save » et « Cancel » sont de simples liens.
+
+### Écran 5 : tableau de bord (`DashBoardCollectionPage`)
+
+**Constats :**
+- **Grands blocs dorés** à texte noir, qui écrasent les valeurs.
+- **Un carré noir et un carré doré vides** : les valeurs s'affichent mal quand il n'y a pas de collection.
+- **« COLLECTIO / N » coupé** sur deux lignes, faute « Coeeficient moyen », bouton « Listes » bleu sur doré.
+- Barre d'outils au-dessus du logo, qui repousse le contenu vers le bas.
+
+### Écran 6 : statistiques (`StatistiquesPage`, `ChiffresAffairePage`)
+
+**Constats :**
+- **La grille de tuiles avec icônes est le meilleur écran** : c'est le modèle à généraliser, avec des icônes
+  d'un seul style.
+- **Détail d'une statistique** : le logo et la barre « Période » prennent la moitié de l'écran.
+- **Montants en « $ » écrits en dur** : la devise doit être celle du site.
+- **Ombres floues sur le texte** dans le tableau journalier, et or sur gris peu lisible.
+
+### Synthèse
+
+| Problème | Présent sur | Remède proposé |
+|---|---|---|
+| Titres techniques | tous les écrans | titres français courts |
+| Logo surdimensionné, en dur | tous les écrans | identité `app-profile`, en-tête compact |
+| Or sur blanc ou sur bleu | tous les écrans | couleur principale du site, contraste vérifié |
+| Trois styles de boutons | accueil, listes, tableau de bord | un seul composant de tuile et de bouton |
+| Anglais | accueil, formulaires | français partout |
+| Écrans vides sans message | listes, tableau de bord | états vide, chargement et erreur |
+| Boutons sans action | « ITEMS CALCULTOR », « SIMULATEUR » | décision du propriétaire |
 
 ## 3. Proposition de charte
 
