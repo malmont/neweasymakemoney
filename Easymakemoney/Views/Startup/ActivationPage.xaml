@@ -4,120 +4,144 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
              xmlns:vm="clr-namespace:Easymakemoney.ViewModels.Startup"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
              x:Class="Easymakemoney.Views.Startup.ActivationPage"
              x:DataType="vm:ActivationPageViewModel"
+             Style="{StaticResource UiPage}"
              Shell.NavBarIsVisible="False"
              Title="Choix du site">
 
     <ContentPage.Resources>
         <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DataTemplates/CollectionFormTemplate.xaml" />
+            </ResourceDictionary.MergedDictionaries>
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
     <ScrollView>
-        <VerticalStackLayout Spacing="20" Padding="30,40" VerticalOptions="Center">
+        <VerticalStackLayout Padding="16,24" Spacing="16" VerticalOptions="Center">
 
-            <Image Source="logo.png" HeightRequest="120" WidthRequest="120" HorizontalOptions="Center" />
-
-            <VerticalStackLayout Spacing="5">
-                <Label Text="Configuration du site" FontSize="24" FontAttributes="Bold" TextColor="#512BD4" HorizontalTextAlignment="Center" />
+            <!-- Titre neutre : aucun site n'est connu avant l'activation. -->
+            <VerticalStackLayout Spacing="6" Margin="0,0,0,4">
+                <Label Text="Configuration du site" Style="{StaticResource UiH1}" HorizontalTextAlignment="Center" />
                 <Label Text="Activez votre appareil ou saisissez le code de votre site pour commencer."
-                       FontSize="14" TextColor="Gray" HorizontalTextAlignment="Center" />
+                       Style="{StaticResource UiBody}" FontSize="14" HorizontalTextAlignment="Center" />
             </VerticalStackLayout>
 
             <!-- Message d'erreur -->
             <Border IsVisible="{Binding HasErrorMessage}"
                     BackgroundColor="#FDE8E8"
-                    Stroke="#F87171"
-                    StrokeShape="RoundRectangle 8"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 12"
                     Padding="12">
-                <Label Text="{Binding ErrorMessage}" TextColor="#B91C1C" FontSize="14" HorizontalTextAlignment="Center" />
+                <Label Text="{Binding ErrorMessage}" FontFamily="Inter" FontSize="14" TextColor="#B91C1C" HorizontalTextAlignment="Center" />
             </Border>
 
             <!-- Indicateur d'activité -->
-            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#512BD4" HeightRequest="30" WidthRequest="30" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" HeightRequest="30" WidthRequest="30" />
 
             <!-- Carte de confirmation ("C'est bien ça ?") -->
-            <Border IsVisible="{Binding IsConfirming}"
-                    Stroke="#512BD4"
-                    StrokeShape="RoundRectangle 12"
-                    BackgroundColor="#F5F3FF"
-                    Padding="20">
-                <VerticalStackLayout Spacing="15">
-                    <Label Text="Confirmation du site" FontSize="18" FontAttributes="Bold" TextColor="#512BD4" HorizontalTextAlignment="Center" />
-                    <Label Text="{Binding CandidateTenant.Name}" FontSize="20" FontAttributes="Bold" TextColor="#1F2937" HorizontalTextAlignment="Center" />
-                    <Label Text="C'est bien ça ?" FontSize="16" TextColor="#4B5563" HorizontalTextAlignment="Center" />
+            <components:UiCard Style="{StaticResource UiCard}" IsVisible="{Binding IsConfirming}">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="Confirmation du site" Style="{StaticResource UiTitle}" HorizontalTextAlignment="Center" />
+                    <Label Text="{Binding CandidateTenant.Name}" FontFamily="InterBold" FontSize="20" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="Center" />
+                    <Label Text="C'est bien ça ?" Style="{StaticResource UiBody}" FontSize="15" HorizontalTextAlignment="Center" />
 
-                    <Grid ColumnDefinitions="*,*" ColumnSpacing="15" Margin="0,10,0,0">
-                        <Button Grid.Column="0" Text="Non"
-                                Command="{Binding CancelConfirmationCommand}"
-                                BackgroundColor="#9CA3AF"
-                                TextColor="White"
-                                CornerRadius="8"
-                                IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
-                        <Button Grid.Column="1" Text="Oui"
-                                Command="{Binding ConfirmTenantCommand}"
-                                BackgroundColor="#512BD4"
-                                TextColor="White"
-                                CornerRadius="8"
-                                IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12" Margin="0,8,0,0">
+                        <components:UiCard Grid.Column="0"
+                                           Radius="{DynamicResource ThemeButtonRadius}"
+                                           BackgroundColor="{StaticResource UiSurface}"
+                                           Stroke="{StaticResource UiBorder}"
+                                           StrokeThickness="1"
+                                           Padding="0">
+                            <Button Text="Non"
+                                    Command="{Binding CancelConfirmationCommand}"
+                                    BackgroundColor="Transparent"
+                                    TextColor="{StaticResource UiTextPrimary}"
+                                    FontFamily="InterSemiBold"
+                                    FontSize="16"
+                                    HeightRequest="52"
+                                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+                        </components:UiCard>
+                        <components:UiCard Grid.Column="1"
+                                           Radius="{DynamicResource ThemeButtonRadius}"
+                                           BackgroundColor="{DynamicResource ThemePrimary}"
+                                           StrokeThickness="0"
+                                           Padding="0">
+                            <Button Text="Oui"
+                                    Command="{Binding ConfirmTenantCommand}"
+                                    BackgroundColor="Transparent"
+                                    TextColor="{DynamicResource ThemeOnPrimary}"
+                                    FontFamily="InterSemiBold"
+                                    FontSize="16"
+                                    HeightRequest="52"
+                                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+                        </components:UiCard>
                     </Grid>
                 </VerticalStackLayout>
-            </Border>
+            </components:UiCard>
 
             <!-- Formulaire de saisie (masqué pendant la confirmation) -->
-            <VerticalStackLayout IsVisible="{Binding IsConfirming, Converter={StaticResource InvertedBoolConverter}}" Spacing="25">
+            <VerticalStackLayout IsVisible="{Binding IsConfirming, Converter={StaticResource InvertedBoolConverter}}" Spacing="16">
 
                 <!-- Zone 1 : Clé d'activation -->
-                <Border Stroke="#E5E7EB"
-                        StrokeShape="RoundRectangle 12"
-                        BackgroundColor="White"
-                        Padding="15">
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="Clé d'activation" FontSize="16" FontAttributes="Bold" TextColor="#374151" />
-                        <Label Text="Format : IZ-ADM-XXXX-XXXX-XXXX" FontSize="12" TextColor="Gray" />
-                        <Border HeightRequest="45"
-                                Padding="10,0"
-                                Stroke="#D1D5DB"
-                                StrokeShape="RoundRectangle 8">
-                            <handlers:BorderlessEntry Placeholder="IZ-ADM-..."
-                                                      Text="{Binding KeyInput}"
-                                                      VerticalOptions="Center" />
-                        </Border>
-                        <Button Text="Valider la clé"
-                                Command="{Binding ValidateKeyCommand}"
-                                BackgroundColor="#512BD4"
-                                TextColor="White"
-                                CornerRadius="8"
-                                IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+                <components:UiCard Style="{StaticResource UiCard}">
+                    <VerticalStackLayout Spacing="12">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Clé d'activation" Style="{StaticResource FormLabel}" />
+                            <Label Text="Format : IZ-ADM-XXXX-XXXX-XXXX" Style="{StaticResource UiBody}" />
+                            <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                                <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                                          Placeholder="IZ-ADM-..."
+                                                          Text="{Binding KeyInput}" />
+                            </Border>
+                        </VerticalStackLayout>
+                        <!-- Button.CornerRadius est un int : le rayon du thème (double) passe par UiCard. -->
+                        <components:UiCard Radius="{DynamicResource ThemeButtonRadius}"
+                                           BackgroundColor="{DynamicResource ThemePrimary}"
+                                           StrokeThickness="0"
+                                           Padding="0">
+                            <Button Text="Valider la clé"
+                                    Command="{Binding ValidateKeyCommand}"
+                                    BackgroundColor="Transparent"
+                                    TextColor="{DynamicResource ThemeOnPrimary}"
+                                    FontFamily="InterSemiBold"
+                                    FontSize="16"
+                                    HeightRequest="52"
+                                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+                        </components:UiCard>
                     </VerticalStackLayout>
-                </Border>
+                </components:UiCard>
 
                 <!-- Zone 2 : Code du site (bien visible pour demo / code court) -->
-                <Border Stroke="#E5E7EB"
-                        StrokeShape="RoundRectangle 12"
-                        BackgroundColor="White"
-                        Padding="15">
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="Code du site" FontSize="16" FontAttributes="Bold" TextColor="#374151" />
-                        <Label Text="Code de votre site (ex. ABC-D4F) ou domaine" FontSize="12" TextColor="Gray" />
-                        <Border HeightRequest="45"
-                                Padding="10,0"
-                                Stroke="#D1D5DB"
-                                StrokeShape="RoundRectangle 8">
-                            <handlers:BorderlessEntry Placeholder="ex. ABC-D4F"
-                                                      Text="{Binding SiteCodeInput}"
-                                                      VerticalOptions="Center" />
-                        </Border>
-                        <Button Text="Valider le code"
-                                Command="{Binding ValidateSiteCodeCommand}"
-                                BackgroundColor="#512BD4"
-                                TextColor="White"
-                                CornerRadius="8"
-                                IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+                <components:UiCard Style="{StaticResource UiCard}">
+                    <VerticalStackLayout Spacing="12">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Code du site" Style="{StaticResource FormLabel}" />
+                            <Label Text="Code de votre site (ex. ABC-D4F) ou domaine" Style="{StaticResource UiBody}" />
+                            <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                                <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                                          Placeholder="ex. ABC-D4F"
+                                                          Text="{Binding SiteCodeInput}" />
+                            </Border>
+                        </VerticalStackLayout>
+                        <components:UiCard Radius="{DynamicResource ThemeButtonRadius}"
+                                           BackgroundColor="{DynamicResource ThemePrimary}"
+                                           StrokeThickness="0"
+                                           Padding="0">
+                            <Button Text="Valider le code"
+                                    Command="{Binding ValidateSiteCodeCommand}"
+                                    BackgroundColor="Transparent"
+                                    TextColor="{DynamicResource ThemeOnPrimary}"
+                                    FontFamily="InterSemiBold"
+                                    FontSize="16"
+                                    HeightRequest="52"
+                                    IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+                        </components:UiCard>
                     </VerticalStackLayout>
-                </Border>
+                </components:UiCard>
 
             </VerticalStackLayout>
 

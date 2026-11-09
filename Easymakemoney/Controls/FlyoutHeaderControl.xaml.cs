@@ -13,7 +13,7 @@ public partial class FlyoutHeaderControl : StackLayout
 	{
 		if (user != null)
 		{
-			lblUserRole.Text = "ROLE_ADMIN";
+			lblUserRole.Text = "Administrateur";
 			lblUserEmail.Text = user.Email;
 		}
 	}

@@ -8,6 +8,7 @@
     xmlns:Models="clr-namespace:Easymakemoney.Models"
     xmlns:views="clr-namespace:Easymakemoney.Views.Dasboard"
     Shell.TabBarIsVisible="False"
+    FlyoutBackgroundColor="{StaticResource UiSurface}"
     xmlns:local="clr-namespace:Easymakemoney">
 
      <ShellContent FlyoutItemIsVisible="False" Shell.FlyoutBehavior="Disabled"
@@ -30,17 +31,17 @@
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems" Route="DashboardPage">
 
             <ShellContent
-            Title="Dashboard" Icon="{x:Static Models:Icons.Dashboard}"
+            Title="Accueil" Icon="{x:Static Models:Icons.Dashboard}"
             ContentTemplate="{DataTemplate DashboardPages:DashboardPage}"/>
           <ShellContent
-            Title="Contact US" Icon="{x:Static Models:Icons.ContactUs}"
+            Title="Contact" Icon="{x:Static Models:Icons.ContactUs}"
             ContentTemplate="{DataTemplate DashboardPages:DashboardPage}"/>
          <ShellContent
-            Title="About US" Icon="{x:Static Models:Icons.AboutUs}"
+            Title="À propos" Icon="{x:Static Models:Icons.AboutUs}"
             ContentTemplate="{DataTemplate DashboardPages:DashboardPage}"/>
 
          <ShellContent
-            Title="People" Icon="{x:Static Models:Icons.People}"
+            Title="Équipe" Icon="{x:Static Models:Icons.People}"
             ContentTemplate="{DataTemplate DashboardPages:DashboardPage}"/>
 
      </FlyoutItem>
@@ -48,10 +49,11 @@
 
 
     <Shell.FlyoutFooter >
-        <StackLayout Padding="20" HorizontalOptions="Center" Spacing="10">
-            <Button Text="Changer de site" Command="{Binding ChangeSiteCommand}" BackgroundColor="#512BD4" TextColor="White"/>
-            <Button Text="Se déconnecter" Command="{Binding SignOutCommand}"/>
-        </StackLayout>
+        <VerticalStackLayout Padding="16,8,16,20" Spacing="2" BackgroundColor="{StaticResource UiSurface}">
+            <BoxView HeightRequest="1" Color="{StaticResource UiBorder}" Margin="0,0,0,8" />
+            <Button Text="Changer de site" Command="{Binding ChangeSiteCommand}" BackgroundColor="Transparent" TextColor="{DynamicResource ThemePrimary}" FontFamily="InterMedium" FontSize="15" MinimumHeightRequest="44" />
+            <Button Text="Se déconnecter" Command="{Binding SignOutCommand}" BackgroundColor="Transparent" TextColor="#B91C1C" FontFamily="InterMedium" FontSize="15" MinimumHeightRequest="44" />
+        </VerticalStackLayout>
     </Shell.FlyoutFooter>
 
 </Shell>
