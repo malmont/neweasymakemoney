@@ -34,14 +34,20 @@ m'a délégué le choix, et le contrat ci-dessous est transmis au backend, à ch
 
 **Charge backend estimée : une demi-journée.**
 
-## Point à trancher : le calcul du budget
+## Calcul du budget : aucune régression (corrigé le 09/11/2026)
 
-`CommandeDashboardService` calcule aujourd'hui `usedBudget = Σ product.price × product.quantity`, plus les frais de
-port. Pour un produit de boutique, `price` est le **prix de vente**. Rattacher un tel produit gonflerait donc le budget
-utilisé. Le backend propose de prendre `purchasePrice` quand il est renseigné, sinon `price`.
+`CommandeDashboardService` calcule `usedBudget = Σ product.price × product.quantity`, plus les frais de port. Pour un produit
+de boutique, `price` est le **prix de vente**, et le rattacher gonflerait le budget utilisé.
 
-**À vérifier avant de coder :** `price` est en centimes, tandis que `purchasePrice` est un nombre décimal. Le backend doit
-confirmer l'unité de `purchasePrice` et convertir si nécessaire, pour que la somme reste cohérente.
+La règle d'abord envisagée (« `purchasePrice` s'il est renseigné, sinon `price` ») est **écartée** : `createProductByCommande`
+pose toujours `purchasePrice`, donc elle changerait les chiffres de toutes les commandes existantes.
+
+**Exigence du propriétaire : aucune régression sur les autres services et projets.**
+- le calcul ne change pour aucun produit existant ni pour aucun produit créé dans une commande ;
+- seuls les produits rattachés par la nouvelle route peuvent être comptés sur `purchasePrice`, avec une marque additive
+  (colonne nullable) et l'unité convertie ;
+- uniquement des ajouts : routes et formats existants intacts, migration sans réécriture des données ;
+- test prouvant que le tableau de bord d'une commande existante rend les mêmes valeurs avant et après.
 
 ## Côté application (première analyse)
 
