@@ -73,11 +73,10 @@ namespace Easymakemoney.ViewModels.Dashboard
             IsBusy = true;
             try
             {
-                var result = await _getCollectionCloseUseCase.GetCollectionClose(CollectionId);
-                if (result != null)
-                {
-                    await _dialogService.ShowInfoAsync(result);
-                }
+                await _getCollectionCloseUseCase.CloseCollectionAsync(CollectionId);
+                await _dialogService.ShowInfoAsync("Collection clôturée");
+                await GetDashBoardCollectionAsync(CollectionId);
+                IsClosed = true;
             }
             catch (Exception ex)
             {

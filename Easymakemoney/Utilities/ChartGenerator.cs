@@ -25,7 +25,7 @@ namespace Easymakemoney.Utilities
                 entries.Add(new ChartEntry(Convert.ToSingle(data.Data2))
                 {
                     Label = label,
-                    ValueLabel = (data.Data2 / 100).ToString("C"),
+                    ValueLabel = SiteCurrency.FormatCents(data.Data2, CultureInfo.CurrentCulture),
                     Color = color
                 });
             }

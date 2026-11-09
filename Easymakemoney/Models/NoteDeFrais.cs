@@ -6,7 +6,7 @@ namespace Easymakemoney.Models
         public string name { get; set; }
         public string description { get; set; }
         public string? imageNdf { get; set; }
-        public double? montant { get; set; }
+        public long? montant { get; set; }
         public string date { get; set; }
         public int? typeNoteDeFraisId { get; set; }
 

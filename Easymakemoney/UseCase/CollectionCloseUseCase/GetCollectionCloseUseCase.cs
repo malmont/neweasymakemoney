@@ -9,9 +9,9 @@ namespace Easymakemoney.UseCase.CollectionCloseUseCase
             _collectionCloseService = collectionCloseService;
         }
 
-        public async Task<string> GetCollectionClose(int CollectionId)
+        public async Task<bool> CloseCollectionAsync(int collectionId)
         {
-            return await _collectionCloseService.GetCollectionClose(CollectionId);
+            return await _collectionCloseService.CloseCollectionAsync(collectionId);
         }
     }
 }

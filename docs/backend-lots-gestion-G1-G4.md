@@ -107,3 +107,27 @@ Tous les montants deviennent des **entiers en centimes**, en entrée et en sorti
 - `POST dashboard/commande/{id}/close` et `dashboard/collection/{id}/close` : 200 avec l'objet du tableau de bord figé ; déjà fermé → 409 `ALREADY_CLOSED`.
 
 **À adapter côté application, en priorité :** `CollectionCloseService` lit encore une chaîne (voir le point de vigilance de G2).
+
+## LIVRÉ : G3, le 09/11/2026 (`dev` 334f41e9 ; 888 tests verts)
+
+- `month` est un **entier JSON 1..12** dans `chiffre-affaires`, `nombre-commandes`, `panier-moyen`, `carrier/statistics`, `taxes/monthly`, `frais/total` ; `monthlyXForCurrentYear` ne contient que les mois écoulés.
+- `carrier/statistics` : `shippingAmount` ajouté (même valeur que `carrier_count`).
+- `frais/total` fonctionne (il renvoyait une erreur 500).
+- `chiffre-affaires?startDate=&endDate=` : dates invalides → 400 `INVALID_DATE`.
+- `?locale=en` sur `commandes/{id}/products`, `type-fournisseurs`, `type-note-de-frais`.
+- Types de note de frais désormais remplis sur tous les sites (ils étaient vides : aucune note de frais ne pouvait être saisie).
+- Les messages de succès ne disparaîtront qu'à G4.
+
+**À adapter côté application :** `Month` est une chaîne dans les modèles. Un entier arrive donc affiché « 3 » : il faut l'afficher en nom de mois français. À confier à Gemini après l'adaptation G1-G2.
+
+## G4 : contrat exact annoncé avant livraison (09/11/2026)
+
+- Créations : 201 avec l'objet créé (`createcollections`, `…/commandes`, `…/frais-de-port`, `…/notes-de-frais`, `fournisseurs`, `transporteurs`) ; plus aucun `{"success":…}` ni `{"message":…}`.
+- Suppressions : 204 sans corps partout. `DELETE collections/{id}` devient logique ; `DELETE commandes/{id}` détache ses produits.
+- `GET commandes/{id}/frais-de-port` sans frais : 200 avec le corps JSON `null`.
+- Erreurs : 404 `FOURNISSEUR_NOT_FOUND`, `TYPE_FOURNISSEUR_NOT_FOUND`, `TYPE_NOTE_DE_FRAIS_NOT_FOUND`, `TRANSPORTEUR_NOT_FOUND`, `STYLE_NOT_FOUND`, `CATEGORY_NOT_FOUND` ; 409 `SHIPPING_COST_ALREADY_SET`, `COMMANDE_CLOSED`, `COLLECTION_CLOSED`, `FOURNISSEUR_IN_USE`, `TRANSPORTEUR_IN_USE` ; 400 `INVALID_JSON` ; 422 `VALIDATION_FAILED`.
+- `userId` ignoré sur `createcollections` ; `quantity` facultative sur `POST commandes/{id}/products` ; `ROLE_ADMIN` sur `transporteurs`, `type-*` et `PUT`/`DELETE notes-de-frais/{id}`.
+
+**Compatibilité avec le lot 3 :** rien d'indispensable à changer. Les 2xx sont des succès, le corps des créations n'est plus lu, 204 et le `null` des frais de port sont traités, et les codes d'erreur remontent par `ApiError`. Le message du serveur s'affiche ; à vérifier qu'il est en français pour les nouveaux codes.
+
+**G4 livré le 09/11/2026** (`dev` bd6d1c2d, 888 tests verts), conforme au contrat ci-dessus. Prochaine annonce du backend : jeu de données demo (`app:gestion:seed-demo`), pour tester avec des collections, commandes, frais et notes de frais réels.

@@ -18,7 +18,7 @@ namespace Easymakemoney.UseCase.ListFraisDePortUseCase
                 tracknumber = FraisDePortForm.Tracknumber,
                 image = FraisDePortForm.Image,
                 transporteur= FraisDePortForm.SelectedTransporteur,
-                price = FraisDePortForm.Prix *100,
+                price = (long)Math.Round((FraisDePortForm.Prix ?? 0) * 100),
             };
             return await _createFraisDePortUseCase.ExecuteAsync(newFraisDePort, commandId);
         }

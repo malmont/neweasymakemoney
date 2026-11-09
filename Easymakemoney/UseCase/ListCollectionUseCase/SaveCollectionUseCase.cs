@@ -22,7 +22,7 @@ public class SaveCollectionUseCase
         var userId = user?.Id ?? 0;
         var newCollection = new ListCollection
         {
-            budgetCollection = (collectionForm.BudgetCollection ?? 0) * 100,
+            budgetCollection = (long)Math.Round((collectionForm.BudgetCollection ?? 0) * 100),
             startDateCollection = collectionForm.StartDateCollection.ToString("yyyy-MM-ddTHH:mm:ssZ"),
             endDateCollection = collectionForm.EndDateCollection.ToString("yyyy-MM-ddTHH:mm:ssZ"),
             del = collectionForm.Del,
