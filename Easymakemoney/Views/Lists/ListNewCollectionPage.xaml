@@ -9,7 +9,7 @@
              x:Class="Easymakemoney.Views.Lists.ListNewCollectionPage"
              x:Name="Page"
              Style="{StaticResource UiPage}"
-             Title="Collections">
+             Title="Périodes">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -19,13 +19,13 @@
     </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,*">
-        <components:AppHeader Title="Collections" />
+        <components:AppHeader Title="Périodes" />
 
         <CollectionView Grid.Row="1" ItemsSource="{Binding ListCollections}" SelectionMode="None" Margin="16,8,16,0">
             <CollectionView.EmptyView>
                 <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="10" Padding="24,80">
-                    <Label Text="Aucune collection" FontFamily="InterBold" FontSize="20" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="Center" />
-                    <Label Text="Touchez + pour créer votre première collection." Style="{StaticResource UiBody}" FontSize="15" HorizontalTextAlignment="Center" />
+                    <Label Text="Aucune période" FontFamily="InterBold" FontSize="20" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="Center" />
+                    <Label Text="Elles apparaissent automatiquement à leur début." Style="{StaticResource UiBody}" FontSize="15" HorizontalTextAlignment="Center" />
                 </VerticalStackLayout>
             </CollectionView.EmptyView>
             <CollectionView.ItemTemplate>
@@ -33,7 +33,7 @@
                     <SwipeView Margin="0,0,0,10">
                         <SwipeView.RightItems>
                             <SwipeItems Mode="Reveal">
-                                <SwipeItem Text="Supprimer" BackgroundColor="#B91C1C"
+                                <SwipeItem Text="Supprimer" BackgroundColor="#B91C1C" IsVisible="{Binding CanDelete}"
                                            Command="{Binding Path=BindingContext.DeleteCollectionCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
                                            CommandParameter="{Binding .}" />
                             </SwipeItems>
@@ -58,6 +58,7 @@
                                                 </FormattedString>
                                             </Label.FormattedText>
                                         </Label>
+                                        <Label Text="{Binding StatusText}" Style="{StaticResource UiBody}" FontFamily="InterSemiBold" />
                                         <Label Text="{Binding budgetCollection, StringFormat='Budget : {0}', Converter={StaticResource CurrencyConverter}}"
                                                FontFamily="InterSemiBold" FontSize="14" TextColor="{DynamicResource ThemePrimary}" />
                                     </VerticalStackLayout>
@@ -69,14 +70,5 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <Border Grid.Row="1" WidthRequest="60" HeightRequest="60" StrokeThickness="0" StrokeShape="RoundRectangle 18"
-                BackgroundColor="{DynamicResource ThemePrimary}" HorizontalOptions="End" VerticalOptions="End" Margin="16,0,16,28"
-                SemanticProperties.Description="Ajouter une collection">
-            <Border.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding ShowBottomSheetCommand}" />
-            </Border.GestureRecognizers>
-            <Path Data="M12 5v14M5 12h14" Stroke="{DynamicResource ThemeOnPrimary}" StrokeThickness="2.4" StrokeLineCap="Round"
-                  WidthRequest="24" HeightRequest="24" Aspect="None" HorizontalOptions="Center" VerticalOptions="Center" />
-        </Border>
     </Grid>
 </ContentPage>

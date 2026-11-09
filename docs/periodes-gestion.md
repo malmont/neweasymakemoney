@@ -95,3 +95,20 @@ Contraintes : ajouts uniquement, aucune régression pour les autres applications
 **À adapter côté application, après « LIVRÉ » :** traduire `PERIOD_CLOSED` et `PERIOD_NOT_DELETABLE`, libellé « Période », lecture seule si `status = closed`, création de commande et de note par la date, combiné avec `kind=period`, modification du budget.
 
 **À suivre :** P2 (résultat de période, locations et abonnements à part si le propriétaire le confirme) et P3 (reprise d'historique), chacun annoncé avant son code.
+
+## LIVRÉ : P1, le 09/11/2026 (`dev` 54a0cdca ; 898 tests verts)
+
+**Adapté dans l'application :** « Période » partout, plus de création ni de suppression d'une période, état affiché (à venir, en cours, clôturée), bannière et lecture seule sur une période clôturée (commandes, articles, notes, frais), réouverture et nouvelle clôture depuis le tableau de bord, messages `PERIOD_CLOSED`, `PERIOD_NOT_DELETABLE`, `OUTSIDE_PERIOD`, `NOT_CLOSED`.
+
+**À venir côté application :** modification du budget (`PATCH /api/periodes/{id}`), création par la date depuis un point d'entrée général (`POST /api/commandes`, `POST /api/notes-de-frais`), période courante présélectionnée.
+
+## Contrat du lot P2 : résultat de période (validé avec corrections le 09/11/2026, en cours)
+
+`GET /api/periodes/{id}/resultat` : `period`, `currency`, `frozen`, `frozenAt`, `sales {revenue, unknownCostRevenue, shippingBilled, orders, items, returns, bySource}`, `otherRevenue {rentals, subscriptions, total}`, `cogs {amount, items, unknownCostItems}`, `expenses {shipping, notes, other: [], total}`, `result {gross, net, tauxMarge, tauxMarque, netRate}`, `investment {purchases, shipping, total}`.
+
+- `gross = (revenue − unknownCostRevenue) − cogs` ; `net = gross − expenses.total` ; `tauxMarge = gross / cogs` ; `tauxMarque` et `netRate` sur `revenue − unknownCostRevenue`. Dénominateur nul : `null`.
+- `revenue` net des remises et des retours ; un retour retire aussi son coût de `cogs`, et compte à sa propre date.
+- Locations et abonnements exclus de `revenue` et `cogs`, renvoyés dans `otherRevenue`.
+- Une période fermée ignore les rattachements et coûts posés après son échéance, quelle que soit la date de première lecture.
+
+Maquette des écrans : https://claude.ai/artifact/8biDay5vzqM3kEKQcz8zU8

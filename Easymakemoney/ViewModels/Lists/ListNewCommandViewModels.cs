@@ -31,6 +31,12 @@ namespace Easymakemoney.ViewModels.Lists
 
         public ICommand ItemTappedProducts { get; }
         public int CollectionId { get; set; }
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanEdit))]
+        private bool isClosed;
+
+        public bool CanEdit => !IsClosed;
         public ICommand DeleteCommandCommand { get; }
         public async Task GetListCommandAsync()
         {
@@ -98,7 +104,7 @@ namespace Easymakemoney.ViewModels.Lists
 
             // Navigate to the ListNewCommandPage and pass the collection ID
             if (Shell.Current is { } shell)
-                await shell.GoToAsync($"{nameof(ListNewProductPage)}?CommandId={command.id}", true);
+                await shell.GoToAsync($"{nameof(ListNewProductPage)}?CommandId={command.id}&Closed={IsClosed}", true);
         }
 
 

@@ -18,7 +18,12 @@
     </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,*">
-        <components:AppHeader Title="Commandes" />
+        <VerticalStackLayout>
+            <components:AppHeader Title="Commandes" />
+            <Border IsVisible="{Binding IsClosed}" Margin="16,12,16,0" Padding="12,10" StrokeThickness="0" StrokeShape="RoundRectangle 12" BackgroundColor="#FEE2E2">
+                <Label Text="Période clôturée : plus rien ne peut y être ajouté." FontFamily="InterSemiBold" FontSize="14" TextColor="#B91C1C" />
+            </Border>
+        </VerticalStackLayout>
 
         <CollectionView Grid.Row="1" ItemsSource="{Binding ListCommands}" SelectionMode="None" Margin="16,8,16,0">
             <CollectionView.EmptyView>
@@ -32,7 +37,7 @@
                     <SwipeView Margin="0,0,0,10">
                         <SwipeView.RightItems>
                             <SwipeItems Mode="Reveal">
-                                <SwipeItem Text="Supprimer" BackgroundColor="#B91C1C"
+                                <SwipeItem Text="Supprimer" BackgroundColor="#B91C1C" IsVisible="{Binding Path=BindingContext.CanEdit, Source={x:Reference Page}, x:DataType=ContentPage}"
                                            Command="{Binding Path=BindingContext.DeleteCommandCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
                                            CommandParameter="{Binding .}" />
                             </SwipeItems>
@@ -67,7 +72,7 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <Border Grid.Row="1" WidthRequest="60" HeightRequest="60" StrokeThickness="0" StrokeShape="RoundRectangle 18"
+        <Border Grid.Row="1" IsVisible="{Binding CanEdit}" WidthRequest="60" HeightRequest="60" StrokeThickness="0" StrokeShape="RoundRectangle 18"
                 BackgroundColor="{DynamicResource ThemePrimary}" HorizontalOptions="End" VerticalOptions="End" Margin="16,0,16,28"
                 SemanticProperties.Description="Ajouter une commande">
             <Border.GestureRecognizers>

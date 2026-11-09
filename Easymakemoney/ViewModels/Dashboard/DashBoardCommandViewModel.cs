@@ -75,7 +75,7 @@ namespace Easymakemoney.ViewModels.Dashboard
         {
             if (CollectionId == 0)
             {
-                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une collection");
+                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une période");
                 return;
             }
             _listNewCommandViewModel.CollectionId = CollectionId;
@@ -101,7 +101,7 @@ namespace Easymakemoney.ViewModels.Dashboard
         {
             if (CollectionId == 0)
             {
-                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une collection");
+                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une période");
                 return;
             }
             var viewModel = new BottomSheetPopupListViewViewModel(

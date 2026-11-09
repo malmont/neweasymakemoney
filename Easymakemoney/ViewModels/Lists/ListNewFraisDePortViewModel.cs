@@ -47,10 +47,13 @@ namespace Easymakemoney.ViewModels.Lists
         private string? collectionName;
 
         [ObservableProperty]
+        private bool isClosed;
+
+        [ObservableProperty]
         private bool showEmptyState = true;
 
         [ObservableProperty]
-        private string emptyTitle = "Choisissez une collection";
+        private string emptyTitle = "Choisissez une période";
 
         [ObservableProperty]
         private string emptyMessage = "Ses commandes apparaîtront ici, avec leurs frais de port.";
@@ -62,7 +65,7 @@ namespace Easymakemoney.ViewModels.Lists
 
             if (CollectionId == 0)
             {
-                SetEmptyState("Choisissez une collection", "Ses commandes apparaîtront ici, avec leurs frais de port.");
+                SetEmptyState("Choisissez une période", "Ses commandes apparaîtront ici, avec leurs frais de port.");
                 return;
             }
 
@@ -84,7 +87,7 @@ namespace Easymakemoney.ViewModels.Lists
                     Rows.Add(row);
                 }
 
-                SetEmptyState("Aucune commande", "Cette collection n'a pas encore de commande.");
+                SetEmptyState("Aucune commande", "Cette période n'a pas encore de commande.");
                 ShowEmptyState = Rows.Count == 0;
             }
             catch (Exception e)
@@ -93,7 +96,7 @@ namespace Easymakemoney.ViewModels.Lists
                 if (version != _loadVersion)
                     return;
 
-                SetEmptyState("Chargement impossible", "Choisissez de nouveau la collection pour réessayer.");
+                SetEmptyState("Chargement impossible", "Choisissez de nouveau la période pour réessayer.");
                 await _dialogService.ShowErrorAsync(e);
             }
             finally
@@ -109,7 +112,7 @@ namespace Easymakemoney.ViewModels.Lists
             try
             {
                 var frais = await _getListFraisDePortUseCase.ExecuteAsync(commande.id);
-                return new FraisDePortCommandeRow { Commande = commande, Frais = frais.FirstOrDefault() };
+                return new FraisDePortCommandeRow { Commande = commande, Frais = frais.FirstOrDefault(), PeriodClosed = IsClosed };
             }
             finally
             {
@@ -201,6 +204,7 @@ namespace Easymakemoney.ViewModels.Lists
                         CollectionId = collection.id;
                         CollectionImage = collection.Photo;
                         CollectionName = collection.Name;
+                        IsClosed = collection.IsClosed;
                         await GetListFraisDePort();
                     }
                 });

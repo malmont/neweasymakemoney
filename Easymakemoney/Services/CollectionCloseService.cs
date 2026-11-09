@@ -15,6 +15,13 @@ namespace Easymakemoney.Services
             await _httpService.PostAsyncWithAuth<object>(url, null);
             return true;
         }
+
+        public async Task<bool> ReopenCollectionAsync(int collectionId)
+        {
+            var url = $"dashboard/collection/{collectionId}/reopen";
+            await _httpService.PostAsyncWithAuth<object>(url, null);
+            return true;
+        }
     }
 
 

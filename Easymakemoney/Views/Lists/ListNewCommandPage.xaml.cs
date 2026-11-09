@@ -2,6 +2,7 @@
 namespace Easymakemoney.Views.Lists
 {
     [QueryProperty(nameof(CollectionId), "CollectionId")]
+    [QueryProperty(nameof(Closed), "Closed")]
     public partial class ListNewCommandPage : ContentPage
     {
         private readonly ListNewCommandViewModel _viewModel;
@@ -14,10 +15,13 @@ namespace Easymakemoney.Views.Lists
 
         public int CollectionId { get; set; }
 
+        public bool Closed { get; set; }
+
         protected override async void OnAppearing()
         {
             base.OnAppearing();
             _viewModel.CollectionId = CollectionId; 
+            _viewModel.IsClosed = Closed;
             await _viewModel.GetListCommandAsync();
         }
     }

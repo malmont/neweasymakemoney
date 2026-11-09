@@ -48,7 +48,13 @@ namespace Easymakemoney.ViewModels.Dashboard
         public bool IsClosed
         {
             get => _isClosed;
-            set { _isClosed = value; OnPropertyChanged(nameof(IsClosed)); }
+            set
+            {
+                _isClosed = value;
+                OnPropertyChanged(nameof(IsClosed));
+                OnPropertyChanged(nameof(CanClose));
+                OnPropertyChanged(nameof(CanReopen));
+            }
         }
 
         public bool _isClosedVisible = false;
@@ -67,6 +73,56 @@ namespace Easymakemoney.ViewModels.Dashboard
 
         [ObservableProperty]
         private string? collectionName;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanClose))]
+        [NotifyPropertyChangedFor(nameof(CanReopen))]
+        [NotifyPropertyChangedFor(nameof(CloseButtonText))]
+        private bool isPeriod;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanClose))]
+        private bool isReopened;
+
+        // Une période se clôture seule : le bouton ne sert qu'aux collections manuelles et aux périodes rouvertes.
+        public bool CanClose => !IsClosed && (!IsPeriod || IsReopened);
+        public string CloseButtonText => IsPeriod ? "Clôturer la période" : "Clôturer la collection";
+        public bool CanReopen => IsClosed && IsPeriod;
+
+        [RelayCommand]
+        public async Task ReopenCollection()
+        {
+            if (IsBusy)
+                return;
+
+            bool confirmed = await _dialogService.ConfirmAsync(
+                "Rouvrir la période",
+                "Les chiffres ne seront plus figés et de nouvelles saisies seront possibles.",
+                "Rouvrir",
+                "Annuler");
+            if (!confirmed)
+                return;
+
+            IsBusy = true;
+            try
+            {
+                await _getCollectionCloseUseCase.ReopenCollectionAsync(CollectionId);
+                IsReopened = true;
+                IsClosed = false;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
+                return;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+
+            await GetDashBoardCollectionAsync(CollectionId);
+        }
          [RelayCommand]
         public async Task CloseCollection()
         {
@@ -77,7 +133,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             try
             {
                 await _getCollectionCloseUseCase.CloseCollectionAsync(CollectionId);
-                await _dialogService.ShowInfoAsync("Collection clôturée");
+                await _dialogService.ShowInfoAsync(IsPeriod ? "Période clôturée" : "Collection clôturée");
                 await GetDashBoardCollectionAsync(CollectionId);
                 IsClosed = true;
             }
@@ -130,6 +186,8 @@ namespace Easymakemoney.ViewModels.Dashboard
                         this.CollectionImage = collection.Photo;
                         this.CollectionName = collection.Name;
                         this.IsClosed = collection.IsClosed;
+                        this.IsPeriod = collection.IsPeriod;
+                        this.IsReopened = collection.reopenedAt != null;
                         await this.GetDashBoardCollectionAsync(collection.id);
                         IsClosedVisible=true;
                     }

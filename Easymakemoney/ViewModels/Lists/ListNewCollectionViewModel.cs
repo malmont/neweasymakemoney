@@ -92,7 +92,7 @@ namespace Easymakemoney.ViewModels.Lists
 
             // Navigate to the ListNewCommandPage and pass the collection ID
             if (Shell.Current is { } shell)
-                await shell.GoToAsync($"{nameof(ListNewCommandPage)}?CollectionId={collection.id}", true);
+                await shell.GoToAsync($"{nameof(ListNewCommandPage)}?CollectionId={collection.id}&Closed={collection.IsClosed}", true);
         }
 
         private async Task DeleteCollection(ListCollection? collection)

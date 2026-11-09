@@ -18,9 +18,15 @@
     </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,Auto,*">
-        <components:AppHeader Title="Produits" />
+        <VerticalStackLayout>
+            <components:AppHeader Title="Produits" />
+            <Border IsVisible="{Binding IsClosed}" Margin="16,12,16,0" Padding="12,10" StrokeThickness="0" StrokeShape="RoundRectangle 12" BackgroundColor="#FEE2E2">
+                <Label Text="Période clôturée : plus rien ne peut y être ajouté." FontFamily="InterSemiBold" FontSize="14" TextColor="#B91C1C" />
+            </Border>
+        </VerticalStackLayout>
 
         <Border Grid.Row="1"
+                IsVisible="{Binding CanEdit}"
                 Margin="16,12,16,0"
                 Padding="12"
                 StrokeThickness="0"
@@ -49,10 +55,10 @@
                     <SwipeView Margin="0,0,0,10">
                         <SwipeView.RightItems>
                             <SwipeItems Mode="Reveal">
-                                <SwipeItem Text="Retirer" BackgroundColor="#475569"
+                                <SwipeItem Text="Retirer" BackgroundColor="#475569" IsVisible="{Binding Path=BindingContext.CanEdit, Source={x:Reference Page}, x:DataType=ContentPage}"
                                            Command="{Binding Path=BindingContext.DetachProductCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
                                            CommandParameter="{Binding .}" />
-                                <SwipeItem Text="Supprimer" BackgroundColor="#B91C1C"
+                                <SwipeItem Text="Supprimer" BackgroundColor="#B91C1C" IsVisible="{Binding Path=BindingContext.CanEdit, Source={x:Reference Page}, x:DataType=ContentPage}"
                                            Command="{Binding Path=BindingContext.DeleteProductCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
                                            CommandParameter="{Binding .}" />
                             </SwipeItems>
@@ -80,7 +86,7 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <Border Grid.Row="2" WidthRequest="60" HeightRequest="60" StrokeThickness="0" StrokeShape="RoundRectangle 18"
+        <Border Grid.Row="2" IsVisible="{Binding CanEdit}" WidthRequest="60" HeightRequest="60" StrokeThickness="0" StrokeShape="RoundRectangle 18"
                 BackgroundColor="{DynamicResource ThemePrimary}" HorizontalOptions="End" VerticalOptions="End" Margin="16,0,16,28"
                 SemanticProperties.Description="Ajouter un produit">
             <Border.GestureRecognizers>

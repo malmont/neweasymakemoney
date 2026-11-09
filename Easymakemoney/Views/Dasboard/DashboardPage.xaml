@@ -14,8 +14,8 @@
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Padding="16,24" Spacing="12">
                 <Label Text="Accueil" Style="{StaticResource UiH1}" Margin="0,0,0,8" />
-                <components:UiTile Command="{Binding NavigateToAllListsPageCommand}" Icon="M4 6h16M4 12h16M4 18h10" Title="Gestion" Text="Collections, fournisseurs, notes de frais et frais de port" />
-                <components:UiTile Command="{Binding NavigateTDashboardPageCommand}" Icon="M4 20V10M10 20V4M16 20v-7M22 20H2" Title="Tableau de bord" Text="Budget, dépenses et durée de chaque collection" />
+                <components:UiTile Command="{Binding NavigateToAllListsPageCommand}" Icon="M4 6h16M4 12h16M4 18h10" Title="Gestion" Text="Périodes, fournisseurs, notes de frais et frais de port" />
+                <components:UiTile Command="{Binding NavigateTDashboardPageCommand}" Icon="M4 20V10M10 20V4M16 20v-7M22 20H2" Title="Tableau de bord" Text="Budget, dépenses et durée de chaque période" />
                 <components:UiTile Command="{Binding NavigateToStatistiquesPageCommand}" Icon="M3 17l6-6 4 4 8-8M15 7h6v6" Title="Statistiques" Text="Chiffre d’affaires, achats, panier, stock, frais et caisse" />
             </VerticalStackLayout>
         </ScrollView>

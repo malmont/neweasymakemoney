@@ -7,11 +7,16 @@ namespace Easymakemoney.Models
 
         public FraisDePort? Frais { get; init; }
 
+        /// <summary>Période clôturée : plus d'ajout ni de suppression.</summary>
+        public bool PeriodClosed { get; init; }
+
         public string CommandeName => Commande.Name;
 
         public bool HasFrais => Frais != null;
 
-        public bool CanAddFrais => Frais == null;
+        public bool CanAddFrais => Frais == null && !PeriodClosed;
+
+        public bool CanDeleteFrais => Frais != null && !PeriodClosed;
 
         public long? Price => Frais?.price;
 

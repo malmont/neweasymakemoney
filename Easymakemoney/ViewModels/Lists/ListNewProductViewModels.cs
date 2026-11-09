@@ -32,6 +32,13 @@ namespace Easymakemoney.ViewModels.Lists
         public ICommand ItemTappedProductsVariants { get; }
 
         public int CommandId { get; set; }
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanEdit))]
+        private bool isClosed;
+
+        public bool CanEdit => !IsClosed;
+
         public ICommand DeleteProductCommand { get; }
         public async Task GetListProductAsync()
         {

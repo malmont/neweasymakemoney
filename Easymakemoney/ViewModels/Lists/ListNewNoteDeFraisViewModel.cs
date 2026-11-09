@@ -45,6 +45,12 @@ namespace Easymakemoney.ViewModels.Lists
 
         public ICommand ItemTappedNoteDeFrais { get; }
         public int CollectionId { get; set; }
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanEdit))]
+        private bool isClosed;
+
+        public bool CanEdit => !IsClosed;
         public ICommand DeleteNoteDefraisCommand { get; }
 
         private string _collectionImage;
@@ -144,6 +150,7 @@ namespace Easymakemoney.ViewModels.Lists
                     if (collection != null)
                     {
                         this.CollectionId = collection.id;
+                        this.IsClosed = collection.IsClosed;
                         this.CollectionImage = collection.Photo;
                         this.CollectionName = collection.Name;
                         await this.GetListNoteDeFraisAsync();
@@ -160,7 +167,7 @@ namespace Easymakemoney.ViewModels.Lists
         {
             if (CollectionId == 0)
             {
-                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une collection");
+                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une période");
                 return;
             }
             var viewModel = new BottomSheetPopupViewModel(

@@ -176,6 +176,7 @@ public class ApiError
             "MUST_BE_NUMBER" => "Ce champ doit être un nombre valide.",
             "INVALID_DATE" => "La date est invalide.",
             "INVALID_ID" => "L'identifiant est invalide.",
+            "OUTSIDE_PERIOD" => "La date doit être comprise dans cette période.",
             _ => !string.IsNullOrWhiteSpace(errorCode) ? errorCode : "Valeur invalide."
         };
     }
@@ -192,6 +193,9 @@ public class ApiError
             "RATE_LIMITED" or "TOO_MANY_ATTEMPTS" => $"Trop de tentatives. Veuillez patienter {retryAfterSeconds ?? 60} secondes.",
             "VALIDATION_FAILED" => "Données non valides.",
             "ALREADY_CLOSED" => "Cet élément est déjà clôturé.",
+            "PERIOD_CLOSED" => "Cette période est clôturée : plus rien ne peut y être ajouté.",
+            "PERIOD_NOT_DELETABLE" => "Une période ne peut pas être supprimée.",
+            "NOT_CLOSED" => "Cette période est déjà ouverte.",
             _ => (int)statusCode switch
             {
                 429 => $"Trop de tentatives. Veuillez patienter {retryAfterSeconds ?? 60} secondes.",
