@@ -2,8 +2,8 @@ namespace Easymakemoney.Components
 {
     public partial class TitreComponent : ContentView
     {
-        public static readonly BindableProperty IconSourceProperty =
-            BindableProperty.Create(nameof(IconSource), typeof(ImageSource), typeof(TitreComponent));
+        public static readonly BindableProperty IconProperty =
+            BindableProperty.Create(nameof(Icon), typeof(string), typeof(TitreComponent));
 
         public static readonly BindableProperty HeaderTextProperty =
             BindableProperty.Create(nameof(HeaderText), typeof(string), typeof(TitreComponent), default(string));
@@ -13,10 +13,10 @@ namespace Easymakemoney.Components
 
         public static readonly BindableProperty IsExpensesVisibleProperty =
     BindableProperty.Create(nameof(IsExpensesVisible), typeof(bool), typeof(BudgetOverviewView), true);
-        public ImageSource IconSource
+        public string Icon
         {
-            get => (ImageSource)GetValue(IconSourceProperty);
-            set => SetValue(IconSourceProperty, value);
+            get => (string)GetValue(IconProperty);
+            set => SetValue(IconProperty, value);
         }
 
         public string HeaderText

@@ -17,10 +17,7 @@
         </local:UiCard.Triggers>
 
         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-            <Image Source="{Binding IconSource, Source={RelativeSource AncestorType={x:Type local:TitreComponent}}}"
-                   WidthRequest="24"
-                   HeightRequest="24"
-                   VerticalOptions="Center"/>
+            <local:UiGlyph Data="{Binding Icon, Source={RelativeSource AncestorType={x:Type local:TitreComponent}}}" />
 
             <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
                 <Label Text="{Binding HeaderText, Source={RelativeSource AncestorType={x:Type local:TitreComponent}}}"

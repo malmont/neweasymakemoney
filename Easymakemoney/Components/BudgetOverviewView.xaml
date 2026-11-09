@@ -7,10 +7,7 @@
        <ContentView.Content>
               <VerticalStackLayout Spacing="8">
                      <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                            <Image Source="{Binding IconSource, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewView}}}"
-                                   WidthRequest="24"
-                                   HeightRequest="24"
-                                   VerticalOptions="Center"/>
+                            <local:UiGlyph Data="{Binding Icon, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewView}}}" />
                             <Label Grid.Column="1"
                                    Text="{Binding HeaderText, Source={RelativeSource AncestorType={x:Type local:BudgetOverviewView}}}"
                                    Style="{StaticResource UiTitle}"

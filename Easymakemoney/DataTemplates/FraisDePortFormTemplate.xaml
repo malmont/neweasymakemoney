@@ -67,22 +67,6 @@
                 </Border>
             </VerticalStackLayout>
             <VerticalStackLayout Spacing="6">
-                <Label Text="Pays" Style="{StaticResource FormLabel}" />
-                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
-                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
-                                              Placeholder="Pays"
-                                              Text="{Binding FraisDePortForm.Pays, Mode=TwoWay}" />
-                </Border>
-            </VerticalStackLayout>
-            <VerticalStackLayout Spacing="6">
-                <Label Text="Téléphone" Style="{StaticResource FormLabel}" />
-                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
-                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
-                                              Placeholder="Téléphone"
-                                              Text="{Binding FraisDePortForm.Tel, Mode=TwoWay}" />
-                </Border>
-            </VerticalStackLayout>
-            <VerticalStackLayout Spacing="6">
                 <Label Text="Transporteur" Style="{StaticResource FormLabel}" />
                 <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
                     <Picker Style="{StaticResource FormPicker}"

@@ -32,10 +32,7 @@
                         Padding="20,0"
                         HorizontalOptions="Start"/>
                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                    <Image Source="chiffreaffaire.png"
-                           WidthRequest="24"
-                           HeightRequest="24"
-                           VerticalOptions="Center"/>
+                    <components:UiGlyph Data="M3 17l6-6 4 4 8-8M15 7h6v6" />
                     <Label Grid.Column="1"
                            Text="Valeur du stock"
                            Style="{StaticResource UiTitle}"

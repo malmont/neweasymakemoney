@@ -53,25 +53,7 @@ public static class SiteCurrency
 
         try
         {
-            foreach (var ci in CultureInfo.GetCultures(CultureTypes.SpecificCultures))
-            {
-                try
-                {
-                    var ri = new RegionInfo(ci.Name);
-                    if (string.Equals(ri.ISOCurrencySymbol, code, StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (!string.IsNullOrWhiteSpace(ri.CurrencySymbol))
-                        {
-                            discoveredSymbol = ri.CurrencySymbol;
-                            break;
-                        }
-                    }
-                }
-                catch
-                {
-                    // Ignore les cultures spécifiques non supportées par RegionInfo
-                }
-            }
+            discoveredSymbol = FindSymbol(code) ?? code;
         }
         catch
         {
@@ -81,6 +63,49 @@ public static class SiteCurrency
 
         _symbolCache[code] = discoveredSymbol;
         return discoveredSymbol;
+    }
+
+    /// <summary>
+    /// L'ordre des cultures varie d'un lancement à l'autre sur iOS : le choix ne doit pas en dépendre.
+    /// Dans le pays de la devise, le symbole local (« $ » au Canada) ; ailleurs, le plus explicite (« CA$ »).
+    /// </summary>
+    private static string? FindSymbol(string code)
+    {
+        var current = RegionInfo.CurrentRegion;
+        if (string.Equals(current.ISOCurrencySymbol, code, StringComparison.OrdinalIgnoreCase)
+            && !string.IsNullOrWhiteSpace(current.CurrencySymbol))
+        {
+            return current.CurrencySymbol;
+        }
+
+        string? best = null;
+        foreach (var culture in CultureInfo.GetCultures(CultureTypes.SpecificCultures))
+        {
+            RegionInfo region;
+            try
+            {
+                region = new RegionInfo(culture.Name);
+            }
+            catch
+            {
+                continue; // Culture non prise en charge par RegionInfo
+            }
+
+            var symbol = region.CurrencySymbol;
+            if (!string.Equals(region.ISOCurrencySymbol, code, StringComparison.OrdinalIgnoreCase)
+                || string.IsNullOrWhiteSpace(symbol))
+            {
+                continue;
+            }
+
+            if (best == null || symbol.Length > best.Length
+                || (symbol.Length == best.Length && string.CompareOrdinal(symbol, best) < 0))
+            {
+                best = symbol;
+            }
+        }
+
+        return best;
     }
 
     /// <summary>

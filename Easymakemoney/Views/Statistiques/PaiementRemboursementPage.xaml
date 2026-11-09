@@ -32,7 +32,7 @@
                         Padding="20,0"
                         HorizontalOptions="Start"/>
                 <components:BudgetOverviewView
-                    IconSource="chiffreaffaire.png"
+                    Icon="M3 17l6-6 4 4 8-8M15 7h6v6"
                     HeaderText="Vue d’ensemble des transactions"
                     TotalLabelText="Paiement hebdomadaire"
                     TotalValue="{Binding PaiementTotalSemaine, Converter={StaticResource CurrencyConverter}}"
@@ -42,7 +42,7 @@
                     IsExpensesVisible="False"
                     RemainingValue="{Binding RemboursementTotalSemaine, Converter={StaticResource CurrencyConverter}}"/>
                 <components:BudgetOverviewView
-                    IconSource="chiffreaffaire.png"
+                    Icon="M3 17l6-6 4 4 8-8M15 7h6v6"
                     HeaderText="Vue d’ensemble des transactions"
                     TotalLabelText="Paiement mensuel"
                     TotalValue="{Binding PaiementTotalMois, Converter={StaticResource CurrencyConverter}}"
@@ -52,7 +52,7 @@
                     IsExpensesVisible="False"
                     RemainingValue="{Binding RemboursementTotalMois, Converter={StaticResource CurrencyConverter}}"/>
                 <components:BudgetOverviewView
-                    IconSource="chiffreaffaire.png"
+                    Icon="M3 17l6-6 4 4 8-8M15 7h6v6"
                     HeaderText="Vue d’ensemble des transactions"
                     TotalLabelText="Paiement annuel"
                     TotalValue="{Binding PaiementTotalAnnee, Converter={StaticResource CurrencyConverter}}"

@@ -217,23 +217,32 @@ namespace Easymakemoney.Services
 
         private static bool TryExtractCurrency(JsonElement element, out string? currencyCode)
         {
-            foreach (var property in element.EnumerateObject())
-            {
-                if (property.NameEquals("currency") || property.NameEquals("Currency"))
-                {
-                    if (property.Value.ValueKind == JsonValueKind.String)
-                    {
-                        var val = property.Value.GetString();
-                        if (!string.IsNullOrWhiteSpace(val))
-                        {
-                            currencyCode = val.Trim();
-                            return true;
-                        }
-                    }
-                }
-            }
             currencyCode = null;
-            return false;
+
+            // Depuis G6, « currency » d'une commande peut être sa devise d'achat : seul « siteCurrency » fait alors foi.
+            if (TryReadString(element, "siteCurrency", out currencyCode))
+                return true;
+
+            // Le « currency » d'un fournisseur est celui de ses commandes, pas celui du site.
+            if (element.TryGetProperty("purchaseCurrency", out _))
+                return false;
+
+            return TryReadString(element, "currency", out currencyCode)
+                || TryReadString(element, "Currency", out currencyCode);
+        }
+
+        private static bool TryReadString(JsonElement element, string name, out string? value)
+        {
+            value = null;
+            if (!element.TryGetProperty(name, out var property) || property.ValueKind != JsonValueKind.String)
+                return false;
+
+            var text = property.GetString();
+            if (string.IsNullOrWhiteSpace(text))
+                return false;
+
+            value = text.Trim();
+            return true;
         }
     }
 }
