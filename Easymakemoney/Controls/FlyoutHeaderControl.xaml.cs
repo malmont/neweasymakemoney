@@ -1,14 +1,20 @@
-﻿namespace Easymakemoney.Controls;
+﻿using Easymakemoney.Models.Session;
+
+namespace Easymakemoney.Controls;
 
 public partial class FlyoutHeaderControl : StackLayout
 {
 	public FlyoutHeaderControl()
 	{
 		InitializeComponent();
-		if(App.UserDetails != null)
+	}
+
+	public FlyoutHeaderControl(UserInfo? user) : this()
+	{
+		if (user != null)
 		{
-            lblUserRole.Text = App.UserDetails.Role;
-            lblUserEmail.Text = App.UserDetails.Email;
+			lblUserRole.Text = "ROLE_ADMIN";
+			lblUserEmail.Text = user.Email;
 		}
 	}
 }

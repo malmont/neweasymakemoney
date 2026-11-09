@@ -1,8 +1,9 @@
+using Easymakemoney.Models.Session;
 
-namespace Easymakemoney.Services
+namespace Easymakemoney.Services;
+
+public interface IJwtService
 {
-    public interface IJwtService
-    {
-          (string Username, string Role, int UserId) ParseToken(string token); 
-    }
+    bool TryParseAndValidate(string token, string expectedTenantCode, out UserInfo? user, out string? errorMessage);
+    DateTime? GetExpirationUtc(string token);
 }

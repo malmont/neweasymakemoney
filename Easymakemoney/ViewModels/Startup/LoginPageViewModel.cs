@@ -1,4 +1,8 @@
-﻿using Easymakemoney.Services.Tenant;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Easymakemoney.Controls;
+using Easymakemoney.Services.Auth;
+using Easymakemoney.Services.Session;
 
 namespace Easymakemoney.ViewModels.Startup
 {
@@ -10,33 +14,93 @@ namespace Easymakemoney.ViewModels.Startup
         [ObservableProperty]
         private string _password = string.Empty;
 
-        private readonly LoginUseCase _loginUseCase;
-        private readonly ISiteDataCleaner _siteDataCleaner;
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasErrorMessage))]
+        private string? _errorMessage;
 
-        public LoginPageViewModel(LoginUseCase loginUseCase, ISiteDataCleaner siteDataCleaner)
+        public bool HasErrorMessage => !string.IsNullOrWhiteSpace(ErrorMessage);
+
+        private readonly LoginUseCase _loginUseCase;
+        private readonly IAuthFlowService _authFlowService;
+        private readonly IPendingLoginStore _pendingLoginStore;
+        private readonly ISessionService _sessionService;
+
+        public LoginPageViewModel(
+            LoginUseCase loginUseCase,
+            IAuthFlowService authFlowService,
+            IPendingLoginStore pendingLoginStore,
+            ISessionService sessionService)
         {
             _loginUseCase = loginUseCase;
-            _siteDataCleaner = siteDataCleaner;
+            _authFlowService = authFlowService;
+            _pendingLoginStore = pendingLoginStore;
+            _sessionService = sessionService;
+
+            _ = InitializeAsync();
+        }
+
+        public async Task InitializeAsync()
+        {
+            if (string.IsNullOrWhiteSpace(Email))
+            {
+                var lastEmail = await _sessionService.GetLastLoginEmailAsync();
+                if (!string.IsNullOrWhiteSpace(lastEmail) && string.IsNullOrWhiteSpace(Email))
+                {
+                    Email = lastEmail;
+                }
+            }
         }
 
         #region Commands
         [RelayCommand]
         async Task LoginAsync()
         {
-            if (await _loginUseCase.ExecuteAsync(Email, Password))
+            if (IsBusy) return;
+
+            IsBusy = true;
+            ErrorMessage = null;
+
+            try
             {
-                // Successfully logged in
+                var result = await _loginUseCase.ExecuteLoginAsync(Email, Password);
+
+                if (result.OtpRequired)
+                {
+                    _pendingLoginStore.Set(Email, Password);
+                    Password = string.Empty;
+                    if (Shell.Current != null) await Shell.Current.GoToAsync("//OtpPage");
+                }
+                else if (result.IsSuccess)
+                {
+                    _pendingLoginStore.Clear();
+                    Password = string.Empty;
+                    if (AppShell.Current != null && result.User != null)
+                    {
+                        AppShell.Current.FlyoutHeader = new FlyoutHeaderControl(result.User);
+                    }
+                    if (Shell.Current != null) await Shell.Current.GoToAsync("//DashboardPage");
+                }
+                else
+                {
+                    ErrorMessage = result.ErrorMessage;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                await AppShell.Current.DisplayAlert("Invalid User", "Invalid User", "OK");
+                Debug.WriteLine($"[LoginPageViewModel] Erreur connexion : {ex.Message}");
+                ErrorMessage = "Une erreur est survenue, réessayez.";
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
         [RelayCommand]
         async Task ChangeSiteAsync()
         {
-            await _siteDataCleaner.PromptAndChangeSiteAsync();
+            if (IsBusy) return;
+            await _authFlowService.PromptAndChangeSiteAsync();
         }
         #endregion
     }

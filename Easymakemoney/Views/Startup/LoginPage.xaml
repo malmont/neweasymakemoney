@@ -4,7 +4,8 @@
               xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
              x:Class="Easymakemoney.Views.Startup.LoginPage"
               Shell.NavBarIsVisible="False"
-             Title="LoginPage">
+              Shell.FlyoutBehavior="Disabled"
+             Title="Connexion">
      <VerticalStackLayout 
             Spacing="25" 
             Padding="30,0" 
@@ -13,16 +14,26 @@
         <Image Source="logo.png" HeightRequest="150" WidthRequest="150" />
 
         <VerticalStackLayout Spacing="5">
-            <Label Text="Welcome!" FontSize="28" TextColor="Gray" HorizontalTextAlignment="Center" />
-            <Label Text="Login to your account" FontSize="18" TextColor="Gray" HorizontalTextAlignment="Center" />
+            <Label Text="Bienvenue" FontSize="28" TextColor="Gray" HorizontalTextAlignment="Center" />
+            <Label Text="Connexion à votre compte" FontSize="18" TextColor="Gray" HorizontalTextAlignment="Center" />
         </VerticalStackLayout>
+
+        <Border IsVisible="{Binding HasErrorMessage}"
+                BackgroundColor="#FDE8E8"
+                Stroke="#F87171"
+                StrokeShape="RoundRectangle 8"
+                Padding="12">
+            <Label Text="{Binding ErrorMessage}" TextColor="#B91C1C" FontSize="14" HorizontalTextAlignment="Center" />
+        </Border>
+
+        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#512BD4" HeightRequest="30" WidthRequest="30" />
 
         <StackLayout Orientation="Horizontal">
             <Frame ZIndex="1" HasShadow="True" BorderColor="White" HeightRequest="56" WidthRequest="56" CornerRadius="28">
                 <Image Source="user.png" HeightRequest="20" WidthRequest="20" />
             </Frame>
             <Frame HeightRequest="45" Margin="-20,0,0,0" Padding="0" HasShadow="True" BorderColor="White"  HorizontalOptions="FillAndExpand">
-                <handlers:BorderlessEntry  Margin="20,0,0,0" VerticalOptions="Center" Placeholder="User Name" Keyboard="Email" Text="{Binding Email}"/>
+                <handlers:BorderlessEntry  Margin="20,0,0,0" VerticalOptions="Center" Placeholder="Adresse e-mail" Keyboard="Email" Text="{Binding Email}"/>
             </Frame>
         </StackLayout>
 
@@ -31,21 +42,16 @@
                 <Image Source="lock.png" HeightRequest="20" WidthRequest="20" />
             </Frame>
             <Frame HeightRequest="45" Margin="-20,0,0,0" Padding="0" HasShadow="True" BorderColor="White"  HorizontalOptions="FillAndExpand">
-                <handlers:BorderlessEntry Margin="20,0,0,0" VerticalOptions="Center" Placeholder="Password" IsPassword="True" Text="{Binding Password}"/>
+                <handlers:BorderlessEntry Margin="20,0,0,0" VerticalOptions="Center" Placeholder="Mot de passe" IsPassword="True" Text="{Binding Password}"/>
             </Frame>
         </StackLayout>
 
-        <Button Text="Sign In" WidthRequest="100" CornerRadius="20" HorizontalOptions="Center" Command="{Binding LoginCommand}" />
+        <Button Text="Se connecter" WidthRequest="140" CornerRadius="20" HorizontalOptions="Center" Command="{Binding LoginCommand}" />
 
         <Button Text="Changer de site"
                 TextColor="#50b3f2"
                 BackgroundColor="Transparent"
                 HorizontalOptions="Center"
                 Command="{Binding ChangeSiteCommand}" />
-
-        <StackLayout Orientation="Horizontal" Spacing="5" HorizontalOptions="Center">
-            <Label Text="Don't have account?" TextColor="Gray" />
-            <Label Text="Sign Up here" TextColor="#50b3f2" />
-        </StackLayout>
     </VerticalStackLayout>
 </ContentPage>

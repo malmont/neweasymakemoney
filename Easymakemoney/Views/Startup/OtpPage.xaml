@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             xmlns:vm="clr-namespace:Easymakemoney.ViewModels.Startup"
+             x:Class="Easymakemoney.Views.Startup.OtpPage"
+             x:DataType="vm:OtpPageViewModel"
+             Shell.NavBarIsVisible="False"
+             Shell.FlyoutBehavior="Disabled"
+             Title="Code de sécurité">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="25" Padding="30,40" VerticalOptions="Center">
+
+            <Image Source="logo.png" HeightRequest="120" WidthRequest="120" HorizontalOptions="Center" />
+
+            <VerticalStackLayout Spacing="8">
+                <Label Text="Double facteur" FontSize="26" FontAttributes="Bold" TextColor="#512BD4" HorizontalTextAlignment="Center" />
+                <Label Text="Un code de confirmation a été envoyé à l'adresse :"
+                       FontSize="14" TextColor="Gray" HorizontalTextAlignment="Center" />
+                <Label Text="{Binding Email}"
+                       FontSize="15" FontAttributes="Bold" TextColor="#1F2937" HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+
+            <!-- Message d'erreur -->
+            <Border IsVisible="{Binding HasErrorMessage}"
+                    BackgroundColor="#FDE8E8"
+                    Stroke="#F87171"
+                    StrokeShape="RoundRectangle 8"
+                    Padding="12">
+                <Label Text="{Binding ErrorMessage}" TextColor="#B91C1C" FontSize="14" HorizontalTextAlignment="Center" />
+            </Border>
+
+            <!-- Indicateur d'activité -->
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="#512BD4" HeightRequest="30" WidthRequest="30" />
+
+            <!-- Zone de saisie du code OTP -->
+            <Border Stroke="#E5E7EB"
+                    StrokeShape="RoundRectangle 12"
+                    BackgroundColor="White"
+                    Padding="20">
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Code de vérification" FontSize="16" FontAttributes="Bold" TextColor="#374151" />
+                    <Label Text="Saisissez le code reçu par courriel" FontSize="12" TextColor="Gray" />
+
+                    <Border HeightRequest="50"
+                            Padding="12,0"
+                            Stroke="#D1D5DB"
+                            StrokeShape="RoundRectangle 8">
+                        <handlers:BorderlessEntry Placeholder="Ex. 123456"
+                                                  Keyboard="Numeric"
+                                                  HorizontalTextAlignment="Center"
+                                                  FontSize="20"
+                                                  Text="{Binding OtpCode}"
+                                                  VerticalOptions="Center" />
+                    </Border>
+
+                    <Button Text="Valider"
+                            Command="{Binding VerifyOtpCommand}"
+                            BackgroundColor="#512BD4"
+                            TextColor="White"
+                            CornerRadius="8"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Actions secondaires -->
+            <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+                <Button Text="Renvoyer le code"
+                        TextColor="#50b3f2"
+                        BackgroundColor="Transparent"
+                        Command="{Binding ResendOtpCommand}"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+
+                <Button Text="Retour à la connexion"
+                        TextColor="Gray"
+                        BackgroundColor="Transparent"
+                        Command="{Binding BackCommand}"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+            </VerticalStackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
+

@@ -1,4 +1,8 @@
-﻿using Easymakemoney.Models.Tenant;
+﻿using Easymakemoney.Controls;
+using Easymakemoney.Models.Tenant;
+using Easymakemoney.Services;
+using Easymakemoney.Services.Auth;
+using Easymakemoney.Services.Session;
 using Easymakemoney.Services.Site;
 using Easymakemoney.Services.Tenant;
 
@@ -9,15 +13,24 @@ namespace Easymakemoney.ViewModels.Startup
         private readonly ITenantStore _tenantStore;
         private readonly ISiteService _siteService;
         private readonly ISiteDataCleaner _siteDataCleaner;
+        private readonly ISessionService _sessionService;
+        private readonly IJwtService _jwtService;
+        private readonly ITokenRefresher _tokenRefresher;
 
         public LoadingPageViewModel(
             ITenantStore tenantStore,
             ISiteService siteService,
-            ISiteDataCleaner siteDataCleaner)
+            ISiteDataCleaner siteDataCleaner,
+            ISessionService sessionService,
+            IJwtService jwtService,
+            ITokenRefresher tokenRefresher)
         {
             _tenantStore = tenantStore;
             _siteService = siteService;
             _siteDataCleaner = siteDataCleaner;
+            _sessionService = sessionService;
+            _jwtService = jwtService;
+            _tokenRefresher = tokenRefresher;
 
             InitStartup();
         }
@@ -47,8 +60,8 @@ namespace Easymakemoney.ViewModels.Startup
                 return;
             }
 
-            // Poursuite de la logique actuelle de vérification de session
-            checkUserLoginDetails();
+            // Vérification de session sécurisée (Lot 2)
+            await CheckSessionAndNavigateAsync();
         }
 
         private async Task RecheckTenantInBackgroundAsync(TenantContext tenant)
@@ -94,35 +107,75 @@ namespace Easymakemoney.ViewModels.Startup
             }
         }
 
-        private async void checkUserLoginDetails()
+        private async Task CheckSessionAndNavigateAsync()
         {
-            string userDetailsStr = Microsoft.Maui.Storage.Preferences.Get(nameof(App.UserDetails), "");
-
-            if (string.IsNullOrWhiteSpace(userDetailsStr))
+            try
             {
+                var token = await _sessionService.GetTokenAsync();
+                var refreshToken = await _sessionService.GetRefreshTokenAsync();
+
+                // Cas 1 : pas de session (aucun jeton ni refresh token)
+                if (string.IsNullOrWhiteSpace(token) && string.IsNullOrWhiteSpace(refreshToken))
+                {
+                    await Shell.Current.GoToAsync("//LoginPage");
+                    return;
+                }
+
+                // Cas 2 : jeton présent et encore valide (comparaison UTC avec 60s de marge)
+                if (!string.IsNullOrWhiteSpace(token))
+                {
+                    var expUtc = _jwtService.GetExpirationUtc(token);
+                    if (expUtc.HasValue && expUtc.Value > DateTime.UtcNow.AddSeconds(60))
+                    {
+                        var user = await _sessionService.GetUserAsync();
+                        if (AppShell.Current != null)
+                        {
+                            AppShell.Current.FlyoutHeader = new FlyoutHeaderControl(user);
+                        }
+                        await Shell.Current.GoToAsync("//DashboardPage");
+                        return;
+                    }
+                }
+
+                // Cas 3 : jeton expiré ou absent, mais refresh token présent
+                if (!string.IsNullOrWhiteSpace(refreshToken))
+                {
+                    var refreshResult = await _tokenRefresher.RefreshAsync(token);
+
+                    if (refreshResult.IsSuccess)
+                    {
+                        var user = await _sessionService.GetUserAsync();
+                        if (AppShell.Current != null)
+                        {
+                            AppShell.Current.FlyoutHeader = new FlyoutHeaderControl(user);
+                        }
+                        await Shell.Current.GoToAsync("//DashboardPage");
+                        return;
+                    }
+
+                    if (refreshResult.Status == RefreshStatus.Rejected)
+                    {
+                        // Refus serveur (400 ou 401) : TokenRefresher a purgé la session
+                        await Shell.Current.GoToAsync("//LoginPage");
+                        return;
+                    }
+
+                    // Serveur injoignable (NetworkError) : la session est conservée
+                    var cachedUser = await _sessionService.GetUserAsync();
+                    if (AppShell.Current != null)
+                    {
+                        AppShell.Current.FlyoutHeader = new FlyoutHeaderControl(cachedUser);
+                    }
+                    await Shell.Current.GoToAsync("//DashboardPage");
+                    return;
+                }
+
                 await Shell.Current.GoToAsync("//LoginPage");
             }
-            else
+            catch (Exception ex)
             {
-                var encryptedToken = Microsoft.Maui.Storage.Preferences.Get("userToken", string.Empty);
-                var tokenDetails = EncryptionHelper.Decrypt(encryptedToken);
-
-                var handler = new JwtSecurityTokenHandler();
-                var jsonToken = handler.ReadJwtToken(tokenDetails) as JwtSecurityToken;
-
-                if (jsonToken.ValidTo < DateTime.Now)
-                {
-                    await Shell.Current.DisplayAlert("User session expired", "Login again to continue", "OK");
-                    await Shell.Current.GoToAsync("//LoginPage");
-                }
-                else
-                {
-                    var userInfo = JsonConvert.DeserializeObject<UserBasicInfo>(userDetailsStr);
-                    App.UserDetails = userInfo;
-                    App.Token = tokenDetails;
-                    AppShell.Current.FlyoutHeader = new FlyoutHeaderControl();
-                    await Shell.Current.GoToAsync("//DashboardPage");
-                }
+                Debug.WriteLine($"[LoadingPageViewModel] Erreur contrôle session : {ex.Message}");
+                await Shell.Current.GoToAsync("//LoginPage");
             }
         }
     }

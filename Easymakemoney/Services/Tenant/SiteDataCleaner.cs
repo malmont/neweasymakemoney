@@ -1,18 +1,26 @@
+// Règle de nettoyage
+using System.Diagnostics;
+using Easymakemoney.Services.Session;
+
 namespace Easymakemoney.Services.Tenant;
 
 public class SiteDataCleaner : ISiteDataCleaner
 {
     private readonly ITenantStore _tenantStore;
+    private readonly ISessionService _sessionService;
 
-    public SiteDataCleaner(ITenantStore tenantStore)
+    public SiteDataCleaner(ITenantStore tenantStore, ISessionService sessionService)
     {
         _tenantStore = tenantStore;
+        _sessionService = sessionService;
     }
 
-    public Task ClearAllAsync()
+    public async Task ClearAllAsync()
     {
         try
         {
+            // Règle N6 : ClearAllAsync (changement de site) efface aussi le courriel mémorisé
+            SecureStorage.Default.Remove(SessionKeys.LastLoginEmailKey);
             SecureStorage.Default.RemoveAll();
         }
         catch (Exception ex)
@@ -23,29 +31,7 @@ public class SiteDataCleaner : ISiteDataCleaner
         Preferences.Default.Clear();
         Preferences.Default.Set(TenantStore.FirstRunKey, true);
 
-        App.Token = null;
-        App.UserDetails = null;
-
+        await _sessionService.ClearSessionAsync();
         _tenantStore.ClearMemory();
-
-        return Task.CompletedTask;
-    }
-
-    public async Task<bool> PromptAndChangeSiteAsync()
-    {
-        var confirm = await Shell.Current.DisplayAlertAsync(
-            "Changer de site",
-            "Changer de site ? Vous serez déconnecté et les données de ce site seront effacées de l'appareil.",
-            "Oui",
-            "Non");
-
-        if (!confirm)
-        {
-            return false;
-        }
-
-        await ClearAllAsync();
-        await Shell.Current.GoToAsync("//ActivationPage");
-        return true;
     }
 }

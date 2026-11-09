@@ -110,3 +110,24 @@ messages des écrans.
 | « Changer de site » en étant connecté | en attente |
 | Mauvais mot de passe, code OTP faux | en attente |
 | Aucune erreur ni aucun jeton dans le journal du téléphone | **OK** (journal relu par Claude) |
+
+## Contre-vérification des corrections N1 à N6 (08/11/2026)
+
+- **Encodage** : les 3 `DIFF` signalés sont expliqués. `AppShell.xaml`, `JwtService.cs` et `LoginUseCase.cs` étaient en
+  ASCII, sans BOM, et passent en UTF-8 parce qu'ils contiennent maintenant des accents. Les 3 documents de `docs/`
+  apparaissent parce qu'ils sont commités sur cette branche et absents de celle du lot 1. **Merci d'avoir collé la
+  sortie réelle.**
+- **N1** : le diff avec et sans les espaces est désormais quasi identique dans les 4 fichiers.
+- **N2 à N6** : vérifiés dans le code.
+  - Plus aucun `\u00` dans le code.
+  - Le notificateur n'est plus appelé que par `AuthHandler`, sans attente.
+  - `LoadIntoBufferAsync` est appelé avant l'envoi.
+  - `SessionService` garde les valeurs lues en mémoire, avec un drapeau par valeur.
+  - `last_login_email` est conservé par `ClearSessionAsync` et effacé par `ClearAllAsync`.
+- **Ma compilation** donne `0 Error(s)` et `419 Warning(s)`. Les 3 avertissements de plus sont des CS8602 dans
+  `LoadingPageViewModel.cs` (lignes 135, 152 et 169), apparus quand les tests `Shell.Current != null` ont été retirés.
+  Ils sont sans conséquence et seront repris au lot 3. Le compte rendu dit à tort qu'aucun avertissement ne vient du
+  code du lot 2.
+
+**Le code du lot 2 est validé.** Il reste un essai sur le téléphone : l'adresse e-mail préremplie après
+« Se déconnecter ». Le lot sera poussé sur `main` après cet essai.

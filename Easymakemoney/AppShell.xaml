@@ -21,6 +21,10 @@
      <ShellContent Title="Login Page" FlyoutItemIsVisible="False" Shell.FlyoutBehavior="Disabled"
         ContentTemplate="{DataTemplate startupPages:LoginPage}"
         Route="LoginPage" />
+
+     <ShellContent Title="Code OTP" FlyoutItemIsVisible="False" Shell.FlyoutBehavior="Disabled"
+        ContentTemplate="{DataTemplate startupPages:OtpPage}"
+        Route="OtpPage" />
    
 
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems" Route="DashboardPage">
@@ -46,7 +50,7 @@
     <Shell.FlyoutFooter >
         <StackLayout Padding="20" HorizontalOptions="Center" Spacing="10">
             <Button Text="Changer de site" Command="{Binding ChangeSiteCommand}" BackgroundColor="#512BD4" TextColor="White"/>
-            <Button Text="Sign Out" Command="{Binding SignOutCommand}"/>
+            <Button Text="Se déconnecter" Command="{Binding SignOutCommand}"/>
         </StackLayout>
     </Shell.FlyoutFooter>
 

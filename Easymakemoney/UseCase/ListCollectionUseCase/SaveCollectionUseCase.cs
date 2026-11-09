@@ -1,23 +1,25 @@
 
+using Easymakemoney.Services.Session;
 
 namespace Easymakemoney.UseCase.ListCollectionUsecase
 {
 public class SaveCollectionUseCase
 {
     private readonly CreateCollectionUseCase _createCollectionUseCase;
-    private readonly IPreferenceService _preferenceService;
+    private readonly ISessionService _sessionService;
     // private readonly ListNewCollectionViewModel _collectionViewModel;
 
-    public SaveCollectionUseCase(CreateCollectionUseCase createCollectionUseCase, IPreferenceService preferenceService)
+    public SaveCollectionUseCase(CreateCollectionUseCase createCollectionUseCase, ISessionService sessionService)
     {
         _createCollectionUseCase = createCollectionUseCase;
-        _preferenceService = preferenceService;
+        _sessionService = sessionService;
         // _collectionViewModel = collectionViewModel;
     }
 
     public async Task<bool> ExecuteAsync(CollectionFormModel collectionForm)
     {
-        var user = _preferenceService.GetUserId();
+        var user = await _sessionService.GetUserAsync();
+        var userId = user?.Id ?? 0;
         var newCollection = new ListCollection
         {
             budgetCollection = (collectionForm.BudgetCollection ?? 0) * 100,
@@ -26,7 +28,7 @@ public class SaveCollectionUseCase
             del = collectionForm.Del,
             nomCollection = collectionForm.NomCollection,
             photoCollection = collectionForm.PhotoCollection,
-            userId = user
+            userId = userId
         };
 
         var result = await _createCollectionUseCase.ExecuteAsync(newCollection);

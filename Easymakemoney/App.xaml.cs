@@ -8,9 +8,6 @@ namespace Easymakemoney
 {
     public partial class App : Application
     {
-        public static UserBasicInfo? UserDetails;
-        public static string? Token;
-
         public App(AppShell shell)
         {
             InitializeComponent();
@@ -40,6 +37,9 @@ namespace Easymakemoney
 #endif
                 }
             });
+
+            // Règle M10 : forcer le thème clair pour éviter le texte blanc sur fond blanc en mode sombre
+            UserAppTheme = AppTheme.Light;
 
             MainPage = shell;
         }

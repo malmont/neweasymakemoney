@@ -1,30 +1,26 @@
-﻿using Easymakemoney.Services.Tenant;
+﻿using Easymakemoney.Services.Auth;
 
 namespace Easymakemoney.ViewModels
 {
 	public partial class AppShellViewModel:BaseViewModel
 	{
-		private readonly ISiteDataCleaner _siteDataCleaner;
+		private readonly IAuthFlowService _authFlowService;
 
-		public AppShellViewModel(ISiteDataCleaner siteDataCleaner)
+		public AppShellViewModel(IAuthFlowService authFlowService)
 		{
-			_siteDataCleaner = siteDataCleaner;
+			_authFlowService = authFlowService;
 		}
 
 		[RelayCommand]
 		async Task ChangeSiteAsync()
 		{
-			await _siteDataCleaner.PromptAndChangeSiteAsync();
+			await _authFlowService.PromptAndChangeSiteAsync();
 		}
 
 		[RelayCommand]
 		async void SignOut()
 		{
-            if (Preferences.ContainsKey(nameof(App.UserDetails)))
-            {
-                Preferences.Remove(nameof(App.UserDetails));
-            };
-            await Shell.Current.GoToAsync($"//{nameof(LoginPage)}");
+			await _authFlowService.LogoutAsync();
 		}
-    }
+	}
 }

@@ -1,6 +1,8 @@
 ﻿
 using Easymakemoney.Services.Tenant;
 using Easymakemoney.Services.Site;
+using Easymakemoney.Services.Auth;
+using Easymakemoney.Services.Session;
 
 namespace Easymakemoney;
 
@@ -39,22 +41,35 @@ public static class MauiProgram
 
 
 
-		// Configuration HTTP partagée (L5) et gestionnaire de site
+		// Configuration HTTP partagée (L5, M1) et gestionnaires de requêtes
 		builder.Services.AddTransient<TenantHandler>();
-		builder.Services.AddHttpClient<IHttpService, HttpService>(ConfigureBackendHttpClient)
+		builder.Services.AddTransient<AuthHandler>();
+
+		// Client nommé "auth" pour les routes publiques (M1, M2) : BaseAddress + TenantHandler seulement
+		builder.Services.AddHttpClient("auth", ConfigureBackendHttpClient)
 			.AddHttpMessageHandler<TenantHandler>();
+
+		// Client HTTP principal : BaseAddress + TenantHandler + AuthHandler
+		builder.Services.AddHttpClient<IHttpService, HttpService>(ConfigureBackendHttpClient)
+			.AddHttpMessageHandler<TenantHandler>()
+			.AddHttpMessageHandler<AuthHandler>();
+
 		builder.Services.AddHttpClient<ISiteService, SiteService>(ConfigureBackendHttpClient)
 			.AddHttpMessageHandler<TenantHandler>();
 
 		builder.Services.AddSingleton<ITenantStore, TenantStore>();
 		builder.Services.AddSingleton<ISiteDataCleaner, SiteDataCleaner>();
+		builder.Services.AddSingleton<ISessionService, SessionService>();
+		builder.Services.AddSingleton<IPendingLoginStore, PendingLoginStore>();
+		builder.Services.AddSingleton<ISessionExpiryNotifier, SessionExpiryNotifier>();
+		builder.Services.AddSingleton<ITokenRefresher, TokenRefresher>();
+		builder.Services.AddSingleton<IAuthFlowService, AuthFlowService>();
 		builder.Services.AddSingleton<AppShellViewModel>();
 		builder.Services.AddSingleton<AppShell>();
 
 		builder.Services.AddTransient<ILoginService, LoginService>();
 		builder.Services.AddTransient<IListCollectionService, ListCollectionService>();
 		builder.Services.AddSingleton<IJwtService, JwtService>();
-		builder.Services.AddSingleton<IPreferenceService, PreferenceService>();
 		builder.Services.AddTransient<IListCommandService, ListCommandService>();
 		builder.Services.AddTransient<IListProductService, ListProductService>();
 		builder.Services.AddTransient<IListCategoryServices, ListCategoryServices>();
@@ -136,6 +151,7 @@ public static class MauiProgram
 
 		builder.Services.AddTransient<ActivationPage>();
 		builder.Services.AddTransient<LoginPage>();
+		builder.Services.AddTransient<OtpPage>();
 		builder.Services.AddTransient<DashboardPage>();
 		builder.Services.AddTransient<LoadingPage>();
 		builder.Services.AddTransient<AllListsPage>();
@@ -160,6 +176,7 @@ public static class MauiProgram
 		//View Models
 		builder.Services.AddTransient<ActivationPageViewModel>();
 		builder.Services.AddTransient<LoginPageViewModel>();
+		builder.Services.AddTransient<OtpPageViewModel>();
 		builder.Services.AddTransient<DashboardPageViewModel>();
 		builder.Services.AddTransient<LoadingPageViewModel>();
 		builder.Services.AddTransient<AllListsViewModel>();
