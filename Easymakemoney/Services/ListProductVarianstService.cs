@@ -20,15 +20,15 @@ namespace Easymakemoney.Services
         public async Task<bool> PostProductVariant(ProductVariant newProductVariant, int id)
         {
             var url = $"products/{id}/variants";
-            var result = await _httpService.PostAsyncWithAuth<object>(url, newProductVariant);
-            return result != null;
+            await _httpService.PostAsyncWithAuth<object>(url, newProductVariant);
+            return true;
         }
 
         public async Task<bool> DeleteProductVariant(int id)
         {
             var url = $"product-variants/{id}";
             var result = await _httpService.DeleAsyncWithAuth<object>(url);
-            return result != null;
+            return result;
         }
     }
 }

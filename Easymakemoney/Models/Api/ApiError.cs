@@ -5,6 +5,12 @@ using Newtonsoft.Json.Linq;
 
 namespace Easymakemoney.Models.Api;
 
+public class ApiValidationError
+{
+    public string Path { get; set; } = string.Empty;
+    public string Message { get; set; } = string.Empty;
+}
+
 public class ApiError
 {
     private static readonly Regex ValidCodeRegex = new("^[A-Z][A-Z0-9_]*$", RegexOptions.Compiled);
@@ -12,12 +18,14 @@ public class ApiError
     public string Code { get; set; } = string.Empty;
     public string Message { get; set; } = string.Empty;
     public int? RetryAfterSeconds { get; set; }
+    public List<ApiValidationError> Errors { get; set; } = new();
 
     public static ApiError FromHttpResponse(string? json, HttpStatusCode statusCode, HttpResponseHeaders? headers)
     {
         string? extractedCode = null;
         string? serverMessage = null;
         int? retryAfterSeconds = null;
+        var validationErrors = new List<ApiValidationError>();
 
         // Extraction Retry-After selon L1 (Delta ou Date)
         if (headers?.RetryAfter != null)
@@ -73,6 +81,35 @@ public class ApiError
                         retryAfterSeconds = parsedSeconds;
                     }
                 }
+
+                // Extraction des erreurs de validation (format Symfony "errors" ou API Platform "violations")
+                var errorsToken = jObject["errors"];
+                if (errorsToken is JArray jErrors)
+                {
+                    foreach (var item in jErrors)
+                    {
+                        var path = item["path"]?.ToString() ?? string.Empty;
+                        var msg = item["message"]?.ToString() ?? string.Empty;
+                        if (!string.IsNullOrWhiteSpace(msg))
+                        {
+                            validationErrors.Add(new ApiValidationError { Path = path, Message = msg });
+                        }
+                    }
+                }
+
+                var violationsToken = jObject["violations"];
+                if (violationsToken is JArray jViolations)
+                {
+                    foreach (var item in jViolations)
+                    {
+                        var path = item["propertyPath"]?.ToString() ?? item["path"]?.ToString() ?? string.Empty;
+                        var msg = item["message"]?.ToString() ?? string.Empty;
+                        if (!string.IsNullOrWhiteSpace(msg))
+                        {
+                            validationErrors.Add(new ApiValidationError { Path = path, Message = msg });
+                        }
+                    }
+                }
             }
             catch
             {
@@ -94,7 +131,8 @@ public class ApiError
         {
             Code = extractedCode,
             Message = finalMessage,
-            RetryAfterSeconds = retryAfterSeconds
+            RetryAfterSeconds = retryAfterSeconds,
+            Errors = validationErrors
         };
     }
 

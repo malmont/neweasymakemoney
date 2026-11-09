@@ -50,13 +50,19 @@ namespace Easymakemoney.ViewModels.FormModels
 
         private async void LoadTransporteurs()
         {
-            var fournisseurs = await _getListFournisseursUseCase.ExecuteAsync();
-            Fournisseurs.Clear();
-            foreach (var fournisseur in fournisseurs)
+            try
             {
-                Fournisseurs.Add(fournisseur);
+                var fournisseurs = await _getListFournisseursUseCase.ExecuteAsync();
+                Fournisseurs.Clear();
+                foreach (var fournisseur in fournisseurs)
+                {
+                    Fournisseurs.Add(fournisseur);
+                }
             }
-
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"LoadTransporteurs failed: {ex.Message}");
+            }
         }
     }
 }

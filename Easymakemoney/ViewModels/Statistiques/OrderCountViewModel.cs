@@ -1,8 +1,14 @@
 
+using Easymakemoney.Services.Dialog;
+using Easymakemoney.UseCase.OrderCountUseCase;
+
 namespace Easymakemoney.ViewModels.Statistiques
 {
     public partial class OrderCountViewModel : BaseViewModel
     {
+        private readonly IDialogService? _dialogService;
+        private readonly OrderCountUseCase? _orderCountUseCase;
+
         // Propriétés de recettes et périodes
         [ObservableProperty] private double currentDataValueWeek;
         [ObservableProperty] private double lastDataValueWeek;
@@ -65,15 +71,33 @@ namespace Easymakemoney.ViewModels.Statistiques
 
         [ObservableProperty] bool isYearChartVisible;
         public List<PeriodeType> PeriodeTypeChoices { get; }
-        public OrderCountViewModel()
+        public OrderCountViewModel(IDialogService? dialogService = null,
+            OrderCountUseCase? orderCountUseCase = null)
         {
-
+            _dialogService = dialogService;
+            _orderCountUseCase = orderCountUseCase;
             PeriodeTypeChoices = StaticData.StaticData.PeriodeTypeChoices;
-
         }
-        public void LoadOderCount(OrderStatistics data)
 
+        public async Task LoadOrderCountStatisticsAsync()
         {
+            if (_orderCountUseCase == null) return;
+            try
+            {
+                var data = await _orderCountUseCase.GetOrderStatistics();
+                LoadOderCount(data);
+            }
+            catch (Exception ex)
+            {
+                if (_dialogService != null)
+                    await _dialogService.ShowErrorAsync(ex);
+            }
+        }
+        public void LoadOderCount(OrderStatistics? data)
+        {
+            if (data == null)
+                return;
+
             CurrentPeriode = "Semaine en cours";
             LastPeriode = "Semaine précédente";
             TypeDataValue = "Commande journalière";
@@ -92,15 +116,24 @@ namespace Easymakemoney.ViewModels.Statistiques
             CurrentWeekReturnOrderComplete = data.CurrentWeekCountRetourClientCompletee;
             LastWeekReturnOrderComplete = data.LastWeekCountRetourClientCompletee;
 
-
-            DailyDataValueCurrentWeek = data.DailyCountAchatClientCompleteeForCurrentWeek.Cast<IStatistiqueData>().ToList();
-            WeeklyDataValueForCurrentMonth = data.WeeklyCountForCurrentMonth.Cast<IStatistiqueData>().ToList();
-            MonthlyDataValueForCurrentYear = data.MonthlyCountForCurrentYear.Cast<IStatistiqueData>().ToList();
-            DailycurrentWeekOrderDelivery = data.DailyCountAchatClientLivreeForCurrentWeek.Cast<IStatistiqueData>().ToList();
-            DailyLcurrentWeekOrderCancellation = data.DailyCountAchatClientAnnulationForCurrentWeek.Cast<IStatistiqueData>().ToList();
-            DailycurrentWeekReturnOrderComplete = data.DailyCountRetourClientCompleteeForCurrentWeek.Cast<IStatistiqueData>().ToList();
-
-
+            DailyDataValueCurrentWeek = data.DailyCountAchatClientCompleteeForCurrentWeek != null
+                ? data.DailyCountAchatClientCompleteeForCurrentWeek.Cast<IStatistiqueData>().ToList()
+                : new List<IStatistiqueData>();
+            WeeklyDataValueForCurrentMonth = data.WeeklyCountForCurrentMonth != null
+                ? data.WeeklyCountForCurrentMonth.Cast<IStatistiqueData>().ToList()
+                : new List<IStatistiqueData>();
+            MonthlyDataValueForCurrentYear = data.MonthlyCountForCurrentYear != null
+                ? data.MonthlyCountForCurrentYear.Cast<IStatistiqueData>().ToList()
+                : new List<IStatistiqueData>();
+            DailycurrentWeekOrderDelivery = data.DailyCountAchatClientLivreeForCurrentWeek != null
+                ? data.DailyCountAchatClientLivreeForCurrentWeek.Cast<IStatistiqueData>().ToList()
+                : new List<IStatistiqueData>();
+            DailyLcurrentWeekOrderCancellation = data.DailyCountAchatClientAnnulationForCurrentWeek != null
+                ? data.DailyCountAchatClientAnnulationForCurrentWeek.Cast<IStatistiqueData>().ToList()
+                : new List<IStatistiqueData>();
+            DailycurrentWeekReturnOrderComplete = data.DailyCountRetourClientCompleteeForCurrentWeek != null
+                ? data.DailyCountRetourClientCompleteeForCurrentWeek.Cast<IStatistiqueData>().ToList()
+                : new List<IStatistiqueData>();
 
             // Appliquer les couleurs alternées
             ApplyAlternateRowColors(DailyDataValueCurrentWeek);
@@ -176,7 +209,8 @@ namespace Easymakemoney.ViewModels.Statistiques
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
-            await Application.Current.MainPage.ShowPopupAsync(popup);
+            if (Application.Current?.MainPage != null)
+                await Application.Current.MainPage.ShowPopupAsync(popup);
         }
 
         private void ApplyAlternateRowColors(List<IStatistiqueData> dataList)

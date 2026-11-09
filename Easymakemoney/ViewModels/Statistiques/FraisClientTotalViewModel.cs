@@ -1,8 +1,14 @@
 
+using Easymakemoney.Services.Dialog;
+using Easymakemoney.UseCase.FraisClientTotalUseCase;
+
 namespace Easymakemoney.ViewModels.Statistiques
 {
     public partial class FraisClientTotalViewModel : BaseViewModel
     {
+        private readonly IDialogService? _dialogService;
+        private readonly GetFraisClientCarrierUseCase? _getFraisClientCarrierUseCase;
+        private readonly GetFraisClientTaxUseCase? _getFraisClientTaxUseCase;
 
         [ObservableProperty] private string titreFraisMonth;
   
@@ -23,8 +29,13 @@ namespace Easymakemoney.ViewModels.Statistiques
         [ObservableProperty] bool ismonthlyCarrierChartVisible;
         [ObservableProperty] bool ismonhthlyTaxesChartVisible;
    
-        public FraisClientTotalViewModel()
+        public FraisClientTotalViewModel(IDialogService? dialogService = null,
+            GetFraisClientCarrierUseCase? getFraisClientCarrierUseCase = null,
+            GetFraisClientTaxUseCase? getFraisClientTaxUseCase = null)
         {
+            _dialogService = dialogService;
+            _getFraisClientCarrierUseCase = getFraisClientCarrierUseCase;
+            _getFraisClientTaxUseCase = getFraisClientTaxUseCase;
             periodeTypeChoices = new List<PeriodeType>
             {
                 new PeriodeType { id = 1, typePeriode = "Taxes", photoPeriode = "week.png" },
@@ -33,15 +44,41 @@ namespace Easymakemoney.ViewModels.Statistiques
             };
         }
 
-        public void LoadDataFrais( TaxStatisticsResponse data , CarrierStatisticsResponse data2)
+        public async Task LoadFraisStatisticsAsync()
         {
-            MonhthlyTaxesForCurrentYear = data.MonthlyTaxesForCurrentYear.Cast<IStatistiqueData>().ToList();
-            MonthlyCarrierForCurrentYear = data2.MonthlyCarrierForCurrentYear.Cast<IStatistiqueData>().ToList();
+            try
+            {
+                CarrierStatisticsResponse? carrierData = null;
+                TaxStatisticsResponse? taxData = null;
+                if (_getFraisClientCarrierUseCase != null)
+                    carrierData = await _getFraisClientCarrierUseCase.Execute();
+                if (_getFraisClientTaxUseCase != null)
+                    taxData = await _getFraisClientTaxUseCase.Execute();
+                LoadDataFrais(taxData, carrierData);
+            }
+            catch (Exception ex)
+            {
+                if (_dialogService != null)
+                    await _dialogService.ShowErrorAsync(ex);
+            }
+        }
 
+        public void LoadDataFrais(TaxStatisticsResponse? data, CarrierStatisticsResponse? data2)
+        {
+            if (data == null && data2 == null)
+                return;
 
-            
-            ApplyAlternateRowColors(MonhthlyTaxesForCurrentYear);
-            ApplyAlternateRowColors(MonthlyCarrierForCurrentYear);
+            if (data?.MonthlyTaxesForCurrentYear != null)
+            {
+                MonhthlyTaxesForCurrentYear = data.MonthlyTaxesForCurrentYear.Cast<IStatistiqueData>().ToList();
+                ApplyAlternateRowColors(MonhthlyTaxesForCurrentYear);
+            }
+
+            if (data2?.MonthlyCarrierForCurrentYear != null)
+            {
+                MonthlyCarrierForCurrentYear = data2.MonthlyCarrierForCurrentYear.Cast<IStatistiqueData>().ToList();
+                ApplyAlternateRowColors(MonthlyCarrierForCurrentYear);
+            }
         }
 
         public void UpdateFraisData(int periodeTypeId)
@@ -85,7 +122,8 @@ namespace Easymakemoney.ViewModels.Statistiques
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
-            await Application.Current.MainPage.ShowPopupAsync(popup);
+            if (Application.Current?.MainPage != null)
+                await Application.Current.MainPage.ShowPopupAsync(popup);
         }
 
         private void ApplyAlternateRowColors<T>(List<T> dataList) where T : class

@@ -60,11 +60,18 @@ namespace Easymakemoney.ViewModels.FormModels
     
             private async void LoadTransporteur()
             {
-                var transporteurs = await _getListTransporteurUseCase.ExecuteAsync();
-                Transporteurs.Clear();
-                foreach (var transporteur in transporteurs)
+                try
                 {
-                    Transporteurs.Add(transporteur);
+                    var transporteurs = await _getListTransporteurUseCase.ExecuteAsync();
+                    Transporteurs.Clear();
+                    foreach (var transporteur in transporteurs)
+                    {
+                        Transporteurs.Add(transporteur);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"LoadTransporteur failed: {ex.Message}");
                 }
             }
    }

@@ -1,8 +1,14 @@
 
+using Easymakemoney.Services.Dialog;
+using Easymakemoney.UseCase.StockEvolutionUseCase;
+
 namespace Easymakemoney.ViewModels.Statistiques
 {
     public partial class StockEvolutionViewModel : BaseViewModel
     {
+        private readonly IDialogService? _dialogService;
+        private readonly StockEvolutionUseCase? _stockEvolutionUseCase;
+        private readonly StockValueEvolutionUseCase? _stockValueEvolutionUseCase;
 
         
         [ObservableProperty] private string stockCurrentPeriode;
@@ -31,27 +37,62 @@ namespace Easymakemoney.ViewModels.Statistiques
         [ObservableProperty] bool isYearChartVisible;
         public List<PeriodeType> PeriodeTypeChoices { get; }
 
-        public StockEvolutionViewModel()
+        public StockEvolutionViewModel(IDialogService? dialogService = null,
+            StockEvolutionUseCase? stockEvolutionUseCase = null,
+            StockValueEvolutionUseCase? stockValueEvolutionUseCase = null)
         {
-
+            _dialogService = dialogService;
+            _stockEvolutionUseCase = stockEvolutionUseCase;
+            _stockValueEvolutionUseCase = stockValueEvolutionUseCase;
             PeriodeTypeChoices = StaticData.StaticData.PeriodeTypeChoices;
-
         }
-        public void LoadDataChiffreAffaire( StockEvolution data ,StockValue data1)
 
+        public async Task LoadStockEvolutionStatisticsAsync()
         {
+            try
+            {
+                StockEvolution? stockData = null;
+                StockValue? stockValueData = null;
+                if (_stockEvolutionUseCase != null)
+                    stockData = await _stockEvolutionUseCase.GetStockEvolution();
+                if (_stockValueEvolutionUseCase != null)
+                    stockValueData = await _stockValueEvolutionUseCase.GetStockValueEvolution();
+                LoadDataChiffreAffaire(stockData, stockValueData);
+            }
+            catch (Exception ex)
+            {
+                if (_dialogService != null)
+                    await _dialogService.ShowErrorAsync(ex);
+            }
+        }
+        public void LoadDataChiffreAffaire(StockEvolution? data, StockValue? data1)
+        {
+            if (data == null && data1 == null)
+                return;
+
             StockCurrentPeriode = "stock semaine";
-            StockMouvementDataValueWeek = data.StockEvolutionWeek.Cast<IStatistiqueData>().ToList();
-            StockMouvementDataValueMonth = data.StockEvolutionMonth.Cast<IStatistiqueData>().ToList();
-            StockMouvementDataValueYear = data.StockEvolutionYear.Cast<IStatistiqueData>().ToList();
 
-            StockDataValueCurrentMonth= data1.StockValueCurrent.StockValueCurrentMonth[0];
-           
+            if (data != null)
+            {
+                StockMouvementDataValueWeek = data.StockEvolutionWeek != null
+                    ? data.StockEvolutionWeek.Cast<IStatistiqueData>().ToList()
+                    : new List<IStatistiqueData>();
+                StockMouvementDataValueMonth = data.StockEvolutionMonth != null
+                    ? data.StockEvolutionMonth.Cast<IStatistiqueData>().ToList()
+                    : new List<IStatistiqueData>();
+                StockMouvementDataValueYear = data.StockEvolutionYear != null
+                    ? data.StockEvolutionYear.Cast<IStatistiqueData>().ToList()
+                    : new List<IStatistiqueData>();
 
-            // Appliquer les couleurs alternées
-            ApplyAlternateRowColors(StockMouvementDataValueWeek);
-            ApplyAlternateRowColors(StockMouvementDataValueMonth);
-            ApplyAlternateRowColors(StockMouvementDataValueYear);
+                ApplyAlternateRowColors(StockMouvementDataValueWeek);
+                ApplyAlternateRowColors(StockMouvementDataValueMonth);
+                ApplyAlternateRowColors(StockMouvementDataValueYear);
+            }
+
+            if (data1?.StockValueCurrent?.StockValueCurrentMonth != null && data1.StockValueCurrent.StockValueCurrentMonth.Count > 0)
+            {
+                StockDataValueCurrentMonth = data1.StockValueCurrent.StockValueCurrentMonth[0];
+            }
         }
 
         public void UpdateRevenueData(int periodeTypeId)
@@ -101,7 +142,8 @@ namespace Easymakemoney.ViewModels.Statistiques
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
-            await Application.Current.MainPage.ShowPopupAsync(popup);
+            if (Application.Current?.MainPage != null)
+                await Application.Current.MainPage.ShowPopupAsync(popup);
         }
 
         private void ApplyAlternateRowColors(List<IStatistiqueData> dataList)

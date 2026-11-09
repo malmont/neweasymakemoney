@@ -100,3 +100,10 @@ Tous les montants deviennent des **entiers en centimes**, en entrée et en sorti
 - `close` commande ou collection → 200 avec le tableau de bord figé ; 409 `ALREADY_CLOSED`.
 
 **Point de vigilance côté application :** `CollectionCloseService` lit la réponse en `string`. Un objet JSON (déjà `{"message":…}` depuis G1) fait échouer la lecture alors que la clôture a réussi. À corriger avec le lot d'adaptation G1 : ne plus lire le corps, afficher « Collection clôturée », et recharger le tableau de bord.
+
+## LIVRÉ : G2, le 09/11/2026 (en production ; 885 tests verts)
+
+- Tableaux de bord : mêmes clés, plus `purchaseCost` et `currency`. Coût = `commande_cost_cents ?? purchasePrice ?? price`.
+- `POST dashboard/commande/{id}/close` et `dashboard/collection/{id}/close` : 200 avec l'objet du tableau de bord figé ; déjà fermé → 409 `ALREADY_CLOSED`.
+
+**À adapter côté application, en priorité :** `CollectionCloseService` lit encore une chaîne (voir le point de vigilance de G2).

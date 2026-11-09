@@ -1,5 +1,7 @@
 
 
+using Easymakemoney.Services.Dialog;
+
 namespace Easymakemoney.ViewModels.Lists
 {
     public partial class ListNewFournisseurViewModel : BaseViewModel
@@ -11,19 +13,21 @@ namespace Easymakemoney.ViewModels.Lists
         private readonly FournisseurFormModel _fournisseurFormModel;
 
         private readonly SaveFournisseurUseCase _saveFournisseurUseCase;
+        private readonly IDialogService _dialogService;
 
 
         public ListNewFournisseurViewModel(GetListFournisseursUseCase getListFournisseurUseCase, DeleteFournisseurUseCase deleteFournisseurUseCase,
-            SaveFournisseurUseCase saveFournisseurUseCase, FournisseurFormModel fournisseurFormModel
-        )
+            SaveFournisseurUseCase saveFournisseurUseCase, FournisseurFormModel fournisseurFormModel,
+            IDialogService dialogService)
         {
 
             _getListFournisseurUseCase = getListFournisseurUseCase;
             _deleteFournisseurUseCase = deleteFournisseurUseCase;
             _saveFournisseurUseCase = saveFournisseurUseCase;
             _fournisseurFormModel = fournisseurFormModel;
-            DeleteFournisseurCommand = new RelayCommand<ListFournisseur>(DeleteFournisseur);
-            ItemTappedFournisseur = new RelayCommand<ListFournisseur>(OnItemTapped);
+            _dialogService = dialogService;
+            DeleteFournisseurCommand = new AsyncRelayCommand<ListFournisseur>(DeleteFournisseur);
+            ItemTappedFournisseur = new AsyncRelayCommand<ListFournisseur>(OnItemTapped);
         }
 
         public ObservableCollection<ListFournisseur> ListFournisseurs { get; set; } = new ObservableCollection<ListFournisseur>();
@@ -55,6 +59,7 @@ namespace Easymakemoney.ViewModels.Lists
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
             }
             finally
             {
@@ -62,9 +67,20 @@ namespace Easymakemoney.ViewModels.Lists
             }
         }
 
-        private async void DeleteFournisseur(ListFournisseur fournisseur)
+        private async Task DeleteFournisseur(ListFournisseur? fournisseur)
         {
+            if (fournisseur == null)
+                return;
+
             if (IsBusy)
+                return;
+
+            bool confirmed = await _dialogService.ConfirmAsync(
+                "Confirmation",
+                "Êtes-vous sûr de vouloir supprimer ce fournisseur ?",
+                "Supprimer",
+                "Annuler");
+            if (!confirmed)
                 return;
 
             IsBusy = true;
@@ -74,11 +90,17 @@ namespace Easymakemoney.ViewModels.Lists
                 if (result)
                 {
                     ListFournisseurs.Remove(fournisseur);
+                    await _dialogService.ShowInfoAsync("Fournisseur supprimé avec succès.");
+                }
+                else
+                {
+                    await _dialogService.ShowInfoAsync("Échec de la suppression du fournisseur.");
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
             }
             finally
             {
@@ -86,10 +108,11 @@ namespace Easymakemoney.ViewModels.Lists
             }
         }
 
-        private async void OnItemTapped(ListFournisseur fournisseur)
+        private async Task OnItemTapped(ListFournisseur? fournisseur)
         {
             if (fournisseur == null)
                 return;
+            await Task.CompletedTask;
         }
       
 
@@ -97,11 +120,12 @@ namespace Easymakemoney.ViewModels.Lists
         public async Task ShowBottomSheet()
         {
             var viewModel = new BottomSheetPopupViewModel(
-            popup: new Popup(),
-            fournisseurViewModel: this,
-            isFournisseurForm: true,
-            saveFournisseurUseCase: _saveFournisseurUseCase,
-            fournisseurForm: _fournisseurFormModel);
+                popup: new Popup(),
+                fournisseurViewModel: this,
+                isFournisseurForm: true,
+                saveFournisseurUseCase: _saveFournisseurUseCase,
+                fournisseurForm: _fournisseurFormModel,
+                dialogService: _dialogService);
 
             var popup = new BottomSheetPopup(viewModel);
             var mainPage = Application.Current?.MainPage;

@@ -20,15 +20,15 @@ public class ListProductService : IListProductService
         var url = $"commandes/{id}/products";
 
         // Utilisez la méthode `PostMultipartAsyncWithAuth` pour envoyer le produit et l'image
-        var result = await _httpService.PostMultipartAsyncWithAuth<object>(url, newProduct, imageStream, fileName);
+        await _httpService.PostMultipartAsyncWithAuth<object>(url, newProduct, imageStream, fileName);
 
-        return result != null;
+        return true;
     }
 
     public async Task<bool> DeleteProducts(int id)
     {
         var url = $"products/{id}";
         var result = await _httpService.DeleAsyncWithAuth<object>(url);
-        return result != null;
+        return result;
     }
 }

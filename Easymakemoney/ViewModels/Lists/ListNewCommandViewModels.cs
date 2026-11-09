@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using Easymakemoney.Services.Dialog;
 
 namespace Easymakemoney.ViewModels.Lists
 {
@@ -10,19 +11,22 @@ namespace Easymakemoney.ViewModels.Lists
         private readonly CommandFormModel _commandFormModel;
 
         private readonly SaveCommandUseCase _saveCommandUseCase;
+        private readonly IDialogService _dialogService;
 
         public ObservableCollection<ListCommand> ListCommands { get; set; } = new ObservableCollection<ListCommand>();
 
         public ListNewCommandViewModel(GetListCommandUseCase getListCommandUseCase,SaveCommandUseCase saveCommandUseCase,
         DeleteCommandUseCase deleteCommandUseCase,
-        CommandFormModel commandFormModel)
+        CommandFormModel commandFormModel,
+        IDialogService dialogService)
         {
             _saveCommandUseCase = saveCommandUseCase;
             _getListCommandUseCase = getListCommandUseCase;
             _commandFormModel = commandFormModel;
             _deleteCommandUseCase = deleteCommandUseCase;
-            DeleteCommandCommand = new RelayCommand<ListCommand>(DeleteCommand);
-            ItemTappedProducts = new RelayCommand<ListCommand>(OnItemTapped);
+            _dialogService = dialogService;
+            DeleteCommandCommand = new AsyncRelayCommand<ListCommand>(DeleteCommand);
+            ItemTappedProducts = new AsyncRelayCommand<ListCommand>(OnItemTapped);
         }
 
         public ICommand ItemTappedProducts { get; }
@@ -47,7 +51,7 @@ namespace Easymakemoney.ViewModels.Lists
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                await Shell.Current.DisplayAlert("Error", "Unable to get commands", "OK");
+                await _dialogService.ShowErrorAsync(ex);
             }
             finally
             {
@@ -55,30 +59,46 @@ namespace Easymakemoney.ViewModels.Lists
             }
         }
 
-        private async void DeleteCommand(ListCommand command)
+        private async Task DeleteCommand(ListCommand? command)
         {
             if (command == null)
                 return;
 
-            var result = await _deleteCommandUseCase.ExecuteAsync(command.id); ;
-            if (result)
+            bool confirmed = await _dialogService.ConfirmAsync(
+                "Confirmation",
+                "Êtes-vous sûr de vouloir supprimer cette commande ?",
+                "Supprimer",
+                "Annuler");
+            if (!confirmed)
+                return;
+
+            try
             {
-                await GetListCommandAsync();
-                await Shell.Current.DisplayAlert("Success", "Collection deleted", "OK");
+                var result = await _deleteCommandUseCase.ExecuteAsync(command.id);
+                if (result)
+                {
+                    await GetListCommandAsync();
+                    await _dialogService.ShowInfoAsync("Commande supprimée avec succès.");
+                }
+                else
+                {
+                    await _dialogService.ShowInfoAsync("Échec de la suppression de la commande.");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Error", "Failed to delete collection", "OK");
+                await _dialogService.ShowErrorAsync(ex);
             }
         }
 
-        private async void OnItemTapped(ListCommand command)
+        private async Task OnItemTapped(ListCommand? command)
         {
             if (command == null)
                 return;
 
             // Navigate to the ListNewCommandPage and pass the collection ID
-            await Shell.Current.GoToAsync($"{nameof(ListNewProductPage)}?CommandId={command.id}", true);
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync($"{nameof(ListNewProductPage)}?CommandId={command.id}", true);
         }
 
 
@@ -86,11 +106,12 @@ namespace Easymakemoney.ViewModels.Lists
         public async Task ShowBottomSheet()
         {
             var viewModel = new BottomSheetPopupViewModel(
-            popup: new Popup(),
-            commandViewModel: this,
-            isCommandForm: true,
-            saveCommandUseCase: _saveCommandUseCase,
-            commandFormModel: _commandFormModel);
+                popup: new Popup(),
+                commandViewModel: this,
+                isCommandForm: true,
+                saveCommandUseCase: _saveCommandUseCase,
+                commandFormModel: _commandFormModel,
+                dialogService: _dialogService);
 
             var popup = new BottomSheetPopup(viewModel);
             var mainPage = Application.Current?.MainPage;

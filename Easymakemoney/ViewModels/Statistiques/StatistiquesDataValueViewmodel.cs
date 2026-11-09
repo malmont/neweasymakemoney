@@ -1,8 +1,15 @@
 
+using Easymakemoney.Services.Dialog;
+using Easymakemoney.UseCase.ChiffreAffaireUseCase;
+
 namespace Easymakemoney.ViewModels.Statistiques
 {
     public partial class StatistiquesDataValueViewmodel : BaseViewModel
     {
+        private readonly IDialogService? _dialogService;
+        private readonly ChiffreAffaireUseCase? _chiffreAffaireUseCase;
+        private readonly AverageOrderValueUseCase? _averageOrderValueUseCase;
+
         // Propriétés de recettes et périodes
         [ObservableProperty] private double currentDataValueWeek;
         [ObservableProperty] private double lastDataValueWeek;
@@ -36,17 +43,53 @@ namespace Easymakemoney.ViewModels.Statistiques
         [ObservableProperty] bool isYearChartVisible;
           public List<PeriodeType> PeriodeTypeChoices { get; }
 
-        public StatistiquesDataValueViewmodel()
+        public StatistiquesDataValueViewmodel(IDialogService? dialogService = null,
+            ChiffreAffaireUseCase? chiffreAffaireUseCase = null,
+            AverageOrderValueUseCase? averageOrderValueUseCase = null)
         {
-
-           PeriodeTypeChoices = StaticData.StaticData.PeriodeTypeChoices;
-
+            _dialogService = dialogService;
+            _chiffreAffaireUseCase = chiffreAffaireUseCase;
+            _averageOrderValueUseCase = averageOrderValueUseCase;
+            PeriodeTypeChoices = StaticData.StaticData.PeriodeTypeChoices;
         }
-        public void LoadDataChiffreAffaire<TDaily, TWeekly, TMonthly>(IAllDataStatistics<TDaily, TWeekly, TMonthly> data)
+
+        public async Task LoadRevenueStatisticsAsync()
+        {
+            if (_chiffreAffaireUseCase == null) return;
+            try
+            {
+                var data = await _chiffreAffaireUseCase.GetRevenueStatistics();
+                LoadDataChiffreAffaire(data);
+            }
+            catch (Exception ex)
+            {
+                if (_dialogService != null)
+                    await _dialogService.ShowErrorAsync(ex);
+            }
+        }
+
+        public async Task LoadAverageOrderValueStatisticsAsync()
+        {
+            if (_averageOrderValueUseCase == null) return;
+            try
+            {
+                var data = await _averageOrderValueUseCase.GetAverageOrderValueStatistics();
+                LoadDataChiffreAffaire(data);
+            }
+            catch (Exception ex)
+            {
+                if (_dialogService != null)
+                    await _dialogService.ShowErrorAsync(ex);
+            }
+        }
+        public void LoadDataChiffreAffaire<TDaily, TWeekly, TMonthly>(IAllDataStatistics<TDaily, TWeekly, TMonthly>? data)
             where TDaily : IStatistiqueData
             where TWeekly : IStatistiqueData
             where TMonthly : IStatistiqueData
         {
+            if (data == null)
+                return;
+
             CurrentPeriode = "Semaine en cours";
             LastPeriode = "Semaine précédente";
             TypeDataValue = "Recette journalière";
@@ -59,9 +102,15 @@ namespace Easymakemoney.ViewModels.Statistiques
             CurrentDataValueYear = data.CurrentYearData;
             LastDataValueYear = data.LastYearData;
 
-            DailyDataValueCurrentWeek = data.DailyDataForCurrentWeek.Cast<IStatistiqueData>().ToList();
-            WeeklyDataValueForCurrentMonth = data.WeeklyDataForCurrentMonth.Cast<IStatistiqueData>().ToList();
-            MonthlyDataValueForCurrentYear = data.MonthlyDataForCurrentYear.Cast<IStatistiqueData>().ToList();
+            DailyDataValueCurrentWeek = data.DailyDataForCurrentWeek != null
+                ? data.DailyDataForCurrentWeek.Cast<IStatistiqueData>().ToList()
+                : new List<IStatistiqueData>();
+            WeeklyDataValueForCurrentMonth = data.WeeklyDataForCurrentMonth != null
+                ? data.WeeklyDataForCurrentMonth.Cast<IStatistiqueData>().ToList()
+                : new List<IStatistiqueData>();
+            MonthlyDataValueForCurrentYear = data.MonthlyDataForCurrentYear != null
+                ? data.MonthlyDataForCurrentYear.Cast<IStatistiqueData>().ToList()
+                : new List<IStatistiqueData>();
 
             // Appliquer les couleurs alternées
             ApplyAlternateRowColors(DailyDataValueCurrentWeek);
@@ -128,7 +177,8 @@ namespace Easymakemoney.ViewModels.Statistiques
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
-            await Application.Current.MainPage.ShowPopupAsync(popup);
+            if (Application.Current?.MainPage != null)
+                await Application.Current.MainPage.ShowPopupAsync(popup);
         }
 
         private void ApplyAlternateRowColors(List<IStatistiqueData> dataList)

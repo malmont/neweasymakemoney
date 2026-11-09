@@ -1,5 +1,7 @@
 
 
+using Easymakemoney.Services.Dialog;
+
 namespace Easymakemoney.ViewModels.Dashboard
 {
     public partial class DashBoardProductViewModel : BaseViewModel
@@ -9,19 +11,19 @@ namespace Easymakemoney.ViewModels.Dashboard
         private readonly ProductFormModel _productFormModel;
         private readonly SaveProductUseCase _saveProductUseCase;
         private readonly GetListProductsUseCase _getListProductUseCase;
+        private readonly IDialogService _dialogService;
         
         [ObservableProperty]
         private int displayedQuantity;
 
         public DashBoardProductViewModel(ListNewProductViewModel listNewProductViewModel, ProductFormModel productFormModel,
-            SaveProductUseCase saveProductUseCase, GetListProductsUseCase getListProductUseCase)
+            SaveProductUseCase saveProductUseCase, GetListProductsUseCase getListProductUseCase, IDialogService dialogService)
         {
             _productFormModel = productFormModel;
             _getListProductUseCase = getListProductUseCase;
             _saveProductUseCase = saveProductUseCase;
             _listNewProductViewModel = listNewProductViewModel;
-
-
+            _dialogService = dialogService;
         }
 
         public ListProduct _dashBoardProduct;
@@ -47,12 +49,13 @@ namespace Easymakemoney.ViewModels.Dashboard
         public async Task ShowBottomSheetCreateProduct()
         {
             var viewModel = new BottomSheetPopupViewModel(
-            popup: new Popup(),
-            isProductForm: true,
-            productViewModel: _listNewProductViewModel,
-            saveProductUseCase: _saveProductUseCase,
-            productFormModel: _productFormModel
-        );
+                popup: new Popup(),
+                isProductForm: true,
+                productViewModel: _listNewProductViewModel,
+                saveProductUseCase: _saveProductUseCase,
+                productFormModel: _productFormModel,
+                dialogService: _dialogService
+            );
 
             var popup = new BottomSheetPopup(viewModel);
             var mainPage = Application.Current?.MainPage;
@@ -68,11 +71,22 @@ namespace Easymakemoney.ViewModels.Dashboard
         {
             if (CommandId == 0)
             {
-                await Shell.Current.DisplayAlert("Error", "Vous devez choisir obligatoirement une commande", "OK");
+                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une commande");
                 return;
             }
             var viewModel = new BottomSheetPopupListViewViewModel(
-                getItemsFunc: async () => await _getListProductUseCase.ExecuteAsync(CommandId),
+                getItemsFunc: async () =>
+                {
+                    try
+                    {
+                        return await _getListProductUseCase.ExecuteAsync(CommandId);
+                    }
+                    catch (Exception ex)
+                    {
+                        await _dialogService.ShowErrorAsync(ex);
+                        return new ObservableCollection<ListProduct>();
+                    }
+                },
                 onItemTappedAction: (item) =>
                 {
                     var Product = item as ListProduct;
@@ -86,7 +100,8 @@ namespace Easymakemoney.ViewModels.Dashboard
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
-            await Application.Current.MainPage.ShowPopupAsync(popup);
+            if (Application.Current?.MainPage != null)
+                await Application.Current.MainPage.ShowPopupAsync(popup);
         }
     }
 }

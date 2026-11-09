@@ -1,4 +1,6 @@
 
+using Easymakemoney.Services.Dialog;
+
 namespace Easymakemoney.ViewModels.Components
 {
     public partial class BottomSheetPopupViewModel : ObservableObject
@@ -28,6 +30,7 @@ namespace Easymakemoney.ViewModels.Components
         private readonly ListNewFournisseurViewModel _fournisseurViewModel;
 
         private readonly ListNewFraisDePortViewModel _fraisDePortViewModel;
+        private readonly IDialogService _dialogService;
         private Popup _popup;
         public BottomSheetPopupViewModel(
         Popup popup = null,
@@ -58,7 +61,8 @@ namespace Easymakemoney.ViewModels.Components
         bool isFournisseurForm = false,
         ListNewFraisDePortViewModel fraisDePortViewModel = null,
         SaveFraisDePortUseCase saveFraisDePortUseCase = null,
-        FraisDePortFormModel fraisDePortForm = null
+        FraisDePortFormModel fraisDePortForm = null,
+        IDialogService dialogService = null
 
         )
         {
@@ -83,6 +87,7 @@ namespace Easymakemoney.ViewModels.Components
             _saveCollectionUseCase = saveCollectionUseCase;
             _saveCommandUseCase = saveCommandUseCase;
             _saveProductUseCase = saveProductUseCase;
+            _dialogService = dialogService;
             _popup = popup;
             IsCollectionForm = isCollectionForm;
             CollectionForm = collectionFormModel;
@@ -91,7 +96,7 @@ namespace Easymakemoney.ViewModels.Components
             CommandForm = commandFormModel;
             IsProductForm = isProductForm;
             ProductForm = productFormModel;
-            SaveCommand = new RelayCommand(Save);
+            SaveCommand = new AsyncRelayCommand(SaveAsync);
             CancelCommand = new AsyncRelayCommand(CancelAsync);
             _saveFournisseurUseCase = saveFournisseurUseCase;
 
@@ -168,7 +173,7 @@ namespace Easymakemoney.ViewModels.Components
         {
             _popup = popup;
         }
-        private async void Save()
+        private async Task SaveAsync()
         {
             try
             {
@@ -217,7 +222,14 @@ namespace Easymakemoney.ViewModels.Components
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+                if (_dialogService != null)
+                {
+                    await _dialogService.ShowErrorAsync(ex);
+                }
+                else if (Application.Current?.MainPage != null)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+                }
             }
         }
         private Task CancelAsync() => _popup.CloseAsync();

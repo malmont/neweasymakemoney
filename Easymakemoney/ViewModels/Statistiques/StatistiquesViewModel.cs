@@ -7,46 +7,60 @@ namespace Easymakemoney.ViewModels.Statistiques
             
         }
 
-         [RelayCommand]
-        async void NavigateToChiffreAffaire()
+        [RelayCommand]
+        private async Task NavigateToChiffreAffaire()
         {
-            await Shell.Current.GoToAsync(nameof(ChiffresAffairePage));
-        }
-         [RelayCommand]
-        async void NavigateToPurchasing()
-        {
-            await Shell.Current.GoToAsync(nameof(OrderNumberPage));
-        }
-         [RelayCommand]
-        async void NavigateToPanier()
-        {
-            await Shell.Current.GoToAsync(nameof(PanierMoyenPage));
-        }
-         [RelayCommand]
-        async void NavigateToStock()
-        {
-            await Shell.Current.GoToAsync(nameof(StockPage));
-        }
-         [RelayCommand]
-        async void NavigateToFrais()
-        {
-            await Shell.Current.GoToAsync(nameof(FraisEvolutionEntreprisePage));
-        }
-         [RelayCommand]
-        async void NavigateToCaisse()
-        {
-            await Shell.Current.GoToAsync(nameof(TransactionCaissePage));
-        }
-         [RelayCommand]
-        async void NavigateToPayment()
-        {
-            await Shell.Current.GoToAsync(nameof(PaiementRemboursementPage));
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(ChiffresAffairePage));
         }
 
-          [RelayCommand]
-        async void NavigateToFraisTotal()
+        [RelayCommand]
+        private async Task NavigateToPurchasing()
         {
-            await Shell.Current.GoToAsync(nameof(FraisClientTotalViewPage));
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(OrderNumberPage));
+        }
+
+        [RelayCommand]
+        private async Task NavigateToPanier()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(PanierMoyenPage));
+        }
+
+        [RelayCommand]
+        private async Task NavigateToStock()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(StockPage));
+        }
+
+        [RelayCommand]
+        private async Task NavigateToFrais()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(FraisEvolutionEntreprisePage));
+        }
+
+        [RelayCommand]
+        private async Task NavigateToCaisse()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(TransactionCaissePage));
+        }
+
+        [RelayCommand]
+        private async Task NavigateToPayment()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(PaiementRemboursementPage));
+        }
+
+        [RelayCommand]
+        private async Task NavigateToFraisTotal()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(FraisClientTotalViewPage));
         }
     }
 }

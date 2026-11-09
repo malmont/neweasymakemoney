@@ -18,8 +18,8 @@ namespace Easymakemoney.Services
         public async Task<bool> PostFourniseurs(ListFournisseur newFourniseurs)
         {
             var url = "fournisseurs";
-            var result = await _httpService.PostAsyncWithAuth<object>(url, newFourniseurs);
-            return result != null;
+            await _httpService.PostAsyncWithAuth<object>(url, newFourniseurs);
+            return true;
         }
 
         public async Task<ObservableCollection<TypeFournisseur>> GetTypeFournisseurs()
@@ -33,7 +33,7 @@ namespace Easymakemoney.Services
         {
             var url = $"fournisseurs/{id}";
             var result = await _httpService.DeleAsyncWithAuth<object>(url);
-            return result != null;
+            return result;
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿
+using Easymakemoney.Services.Dialog;
+
 namespace Easymakemoney.ViewModels.Lists
 {
     public partial class ListNewCollectionViewModel : BaseViewModel
@@ -7,19 +9,21 @@ namespace Easymakemoney.ViewModels.Lists
         private readonly DeleteCollectionUseCase _deleteCollectionUseCase;
         private readonly CollectionFormModel _collectionFormModel;
         private readonly SaveCollectionUseCase _saveCollectionUseCase;
-        
+        private readonly IDialogService _dialogService;
 
         public ObservableCollection<ListCollection> ListCollections { get; set; } = new ObservableCollection<ListCollection>();
 
         public ListNewCollectionViewModel(GetListCollectionsUseCase getListCollectionsUseCase,SaveCollectionUseCase saveCollectionUseCase,
         DeleteCollectionUseCase deleteCollectionUseCase,
-        CollectionFormModel collectionFormModel)
+        CollectionFormModel collectionFormModel,
+        IDialogService dialogService)
         {
             _saveCollectionUseCase = saveCollectionUseCase;
             _getListCollectionsUseCase = getListCollectionsUseCase;
             _deleteCollectionUseCase = deleteCollectionUseCase;
-            ItemTappedCommand = new RelayCommand<ListCollection>(OnItemTapped);
-            DeleteCollectionCommand = new RelayCommand<ListCollection>(DeleteCollection!);
+            _dialogService = dialogService;
+            ItemTappedCommand = new AsyncRelayCommand<ListCollection>(OnItemTapped);
+            DeleteCollectionCommand = new AsyncRelayCommand<ListCollection>(DeleteCollection);
             _collectionFormModel = collectionFormModel;
         }
         public ICommand ItemTappedCommand { get; }
@@ -45,7 +49,7 @@ namespace Easymakemoney.ViewModels.Lists
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                await Shell.Current.DisplayAlert("Error", "Unable to get collections", "OK");
+                await _dialogService.ShowErrorAsync(ex);
             }
             finally
             {
@@ -63,7 +67,8 @@ namespace Easymakemoney.ViewModels.Lists
                     saveCollectionUseCase: _saveCollectionUseCase,
                     isCollectionForm: true,
                     collectionViewModel: this,
-                    collectionFormModel: _collectionFormModel);
+                    collectionFormModel: _collectionFormModel,
+                    dialogService: _dialogService);
 
                 var popup = new BottomSheetPopup(viewModel);
                 var mainPage = Application.Current?.MainPage;
@@ -71,43 +76,55 @@ namespace Easymakemoney.ViewModels.Lists
                 {
                     Console.WriteLine("AShowPopupAsync");
                     await mainPage.ShowPopupAsync(popup);
-
                 }
             }
             catch (Exception ex)
             {
-                if(Application.Current?.MainPage!=null)
-                await Application.Current.MainPage.DisplayAlert("Exception", ex.Message, "OK");
+                await _dialogService.ShowErrorAsync(ex);
                 Console.WriteLine($"Exception: {ex}");
             }
         }
 
-
-
-        private async void OnItemTapped(ListCollection collection)
+        private async Task OnItemTapped(ListCollection? collection)
         {
             if (collection == null)
                 return;
 
             // Navigate to the ListNewCommandPage and pass the collection ID
-            await Shell.Current.GoToAsync($"{nameof(ListNewCommandPage)}?CollectionId={collection.id}", true);
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync($"{nameof(ListNewCommandPage)}?CollectionId={collection.id}", true);
         }
 
-        private async void DeleteCollection(ListCollection collection)
+        private async Task DeleteCollection(ListCollection? collection)
         {
             if (collection == null)
                 return;
-            var result = await _deleteCollectionUseCase.ExecuteAsync(collection.id);
-            if (result)
-            {
-                await GetListCollectionAsync();
-                await Shell.Current.DisplayAlert("Success", "Collection deleted", "OK");
-            }
-            else
-            {
-                await Shell.Current.DisplayAlert("Error", "Failed to delete collection", "OK");
-            }
 
+            bool confirmed = await _dialogService.ConfirmAsync(
+                "Confirmation",
+                "Êtes-vous sûr de vouloir supprimer cette collection ?",
+                "Supprimer",
+                "Annuler");
+            if (!confirmed)
+                return;
+
+            try
+            {
+                var result = await _deleteCollectionUseCase.ExecuteAsync(collection.id);
+                if (result)
+                {
+                    await GetListCollectionAsync();
+                    await _dialogService.ShowInfoAsync("Collection supprimée avec succès.");
+                }
+                else
+                {
+                    await _dialogService.ShowInfoAsync("Échec de la suppression de la collection.");
+                }
+            }
+            catch (Exception ex)
+            {
+                await _dialogService.ShowErrorAsync(ex);
+            }
         }
     }
 }

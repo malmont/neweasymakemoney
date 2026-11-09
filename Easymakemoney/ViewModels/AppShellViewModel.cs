@@ -18,7 +18,7 @@ namespace Easymakemoney.ViewModels
 		}
 
 		[RelayCommand]
-		async void SignOut()
+		async Task SignOut()
 		{
 			await _authFlowService.LogoutAsync();
 		}

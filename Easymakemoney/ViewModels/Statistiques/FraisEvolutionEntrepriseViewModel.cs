@@ -1,10 +1,15 @@
 
 using static Easymakemoney.Models.FraisEvolution;
+using Easymakemoney.Services.Dialog;
+using Easymakemoney.UseCase.FraisEvolutionUseCase;
 
 namespace Easymakemoney.ViewModels.Statistiques
 {
     public partial class FraisEvolutionEntrepriseViewModel : BaseViewModel
     {
+        private readonly IDialogService? _dialogService;
+        private readonly FraisEvolutionUseCase? _fraisEvolutionUseCase;
+
         // Propriétés pour les totaux des frais
         [ObservableProperty] private double totalFraisAnnee;
         [ObservableProperty] private double noteDeFraisAnnee;
@@ -29,8 +34,11 @@ namespace Easymakemoney.ViewModels.Statistiques
         [ObservableProperty] bool isMonthChartVisible;
         [ObservableProperty] bool isYearChartVisible;
 
-        public FraisEvolutionEntrepriseViewModel()
+        public FraisEvolutionEntrepriseViewModel(IDialogService? dialogService = null,
+            FraisEvolutionUseCase? fraisEvolutionUseCase = null)
         {
+            _dialogService = dialogService;
+            _fraisEvolutionUseCase = fraisEvolutionUseCase;
             periodeTypeChoices = new List<PeriodeType>
             {
                 new PeriodeType { id = 1, typePeriode = "Mois", photoPeriode = "month.png" },
@@ -38,20 +46,42 @@ namespace Easymakemoney.ViewModels.Statistiques
             };
         }
 
-        public void LoadDataFrais(FraisEvolution data)
+        public async Task LoadFraisEvolutionStatisticsAsync()
         {
+            if (_fraisEvolutionUseCase == null) return;
+            try
+            {
+                var data = await _fraisEvolutionUseCase.GetFraisEvolutionAsync();
+                LoadDataFrais(data);
+            }
+            catch (Exception ex)
+            {
+                if (_dialogService != null)
+                    await _dialogService.ShowErrorAsync(ex);
+            }
+        }
 
-            TotalFraisAnnee = data.TotalFraisAnnee.TotalFrais.Total;
-            NoteDeFraisAnnee = data.TotalFraisAnnee.TotalFrais.NoteDeFrais;
-            FraisDePortAnnee = data.TotalFraisAnnee.TotalFrais.FraisDePort;
+        public void LoadDataFrais(FraisEvolution? data)
+        {
+            if (data == null)
+                return;
+
+            if (data.TotalFraisAnnee?.TotalFrais != null)
+            {
+                TotalFraisAnnee = data.TotalFraisAnnee.TotalFrais.Total;
+                NoteDeFraisAnnee = data.TotalFraisAnnee.TotalFrais.NoteDeFrais;
+                FraisDePortAnnee = data.TotalFraisAnnee.TotalFrais.FraisDePort;
+            }
 
             LabelFrais = "frais par mois";
             FraisParMois = data.FraisParMois;
             FraisParJour = data.FraisParJour;
             PeriodeFrais = "Frais annuels";
 
-            ApplyAlternateRowColors(fraisParMois);
-            ApplyAlternateRowColors(fraisParJour);
+            if (fraisParMois != null)
+                ApplyAlternateRowColors(fraisParMois);
+            if (fraisParJour != null)
+                ApplyAlternateRowColors(fraisParJour);
         }
 
         public void UpdateFraisData(int periodeTypeId)
@@ -92,7 +122,8 @@ namespace Easymakemoney.ViewModels.Statistiques
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
-            await Application.Current.MainPage.ShowPopupAsync(popup);
+            if (Application.Current?.MainPage != null)
+                await Application.Current.MainPage.ShowPopupAsync(popup);
         }
 
         private void ApplyAlternateRowColors<T>(List<T> dataList) where T : class
