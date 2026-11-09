@@ -118,8 +118,9 @@ Les captures sont prises sur le téléphone du propriétaire, avec la version du
 
 **Constats (iPhone, iOS 27.2) :**
 - **Le logo occupe l'écran** et le titre reste technique (« ListNewCollectionPage »).
-- **Liste vide sans aucun message** sur le site demo. On ne peut pas savoir s'il n'y a pas de données ou si l'appel a
-  échoué : `HttpService` rend une liste vide dans les deux cas (corrigé au lot 3).
+- **Liste vide sans aucun message.** Sur le site demo, c'est normal : il n'a aucune collection (confirmé par le
+  propriétaire). Mais rien ne distingue « aucune donnée » d'un appel échoué : `HttpService` rend une liste vide dans les
+  deux cas (corrigé au lot 3). Il faut un vrai état vide, avec une invitation à créer.
 - **Bouton « + » en dégradé brillant**, au style daté.
 - **Listes remplies pas encore vues** : le site demo n'en montre aucune, et l'audit n'y crée rien.
 
@@ -159,7 +160,7 @@ Les captures sont prises sur le téléphone du propriétaire, avec la version du
 | Trois styles de boutons | accueil, listes, tableau de bord | un seul composant de tuile et de bouton |
 | Anglais | accueil, formulaires | français partout |
 | Écrans vides sans message | listes, tableau de bord | états vide, chargement et erreur |
-| Boutons sans action | « ITEMS CALCULTOR », « SIMULATEUR » | décision du propriétaire |
+| Boutons sans action | « ITEMS CALCULTOR », « SIMULATEUR » | **à retirer** (décision du propriétaire, 09/11/2026) |
 
 ## 3. Proposition de charte
 

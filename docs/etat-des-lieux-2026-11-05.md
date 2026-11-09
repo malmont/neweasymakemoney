@@ -238,6 +238,12 @@ après les lots du backend. Cadrage : [futur-module-assistance.md](futur-module-
    écrans. Il en va de même pour la refonte des popups prévue par la revue d'architecture. Support :
    `docs/revue-ui.md`.
 
+5. **Rattacher des produits existants à la gestion (demande du propriétaire, 09/11/2026).** Un produit peut exister
+   sans collection ni commande : les autres applications de la suite fonctionnent ainsi, et le site demo n'a aucune
+   collection, ce qui est normal. La chaîne collection → commande → produits ne sert qu'à la gestion. Quand un site
+   lance ce processus, il doit pouvoir y intégrer, s'il le souhaite, des produits déjà créés. Contrat backend à
+   vérifier auprès de la session « appli degestion backend », puis lot à définir.
+
 ## 7. Questions ouvertes (à trancher par le propriétaire ou le backend)
 
 1. Version cible : .NET 10 LTS ? Le propriétaire autorise-t-il l'installation du SDK et des workloads sur ce Mac ?
