@@ -217,4 +217,4 @@ Trois vignettes au plus sur l'écran d'accueil, triées par urgence. Chacune mè
 
 Première version : premiers pas et stock bas. Le reste suit les budgets (B1), qui gagnent une notion de **voyage** (dates, lieu, budget total et journalier), et le guide IA (G1).
 
-**À trancher :** notifications sur le téléphone, réservées aux alertes vraiment urgentes.
+**Notifications (décision du propriétaire, 10/11/2026) :** seulement les vraies urgences (article qui se vend bien et va manquer, trésorerie critique, budget du voyage dépassé, facture en double), **une par jour au plus**, chaque type réglable par le gérant, et un appui qui ouvre l'écran concerné. Elles viennent après les vignettes ; le backend vérifie d'abord si la plateforme sait déjà en envoyer.
