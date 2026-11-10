@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             x:DataType="list:TreasuryViewModel"
+             x:Class="Easymakemoney.Views.Lists.TreasuryPage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Trésorerie">
+
+    <ContentPage.Resources>
+        <!-- Styles de formulaire : ils ne sont pas globaux -->
+        <Style x:Key="FormDate" TargetType="handlers:BorderlessDatePicker">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="FormLabel" TargetType="Label">
+            <Setter Property="FontFamily" Value="InterMedium" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextSecondary}" />
+        </Style>
+        <Style x:Key="FormField" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="MinimumHeightRequest" Value="48" />
+            <Setter Property="Padding" Value="12,0" />
+        </Style>
+        <Style x:Key="FormEntry" TargetType="handlers:BorderlessEntry">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="PlaceholderColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="SectionTitle" TargetType="Label">
+            <Setter Property="FontFamily" Value="InterBold" />
+            <Setter Property="FontSize" Value="17" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="Margin" Value="0,8,0,0" />
+        </Style>
+        <Style x:Key="DocAction" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimaryTint}" />
+            <Setter Property="TextColor" Value="{DynamicResource ThemePrimary}" />
+            <Setter Property="FontFamily" Value="InterBold" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="HeightRequest" Value="48" />
+        </Style>
+        <Style x:Key="DocMain" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimary}" />
+            <Setter Property="TextColor" Value="{DynamicResource ThemeOnPrimary}" />
+            <Setter Property="FontFamily" Value="InterBold" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="HeightRequest" Value="52" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Trésorerie" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" />
+
+                <!-- État de la trésorerie sur 14 jours -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="16" IsVisible="{Binding HasOverview}">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="{Binding Overview.StatusText}" FontFamily="InterBold" FontSize="18" TextColor="{Binding Overview.StatusColor}" />
+                        <Label Text="{Binding Overview.StatusDetail}" Style="{StaticResource UiBody}" FontSize="14" />
+
+                        <VerticalStackLayout Spacing="8" Margin="0,6,0,0" IsVisible="{Binding Overview.HasBalance}">
+                            <components:UiAmountRow Title="Solde saisi" Value="{Binding Overview.BalanceText}" />
+                            <components:UiAmountRow Title="Point bas sur 14 jours" Value="{Binding Overview.Low14Text}" />
+                            <components:UiAmountRow Title="Point bas sur 90 jours" Value="{Binding Overview.LowText}" />
+                            <components:UiAmountRow Title="Dans 90 jours" Value="{Binding Overview.EndText}" />
+                            <Label Text="{Binding Overview.BelowThresholdText}" IsVisible="{Binding Overview.HasBelowThreshold}"
+                                   FontFamily="InterSemiBold" FontSize="13" TextColor="#B91C1C" />
+                        </VerticalStackLayout>
+
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,6,0,0">
+                            <Label Text="{Binding Overview.ThresholdText}" Style="{StaticResource UiBody}" FontSize="14" VerticalOptions="Center" />
+                            <Button Grid.Column="1" Text="Modifier" Command="{Binding EditThresholdCommand}" Padding="12,0" HeightRequest="36"
+                                    BackgroundColor="Transparent" TextColor="{DynamicResource ThemePrimary}" FontFamily="InterSemiBold" FontSize="14" />
+                        </Grid>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                <Label Text="Compter les ventes à venir" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                <Label Text="{Binding Overview.ReceiptsText}" Style="{StaticResource UiBody}" FontSize="12" />
+                            </VerticalStackLayout>
+                            <Switch Grid.Column="1" IsToggled="{Binding IncludeEstimatedSales}" OnColor="{DynamicResource ThemePrimary}" VerticalOptions="Center" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <!-- Prochaines échéances -->
+                <Label Text="Prochaines échéances" Style="{StaticResource SectionTitle}" IsVisible="{Binding HasUpcoming}" />
+                <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding HasUpcoming}">
+                    <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Upcoming}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:TreasuryDay">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                                    <Label Text="{Binding DateText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                    <Label Grid.Column="1" Text="{Binding MovesText}" Style="{StaticResource UiBody}" FontSize="13" />
+                                    <Label Grid.Column="2" Text="{Binding BalanceText}" FontFamily="InterBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding IsNegative}" Value="True">
+                                                <Setter Property="TextColor" Value="#B91C1C" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <!-- Saisie du solde du compte -->
+                <Label Text="Saisir le solde du compte" Style="{StaticResource SectionTitle}" />
+                <Label Text="Le solde de votre compte en banque à la fin de la journée. Une saisie à une date déjà saisie la remplace."
+                       Style="{StaticResource UiBody}" FontSize="13" />
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12" RowDefinitions="Auto,Auto" RowSpacing="8">
+                    <Label Text="Date" Style="{StaticResource FormLabel}" />
+                    <Label Grid.Column="1" Text="Solde" Style="{StaticResource FormLabel}" />
+                    <Border Grid.Row="1" Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessDatePicker Style="{StaticResource FormDate}" Date="{Binding BalanceDate}" MaximumDate="{Binding MaxBalanceDate}" Format="dd/MM/yyyy" />
+                    </Border>
+                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="0,00" Keyboard="Numeric" Text="{Binding BalanceAmountText}" />
+                    </Border>
+                </Grid>
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="Découvert (solde négatif)" Style="{StaticResource FormLabel}" VerticalOptions="Center" />
+                    <Switch Grid.Column="1" IsToggled="{Binding BalanceIsOverdraft}" OnColor="#B91C1C" />
+                </Grid>
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Note (facultatif)" Text="{Binding BalanceNote}" />
+                </Border>
+                <Button Text="Enregistrer le solde" Command="{Binding AddBalanceCommand}" Style="{StaticResource DocMain}" />
+
+                <!-- Mouvements prévus -->
+                <Label Text="Mouvements prévus" Style="{StaticResource SectionTitle}" />
+                <Label Text="Loyer, salaires, prêt, taxes… Vos commandes, notes de frais, frais de port et publicités sont déjà comptés : ne les ajoutez pas ici."
+                       Style="{StaticResource UiBody}" FontSize="13" />
+                <Button Text="Ajouter un mouvement" Command="{Binding AddMovementCommand}" Style="{StaticResource DocAction}" />
+                <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Movements}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:TreasuryMovement">
+                            <SwipeView>
+                                <SwipeView.RightItems>
+                                    <SwipeItems Mode="Reveal">
+                                        <SwipeItem Text="Supprimer" BackgroundColor="#B91C1C" IsVisible="{Binding CanDelete}"
+                                                   Command="{Binding Path=BindingContext.DeleteMovementCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                   CommandParameter="{Binding .}" />
+                                    </SwipeItems>
+                                </SwipeView.RightItems>
+                                <Grid BackgroundColor="{StaticResource UiBackground}">
+                                    <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                                            <VerticalStackLayout Spacing="3">
+                                                <Label Text="{Binding label}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
+                                                <Label Text="{Binding ScheduleText}" Style="{StaticResource UiBody}" FontSize="13" />
+                                            </VerticalStackLayout>
+                                            <Label Grid.Column="1" Text="{Binding AmountText}" FontFamily="InterBold" FontSize="15" VerticalOptions="Center"
+                                                   TextColor="{StaticResource UiTextPrimary}">
+                                                <Label.Triggers>
+                                                    <DataTrigger TargetType="Label" Binding="{Binding IsIncoming}" Value="True">
+                                                        <Setter Property="TextColor" Value="#047857" />
+                                                    </DataTrigger>
+                                                </Label.Triggers>
+                                            </Label>
+                                        </Grid>
+                                    </components:UiCard>
+                                </Grid>
+                            </SwipeView>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+                <Label Text="Aucun mouvement prévu pour l'instant." IsVisible="{Binding HasNoMovements}"
+                       Style="{StaticResource UiBody}" FontSize="13" />
+
+                <!-- Soldes déjà saisis -->
+                <Label Text="Derniers soldes saisis" Style="{StaticResource SectionTitle}" />
+                <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Balances}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:TreasuryBalance">
+                            <SwipeView>
+                                <SwipeView.RightItems>
+                                    <SwipeItems Mode="Reveal">
+                                        <SwipeItem Text="Supprimer" BackgroundColor="#B91C1C"
+                                                   Command="{Binding Path=BindingContext.DeleteBalanceCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                   CommandParameter="{Binding .}" />
+                                    </SwipeItems>
+                                </SwipeView.RightItems>
+                                <Grid BackgroundColor="{StaticResource UiBackground}">
+                                    <components:UiCard Style="{StaticResource UiCard}" Padding="12">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <VerticalStackLayout Spacing="2">
+                                                <Label Text="{Binding DateText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                                <Label Text="{Binding note}" IsVisible="{Binding HasNote}" Style="{StaticResource UiBody}" FontSize="12" />
+                                            </VerticalStackLayout>
+                                            <Label Grid.Column="1" Text="{Binding AmountText}" FontFamily="InterBold" FontSize="15" VerticalOptions="Center"
+                                                   TextColor="{StaticResource UiTextPrimary}" />
+                                        </Grid>
+                                    </components:UiCard>
+                                </Grid>
+                            </SwipeView>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <!-- Remarques du calcul -->
+                <Label Text="{Binding Overview.CaveatsText}" IsVisible="{Binding Overview.HasCaveats}" Style="{StaticResource UiBody}" FontSize="12" Margin="0,8,0,16" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

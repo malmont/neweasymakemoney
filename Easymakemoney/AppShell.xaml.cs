@@ -27,6 +27,8 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute("CampaignProfitabilityPage", typeof(CampaignProfitabilityPage));
 		Routing.RegisterRoute("StockLowPage", typeof(StockLowPage));
 		Routing.RegisterRoute("PeriodBudgetPage", typeof(PeriodBudgetPage));
+		Routing.RegisterRoute("TreasuryPage", typeof(TreasuryPage));
+		Routing.RegisterRoute("TreasuryMovementPage", typeof(TreasuryMovementPage));
 		Routing.RegisterRoute("LoginPage", typeof(LoginPage));
         Routing.RegisterRoute("AllListsPage", typeof(AllListsPage));
         Routing.RegisterRoute("ListNewCollectionPage", typeof(ListNewCollectionPage));

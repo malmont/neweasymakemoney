@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             x:DataType="list:TreasuryMovementViewModel"
+             x:Class="Easymakemoney.Views.Lists.TreasuryMovementPage"
+             Style="{StaticResource UiPage}"
+             Title="Mouvement prévu">
+
+    <ContentPage.Resources>
+        <!-- Styles de formulaire : ils ne sont pas globaux -->
+        <Style x:Key="FormDate" TargetType="handlers:BorderlessDatePicker">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="FormLabel" TargetType="Label">
+            <Setter Property="FontFamily" Value="InterMedium" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextSecondary}" />
+        </Style>
+        <Style x:Key="FormField" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="MinimumHeightRequest" Value="48" />
+            <Setter Property="Padding" Value="12,0" />
+        </Style>
+        <Style x:Key="FormEntry" TargetType="handlers:BorderlessEntry">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="PlaceholderColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="FormPicker" TargetType="Picker">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="TitleColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="DocMain" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimary}" />
+            <Setter Property="TextColor" Value="{DynamicResource ThemeOnPrimary}" />
+            <Setter Property="FontFamily" Value="InterBold" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="HeightRequest" Value="52" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Mouvement prévu" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <Label Text="Nom" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Ex. : Loyer du local" Text="{Binding Label}" />
+                </Border>
+
+                <Label Text="Catégorie" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <Picker Style="{StaticResource FormPicker}" Title="Choisir une catégorie" ItemsSource="{Binding Categories}"
+                            SelectedItem="{Binding SelectedCategory}" ItemDisplayBinding="{Binding Label, x:DataType=models:TreasuryChoice}" />
+                </Border>
+
+                <Label Text="Sens" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <Picker Style="{StaticResource FormPicker}" Title="Entrée ou sortie" ItemsSource="{Binding Directions}"
+                            SelectedItem="{Binding SelectedDirection}" ItemDisplayBinding="{Binding Label, x:DataType=models:TreasuryChoice}" />
+                </Border>
+
+                <Label Text="Montant" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="0,00" Keyboard="Numeric" Text="{Binding AmountText}" />
+                </Border>
+
+                <Label Text="Fréquence" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <Picker Style="{StaticResource FormPicker}" Title="Choisir une fréquence" ItemsSource="{Binding Recurrences}"
+                            SelectedItem="{Binding SelectedRecurrence}" ItemDisplayBinding="{Binding Label, x:DataType=models:TreasuryChoice}" />
+                </Border>
+
+                <Label Text="Date (première échéance)" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessDatePicker Style="{StaticResource FormDate}" Date="{Binding StartDate}" Format="dd/MM/yyyy" />
+                </Border>
+                <Label Text="Un 31 tombe le dernier jour des mois plus courts." IsVisible="{Binding IsRecurring}" Style="{StaticResource UiBody}" FontSize="12" />
+
+                <VerticalStackLayout Spacing="8" IsVisible="{Binding IsRecurring}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="Date de fin" Style="{StaticResource FormLabel}" VerticalOptions="Center" />
+                        <Switch Grid.Column="1" IsToggled="{Binding HasEndDate}" OnColor="{DynamicResource ThemePrimary}" />
+                    </Grid>
+                    <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12" IsVisible="{Binding HasEndDate}">
+                        <handlers:BorderlessDatePicker Style="{StaticResource FormDate}" Date="{Binding EndDate}" MinimumDate="{Binding StartDate}" Format="dd/MM/yyyy" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <Label Text="Notes (facultatif)" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Ex. : prélevé le 1er" Text="{Binding Notes}" />
+                </Border>
+
+                <Button Text="Enregistrer le mouvement" Command="{Binding SaveCommand}" Style="{StaticResource DocMain}" Margin="0,8,0,16" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>
