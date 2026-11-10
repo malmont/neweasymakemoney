@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             x:DataType="list:PeriodSimulationViewModel"
+             x:Class="Easymakemoney.Views.Lists.PeriodSimulationPage"
+             Style="{StaticResource UiPage}"
+             Title="Simuler la période">
+
+    <ContentPage.Resources>
+        <!-- Styles de formulaire : ils ne sont pas globaux -->
+        <Style x:Key="FormLabel" TargetType="Label">
+            <Setter Property="FontFamily" Value="InterMedium" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextSecondary}" />
+        </Style>
+        <Style x:Key="FormField" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="MinimumHeightRequest" Value="48" />
+            <Setter Property="Padding" Value="12,0" />
+        </Style>
+        <Style x:Key="FormEntry" TargetType="handlers:BorderlessEntry">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="PlaceholderColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="LeverValue" TargetType="Label">
+            <Setter Property="FontFamily" Value="InterBold" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+        </Style>
+        <Style x:Key="DocAction" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimaryTint}" />
+            <Setter Property="TextColor" Value="{DynamicResource ThemePrimary}" />
+            <Setter Property="FontFamily" Value="InterBold" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="HeightRequest" Value="48" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Simuler la période" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <Label Text="{Binding Simulation.PeriodText}" Style="{StaticResource UiTitle}" FontSize="17" />
+                <Label Text="Bougez un levier : le résultat se recalcule. Rien n'est enregistré." Style="{StaticResource UiBody}" FontSize="13" />
+
+                <!-- Leviers -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="16">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="{Binding PriceText}" Style="{StaticResource LeverValue}" />
+                        <Slider Minimum="-30" Maximum="50" Value="{Binding PricePercent}"
+                                MinimumTrackColor="{DynamicResource ThemePrimary}" ThumbColor="{DynamicResource ThemePrimary}" />
+
+                        <Label Text="{Binding PromotionText}" Style="{StaticResource LeverValue}" Margin="0,6,0,0" />
+                        <Slider Minimum="0" Maximum="50" Value="{Binding PromotionPercent}"
+                                MinimumTrackColor="{DynamicResource ThemePrimary}" ThumbColor="{DynamicResource ThemePrimary}" />
+
+                        <Label Text="Publicité en plus" Style="{StaticResource FormLabel}" Margin="0,6,0,0" />
+                        <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                            <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="0,00" Keyboard="Numeric" Text="{Binding AdvertisingText}" />
+                        </Border>
+                        <Button Text="Ajouter cette publicité au budget" IsVisible="{Binding CanSaveAdvertising}"
+                                Command="{Binding SaveAdvertisingCommand}" Style="{StaticResource DocAction}" />
+
+                        <Button Text="Revenir à la situation actuelle" Command="{Binding ResetCommand}"
+                                BackgroundColor="Transparent" TextColor="{DynamicResource ThemePrimary}" FontFamily="InterSemiBold" FontSize="14" />
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" />
+                <Border IsVisible="{Binding HasError}" StrokeThickness="0" StrokeShape="RoundRectangle 12"
+                        BackgroundColor="#FEE2E2" Padding="12,10">
+                    <Label Text="{Binding ErrorText}" FontFamily="InterSemiBold" FontSize="14" TextColor="#B91C1C" />
+                </Border>
+
+                <!-- Comparaison actuel / simulé -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding HasSimulation}">
+                    <VerticalStackLayout Spacing="10">
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                            <Label Text="" />
+                            <Label Grid.Column="1" Text="Actuel" Style="{StaticResource FormLabel}" FontSize="12" WidthRequest="96" HorizontalTextAlignment="End" />
+                            <Label Grid.Column="2" Text="Simulé" Style="{StaticResource FormLabel}" FontSize="12" WidthRequest="96" HorizontalTextAlignment="End" />
+                        </Grid>
+                        <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Rows}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:SimulationRow">
+                                    <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="10">
+                                        <Label Text="{Binding Label}" Style="{StaticResource UiBody}" FontSize="13" VerticalOptions="Center" />
+                                        <Label Grid.Column="1" Text="{Binding BaseText}" FontFamily="Inter" FontSize="13" WidthRequest="96"
+                                               HorizontalTextAlignment="End" TextColor="{StaticResource UiTextSecondary}" />
+                                        <Label Grid.Column="2" Text="{Binding SimulatedText}" FontFamily="InterBold" FontSize="13" WidthRequest="96"
+                                               HorizontalTextAlignment="End" TextColor="{StaticResource UiTextPrimary}" />
+                                        <Label Grid.Row="1" Grid.Column="2" Text="{Binding DeltaText}" IsVisible="{Binding HasDelta}"
+                                               FontFamily="InterSemiBold" FontSize="12" HorizontalTextAlignment="End" TextColor="{Binding DeltaColor}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <Label Text="{Binding Simulation.MethodText}" IsVisible="{Binding HasSimulation}" Style="{StaticResource UiBody}" FontSize="13" />
+                <Label Text="{Binding Simulation.LastYearText}" IsVisible="{Binding Simulation.HasLastYear}" Style="{StaticResource UiBody}" FontSize="13" />
+                <Label Text="{Binding Simulation.CaveatsText}" IsVisible="{Binding Simulation.HasCaveats}" Style="{StaticResource UiBody}" FontSize="12" Margin="0,0,0,16" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

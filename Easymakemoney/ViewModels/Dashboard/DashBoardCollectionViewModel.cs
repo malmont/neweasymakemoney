@@ -163,6 +163,16 @@ namespace Easymakemoney.ViewModels.Dashboard
             await shell.GoToAsync($"{nameof(PeriodBudgetPage)}?PeriodId={CollectionId}&ReadOnly={(IsClosed ? 1 : 0)}");
         }
 
+        /// <summary>Simulateur : seulement pour une période ouverte (une période fermée n'a plus rien à décider).</summary>
+        [RelayCommand]
+        private async Task OpenSimulation()
+        {
+            if (CollectionId <= 0 || !CanEditBudget || Shell.Current is not { } shell)
+                return;
+
+            await shell.GoToAsync($"{nameof(PeriodSimulationPage)}?PeriodId={CollectionId}");
+        }
+
         [RelayCommand]
         private async Task EditBudget()
         {
