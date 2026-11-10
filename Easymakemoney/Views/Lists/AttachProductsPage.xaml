@@ -12,7 +12,7 @@
              Title="Articles existants">
 
     <Grid RowDefinitions="Auto,Auto,*,Auto">
-        <components:AppHeader Title="Articles existants" />
+        <components:AppHeader Title="{Binding PageTitle}" />
 
         <components:UiCard Grid.Row="1" Style="{StaticResource UiCard}" Padding="14,4" Margin="16,12,16,0">
             <handlers:BorderlessEntry Text="{Binding SearchText}"

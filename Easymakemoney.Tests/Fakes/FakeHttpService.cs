@@ -24,6 +24,12 @@ public class FakeHttpService : IHttpService
         return Task.FromResult((T)(ResultToReturn ?? default(T)!));
     }
 
+    public Task<T> PatchAsyncWithAuth<T>(string url, object data)
+    {
+        PostedAuthData.Add((url, data));
+        return Task.FromResult((T)(ResultToReturn ?? default(T)!));
+    }
+
     public Task<T> PostAsyncWithoutAuth<T>(string url, object data)
     {
         PostedWithoutAuthData.Add((url, data));

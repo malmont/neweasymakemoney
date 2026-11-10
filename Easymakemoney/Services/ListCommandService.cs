@@ -17,7 +17,8 @@ namespace Easymakemoney.Services
         }
         public async Task<bool> PostCommandes(ListCommand newCommandes, int id)
         {
-            var url = $"collections/{id}/commandes";
+            // Sans période choisie, le backend classe la commande par sa date.
+            var url = id == 0 ? "commandes" : $"collections/{id}/commandes";
             await _httpService.PostAsyncWithAuth<object>(url, newCommandes);
             return true;
         }

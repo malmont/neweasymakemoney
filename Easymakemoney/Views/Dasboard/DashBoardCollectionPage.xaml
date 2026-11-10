@@ -37,6 +37,16 @@
         <ScrollView Grid.Row="2">
             <VerticalStackLayout Padding="16" Spacing="12">
                 <VerticalStackLayout IsVisible="{Binding IsClosedVisible}" Spacing="8">
+                    <Button Text="Modifier le budget"
+                            IsVisible="{Binding CanEditBudget}"
+                            BackgroundColor="{DynamicResource ThemePrimaryTint}"
+                            TextColor="{DynamicResource ThemePrimary}"
+                            FontFamily="InterSemiBold"
+                            FontSize="15"
+                            CornerRadius="12"
+                            MinimumHeightRequest="48"
+                            Command="{Binding EditBudgetCommand}" />
+
                     <!-- Bouton de clôture : seules les collections manuelles se clôturent à la main -->
                     <Button Text="{Binding CloseButtonText}"
                             IsVisible="{Binding CanClose}"

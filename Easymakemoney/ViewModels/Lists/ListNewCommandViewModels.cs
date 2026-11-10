@@ -40,6 +40,13 @@ namespace Easymakemoney.ViewModels.Lists
         public ICommand DeleteCommandCommand { get; }
         public async Task GetListCommandAsync()
         {
+            // Création depuis Gestion : aucune liste à rafraîchir, le backend a classé la commande par sa date.
+            if (CollectionId == 0)
+            {
+                await _dialogService.ShowInfoAsync("Commande enregistrée dans la période de sa date.");
+                return;
+            }
+
             if (IsBusy)
                 return;
 

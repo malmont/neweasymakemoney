@@ -13,7 +13,7 @@ namespace Easymakemoney.Views.Lists
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            // await _viewModel.GetListNoteDeFraisAsync();
+            await _viewModel.SelectCurrentPeriodIfNoneAsync();
         }
       
     }

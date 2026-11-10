@@ -3,9 +3,45 @@ namespace Easymakemoney.ViewModels.Lists
 {
     public partial class AllListsViewModel
 	{
-		public AllListsViewModel()
+		private readonly ListNewCommandViewModel _commandViewModel;
+		private readonly SaveCommandUseCase _saveCommandUseCase;
+		private readonly CommandFormModel _commandFormModel;
+		private readonly Easymakemoney.Services.Dialog.IDialogService _dialogService;
+
+		public AllListsViewModel(ListNewCommandViewModel commandViewModel, SaveCommandUseCase saveCommandUseCase,
+			CommandFormModel commandFormModel, Easymakemoney.Services.Dialog.IDialogService dialogService)
 		{
-            
+			_commandViewModel = commandViewModel;
+			_saveCommandUseCase = saveCommandUseCase;
+			_commandFormModel = commandFormModel;
+			_dialogService = dialogService;
+        }
+
+        [RelayCommand]
+        private async Task NewCommand()
+        {
+            _commandViewModel.CollectionId = 0;
+            var viewModel = new BottomSheetPopupViewModel(
+                popup: new Popup(),
+                commandViewModel: _commandViewModel,
+                isCommandForm: true,
+                saveCommandUseCase: _saveCommandUseCase,
+                commandFormModel: _commandFormModel,
+                dialogService: _dialogService);
+
+            var popup = new BottomSheetPopup(viewModel);
+            var mainPage = Application.Current?.MainPage;
+            if (mainPage != null)
+            {
+                await mainPage.ShowPopupAsync(popup);
+            }
+        }
+
+        [RelayCommand]
+        private async Task NavigateToToClassify()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(AttachProductsPage));
         }
 
         [RelayCommand]

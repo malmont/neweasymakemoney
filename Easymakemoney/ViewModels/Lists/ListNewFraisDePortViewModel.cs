@@ -13,6 +13,7 @@ namespace Easymakemoney.ViewModels.Lists
         private readonly GetListFraisDePortUseCase _getListFraisDePortUseCase;
         private readonly DeleteFraisDePortUseCase _deleteFraisDePortUseCase;
         private readonly SaveFraisDePortUseCase _saveFraisDePortUseCase;
+        private readonly Easymakemoney.UseCase.PeriodResultUseCase.PeriodUseCase _periodUseCase;
         private readonly IServiceProvider _services;
         private readonly IDialogService _dialogService;
 
@@ -22,8 +23,10 @@ namespace Easymakemoney.ViewModels.Lists
         public ListNewFraisDePortViewModel(GetListCollectionsUseCase getListCollectionsUseCase,
             GetListCommandUseCase getListCommandUseCase, GetListFraisDePortUseCase getListFraisDePortUseCase,
             DeleteFraisDePortUseCase deleteFraisDePortUseCase, SaveFraisDePortUseCase saveFraisDePortUseCase,
+            Easymakemoney.UseCase.PeriodResultUseCase.PeriodUseCase periodUseCase,
             IServiceProvider services, IDialogService dialogService)
         {
+            _periodUseCase = periodUseCase;
             _getListCollectionsUseCase = getListCollectionsUseCase;
             _getListCommandUseCase = getListCommandUseCase;
             _getListFraisDePortUseCase = getListFraisDePortUseCase;
@@ -57,6 +60,35 @@ namespace Easymakemoney.ViewModels.Lists
 
         [ObservableProperty]
         private string emptyMessage = "Ses commandes apparaîtront ici, avec leurs frais de port.";
+
+        /// <summary>À l'ouverture de l'écran, sans choix préalable : la période en cours.</summary>
+        public async Task SelectCurrentPeriodIfNoneAsync()
+        {
+            if (CollectionId != 0)
+                return;
+
+            try
+            {
+                var current = await _periodUseCase.GetCurrentPeriodAsync();
+                if (current != null && CollectionId == 0)
+                {
+                    await SelectCollectionAsync(current);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        private async Task SelectCollectionAsync(ListCollection collection)
+        {
+            CollectionId = collection.id;
+            CollectionImage = collection.Photo;
+            CollectionName = collection.Name;
+            IsClosed = collection.IsClosed;
+            await GetListFraisDePort();
+        }
 
         public async Task GetListFraisDePort()
         {
@@ -201,11 +233,7 @@ namespace Easymakemoney.ViewModels.Lists
                 {
                     if (item is ListCollection collection)
                     {
-                        CollectionId = collection.id;
-                        CollectionImage = collection.Photo;
-                        CollectionName = collection.Name;
-                        IsClosed = collection.IsClosed;
-                        await GetListFraisDePort();
+                        await SelectCollectionAsync(collection);
                     }
                 });
 

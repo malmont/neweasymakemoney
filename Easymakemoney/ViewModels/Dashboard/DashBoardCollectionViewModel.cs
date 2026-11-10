@@ -18,15 +18,18 @@ namespace Easymakemoney.ViewModels.Dashboard
 
         private readonly CollectionFormModel _collectionFormModel;
         private readonly Easymakemoney.UseCase.PeriodResultUseCase.GetPeriodResultUseCase _getPeriodResultUseCase;
+        private readonly Easymakemoney.UseCase.PeriodResultUseCase.PeriodUseCase _periodUseCase;
         private readonly IDialogService _dialogService;
 
         public DashBoardCollectionViewModel(GetDashBoardCollectionUseCase getDashBoardCollectionUseCase,GetListCollectionsUseCase getListCollectionsUseCase,
             SaveCollectionUseCase saveCollectionUseCase, ListNewCollectionViewModel listNewCollectionViewModel,
              CollectionFormModel collectionFormModel,GetCollectionCloseUseCase getCollectionCloseUseCase,
              Easymakemoney.UseCase.PeriodResultUseCase.GetPeriodResultUseCase getPeriodResultUseCase,
+             Easymakemoney.UseCase.PeriodResultUseCase.PeriodUseCase periodUseCase,
              IDialogService dialogService)
         {
             _getPeriodResultUseCase = getPeriodResultUseCase;
+            _periodUseCase = periodUseCase;
             _collectionFormModel = collectionFormModel;
             _listNewCollectionViewModel = listNewCollectionViewModel;
             _saveCollectionUseCase = saveCollectionUseCase;
@@ -57,6 +60,7 @@ namespace Easymakemoney.ViewModels.Dashboard
                 OnPropertyChanged(nameof(IsClosed));
                 OnPropertyChanged(nameof(CanClose));
                 OnPropertyChanged(nameof(CanReopen));
+                OnPropertyChanged(nameof(CanEditBudget));
             }
         }
 
@@ -81,6 +85,7 @@ namespace Easymakemoney.ViewModels.Dashboard
         [NotifyPropertyChangedFor(nameof(CanClose))]
         [NotifyPropertyChangedFor(nameof(CanReopen))]
         [NotifyPropertyChangedFor(nameof(CloseButtonText))]
+        [NotifyPropertyChangedFor(nameof(CanEditBudget))]
         private bool isPeriod;
 
         [ObservableProperty]
@@ -114,6 +119,71 @@ namespace Easymakemoney.ViewModels.Dashboard
         public bool CanClose => !IsClosed && (!IsPeriod || IsReopened);
         public string CloseButtonText => IsPeriod ? "Clôturer la période" : "Clôturer la collection";
         public bool CanReopen => IsClosed && IsPeriod;
+        public bool CanEditBudget => IsPeriod && !IsClosed;
+
+        /// <summary>À l'ouverture de l'écran, sans choix préalable : la période en cours.</summary>
+        public async Task SelectCurrentPeriodIfNoneAsync()
+        {
+            if (CollectionId != 0)
+                return;
+
+            try
+            {
+                var current = await _periodUseCase.GetCurrentPeriodAsync();
+                if (current != null && CollectionId == 0)
+                {
+                    await SelectCollectionAsync(current);
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+        }
+
+        private async Task SelectCollectionAsync(ListCollection collection)
+        {
+            CollectionId = collection.id;
+            CollectionImage = collection.Photo;
+            CollectionName = collection.Name;
+            IsClosed = collection.IsClosed;
+            IsPeriod = collection.IsPeriod;
+            IsReopened = collection.reopenedAt != null;
+            await GetDashBoardCollectionAsync(collection.id);
+            await LoadPeriodResultAsync();
+            IsClosedVisible = true;
+        }
+
+        [RelayCommand]
+        private async Task EditBudget()
+        {
+            var page = Application.Current?.MainPage;
+            if (page == null || IsBusy)
+                return;
+
+            var text = await page.DisplayPromptAsync("Budget de la période", CollectionName, "Valider", "Annuler", keyboard: Keyboard.Numeric);
+            if (string.IsNullOrWhiteSpace(text))
+                return;
+
+            if (!double.TryParse(text.Trim().Replace(',', '.'), System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.InvariantCulture, out var amount))
+            {
+                await _dialogService.ShowInfoAsync("Montant invalide.");
+                return;
+            }
+
+            try
+            {
+                await _periodUseCase.UpdateBudgetAsync(CollectionId, amount);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
+                return;
+            }
+
+            await GetDashBoardCollectionAsync(CollectionId);
+        }
 
         [RelayCommand]
         public async Task ReopenCollection()
@@ -210,15 +280,7 @@ namespace Easymakemoney.ViewModels.Dashboard
                     var collection = item as ListCollection;
                     if (collection != null)
                     {
-                        this.CollectionId = collection.id;
-                        this.CollectionImage = collection.Photo;
-                        this.CollectionName = collection.Name;
-                        this.IsClosed = collection.IsClosed;
-                        this.IsPeriod = collection.IsPeriod;
-                        this.IsReopened = collection.reopenedAt != null;
-                        await this.GetDashBoardCollectionAsync(collection.id);
-                        await this.LoadPeriodResultAsync();
-                        IsClosedVisible=true;
+                        await SelectCollectionAsync(collection);
                     }
                 });
 

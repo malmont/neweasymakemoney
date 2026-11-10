@@ -24,8 +24,10 @@ namespace Easymakemoney.ViewModels.Lists
          GetListNoteDeFraisUseCase getListNoteDeFraisUseCase, DeleteNoteDeFraisUseCase deleteNoteDeFraisUseCase,
           SaveNoteDeFraisUseCase saveNoteDeFraisUseCase, NoteDeFraisForModel noteDeFraisForModel, SaveCollectionUseCase saveCollectionUseCase,
           ListNewCollectionViewModel listNewCollectionViewModel, CollectionFormModel collectionFormModel,
+          Easymakemoney.UseCase.PeriodResultUseCase.PeriodUseCase periodUseCase,
           IDialogService dialogService)
         {
+            _periodUseCase = periodUseCase;
             _collectionFormModel = collectionFormModel;
             _listNewCollectionViewModel = listNewCollectionViewModel;
             _saveCollectionUseCase = saveCollectionUseCase;
@@ -51,6 +53,37 @@ namespace Easymakemoney.ViewModels.Lists
         private bool isClosed;
 
         public bool CanEdit => !IsClosed;
+
+        private readonly Easymakemoney.UseCase.PeriodResultUseCase.PeriodUseCase _periodUseCase;
+
+        /// <summary>À l'ouverture de l'écran, sans choix préalable : la période en cours.</summary>
+        public async Task SelectCurrentPeriodIfNoneAsync()
+        {
+            if (CollectionId != 0)
+                return;
+
+            try
+            {
+                var current = await _periodUseCase.GetCurrentPeriodAsync();
+                if (current != null && CollectionId == 0)
+                {
+                    await SelectCollectionAsync(current);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+
+        private async Task SelectCollectionAsync(ListCollection collection)
+        {
+            CollectionId = collection.id;
+            IsClosed = collection.IsClosed;
+            CollectionImage = collection.Photo;
+            CollectionName = collection.Name;
+            await GetListNoteDeFraisAsync();
+        }
         public ICommand DeleteNoteDefraisCommand { get; }
 
         private string _collectionImage;
@@ -149,11 +182,7 @@ namespace Easymakemoney.ViewModels.Lists
                     var collection = item as ListCollection;
                     if (collection != null)
                     {
-                        this.CollectionId = collection.id;
-                        this.IsClosed = collection.IsClosed;
-                        this.CollectionImage = collection.Photo;
-                        this.CollectionName = collection.Name;
-                        await this.GetListNoteDeFraisAsync();
+                        await SelectCollectionAsync(collection);
                     }
                 });
 

@@ -5,7 +5,15 @@ namespace Easymakemoney.Views.Dasboard
         public DashBoardCollectionPage(DashBoardCollectionViewModel viewModel)
         {
             InitializeComponent();
-            this.BindingContext = viewModel;
+            this.BindingContext = _viewModel = viewModel;
+        }
+
+        private readonly DashBoardCollectionViewModel _viewModel;
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await _viewModel.SelectCurrentPeriodIfNoneAsync();
         }
     }
 }

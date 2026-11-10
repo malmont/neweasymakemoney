@@ -11,6 +11,8 @@ namespace Easymakemoney.ViewModels.Lists
 
         private readonly GetAvailableProductsUseCase _getAvailableProductsUseCase;
         private readonly AttachProductsUseCase _attachProductsUseCase;
+        private readonly GetListCollectionsUseCase _getListCollectionsUseCase;
+        private readonly GetListCommandUseCase _getListCommandUseCase;
         private readonly IDialogService _dialogService;
 
         // La sélection survit à un changement de recherche.
@@ -22,8 +24,11 @@ namespace Easymakemoney.ViewModels.Lists
         private bool _isLoadingMore;
 
         public AttachProductsViewModel(GetAvailableProductsUseCase getAvailableProductsUseCase,
-            AttachProductsUseCase attachProductsUseCase, IDialogService dialogService)
+            AttachProductsUseCase attachProductsUseCase, GetListCollectionsUseCase getListCollectionsUseCase,
+            GetListCommandUseCase getListCommandUseCase, IDialogService dialogService)
         {
+            _getListCollectionsUseCase = getListCollectionsUseCase;
+            _getListCommandUseCase = getListCommandUseCase;
             _getAvailableProductsUseCase = getAvailableProductsUseCase;
             _attachProductsUseCase = attachProductsUseCase;
             _dialogService = dialogService;
@@ -31,7 +36,15 @@ namespace Easymakemoney.ViewModels.Lists
 
         public ObservableCollection<AvailableProduct> Products { get; } = new ObservableCollection<AvailableProduct>();
 
-        public int CommandId { get; set; }
+        /// <summary>0 : mode « À classer », la commande est choisie à la validation.</summary>
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(PageTitle))]
+        [NotifyPropertyChangedFor(nameof(ConfirmText))]
+        private int commandId;
+
+        public bool IsClassifying => CommandId == 0;
+
+        public string PageTitle => IsClassifying ? "À classer" : "Articles existants";
 
         [ObservableProperty]
         private string? searchText;
@@ -50,8 +63,8 @@ namespace Easymakemoney.ViewModels.Lists
         public bool HasSelection => SelectedCount > 0;
 
         public string ConfirmText => SelectedCount > 1
-            ? $"Ajouter {SelectedCount} articles"
-            : "Ajouter 1 article";
+            ? $"{(IsClassifying ? "Associer" : "Ajouter")} {SelectedCount} articles"
+            : $"{(IsClassifying ? "Associer" : "Ajouter")} 1 article";
 
         partial void OnSearchTextChanged(string? value) => _ = SearchAfterDelayAsync();
 
@@ -86,7 +99,7 @@ namespace Easymakemoney.ViewModels.Lists
                 Products.Clear();
                 AddResults(result);
                 _page = 1;
-                EmptyTitle = "Aucun article disponible";
+                EmptyTitle = IsClassifying ? "Aucun article à classer" : "Aucun article disponible";
                 ShowEmptyState = Products.Count == 0;
             }
             catch (Exception e)
@@ -183,23 +196,82 @@ namespace Easymakemoney.ViewModels.Lists
             SetSelected(product, true);
         }
 
+        private async Task<int?> PickCommandeAsync()
+        {
+            try
+            {
+                ListCollection? period = null;
+                await ShowPickerAsync(
+                    async () => (await _getListCollectionsUseCase.ExecuteAsync()).Where(c => !c.IsClosed).Cast<IListItem>(),
+                    item => period = item as ListCollection);
+                if (period == null)
+                    return null;
+
+                var commandes = await _getListCommandUseCase.ExecuteAsync(period.id);
+                if (commandes.Count == 0)
+                {
+                    await _dialogService.ShowInfoAsync("Cette période n'a pas encore de commande.");
+                    return null;
+                }
+
+                ListCommand? commande = null;
+                await ShowPickerAsync(
+                    () => Task.FromResult(commandes.Cast<IListItem>()),
+                    item => commande = item as ListCommand);
+                return commande?.id;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                await _dialogService.ShowErrorAsync(e);
+                return null;
+            }
+        }
+
+        private static async Task ShowPickerAsync(Func<Task<IEnumerable<IListItem>>> getItems, Action<IListItem> onPicked)
+        {
+            var mainPage = Application.Current?.MainPage;
+            if (mainPage != null)
+            {
+                var viewModel = new BottomSheetPopupListViewViewModel(getItemsFunc: getItems, onItemTappedAction: onPicked);
+                await mainPage.ShowPopupAsync(new BottomSheetPopupListView(viewModel));
+            }
+        }
+
         [RelayCommand]
         private async Task Confirm()
         {
             if (IsBusy || _selected.Count == 0)
                 return;
 
+            var targetCommandId = CommandId;
+            if (IsClassifying)
+            {
+                targetCommandId = await PickCommandeAsync() ?? 0;
+                if (targetCommandId == 0)
+                    return;
+            }
+
             IsBusy = true;
             try
             {
                 var count = _selected.Count;
-                await _attachProductsUseCase.ExecuteAsync(CommandId, _selected.Values);
+                await _attachProductsUseCase.ExecuteAsync(targetCommandId, _selected.Values);
                 await _dialogService.ShowInfoAsync(count > 1
                     ? $"{count} articles ajoutés à la commande."
                     : "Article ajouté à la commande.");
 
-                if (Shell.Current is { } shell)
+                if (IsClassifying)
+                {
+                    _selected.Clear();
+                    SelectedCount = 0;
+                    IsBusy = false;
+                    await LoadFirstPageAsync();
+                }
+                else if (Shell.Current is { } shell)
+                {
                     await shell.GoToAsync("..", true);
+                }
             }
             catch (Exception e)
             {
