@@ -48,5 +48,9 @@
 		</dict>
 	</dict>
 
+	<key>NSCameraUsageDescription</key>
+	<string>Photographier vos factures et reçus pour les enregistrer.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Choisir des photos de factures et de reçus.</string>
 </dict>
 </plist>

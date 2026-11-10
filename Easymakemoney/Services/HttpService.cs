@@ -87,6 +87,36 @@ namespace Easymakemoney.Services
             }
         }
 
+        public async Task<T> PostFilesAsync<T>(string url, IDictionary<string, string> fields, string fileField, IEnumerable<UploadFile> files)
+        {
+            using var content = new MultipartFormDataContent();
+            foreach (var field in fields)
+            {
+                content.Add(new StringContent(field.Value), field.Key);
+            }
+            foreach (var file in files)
+            {
+                var part = new StreamContent(file.Content);
+                part.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+                content.Add(part, fileField, file.FileName);
+            }
+
+            HttpResponseMessage response;
+            try
+            {
+                response = await _httpClient.PostAsync(url, content);
+            }
+            catch (Exception ex) when (ex is HttpRequestException or IOException or OperationCanceledException or TimeoutException)
+            {
+                throw ApiException.NoConnection(ex);
+            }
+
+            using (response)
+            {
+                return await HandleResponseAsync<T>(response);
+            }
+        }
+
         public async Task<bool> DeleAsyncWithAuth<T>(string url)
         {
             HttpResponseMessage response;

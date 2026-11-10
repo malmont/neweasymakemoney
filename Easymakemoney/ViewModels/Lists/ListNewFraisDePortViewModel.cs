@@ -199,6 +199,25 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
         [RelayCommand]
+        private async Task ReadTransportInvoice(FraisDePortCommandeRow? row)
+        {
+            if (row == null || !row.CanAddFrais)
+                return;
+
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync($"{nameof(DocumentReadPage)}?Type=transport&CommandeId={row.Commande.id}", true);
+        }
+
+        /// <summary>Au retour sur l'écran : un frais a pu être créé par la lecture d'une facture.</summary>
+        public async Task RefreshAsync()
+        {
+            if (CollectionId == 0)
+                await SelectCurrentPeriodIfNoneAsync();
+            else
+                await GetListFraisDePort();
+        }
+
+        [RelayCommand]
         private async Task AddFrais(FraisDePortCommandeRow? row)
         {
             if (row == null || row.HasFrais || IsBusy)

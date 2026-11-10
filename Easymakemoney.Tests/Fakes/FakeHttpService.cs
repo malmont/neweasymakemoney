@@ -18,6 +18,12 @@ public class FakeHttpService : IHttpService
         return Task.FromResult((T)(ResultToReturn ?? default(T)!));
     }
 
+    public Task<T> PostFilesAsync<T>(string url, IDictionary<string, string> fields, string fileField, IEnumerable<Easymakemoney.Services.Api.UploadFile> files)
+    {
+        PostedAuthData.Add((url, fields));
+        return Task.FromResult((T)(ResultToReturn ?? default(T)!));
+    }
+
     public Task<T> PostAsyncWithAuth<T>(string url, object data)
     {
         PostedAuthData.Add((url, data));

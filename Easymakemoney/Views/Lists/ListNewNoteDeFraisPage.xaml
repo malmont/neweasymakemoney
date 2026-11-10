@@ -23,6 +23,13 @@
             <Border IsVisible="{Binding IsClosed}" Margin="16,12,16,0" Padding="12,10" StrokeThickness="0" StrokeShape="RoundRectangle 12" BackgroundColor="#FEE2E2">
                 <Label Text="Période clôturée : plus rien ne peut y être ajouté." FontFamily="InterSemiBold" FontSize="14" TextColor="#B91C1C" />
             </Border>
+            <Border IsVisible="{Binding CanEdit}" Margin="16,12,16,0" Padding="12" StrokeThickness="0" StrokeShape="RoundRectangle 12"
+                    BackgroundColor="{DynamicResource ThemePrimaryTint}" SemanticProperties.Description="Lire un reçu">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ReadReceiptCommand}" />
+                </Border.GestureRecognizers>
+                <Label Text="Lire un reçu" FontFamily="InterBold" FontSize="15" TextColor="{DynamicResource ThemePrimary}" HorizontalTextAlignment="Center" />
+            </Border>
         </VerticalStackLayout>
 
         <components:NavbarContentView Grid.Row="1"

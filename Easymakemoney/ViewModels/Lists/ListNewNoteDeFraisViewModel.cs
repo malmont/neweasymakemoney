@@ -76,6 +76,22 @@ namespace Easymakemoney.ViewModels.Lists
             }
         }
 
+        [RelayCommand]
+        private async Task ReadReceipt()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync($"{nameof(DocumentReadPage)}?Type=note", true);
+        }
+
+        /// <summary>Au retour sur l'écran : la liste peut avoir changé (lecture d'un reçu).</summary>
+        public async Task RefreshAsync()
+        {
+            if (CollectionId == 0)
+                await SelectCurrentPeriodIfNoneAsync();
+            else
+                await GetListNoteDeFraisAsync();
+        }
+
         private async Task SelectCollectionAsync(ListCollection collection)
         {
             CollectionId = collection.id;

@@ -75,7 +75,8 @@
                                 </Border>
                             </Grid>
 
-                            <Border IsVisible="{Binding CanAddFrais}"
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10" IsVisible="{Binding CanAddFrais}">
+                            <Border Grid.Column="0"
                                     StrokeThickness="0"
                                     StrokeShape="RoundRectangle 12"
                                     Padding="12"
@@ -85,12 +86,29 @@
                                     <TapGestureRecognizer Command="{Binding Path=BindingContext.AddFraisCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
                                                           CommandParameter="{Binding .}" />
                                 </Border.GestureRecognizers>
-                                <Label Text="Ajouter un frais de port"
+                                <Label Text="Saisir"
                                        FontFamily="InterBold"
                                        FontSize="15"
                                        TextColor="{DynamicResource ThemePrimary}"
                                        HorizontalTextAlignment="Center" />
                             </Border>
+                            <Border Grid.Column="1"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 12"
+                                    Padding="12"
+                                    BackgroundColor="{DynamicResource ThemePrimaryTint}"
+                                    SemanticProperties.Description="Lire la facture">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.ReadTransportInvoiceCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="Lire la facture"
+                                       FontFamily="InterBold"
+                                       FontSize="15"
+                                       TextColor="{DynamicResource ThemePrimary}"
+                                       HorizontalTextAlignment="Center" />
+                            </Border>
+                            </Grid>
                         </VerticalStackLayout>
                     </components:UiCard>
                 </DataTemplate>

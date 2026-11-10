@@ -107,6 +107,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<IPeriodService, PeriodService>();
 		builder.Services.AddTransient<Easymakemoney.UseCase.PeriodResultUseCase.PeriodUseCase>();
 		builder.Services.AddTransient<IRepriseService, RepriseService>();
+		builder.Services.AddTransient<IDocumentReaderService, DocumentReaderService>();
+		builder.Services.AddTransient<Easymakemoney.UseCase.DocumentUseCase.DocumentReaderUseCase>();
 		builder.Services.AddTransient<Easymakemoney.UseCase.RepriseUseCase.RepriseUseCase>();
 		builder.Services.AddTransient<Easymakemoney.UseCase.PeriodResultUseCase.GetPeriodResultUseCase>();
 
@@ -177,6 +179,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<ListNewProductPage>();
 		builder.Services.AddTransient<AttachProductsPage>();
 		builder.Services.AddTransient<ReprisePage>();
+		builder.Services.AddTransient<DocumentReadPage>();
 		builder.Services.AddTransient<ListNewProductVariantPage>();
 		builder.Services.AddTransient<ListNewNoteDeFraisPage>();
 		builder.Services.AddTransient<ListNewFournisseurPage>();
@@ -207,6 +210,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<ListNewProductViewModel>();
 		builder.Services.AddTransient<AttachProductsViewModel>();
 		builder.Services.AddTransient<RepriseViewModel>();
+		builder.Services.AddTransient<DocumentReadViewModel>();
 		builder.Services.AddTransient<ProductFormModel>();
 		builder.Services.AddTransient<ProductVariantFormModel>();
 		builder.Services.AddTransient<ListNewProductsVariantViewModel>();

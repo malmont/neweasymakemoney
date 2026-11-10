@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             x:DataType="list:DocumentReadViewModel"
+             x:Class="Easymakemoney.Views.Lists.DocumentReadPage"
+             Style="{StaticResource UiPage}"
+             Title="Lire un document">
+
+    <ContentPage.Resources>
+        <!-- Mêmes styles que les formulaires existants (DataTemplates/*FormTemplate.xaml) -->
+        <Style x:Key="FormLabel" TargetType="Label">
+            <Setter Property="FontFamily" Value="InterMedium" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextSecondary}" />
+        </Style>
+        <Style x:Key="FormField" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="MinimumHeightRequest" Value="48" />
+            <Setter Property="Padding" Value="12,0" />
+        </Style>
+        <Style x:Key="FormEntry" TargetType="handlers:BorderlessEntry">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="PlaceholderColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="FormPicker" TargetType="Picker">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="TitleColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="DocAction" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimaryTint}" />
+            <Setter Property="TextColor" Value="{DynamicResource ThemePrimary}" />
+            <Setter Property="FontFamily" Value="InterBold" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="HeightRequest" Value="48" />
+        </Style>
+        <Style x:Key="DocMain" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimary}" />
+            <Setter Property="TextColor" Value="{DynamicResource ThemeOnPrimary}" />
+            <Setter Property="FontFamily" Value="InterBold" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="HeightRequest" Value="52" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="{Binding PageTitle}" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+
+                <!-- 1. Choix des pages -->
+                <VerticalStackLayout IsVisible="{Binding IsChoosing}" Spacing="12">
+                    <Label Text="Photographiez le document ou choisissez des photos (6 pages au plus), ou un PDF. Rien n'est enregistré avant votre validation."
+                           Style="{StaticResource UiBody}" FontSize="14" />
+                    <Button Text="Prendre une photo" Command="{Binding TakePhotoCommand}" Style="{StaticResource DocAction}" />
+                    <Button Text="Choisir des photos" Command="{Binding PickPhotosCommand}" Style="{StaticResource DocAction}" />
+                    <Button Text="Choisir un PDF" Command="{Binding PickPdfCommand}" Style="{StaticResource DocAction}" />
+                    <components:UiCard Style="{StaticResource UiCard}">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="{Binding PagesText}" Style="{StaticResource UiTitle}" FontSize="15" VerticalOptions="Center" />
+                            <Button Grid.Column="1" Text="Effacer" IsVisible="{Binding HasPages}" Command="{Binding ClearPagesCommand}"
+                                    BackgroundColor="Transparent" TextColor="#B91C1C" FontFamily="InterSemiBold" FontSize="14" />
+                        </Grid>
+                    </components:UiCard>
+                    <Button Text="Lire le document" IsVisible="{Binding HasPages}" Command="{Binding ReadCommand}" Style="{StaticResource DocMain}" />
+                </VerticalStackLayout>
+
+                <!-- 2. Lecture en cours -->
+                <VerticalStackLayout IsVisible="{Binding IsReading}" Spacing="14" Padding="0,60">
+                    <ActivityIndicator IsRunning="{Binding IsReading}" Color="{DynamicResource ThemePrimary}" />
+                    <Label Text="Lecture en cours…" Style="{StaticResource UiTitle}" HorizontalTextAlignment="Center" />
+                    <Label Text="Cela prend en général 10 à 40 secondes. Vous pouvez quitter cet écran : la lecture continue."
+                           Style="{StaticResource UiBody}" FontSize="14" HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+
+                <!-- 3. Échec -->
+                <VerticalStackLayout IsVisible="{Binding IsFailed}" Spacing="12">
+                    <Border StrokeThickness="0" StrokeShape="RoundRectangle 12" BackgroundColor="#FEF3C7" Padding="12,10">
+                        <Label Text="{Binding FailureText}" FontFamily="InterSemiBold" FontSize="14" TextColor="#B45309" />
+                    </Border>
+                    <Button Text="Relire le document" Command="{Binding RereadCommand}" Style="{StaticResource DocAction}" />
+                    <Button Text="Saisir à la main" Command="{Binding ManualEntryCommand}" Style="{StaticResource DocAction}" />
+                </VerticalStackLayout>
+
+                <!-- 4. Vérification -->
+                <VerticalStackLayout IsVisible="{Binding IsVerifying}" Spacing="12">
+                    <Border IsVisible="{Binding HasRemarks}" StrokeThickness="0" StrokeShape="RoundRectangle 12" BackgroundColor="#FEF3C7" Padding="12,10">
+                        <Label Text="{Binding RemarksText}" FontFamily="InterSemiBold" FontSize="14" TextColor="#B45309" />
+                    </Border>
+                    <Label Text="Vérifiez et corrigez si besoin, puis validez." Style="{StaticResource UiBody}" FontSize="14" />
+
+                    <Label Text="{Binding AmountLabel}" Style="{StaticResource FormLabel}" />
+                    <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="0,00" Keyboard="Numeric" Text="{Binding AmountText}" />
+                    </Border>
+
+                    <Label Text="Date du document" Style="{StaticResource FormLabel}" />
+                    <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <DatePicker Date="{Binding Date}" Format="dd/MM/yyyy" />
+                    </Border>
+
+                    <VerticalStackLayout IsVisible="{Binding IsNote}" Spacing="12">
+                        <Label Text="Type" Style="{StaticResource FormLabel}" />
+                        <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                            <Picker Style="{StaticResource FormPicker}" Title="Choisir un type" ItemsSource="{Binding Types}" SelectedItem="{Binding SelectedType}" ItemDisplayBinding="{Binding name}" />
+                        </Border>
+                        <Label Text="Description" Style="{StaticResource FormLabel}" />
+                        <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                            <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Description" Text="{Binding Description}" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout IsVisible="{Binding IsTransport}" Spacing="12">
+                        <Label Text="Transporteur" Style="{StaticResource FormLabel}" />
+                        <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                            <Picker Style="{StaticResource FormPicker}" Title="Choisir un transporteur" ItemsSource="{Binding Transporteurs}" SelectedItem="{Binding SelectedTransporteur}" ItemDisplayBinding="{Binding name}" />
+                        </Border>
+                        <Label Text="Numéro de suivi" Style="{StaticResource FormLabel}" />
+                        <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                            <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Numéro de suivi" Text="{Binding TrackingNumber}" />
+                        </Border>
+                        <Label Text="Numéro de facture" Style="{StaticResource FormLabel}" />
+                        <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                            <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Numéro de facture" Text="{Binding InvoiceNumber}" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <Button Text="Valider" Command="{Binding ConfirmCommand}" Style="{StaticResource DocMain}" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>
