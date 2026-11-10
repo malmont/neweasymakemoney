@@ -41,7 +41,7 @@ namespace Easymakemoney.Models
         {
             var b = @base ?? new SimulationScenario();
             var s = simulated ?? new SimulationScenario();
-            return new List<SimulationRow>
+            var rows = new List<SimulationRow>
             {
                 Row("Ventes de la période", b.sales.total, s.sales.total, higherIsBetter: true),
                 Row("Dont ventes à venir", b.sales.projected, s.sales.projected, higherIsBetter: true),
@@ -53,7 +53,34 @@ namespace Easymakemoney.Models
                 Row("Stock restant en fin de période", b.stockEnd.saleValue, s.stockEnd.saleValue, higherIsBetter: null),
                 Row("Trésorerie après achats", b.cashAfterPurchases, s.cashAfterPurchases, higherIsBetter: true),
             };
+            foreach (var row in rows)
+                row.Help = HelpFor(row.Label);
+            return rows;
         }
+
+        /// <summary>Définition affichée quand le gérant touche le titre d'une ligne.</summary>
+        public static string HelpFor(string label) => label switch
+        {
+            "Ventes de la période" =>
+                "Ce que la période vendra en tout, hors taxes : les ventes déjà faites, plus les ventes estimées d'ici la fin de la période.",
+            "Dont ventes à venir" =>
+                "La partie estimée des ventes : le rythme de vente des 30 derniers jours, prolongé jusqu'à la fin de la période, sans dépasser le stock disponible. Le reste est déjà vendu.",
+            "Marge brute" =>
+                "Ventes moins ce que ces articles vous ont coûté à l'achat.",
+            "Taux de marque" =>
+                "La part de marge dans chaque vente. À 43 %, sur 100 $ vendus, il vous reste 43 $ après le coût d'achat.",
+            "Frais de la période" =>
+                "Ce que la période vous coûte en plus des articles : voyage, frais de port, publicité et autres notes de frais. Pour chaque poste, le simulateur prend le plus grand entre le budget prévu et ce qui est déjà dépensé.",
+            "Résultat" =>
+                "Marge brute moins frais : ce que la période vous rapporte réellement. Un résultat négatif est une perte.",
+            "Point mort (ventes nécessaires)" =>
+                "Le montant de ventes à atteindre pour ne pas perdre d'argent sur la période : frais ÷ taux de marque. Au-dessus vous gagnez, en dessous vous perdez.",
+            "Stock restant en fin de période" =>
+                "La valeur de vente du stock qu'il vous restera à la fin de la période, si le rythme de vente continue.",
+            "Trésorerie après achats" =>
+                "L'argent qu'il vous resterait en banque à la fin de la période, une fois payés les achats et les frais encore prévus. Un tiret : aucun solde n'est saisi dans Trésorerie.",
+            _ => string.Empty,
+        };
 
         public string Money(long? cents) => cents is { } value ? SiteCurrency.FormatCents(value, null, currency) : "—";
 
@@ -105,6 +132,9 @@ namespace Easymakemoney.Models
         public int Tone { get; init; }
         public bool IsTotal { get; init; }
         public bool HasDelta => DeltaText.Length > 0;
+
+        /// <summary>Définition de la ligne (titre touchable).</summary>
+        public string Help { get; set; } = string.Empty;
 
         public Microsoft.Maui.Graphics.Color DeltaColor => Microsoft.Maui.Graphics.Color.FromArgb(Tone switch
         {

@@ -101,3 +101,16 @@ public class SimulationCommentTests
             JsonConvert.SerializeObject(Assert.Single(fakeHttp.PutData).Data));
     }
 }
+
+public class SimulationHelpTests
+{
+    [Fact]
+    public void EveryRow_HasADefinition()
+    {
+        var rows = new PeriodSimulation().Rows();
+
+        Assert.Equal(9, rows.Count);
+        Assert.All(rows, row => Assert.False(string.IsNullOrWhiteSpace(row.Help), row.Label));
+        Assert.Contains("frais ÷ taux de marque", rows.Single(row => row.Label.StartsWith("Point mort")).Help);
+    }
+}

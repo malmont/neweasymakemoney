@@ -184,6 +184,15 @@ namespace Easymakemoney.ViewModels.Lists
             };
         }
 
+        /// <summary>Affiche la définition d'une ligne du tableau (titre touché).</summary>
+        [RelayCommand]
+        private async Task ShowHelp(SimulationRow? row)
+        {
+            if (row == null || string.IsNullOrEmpty(row.Help))
+                return;
+            await _dialogService.ShowInfoAsync(row.Help, row.Label);
+        }
+
         // ----- avis du guide -----
 
         [ObservableProperty]

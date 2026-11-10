@@ -88,7 +88,7 @@
                 <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding HasSimulation}">
                     <VerticalStackLayout Spacing="10">
                         <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
-                            <Label Text="" />
+                            <Label Text="Touchez un titre pour sa définition" Style="{StaticResource UiBody}" FontSize="11" VerticalOptions="End" />
                             <Label Grid.Column="1" Text="Actuel" Style="{StaticResource FormLabel}" FontSize="12" WidthRequest="96" HorizontalTextAlignment="End" />
                             <Label Grid.Column="2" Text="Simulé" Style="{StaticResource FormLabel}" FontSize="12" WidthRequest="96" HorizontalTextAlignment="End" />
                         </Grid>
@@ -96,7 +96,15 @@
                             <BindableLayout.ItemTemplate>
                                 <DataTemplate x:DataType="models:SimulationRow">
                                     <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="10">
-                                        <Label Text="{Binding Label}" Style="{StaticResource UiBody}" FontSize="13" VerticalOptions="Center" />
+                                        <!-- Titre en lien : un appui affiche la définition de la ligne -->
+                                        <Label Text="{Binding Label}" FontFamily="InterMedium" FontSize="13" VerticalOptions="Center"
+                                               TextColor="{DynamicResource ThemePrimary}" TextDecorations="Underline"
+                                               SemanticProperties.Hint="Afficher la définition">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Path=BindingContext.ShowHelpCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                                      CommandParameter="{Binding .}" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
                                         <Label Grid.Column="1" Text="{Binding BaseText}" FontFamily="Inter" FontSize="13" WidthRequest="96"
                                                HorizontalTextAlignment="End" TextColor="{StaticResource UiTextSecondary}" />
                                         <Label Grid.Column="2" Text="{Binding SimulatedText}" FontFamily="InterBold" FontSize="13" WidthRequest="96"
