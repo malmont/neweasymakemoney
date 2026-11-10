@@ -284,4 +284,170 @@ public class HttpServiceTests : IDisposable
         Assert.Equal(HttpStatusCode.Conflict, ex.StatusCode);
         Assert.Equal("PERIOD_CLOSED", ex.ApiError.Code);
     }
+
+    [Fact]
+    public async Task PostFilesAsync_Success_SendsMultipartWithFieldsAndFiles()
+    {
+        HttpRequestMessage? capturedRequest = null;
+        var capturedParts = new List<(string? Name, string? FileName, string? ContentType, string Text)>();
+
+        var handler = new TestHttpMessageHandler(async req =>
+        {
+            capturedRequest = req;
+            if (req.Content is MultipartFormDataContent multipart)
+            {
+                foreach (var part in multipart)
+                {
+                    var name = part.Headers.ContentDisposition?.Name?.Trim('"');
+                    var fileName = part.Headers.ContentDisposition?.FileName?.Trim('"');
+                    var contentType = part.Headers.ContentType?.MediaType;
+                    var text = await part.ReadAsStringAsync();
+                    capturedParts.Add((name, fileName, contentType, text));
+                }
+            }
+            return new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("""{ "id": 10, "name": "Facture" }""", Encoding.UTF8, "application/json")
+            };
+        });
+
+        var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
+        var httpService = new HttpService(client);
+
+        var fields = new Dictionary<string, string>
+        {
+            ["type"] = "facture",
+            ["locale"] = "fr"
+        };
+
+        var fileBytes1 = Encoding.UTF8.GetBytes("CONTENU FACTURE 1");
+        var fileBytes2 = Encoding.UTF8.GetBytes("CONTENU FACTURE 2");
+        using var stream1 = new MemoryStream(fileBytes1);
+        using var stream2 = new MemoryStream(fileBytes2);
+
+        var files = new List<UploadFile>
+        {
+            new(stream1, "facture1.pdf", "application/pdf"),
+            new(stream2, "facture2.jpg", "image/jpeg")
+        };
+
+        var result = await httpService.PostFilesAsync<SampleItem>("gestion/documents", fields, "files[]", files);
+
+        Assert.NotNull(result);
+        Assert.Equal(10, result.Id);
+        Assert.Equal("Facture", result.Name);
+
+        Assert.NotNull(capturedRequest);
+        Assert.Equal(HttpMethod.Post, capturedRequest.Method);
+        Assert.Equal("http://localhost/api/gestion/documents", capturedRequest.RequestUri?.ToString());
+        Assert.NotNull(capturedRequest.Content);
+        Assert.Equal("multipart/form-data", capturedRequest.Content.Headers.ContentType?.MediaType);
+
+        // Champs texte présents
+        Assert.Contains(capturedParts, p => p.Name == "type" && p.Text == "facture");
+        Assert.Contains(capturedParts, p => p.Name == "locale" && p.Text == "fr");
+
+        // Fichiers présents
+        var fileParts = capturedParts.Where(p => p.Name == "files[]").ToList();
+        Assert.Equal(2, fileParts.Count);
+        Assert.Equal("facture1.pdf", fileParts[0].FileName);
+        Assert.Equal("application/pdf", fileParts[0].ContentType);
+        Assert.Equal("CONTENU FACTURE 1", fileParts[0].Text);
+
+        Assert.Equal("facture2.jpg", fileParts[1].FileName);
+        Assert.Equal("image/jpeg", fileParts[1].ContentType);
+        Assert.Equal("CONTENU FACTURE 2", fileParts[1].Text);
+    }
+
+    [Fact]
+    public async Task PostFilesAsync_422ValidationError_ThrowsApiException()
+    {
+        var errorJson = """
+        {
+            "error": "INVALID_FORMAT",
+            "message": "Type de fichier non supporté"
+        }
+        """;
+
+        var handler = new TestHttpMessageHandler(_ => new HttpResponseMessage(HttpStatusCode.UnprocessableEntity)
+        {
+            Content = new StringContent(errorJson, Encoding.UTF8, "application/json")
+        });
+
+        var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
+        var httpService = new HttpService(client);
+
+        using var stream = new MemoryStream(new byte[] { 1, 2, 3 });
+        var files = new List<UploadFile> { new(stream, "test.bin", "application/octet-stream") };
+
+        var ex = await Assert.ThrowsAsync<ApiException>(() =>
+            httpService.PostFilesAsync<SampleItem>("gestion/documents", new Dictionary<string, string>(), "files[]", files));
+
+        Assert.Equal(HttpStatusCode.UnprocessableEntity, ex.StatusCode);
+        Assert.Equal("INVALID_FORMAT", ex.ApiError.Code);
+    }
+
+    [Fact]
+    public async Task PostFilesAsync_402PaymentRequired_ThrowsApiException()
+    {
+        var errorJson = """
+        {
+            "error": "QUOTA_EXCEEDED",
+            "message": "Quota dépassé"
+        }
+        """;
+
+        var handler = new TestHttpMessageHandler(_ => new HttpResponseMessage(HttpStatusCode.PaymentRequired)
+        {
+            Content = new StringContent(errorJson, Encoding.UTF8, "application/json")
+        });
+
+        var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
+        var httpService = new HttpService(client);
+
+        using var stream = new MemoryStream(new byte[] { 1, 2, 3 });
+        var files = new List<UploadFile> { new(stream, "test.pdf", "application/pdf") };
+
+        var ex = await Assert.ThrowsAsync<ApiException>(() =>
+            httpService.PostFilesAsync<SampleItem>("gestion/documents", new Dictionary<string, string>(), "files[]", files));
+
+        Assert.Equal(HttpStatusCode.PaymentRequired, ex.StatusCode);
+        Assert.Equal("QUOTA_EXCEEDED", ex.ApiError.Code);
+    }
+
+    [Fact]
+    public async Task PostFilesAsync_NetworkFailure_ThrowsApiExceptionWithNoConnection()
+    {
+        var handler = new TestHttpMessageHandler((Func<HttpRequestMessage, HttpResponseMessage>)(_ =>
+            throw new HttpRequestException("Connexion impossible")));
+
+        var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
+        var httpService = new HttpService(client);
+
+        using var stream = new MemoryStream(new byte[] { 1, 2, 3 });
+        var files = new List<UploadFile> { new(stream, "test.pdf", "application/pdf") };
+
+        var ex = await Assert.ThrowsAsync<ApiException>(() =>
+            httpService.PostFilesAsync<SampleItem>("gestion/documents", new Dictionary<string, string>(), "files[]", files));
+
+        Assert.Equal("NO_CONNECTION", ex.ApiError.Code);
+    }
+
+    [Fact]
+    public async Task PostFilesAsync_Timeout_ThrowsApiExceptionWithNoConnection()
+    {
+        var handler = new TestHttpMessageHandler((Func<HttpRequestMessage, HttpResponseMessage>)(_ =>
+            throw new TaskCanceledException("Timeout")));
+
+        var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
+        var httpService = new HttpService(client);
+
+        using var stream = new MemoryStream(new byte[] { 1, 2, 3 });
+        var files = new List<UploadFile> { new(stream, "test.pdf", "application/pdf") };
+
+        var ex = await Assert.ThrowsAsync<ApiException>(() =>
+            httpService.PostFilesAsync<SampleItem>("gestion/documents", new Dictionary<string, string>(), "files[]", files));
+
+        Assert.Equal("NO_CONNECTION", ex.ApiError.Code);
+    }
 }
