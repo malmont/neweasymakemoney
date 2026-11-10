@@ -174,3 +174,33 @@ Chaque conseil donne une action, son effet estimé en argent, son niveau de conf
 2. Volet publicité, simple et utile tout de suite.
 3. Prévisionnel de commande et simulateur de coefficients et de promotions.
 4. Guide IA, qui a besoin de tous ces chiffres pour donner de vrais conseils.
+
+## Budgets de période, simulateur, lecture des factures (décisions du propriétaire, 10/11/2026)
+
+Feu vert donné pour le volet publicité, le prévisionnel avec simulateur, et le guide IA.
+
+### Budgets et simulateur
+
+Avant ou pendant une période, le gérant répartit son budget : **stock, voyage, frais de port, publicité, autres**. L'écran compare ensuite le prévu au réel.
+
+- **À la main**, ou **par un questionnaire court** qui prérempli les mêmes champs : trésorerie disponible, objectif de ventes, voyage prévu ou non.
+- **Le simulateur** part des données en cours (stock restant valorisé, ventes de la même période l'an dernier, rythme de vente) et montre, quand on bouge un budget, un coefficient ou une promotion : ventes prévues, marge, résultat, point mort, trésorerie après achats. Rien n'est enregistré tant que le gérant ne valide pas.
+- **Le guide IA** commente ces chiffres et propose une répartition. Il ne calcule rien lui-même.
+
+**Point à savoir :** le backend ne connaît pas le solde bancaire. La trésorerie est donc saisie par le gérant, datée, et une liaison bancaire pourra venir plus tard.
+
+### Lire une facture pour créer les articles et les notes de frais
+
+Un seul service de lecture de documents, deux usages :
+
+- **Facture fournisseur → commande et articles** (voir `perimetre-mobile-web.md`) ;
+- **Facture ou reçu → note de frais** : montant, date, type proposé, taxes.
+
+Le gérant vérifie toujours avant création, le total calculé est comparé à celui du document, le document reste attaché comme justificatif, et le classement dans la période se fait par la date. La ré-association d'articles reste utile pour les exceptions.
+
+### Ordre retenu
+
+1. Lecture des factures (articles, notes de frais) : le plus grand gain de temps au quotidien.
+2. Volet publicité.
+3. Budgets et simulateur.
+4. Guide IA, qui s'appuie sur tout le reste.
