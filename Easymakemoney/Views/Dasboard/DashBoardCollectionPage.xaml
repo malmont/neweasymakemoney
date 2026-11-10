@@ -103,7 +103,7 @@
                             <components:UiAmountRow Title="Marge" Value="{Binding PeriodResult.GrossText}" IsTotal="True" />
                             <components:UiAmountRow Title="Frais de port" Value="{Binding PeriodResult.ShippingText}" />
                             <components:UiAmountRow Title="Notes de frais" Value="{Binding PeriodResult.NotesText}" />
-                            <components:UiAmountRow Title="Autres frais" Value="{Binding PeriodResult.OtherExpensesText}" IsVisible="{Binding PeriodResult.HasOtherExpenses}" />
+                            <components:UiAmountRow Title="{Binding PeriodResult.OtherExpensesTitle}" Value="{Binding PeriodResult.OtherExpensesText}" IsVisible="{Binding PeriodResult.HasOtherExpenses}" />
                             <components:UiAmountRow Title="Résultat" Value="{Binding PeriodResult.NetText}" IsTotal="True" />
                         </VerticalStackLayout>
                     </components:UiCard>

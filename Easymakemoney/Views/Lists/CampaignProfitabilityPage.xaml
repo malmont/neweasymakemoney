@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:x1="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             x:DataType="list:CampaignProfitabilityViewModel"
+             x:Class="Easymakemoney.Views.Lists.CampaignProfitabilityPage"
+             Style="{StaticResource UiPage}"
+             Title="Rentabilité">
+
+    <ContentPage.Resources>
+        <Style x:Key="DocAction" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimaryTint}" />
+            <Setter Property="TextColor" Value="{DynamicResource ThemePrimary}" />
+            <Setter Property="FontFamily" Value="InterBold" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="HeightRequest" Value="48" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Rentabilité" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+
+                <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" Margin="0,24" />
+
+                <VerticalStackLayout IsVisible="{Binding HasLoadError}" Spacing="12">
+                    <Border StrokeThickness="0" StrokeShape="RoundRectangle 12" BackgroundColor="#FEE2E2" Padding="12,10">
+                        <Label Text="{Binding LoadError}" FontFamily="InterSemiBold" FontSize="14" TextColor="#B91C1C" />
+                    </Border>
+                    <Button Text="Réessayer" Command="{Binding ReloadCommand}" Style="{StaticResource DocAction}" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout IsVisible="{Binding IsLoaded}" Spacing="12">
+                    <!-- Campagne -->
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="{Binding Campaign.name}" Style="{StaticResource UiTitle}" FontSize="18" />
+                        <Label Style="{StaticResource UiBody}" FontSize="14">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding Campaign.ChannelText}" />
+                                    <Span Text=" · " />
+                                    <Span Text="{Binding Campaign.DatesText}" />
+                                    <Span Text=" · " />
+                                    <Span Text="{Binding Campaign.AmountText}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </VerticalStackLayout>
+
+                    <!-- Pas encore commencée, ou en cours -->
+                    <Border IsVisible="{Binding Report.HasStatus}" StrokeThickness="0" StrokeShape="RoundRectangle 12" BackgroundColor="#FEF3C7" Padding="12,10">
+                        <Label Text="{Binding Report.StatusText}" FontFamily="InterSemiBold" FontSize="14" TextColor="#B45309" />
+                    </Border>
+
+                    <!-- Gain en marge pour 1 $ investi -->
+                    <components:UiCard Style="{StaticResource UiCard}" Padding="16">
+                        <VerticalStackLayout Spacing="6">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="Gain en marge" Style="{StaticResource UiBody}" FontSize="14" VerticalOptions="Center" />
+                                <Border Grid.Column="1" StrokeThickness="0" StrokeShape="RoundRectangle 10" BackgroundColor="{DynamicResource ThemePrimaryTint}" Padding="10,4">
+                                    <Label Text="Estimation" FontFamily="InterBold" FontSize="12" TextColor="{DynamicResource ThemePrimary}" />
+                                </Border>
+                            </Grid>
+                            <Label Text="{Binding Report.GainText}" FontFamily="InterBold" FontSize="36" TextColor="{Binding GainColor}" />
+                            <Label Text="{Binding Report.GainCaption}" Style="{StaticResource UiBody}" FontSize="14" />
+                            <Label Text="{Binding Report.GainVerdict}" FontFamily="InterSemiBold" FontSize="14" TextColor="{Binding GainColor}" />
+                            <Label Text="{Binding Report.RevenueGainText}" IsVisible="{Binding Report.HasRevenueGain}" Style="{StaticResource UiBody}" FontSize="13" />
+                        </VerticalStackLayout>
+                    </components:UiCard>
+
+                    <Border IsVisible="{Binding Report.IsShared}" StrokeThickness="0" StrokeShape="RoundRectangle 12" BackgroundColor="{DynamicResource ThemePrimaryTint}" Padding="12,10">
+                        <Label Text="{Binding Report.SharedText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{DynamicResource ThemePrimary}" />
+                    </Border>
+
+                    <!-- Hausse -->
+                    <components:UiCard Style="{StaticResource UiCard}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Hausse (pendant − avant)" Style="{StaticResource UiTitle}" FontSize="15" />
+                            <components:UiAmountRow Title="Ventes" Value="{Binding Report.RevenueUpliftText}" />
+                            <components:UiAmountRow Title="Marge" Value="{Binding Report.MarginUpliftText}" />
+                        </VerticalStackLayout>
+                    </components:UiCard>
+
+                    <!-- Avant / Pendant / L'an dernier -->
+                    <VerticalStackLayout Spacing="12" BindableLayout.ItemsSource="{Binding Report.Metrics}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="x1:CampaignMetricBlock">
+                                <components:UiCard Style="{StaticResource UiCard}">
+                                    <VerticalStackLayout Spacing="8">
+                                        <Label Text="{Binding Title}" Style="{StaticResource UiTitle}" FontSize="15" />
+                                        <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Rows}">
+                                            <BindableLayout.ItemTemplate>
+                                                <DataTemplate x:DataType="x1:CampaignMetricRow">
+                                                    <components:UiAmountRow Title="{Binding Label}" Value="{Binding Value}" />
+                                                </DataTemplate>
+                                            </BindableLayout.ItemTemplate>
+                                        </VerticalStackLayout>
+                                    </VerticalStackLayout>
+                                </components:UiCard>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                    <!-- Fenêtres de mesure -->
+                    <VerticalStackLayout Spacing="2" Padding="4,0">
+                        <Label Text="{Binding Report.WindowText}" Style="{StaticResource UiBody}" FontSize="13" />
+                        <Label Text="{Binding Report.ReferenceText}" Style="{StaticResource UiBody}" FontSize="13" />
+                        <Label Text="{Binding Report.ScopeText}" Style="{StaticResource UiBody}" FontSize="13" />
+                    </VerticalStackLayout>
+
+                    <!-- Remarques du backend, telles quelles -->
+                    <Border IsVisible="{Binding Report.HasCaveats}" StrokeThickness="0" StrokeShape="RoundRectangle 12" BackgroundColor="#FEF3C7" Padding="12,10">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="À savoir" FontFamily="InterBold" FontSize="14" TextColor="#B45309" />
+                            <Label Text="{Binding Report.CaveatsText}" FontFamily="InterSemiBold" FontSize="14" TextColor="#B45309" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Button Text="Modifier la campagne" Command="{Binding EditCommand}" Style="{StaticResource DocAction}" Margin="0,4,0,24" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

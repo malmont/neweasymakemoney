@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:x1="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             x:DataType="list:CampaignListViewModel"
+             x:Class="Easymakemoney.Views.Lists.CampaignListPage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Publicité">
+
+    <Grid RowDefinitions="Auto,Auto,*">
+        <components:AppHeader Title="Publicité" />
+
+        <Button Grid.Row="1"
+                Text="Nouvelle campagne"
+                Command="{Binding NewCampaignCommand}"
+                Margin="16,12,16,0"
+                HeightRequest="52"
+                CornerRadius="14"
+                FontFamily="InterBold"
+                FontSize="16"
+                BackgroundColor="{DynamicResource ThemePrimary}"
+                TextColor="{DynamicResource ThemeOnPrimary}" />
+
+        <VerticalStackLayout Grid.Row="2" IsVisible="{Binding ShowEmptyState}" VerticalOptions="Center" Spacing="10" Padding="24,0">
+            <Label Text="{Binding EmptyTitle}" FontFamily="InterBold" FontSize="20" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="Center" />
+            <Label Text="{Binding EmptyText}" Style="{StaticResource UiBody}" FontSize="15" HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="2"
+                        ItemsSource="{Binding Campaigns}"
+                        SelectionMode="None"
+                        Margin="16,12,16,0"
+                        RemainingItemsThreshold="5"
+                        RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="x1:Campaign">
+                    <SwipeView Margin="0,0,0,10">
+                        <SwipeView.RightItems>
+                            <SwipeItems Mode="Reveal">
+                                <SwipeItem Text="Modifier" BackgroundColor="#475569"
+                                           Command="{Binding Path=BindingContext.EditCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                           CommandParameter="{Binding .}" />
+                                <SwipeItem Text="Supprimer" BackgroundColor="#B91C1C"
+                                           Command="{Binding Path=BindingContext.DeleteCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                           CommandParameter="{Binding .}" />
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+                        <!-- Fond opaque : le rouge de la suppression ne doit pas apparaître dans les coins arrondis au repos -->
+                        <Grid BackgroundColor="{StaticResource UiBackground}">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                    <components:UiThumb Grid.Column="0" Icon="M3 10v4h3l6 4V6L6 10H3zM16 9a4 4 0 010 6M19 6a8 8 0 010 12" />
+                                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                                        <Label Text="{Binding name}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
+                                        <Label Text="{Binding ChannelText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{DynamicResource ThemePrimary}" />
+                                        <Label Text="{Binding DatesText}" Style="{StaticResource UiBody}" FontSize="13" />
+                                        <Label Text="{Binding PeriodText}" Style="{StaticResource UiBody}" FontSize="13" LineBreakMode="TailTruncation" />
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="2" Spacing="2" VerticalOptions="Center">
+                                        <Label Text="{Binding AmountText}" FontFamily="InterBold" FontSize="15" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="End" />
+                                        <Label Text="{Binding AmountSiteText}" IsVisible="{Binding HasAmountSite}" Style="{StaticResource UiBody}" FontSize="12" HorizontalTextAlignment="End" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </components:UiCard>
+                        </Grid>
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

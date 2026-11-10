@@ -81,6 +81,13 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
         [RelayCommand]
+        private async Task NavigateToAdvertising()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(CampaignListPage));
+        }
+
+        [RelayCommand]
         private async Task NavigateToReprise()
         {
             if (Shell.Current is { } shell)

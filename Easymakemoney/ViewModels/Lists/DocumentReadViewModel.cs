@@ -38,12 +38,17 @@ namespace Easymakemoney.ViewModels.Lists
         public string DocType { get; set; } = "note";
         public int CommandeId { get; set; }
 
+        /// <summary>« campaign » : facture d'une régie (type note) qui deviendra une campagne de publicité, pas une note de frais.</summary>
+        public string? Purpose { get; set; }
+
         public bool IsNote => DocType == "note";
         public bool IsTransport => DocType == "transport";
         public bool IsInvoice => DocType == "facture";
-        public bool CanEnterManually => !IsInvoice;
+        public bool IsCampaign => IsNote && Purpose == "campaign";
+        public bool CanEnterManually => !IsInvoice && !IsCampaign;
         public string PageTitle => DocType switch
         {
+            "note" when IsCampaign => "Lire la facture de la régie",
             "note" => "Lire un reçu",
             "facture" => "Lire une facture fournisseur",
             _ => "Lire une facture de transport",
@@ -51,7 +56,9 @@ namespace Easymakemoney.ViewModels.Lists
 
         public string IntroText => IsInvoice
             ? "Photographiez la facture du fournisseur ou choisissez des photos (6 pages au plus), ou un PDF. Vous vérifierez ensuite chaque ligne : rien n'est enregistré avant votre validation."
-            : "Photographiez le document ou choisissez des photos (6 pages au plus), ou un PDF. Rien n'est enregistré avant votre validation.";
+            : IsCampaign
+                ? "Photographiez la facture de la régie (Facebook, Google, journal, imprimeur…) ou choisissez des photos (6 pages au plus), ou un PDF. Vous vérifierez ensuite la campagne : rien n'est enregistré avant votre validation."
+                : "Photographiez le document ou choisissez des photos (6 pages au plus), ou un PDF. Rien n'est enregistré avant votre validation.";
 
         /// <summary>Factures déjà lues et pas encore validées : le gérant reprend sa vérification.</summary>
         public ObservableCollection<PendingInvoice> PendingInvoices { get; } = new();
@@ -99,14 +106,16 @@ namespace Easymakemoney.ViewModels.Lists
 
         public void Stop() => _stopped = true;
 
-        public async Task InitAsync(string type, int commandeId)
+        public async Task InitAsync(string type, int commandeId, string? purpose = null)
         {
             DocType = type;
             CommandeId = commandeId;
+            Purpose = purpose;
             _stopped = false;
             OnPropertyChanged(nameof(IsNote));
             OnPropertyChanged(nameof(IsTransport));
             OnPropertyChanged(nameof(IsInvoice));
+            OnPropertyChanged(nameof(IsCampaign));
             OnPropertyChanged(nameof(CanEnterManually));
             OnPropertyChanged(nameof(PageTitle));
             OnPropertyChanged(nameof(IntroText));
@@ -117,7 +126,7 @@ namespace Easymakemoney.ViewModels.Lists
 
             try
             {
-                if (IsNote && Types.Count == 0)
+                if (IsNote && !IsCampaign && Types.Count == 0)
                 {
                     foreach (var item in await _notes.GetTypeNoteDeFrais())
                         Types.Add(item);
@@ -348,12 +357,18 @@ namespace Easymakemoney.ViewModels.Lists
                         if (Shell.Current is { } shell)
                             await shell.GoToAsync($"../{nameof(InvoiceReviewPage)}?DocumentId={_documentId}", true);
                         return;
+                    case "extracted" when IsCampaign:
+                        // La facture d'une régie se vérifie dans le formulaire de campagne qui a ouvert cet écran :
+                        // il reçoit le document, se préremplit et le confirmera en campagne.
+                        if (Shell.Current is { } campaignShell)
+                            await campaignShell.GoToAsync($"..?DocumentId={_documentId}", true);
+                        return;
                     case "extracted":
                         Prefill(document.extraction);
                         Step = "verify";
                         return;
                     case "failed":
-                        FailureText = (document.error, IsInvoice) switch
+                        FailureText = (document.error, IsInvoice || IsCampaign) switch
                         {
                             ("DOCUMENT_UNREADABLE", true) => "La facture est illisible. Reprenez une photo plus nette.",
                             ("AI_TOO_MANY_FAILURES", true) => "La lecture a échoué plusieurs fois. Réessayez plus tard.",
@@ -374,7 +389,9 @@ namespace Easymakemoney.ViewModels.Lists
             {
                 FailureText = IsInvoice
                     ? "La lecture prend plus de temps que prévu. Revenez plus tard : la facture sera proposée en haut de cet écran."
-                    : "La lecture prend plus de temps que prévu. Revenez plus tard ou saisissez les informations à la main.";
+                    : IsCampaign
+                        ? "La lecture prend plus de temps que prévu. Revenez en arrière pour saisir la campagne à la main."
+                        : "La lecture prend plus de temps que prévu. Revenez plus tard ou saisissez les informations à la main.";
                 Step = "failed";
             }
         }
@@ -382,7 +399,7 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private void ManualEntry()
         {
-            if (IsInvoice)
+            if (IsInvoice || IsCampaign)
                 return;
 
             Prefill(null);

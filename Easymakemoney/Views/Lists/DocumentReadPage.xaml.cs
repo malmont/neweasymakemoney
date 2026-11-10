@@ -2,6 +2,7 @@ namespace Easymakemoney.Views.Lists
 {
     [QueryProperty(nameof(DocType), "Type")]
     [QueryProperty(nameof(CommandeId), "CommandeId")]
+    [QueryProperty(nameof(Purpose), "Purpose")]
     public partial class DocumentReadPage : ContentPage
     {
         private readonly DocumentReadViewModel _viewModel;
@@ -17,6 +18,9 @@ namespace Easymakemoney.Views.Lists
 
         public int CommandeId { get; set; }
 
+        /// <summary>« campaign » : la facture lue préremplit le formulaire de campagne au lieu d'une note de frais.</summary>
+        public string? Purpose { get; set; }
+
         protected override async void OnAppearing()
         {
             base.OnAppearing();
@@ -25,7 +29,7 @@ namespace Easymakemoney.Views.Lists
                 return;
 
             _initialized = true;
-            await _viewModel.InitAsync(DocType, CommandeId);
+            await _viewModel.InitAsync(DocType, CommandeId, Purpose);
         }
 
         protected override void OnNavigatedFrom(NavigatedFromEventArgs args)

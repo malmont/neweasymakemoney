@@ -24,6 +24,20 @@ namespace Easymakemoney.Models
         public string ShippingText => Minus(expenses.shipping);
         public string NotesText => Minus(expenses.notes);
         public string OtherExpensesText => Minus(OtherExpensesAmount);
+
+        /// <summary>Libellé reçu (« Publicité ») quand il n'y a qu'une catégorie d'autres frais ; sinon « Autres frais ».</summary>
+        public string OtherExpensesTitle
+        {
+            get
+            {
+                var labels = expenses.other?
+                    .Select(item => string.IsNullOrWhiteSpace(item.label) ? null : item.label.Trim())
+                    .Distinct()
+                    .ToList();
+                return labels is { Count: 1 } && labels[0] != null ? labels[0]! : "Autres frais";
+            }
+        }
+
         public string InvestmentText => Money(investment.total);
         public string OtherRevenueText => Money(otherRevenue.total);
 
@@ -79,6 +93,12 @@ namespace Easymakemoney.Models
 
     public sealed class PeriodExpenseItem
     {
+        /// <summary>Catégorie, par exemple « advertising ».</summary>
+        public string? kind { get; set; }
+
+        /// <summary>Libellé à afficher, par exemple « Publicité ».</summary>
+        public string? label { get; set; }
+
         public long amount { get; set; }
     }
 

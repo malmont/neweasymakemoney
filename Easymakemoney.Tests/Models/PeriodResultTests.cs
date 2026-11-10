@@ -178,6 +178,53 @@ public class PeriodResultTests : IDisposable
 
         Assert.False(pr.HasOtherExpenses);
         Assert.Contains("0", pr.OtherExpensesText);
+        Assert.Equal("Autres frais", pr.OtherExpensesTitle);
+    }
+
+    [Fact]
+    public void OtherExpensesTitle_SingleCategory_ShowsReceivedLabel()
+    {
+        var pr = JsonConvert.DeserializeObject<PeriodResult>("""
+        { "expenses": { "shipping": 0, "notes": 0,
+          "other": [ { "kind": "advertising", "label": "Publicité", "amount": 18000, "campaigns": [ { "id": 7, "name": "Hiver", "amount": 18000 } ] } ] } }
+        """)!;
+
+        Assert.Equal("advertising", pr.expenses.other![0].kind);
+        Assert.Equal("Publicité", pr.OtherExpensesTitle);
+        Assert.True(pr.HasOtherExpenses);
+    }
+
+    [Fact]
+    public void OtherExpensesTitle_SeveralCategories_KeepsTheSum()
+    {
+        SiteCurrency.SetCurrency("EUR");
+        CultureInfo.CurrentCulture = new CultureInfo("fr-FR");
+
+        var pr = new PeriodResult
+        {
+            expenses = new PeriodExpenses
+            {
+                other = new List<PeriodExpenseItem>
+                {
+                    new() { kind = "advertising", label = "Publicité", amount = 18000 },
+                    new() { kind = "rent", label = "Loyer", amount = 2000 },
+                }
+            }
+        };
+
+        Assert.Equal("Autres frais", pr.OtherExpensesTitle);
+        Assert.Contains("200,00", pr.OtherExpensesText);
+    }
+
+    [Fact]
+    public void OtherExpensesTitle_WithoutLabel_KeepsGenericTitle()
+    {
+        var pr = new PeriodResult
+        {
+            expenses = new PeriodExpenses { other = new List<PeriodExpenseItem> { new() { amount = 1000 } } }
+        };
+
+        Assert.Equal("Autres frais", pr.OtherExpensesTitle);
     }
 }
 
