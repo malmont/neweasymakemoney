@@ -199,5 +199,9 @@ namespace Easymakemoney.Models
     {
         public double percent { get; init; }
         public string scope { get; init; } = "all";
+
+        /// <summary>Seulement avec scope « products » (promotion conseillée sur des articles qui dorment).</summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public List<int>? productIds { get; init; }
     }
 }

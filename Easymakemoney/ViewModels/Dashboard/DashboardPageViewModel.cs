@@ -52,34 +52,18 @@ namespace Easymakemoney.ViewModels.Dashboard
         [RelayCommand]
         private async Task OpenTile(HomeTile? tile)
         {
-            if (tile == null || Shell.Current is not { } shell)
+            if (tile == null)
                 return;
 
-            switch (tile.Screen)
-            {
-                case "documents.scan":
-                    var type = tile.Param("type") is "facture" ? "facture" : "note";
-                    await shell.GoToAsync($"{nameof(DocumentReadPage)}?Type={type}");
-                    break;
-                case "campagnes.new":
-                    await shell.GoToAsync(nameof(CampaignFormPage));
-                    break;
-                case "periode.budget" when int.TryParse(tile.Param("periodId"), out var periodId):
-                    await shell.GoToAsync($"{nameof(PeriodBudgetPage)}?PeriodId={periodId}");
-                    break;
-                case "voyages.suivi" when int.TryParse(tile.Param("tripId"), out var tripId):
-                    await shell.GoToAsync($"{nameof(TripFollowUpPage)}?TripId={tripId}");
-                    break;
-                case "tresorerie":
-                    await shell.GoToAsync(nameof(TreasuryPage));
-                    break;
-                case "stock.low":
-                    await shell.GoToAsync(nameof(StockLowPage), new ShellNavigationQueryParameters { ["Tile"] = tile });
-                    break;
-                default:
-                    // Écran pas encore présent dans cette version : la vignette reste informative.
-                    break;
-            }
+            // Un écran pas encore présent dans cette version ne fait rien : la vignette reste informative.
+            await Utilities.ScreenNavigator.OpenAsync(tile.Screen, tile.action?.@params, tile.figures, tile.title, tile.text, tile: tile);
+        }
+
+        [RelayCommand]
+        private async Task OpenGuide()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(AdvicePage));
         }
 
         [RelayCommand]

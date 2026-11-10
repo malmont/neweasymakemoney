@@ -244,7 +244,7 @@ namespace Easymakemoney.ViewModels.Lists
 
         // ----- ouverture -----
 
-        public async Task InitAsync(int campaignId, int documentId)
+        public async Task InitAsync(int campaignId, int documentId, int fromCampaignId = 0)
         {
             CampaignId = campaignId;
             _siteCurrency = SiteCurrency.CurrentCurrency;
@@ -252,6 +252,8 @@ namespace Easymakemoney.ViewModels.Lists
 
             if (campaignId > 0)
                 await LoadCampaignAsync();
+            else if (fromCampaignId > 0)
+                await CopyCampaignAsync(fromCampaignId);
             else
                 IsLoaded = true;
 
@@ -292,6 +294,40 @@ namespace Easymakemoney.ViewModels.Lists
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+        /// <summary>
+        /// Relance conseillée par le guide : nouvelle campagne préremplie avec le canal, le montant, la devise et le ciblage
+        /// d'une campagne rentable, sur la même durée à partir d'aujourd'hui. Rien n'est enregistré avant « Enregistrer ».
+        /// </summary>
+        private async Task CopyCampaignAsync(int fromCampaignId)
+        {
+            IsBusy = true;
+            try
+            {
+                var source = await _campaigns.GetAsync(fromCampaignId);
+                if (source != null)
+                {
+                    var start = CampaignDates.Parse(source.startDate) ?? DateTime.Today;
+                    var end = CampaignDates.Parse(source.endDate) ?? start;
+                    Apply(source);
+                    Name = $"{source.name} (relance)";
+                    StartDate = DateTime.Today;
+                    EndDate = DateTime.Today.Add(end.Date - start.Date);
+                    HasCommandes = false;
+                    DocumentText = null;
+                }
+            }
+            catch (Exception e)
+            {
+                // Campagne d'origine introuvable : le formulaire reste vide, rien de bloquant.
+                Console.WriteLine(e);
+            }
+            finally
+            {
+                IsBusy = false;
+                IsLoaded = true;
             }
         }
 

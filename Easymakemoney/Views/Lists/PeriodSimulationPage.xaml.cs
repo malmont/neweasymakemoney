@@ -1,7 +1,10 @@
 namespace Easymakemoney.Views.Lists
 {
-    [QueryProperty(nameof(PeriodId), "PeriodId")]
-    public partial class PeriodSimulationPage : ContentPage
+    /// <summary>
+    /// Paramètres : PeriodId (texte ou nombre) ; facultatifs PromotionPercent et ProductIds, posés par un conseil du guide
+    /// (promotion sur des articles qui dorment).
+    /// </summary>
+    public partial class PeriodSimulationPage : ContentPage, IQueryAttributable
     {
         private readonly PeriodSimulationViewModel _viewModel;
 
@@ -11,9 +14,21 @@ namespace Easymakemoney.Views.Lists
             BindingContext = _viewModel = viewModel;
         }
 
-        public string PeriodId
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            set => _viewModel.PeriodId = int.TryParse(value, out var id) ? id : 0;
+            if (query.TryGetValue("PeriodId", out var period))
+                _viewModel.PeriodId = period switch
+                {
+                    int id => id,
+                    string text when int.TryParse(text, out var id) => id,
+                    _ => 0,
+                };
+
+            if (query.TryGetValue("PromotionPercent", out var percent) && percent is double value && value > 0)
+            {
+                var productIds = query.TryGetValue("ProductIds", out var ids) && ids is IEnumerable<int> list ? list.ToList() : new List<int>();
+                _viewModel.PresetPromotion(value, productIds);
+            }
         }
 
         protected override async void OnAppearing()

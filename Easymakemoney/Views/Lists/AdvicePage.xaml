@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             x:DataType="list:AdviceViewModel"
+             x:Class="Easymakemoney.Views.Lists.AdvicePage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Guide de la période">
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Guide de la période" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <VerticalStackLayout Spacing="2" IsVisible="{Binding HasList}">
+                    <Label Text="{Binding List.period.name}" Style="{StaticResource UiTitle}" FontSize="18" />
+                    <Label Text="{Binding List.MomentsText}" FontFamily="InterSemiBold" FontSize="13" TextColor="{DynamicResource ThemePrimary}" />
+                </VerticalStackLayout>
+
+                <!-- Phrase de synthèse de l'IA -->
+                <Border IsVisible="{Binding List.HasHeadline}" StrokeThickness="0" StrokeShape="RoundRectangle 14"
+                        BackgroundColor="{DynamicResource ThemePrimaryTint}" Padding="14,12">
+                    <Label Text="{Binding List.headline}" FontFamily="InterSemiBold" FontSize="15" TextColor="{DynamicResource ThemePrimary}" />
+                </Border>
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" />
+
+                <VerticalStackLayout IsVisible="{Binding IsEmpty}" Spacing="6" Padding="0,24">
+                    <Label Text="Aucun conseil pour l'instant" FontFamily="InterBold" FontSize="18" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="Center" />
+                    <Label Text="Le guide regarde vos ventes, votre stock, vos budgets et votre trésorerie chaque jour. Il vous préviendra dès qu'il voit une action utile."
+                           Style="{StaticResource UiBody}" FontSize="14" HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Spacing="12" BindableLayout.ItemsSource="{Binding Advices}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:Advice">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="16">
+                                <VerticalStackLayout Spacing="8">
+                                    <Label Text="{Binding ConfidenceText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                    <Label Text="{Binding title}" Style="{StaticResource UiTitle}" FontSize="16" />
+                                    <Label Text="{Binding text}" Style="{StaticResource UiBody}" FontSize="14" />
+                                    <Label Text="{Binding EffectText}" IsVisible="{Binding HasEffect}" FontFamily="InterBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding IsRisk}" Value="True">
+                                                <Setter Property="TextColor" Value="#B91C1C" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                    <Label Text="{Binding SourcesText}" IsVisible="{Binding HasSources}" Style="{StaticResource UiBody}" FontSize="12" />
+
+                                    <Button Text="{Binding ActionText}" IsVisible="{Binding HasAction}"
+                                            Command="{Binding Path=BindingContext.OpenCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}"
+                                            FontFamily="InterBold" FontSize="15" CornerRadius="12" HeightRequest="46" />
+                                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                        <Button Text="C'est fait"
+                                                Command="{Binding Path=BindingContext.DoneCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="{DynamicResource ThemePrimaryTint}" TextColor="{DynamicResource ThemePrimary}"
+                                                FontFamily="InterSemiBold" FontSize="14" CornerRadius="12" HeightRequest="42" />
+                                        <Button Grid.Column="1" Text="Écarter"
+                                                Command="{Binding Path=BindingContext.DismissCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="Transparent" TextColor="{StaticResource UiTextSecondary}"
+                                                FontFamily="InterSemiBold" FontSize="14" CornerRadius="12" HeightRequest="42" />
+                                    </Grid>
+                                </VerticalStackLayout>
+                            </components:UiCard>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Label Text="{Binding List.AiText}" IsVisible="{Binding HasList}" Style="{StaticResource UiBody}" FontSize="12" />
+                <Button Text="{Binding List.RefreshText}" IsVisible="{Binding HasList}" IsEnabled="{Binding List.CanRefresh}"
+                        Command="{Binding RefreshCommand}" BackgroundColor="Transparent" TextColor="{DynamicResource ThemePrimary}"
+                        FontFamily="InterSemiBold" FontSize="14" Margin="0,0,0,16" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

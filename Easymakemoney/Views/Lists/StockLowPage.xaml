@@ -10,14 +10,14 @@
              Title="Stock bas">
 
     <Grid RowDefinitions="Auto,Auto,*">
-        <components:AppHeader Title="Stock bas" />
+        <components:AppHeader Title="{Binding PageTitle}" />
 
         <VerticalStackLayout Grid.Row="1" Padding="16,12,16,0" Spacing="4">
             <Label Text="{Binding Intro}" Style="{StaticResource UiBody}" FontSize="15" />
             <Label Text="{Binding SourcesText}" Style="{StaticResource UiBody}" FontSize="12" />
         </VerticalStackLayout>
 
-        <Label Grid.Row="2" IsVisible="{Binding IsEmpty}" Text="Aucun article à racheter pour l'instant."
+        <Label Grid.Row="2" IsVisible="{Binding IsEmpty}" Text="Aucun article pour l'instant."
                Style="{StaticResource UiBody}" FontSize="15" HorizontalTextAlignment="Center" VerticalOptions="Center" />
 
         <CollectionView Grid.Row="2" ItemsSource="{Binding Items}" SelectionMode="None" Margin="16,12,16,0">
@@ -28,7 +28,8 @@
                             <VerticalStackLayout Spacing="3" VerticalOptions="Center">
                                 <Label Text="{Binding name}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
                                 <Label Text="{Binding SoldText}" Style="{StaticResource UiBody}" FontSize="13" />
-                                <Label Text="{Binding DaysLeftText}" FontFamily="InterSemiBold" FontSize="13" TextColor="#B45309" />
+                                <Label Text="{Binding PriceText}" IsVisible="{Binding HasPrice}" Style="{StaticResource UiBody}" FontSize="13" />
+                                <Label Text="{Binding DaysLeftText}" IsVisible="{Binding HasDaysLeft}" FontFamily="InterSemiBold" FontSize="13" TextColor="#B45309" />
                             </VerticalStackLayout>
                             <Label Grid.Column="1" Text="{Binding StockText}" FontFamily="InterBold" FontSize="15"
                                    TextColor="{StaticResource UiTextPrimary}" VerticalOptions="Center" />

@@ -61,9 +61,22 @@ namespace Easymakemoney.ViewModels.Lists
             _ => $"Prix de vente : −{Math.Abs(PricePercent):0} %",
         };
 
+        /// <summary>Articles visés par la promotion (conseil du guide) ; vide : tout le stock restant.</summary>
+        private List<int> _promotionProductIds = new();
+
         public string PromotionText => PromotionPercent == 0
             ? "Aucune promotion"
-            : $"Promotion de {PromotionPercent:0} % sur le stock restant";
+            : _promotionProductIds.Count == 0
+                ? $"Promotion de {PromotionPercent:0} % sur le stock restant"
+                : $"Promotion de {PromotionPercent:0} % sur {(_promotionProductIds.Count == 1 ? "1 article choisi" : $"{_promotionProductIds.Count} articles choisis")}";
+
+        /// <summary>Promotion préparée par un conseil : seulement sur les articles du conseil.</summary>
+        public void PresetPromotion(double percent, IReadOnlyCollection<int> productIds)
+        {
+            _promotionProductIds = productIds.Distinct().ToList();
+            PromotionPercent = Math.Round(Math.Clamp(percent, 0, 50));
+            OnPropertyChanged(nameof(PromotionText));
+        }
 
         public async Task StartAsync()
         {
@@ -99,8 +112,10 @@ namespace Easymakemoney.ViewModels.Lists
         private void Reset()
         {
             AdvertisingText = null;
+            _promotionProductIds.Clear();
             PromotionPercent = 0;
             PricePercent = 0;
+            OnPropertyChanged(nameof(PromotionText));
             Schedule();
         }
 
@@ -126,7 +141,11 @@ namespace Easymakemoney.ViewModels.Lists
             var levers = new SimulationLevers
             {
                 pricePercent = PricePercent == 0 ? null : PricePercent,
-                promotion = PromotionPercent == 0 ? null : new SimulationPromotion { percent = PromotionPercent, scope = "all" },
+                promotion = PromotionPercent == 0
+                    ? null
+                    : _promotionProductIds.Count == 0
+                        ? new SimulationPromotion { percent = PromotionPercent, scope = "all" }
+                        : new SimulationPromotion { percent = PromotionPercent, scope = "products", productIds = _promotionProductIds.ToList() },
                 advertisingDelta = advertising == 0 ? null : advertising,
             };
 
