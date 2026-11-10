@@ -64,3 +64,40 @@ public class PeriodSimulationTests
         Assert.Equal("{\"pricePercent\":5.0,\"promotion\":{\"percent\":10.0,\"scope\":\"all\"}}", JsonConvert.SerializeObject(body));
     }
 }
+
+[Collection("SiteCurrency")]
+public class SimulationCommentTests
+{
+    [Fact]
+    public void Comment_MarksRecommendedCandidate_AndDescribesPlanned()
+    {
+        var comment = JsonConvert.DeserializeObject<SimulationComment>("""
+        { "simulation": { "currency": "CAD" },
+          "candidates": [
+            { "key": "keep", "label": "Garder le prévu", "planned": { "purchases": 300000, "trip": 0, "shipping": 20000, "advertising": 10000, "other": 5000 }, "result": -23405, "cashAfterPurchases": -27000 },
+            { "key": "cashSafe", "label": "Trésorerie sûre", "planned": { "purchases": 273000, "trip": 0, "shipping": 20000, "advertising": 10000, "other": 5000 }, "result": -23405, "cashAfterPurchases": 0, "purchasesCut": 27000 } ],
+          "comment": { "recommended": "cashSafe", "title": "Réduire un peu les achats", "text": "…", "textSource": "rules" },
+          "ai": { "status": "not_included" }, "cached": false }
+        """)!.Prepare();
+
+        Assert.False(comment.candidates[0].IsRecommended);
+        Assert.True(comment.candidates[1].IsRecommended);
+        Assert.Equal("CAD", comment.candidates[1].Currency);
+        Assert.StartsWith("Stock ", comment.candidates[1].PlannedText);
+        Assert.Contains("Publicité", comment.candidates[1].PlannedText);
+        Assert.Equal("Avis calculé sur vos chiffres.", comment.SourceText);
+    }
+
+    [Fact]
+    public async Task Services_UseCommentRouteAndPutAllLines()
+    {
+        var fakeHttp = new FakeHttpService { ResultToReturn = new SimulationComment() };
+        await new SimulationService(fakeHttp).CommentAsync(7, new SimulationLevers());
+        Assert.Equal("periodes/7/simulation/commentaire?locale=fr", Assert.Single(fakeHttp.PostedAuthData).Url);
+
+        fakeHttp.ResultToReturn = new PeriodBudget();
+        await new PeriodBudgetService(fakeHttp).SaveLinesAsync(7, new Dictionary<string, long> { ["purchases"] = 273000, ["other"] = 5000 });
+        Assert.Equal("{\"lines\":[{\"category\":\"purchases\",\"planned\":273000},{\"category\":\"other\",\"planned\":5000}]}",
+            JsonConvert.SerializeObject(Assert.Single(fakeHttp.PutData).Data));
+    }
+}

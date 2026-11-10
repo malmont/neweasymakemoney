@@ -27,5 +27,11 @@ namespace Easymakemoney.Services
             object body = fromPeriodId.HasValue ? new { fromPeriodId = fromPeriodId.Value } : new { };
             return (await _httpService.PostAsyncWithAuth<PeriodBudget>($"periodes/{periodId}/budget/copier?locale={Locale}", body)).WithCurrency();
         }
+
+        public async Task<PeriodBudget> SaveLinesAsync(int periodId, IReadOnlyDictionary<string, long> plannedByCategory)
+        {
+            var body = new { lines = plannedByCategory.Select(entry => new { category = entry.Key, planned = entry.Value }).ToList() };
+            return (await _httpService.PutAsyncWithAuth<PeriodBudget>($"periodes/{periodId}/budget?locale={Locale}", body)).WithCurrency();
+        }
     }
 }

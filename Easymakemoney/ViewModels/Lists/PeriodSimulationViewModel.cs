@@ -138,16 +138,8 @@ namespace Easymakemoney.ViewModels.Lists
                 return;
 
             var advertising = AdvertisingDeltaCents();
-            var levers = new SimulationLevers
-            {
-                pricePercent = PricePercent == 0 ? null : PricePercent,
-                promotion = PromotionPercent == 0
-                    ? null
-                    : _promotionProductIds.Count == 0
-                        ? new SimulationPromotion { percent = PromotionPercent, scope = "all" }
-                        : new SimulationPromotion { percent = PromotionPercent, scope = "products", productIds = _promotionProductIds.ToList() },
-                advertisingDelta = advertising == 0 ? null : advertising,
-            };
+            var levers = CurrentLevers();
+            Comment = null; // l'avis portait sur les anciens leviers
 
             var version = ++_requestVersion;
             IsBusy = true;
@@ -175,6 +167,94 @@ namespace Easymakemoney.ViewModels.Lists
                 if (version == _requestVersion)
                     IsBusy = false;
             }
+        }
+
+        private SimulationLevers CurrentLevers()
+        {
+            var advertising = AdvertisingDeltaCents();
+            return new SimulationLevers
+            {
+                pricePercent = PricePercent == 0 ? null : PricePercent,
+                promotion = PromotionPercent == 0
+                    ? null
+                    : _promotionProductIds.Count == 0
+                        ? new SimulationPromotion { percent = PromotionPercent, scope = "all" }
+                        : new SimulationPromotion { percent = PromotionPercent, scope = "products", productIds = _promotionProductIds.ToList() },
+                advertisingDelta = advertising == 0 ? null : advertising,
+            };
+        }
+
+        // ----- avis du guide -----
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasComment))]
+        private SimulationComment? _comment;
+
+        public bool HasComment => Comment != null;
+
+        public ObservableCollection<SimulationCandidate> Candidates { get; } = new();
+
+        [ObservableProperty]
+        private bool _isCommenting;
+
+        /// <summary>Demande l'avis du guide sur les leviers actuels (appel synchrone, jusqu'à 30 secondes).</summary>
+        [RelayCommand]
+        private async Task AskGuide()
+        {
+            if (PeriodId <= 0 || IsCommenting)
+                return;
+
+            IsCommenting = true;
+            try
+            {
+                var comment = await _simulationService.CommentAsync(PeriodId, CurrentLevers());
+                Comment = comment;
+                Candidates.Clear();
+                foreach (var candidate in comment.candidates.OrderByDescending(candidate => candidate.IsRecommended))
+                    Candidates.Add(candidate);
+            }
+            catch (ApiException ex) when (ex.ApiError.Code == "COMMENT_LIMIT")
+            {
+                await _dialogService.ShowInfoAsync("Le guide a déjà donné 10 avis aujourd'hui. Réessayez demain.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
+            }
+            finally
+            {
+                IsCommenting = false;
+            }
+        }
+
+        /// <summary>Applique au budget de la période le prévu d'une répartition (après confirmation).</summary>
+        [RelayCommand]
+        private async Task ApplyCandidate(SimulationCandidate? candidate)
+        {
+            if (candidate == null || candidate.planned.Count == 0 || PeriodId <= 0)
+                return;
+
+            var confirmed = await _dialogService.ConfirmAsync(
+                "Appliquer au budget",
+                $"Le prévu de la période deviendra : {candidate.PlannedText}.",
+                "Appliquer", "Annuler");
+            if (!confirmed)
+                return;
+
+            try
+            {
+                await _budgetService.SaveLinesAsync(PeriodId, candidate.planned);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
+                return;
+            }
+
+            await _dialogService.ShowInfoAsync("Budget de la période mis à jour.");
+            await RunAsync();
         }
 
         /// <summary>Ajoute la publicité simulée au prévu « Publicité » de la période (seule écriture de cet écran, après confirmation).</summary>

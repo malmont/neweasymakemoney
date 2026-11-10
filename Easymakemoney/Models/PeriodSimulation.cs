@@ -205,3 +205,67 @@ namespace Easymakemoney.Models
         public List<int>? productIds { get; init; }
     }
 }
+
+namespace Easymakemoney.Models
+{
+    /// <summary>Avis du guide sur une simulation (POST periodes/{id}/simulation/commentaire, lot backend G1b-2).</summary>
+    public class SimulationComment
+    {
+        public PeriodSimulation? simulation { get; set; }
+        public List<SimulationCandidate> candidates { get; set; } = new();
+        public SimulationCommentText? comment { get; set; }
+        public AdviceAi? ai { get; set; }
+        public bool cached { get; set; }
+
+        /// <summary>Donne la devise et marque la répartition recommandée.</summary>
+        public SimulationComment Prepare()
+        {
+            var currency = simulation?.currency;
+            foreach (var candidate in candidates)
+            {
+                candidate.Currency = currency;
+                candidate.IsRecommended = candidate.key == comment?.recommended;
+            }
+            return this;
+        }
+
+        public string SourceText => comment?.textSource == "ai" ? "Avis rédigé par l'IA à partir des chiffres ci-dessous." : "Avis calculé sur vos chiffres.";
+    }
+
+    public class SimulationCommentText
+    {
+        public string? recommended { get; set; }
+        public string? title { get; set; }
+        public string? text { get; set; }
+        public string? textSource { get; set; }
+    }
+
+    public class SimulationCandidate
+    {
+        public string? key { get; set; }
+        public string? label { get; set; }
+        public Dictionary<string, long> planned { get; set; } = new();
+        public long? result { get; set; }
+        public long? cashAfterPurchases { get; set; }
+        public long? purchasesCut { get; set; }
+
+        [JsonIgnore]
+        public string? Currency { get; set; }
+
+        [JsonIgnore]
+        public bool IsRecommended { get; set; }
+
+        public string ResultText => $"Résultat {Money(result)}";
+
+        public string CashText => cashAfterPurchases is null ? string.Empty : $"Trésorerie après achats {Money(cashAfterPurchases)}";
+        public bool HasCash => cashAfterPurchases.HasValue;
+
+        public string PlannedText => string.Join(" · ", new[]
+        {
+            ("purchases", "Stock"), ("trip", "Voyage"), ("shipping", "Port"), ("advertising", "Publicité"), ("other", "Autres"),
+        }.Where(entry => planned.ContainsKey(entry.Item1))
+         .Select(entry => $"{entry.Item2} {Money(planned[entry.Item1])}"));
+
+        public string Money(long? cents) => cents is { } value ? Utilities.SiteCurrency.FormatCents(value, null, Currency) : "—";
+    }
+}

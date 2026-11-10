@@ -7,6 +7,7 @@
              xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
              x:DataType="list:PeriodSimulationViewModel"
              x:Class="Easymakemoney.Views.Lists.PeriodSimulationPage"
+             x:Name="Page"
              Style="{StaticResource UiPage}"
              Title="Simuler la période">
 
@@ -108,6 +109,42 @@
                         </VerticalStackLayout>
                     </VerticalStackLayout>
                 </components:UiCard>
+
+                <!-- Avis du guide : répartitions du prévu calculées par le backend, l'IA en recommande une -->
+                <Button Text="Avis du guide sur ce budget" Command="{Binding AskGuideCommand}" IsVisible="{Binding HasSimulation}"
+                        Style="{StaticResource DocAction}" />
+                <ActivityIndicator IsRunning="{Binding IsCommenting}" IsVisible="{Binding IsCommenting}" Color="{DynamicResource ThemePrimary}" />
+                <Border IsVisible="{Binding HasComment}" StrokeThickness="0" StrokeShape="RoundRectangle 14"
+                        BackgroundColor="{DynamicResource ThemePrimaryTint}" Padding="14,12">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="{Binding Comment.comment.title}" FontFamily="InterBold" FontSize="16" TextColor="{DynamicResource ThemePrimary}" />
+                        <Label Text="{Binding Comment.comment.text}" FontFamily="Inter" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                        <Label Text="{Binding Comment.SourceText}" Style="{StaticResource UiBody}" FontSize="12" />
+                    </VerticalStackLayout>
+                </Border>
+                <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Candidates}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:SimulationCandidate">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                <VerticalStackLayout Spacing="4">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding label}" Style="{StaticResource UiTitle}" FontSize="15" />
+                                        <Label Grid.Column="1" Text="Conseillé" IsVisible="{Binding IsRecommended}"
+                                               FontFamily="InterBold" FontSize="12" TextColor="{DynamicResource ThemePrimary}" />
+                                    </Grid>
+                                    <Label Text="{Binding PlannedText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                    <Label Text="{Binding ResultText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                    <Label Text="{Binding CashText}" IsVisible="{Binding HasCash}" Style="{StaticResource UiBody}" FontSize="13" />
+                                    <Button Text="Appliquer ce prévu au budget"
+                                            Command="{Binding Path=BindingContext.ApplyCandidateCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="Transparent" TextColor="{DynamicResource ThemePrimary}"
+                                            FontFamily="InterSemiBold" FontSize="14" HorizontalOptions="Start" Padding="0" />
+                                </VerticalStackLayout>
+                            </components:UiCard>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
 
                 <Label Text="{Binding Simulation.MethodText}" IsVisible="{Binding HasSimulation}" Style="{StaticResource UiBody}" FontSize="13" />
                 <Label Text="{Binding Simulation.LastYearText}" IsVisible="{Binding Simulation.HasLastYear}" Style="{StaticResource UiBody}" FontSize="13" />
