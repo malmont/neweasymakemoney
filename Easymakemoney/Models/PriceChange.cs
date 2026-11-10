@@ -63,7 +63,12 @@ namespace Easymakemoney.Models
 
         public bool Has(string alert) => alerts.Contains(alert);
 
-        public string Title => level == "variant" ? $"{name} (variante)" : name ?? string.Empty;
+        /// <summary>Taille puis couleur de la variante, par exemple « XL · Noir ».</summary>
+        public string? variantLabel { get; set; }
+
+        public string Title => level == "variant"
+            ? string.IsNullOrWhiteSpace(variantLabel) ? $"{name} (variante)" : $"{name} · {variantLabel}"
+            : name ?? string.Empty;
 
         public string PriceText => changed
             ? $"{Money(oldPrice)} → {Money(newPrice)}"

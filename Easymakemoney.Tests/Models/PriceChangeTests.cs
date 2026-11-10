@@ -44,6 +44,8 @@ public class PriceChangeTests
         Assert.Equal("S'applique aussi à 3 variante(s) sans prix propre", rows[0].VariantsText);
         Assert.Contains("→", rows[0].PriceText);
         Assert.Equal("Chemise XL (variante)", rows[1].Title);
+        rows[1].variantLabel = "XL · Noir";
+        Assert.Equal("Chemise XL · XL · Noir", rows[1].Title);
         Assert.True(rows[1].IsBlocking);
         Assert.Equal("Écart de plus de 50 % · Promotion en cours, son prix reste inchangé", rows[2].AlertsText);
         Assert.False(rows[3].changed);

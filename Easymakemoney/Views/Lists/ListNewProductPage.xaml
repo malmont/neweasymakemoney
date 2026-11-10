@@ -55,6 +55,9 @@
                     <SwipeView Margin="0,0,0,10">
                         <SwipeView.RightItems>
                             <SwipeItems Mode="Reveal">
+                                <SwipeItem Text="Prix" BackgroundColor="#334155"
+                                           Command="{Binding Path=BindingContext.ChangePriceCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                           CommandParameter="{Binding .}" />
                                 <SwipeItem Text="Retirer" BackgroundColor="#475569" IsVisible="{Binding Path=BindingContext.CanEdit, Source={x:Reference Page}, x:DataType=ContentPage}"
                                            Command="{Binding Path=BindingContext.DetachProductCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
                                            CommandParameter="{Binding .}" />

@@ -97,6 +97,14 @@ namespace Easymakemoney.ViewModels.Lists
                 await shell.GoToAsync($"{nameof(ListNewProductVariantPage)}?ProductId={product.id}", true);
         }
 
+        /// <summary>Prix de vente d'un article, avec aperçu, journal et annulation 24 h (permis même en période fermée).</summary>
+        [RelayCommand]
+        private async Task ChangePrice(ListProduct? product)
+        {
+            if (product != null && Shell.Current is { } shell)
+                await shell.GoToAsync($"{nameof(PriceChangePage)}?ProductId={product.id}");
+        }
+
         [RelayCommand]
         private async Task OpenAttachProducts()
         {

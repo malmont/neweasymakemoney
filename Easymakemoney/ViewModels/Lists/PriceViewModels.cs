@@ -44,6 +44,7 @@ namespace Easymakemoney.ViewModels.Lists
 
         public int AdviceId { get; private set; }
         public int CommandeId { get; private set; }
+        public int ProductId { get; private set; }
 
         [ObservableProperty]
         private string _scopeText = string.Empty;
@@ -84,11 +85,19 @@ namespace Easymakemoney.ViewModels.Lists
         public bool CanApply => WritableCount > 0;
         public string ApplyText => WritableCount == 1 ? "Appliquer 1 prix" : $"Appliquer {WritableCount} prix";
 
-        /// <summary>Paramètres : AdviceId et Percent (conseil), ou CommandeId (commande fournisseur).</summary>
-        public void Init(int adviceId, int commandeId, double? percent)
+        /// <summary>Paramètres : AdviceId et Percent (conseil), CommandeId (commande fournisseur) ou ProductId (un article).</summary>
+        public void Init(int adviceId, int commandeId, double? percent, int productId = 0)
         {
             AdviceId = adviceId;
             CommandeId = commandeId;
+            ProductId = productId;
+            if (productId > 0 && adviceId <= 0 && commandeId <= 0)
+            {
+                ScopeText = "Cet article et ses variantes qui ont leur propre prix.";
+                SelectedMode = Modes[0];
+                ValueText = "5";
+                return;
+            }
             if (adviceId > 0)
             {
                 ScopeText = "Articles du conseil du guide. Le conseil sera marqué fait et son effet mesuré sur 14 jours.";
@@ -116,6 +125,7 @@ namespace Easymakemoney.ViewModels.Lists
             {
                 AdviceId = AdviceId > 0 ? AdviceId : null,
                 CommandeId = AdviceId > 0 ? null : CommandeId > 0 ? CommandeId : null,
+                ProductIds = AdviceId <= 0 && CommandeId <= 0 && ProductId > 0 ? new List<int> { ProductId } : null,
                 Mode = SelectedMode?.Code ?? "percent",
                 Value = value,
                 Rounding = SelectedRounding?.Code ?? "none",
