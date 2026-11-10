@@ -1,5 +1,6 @@
 
 using Easymakemoney.Services.Session;
+using Easymakemoney.Utilities;
 
 namespace Easymakemoney.UseCase.ListCollectionUsecase
 {
@@ -22,7 +23,7 @@ public class SaveCollectionUseCase
         var userId = user?.Id ?? 0;
         var newCollection = new ListCollection
         {
-            budgetCollection = (long)Math.Round((collectionForm.BudgetCollection ?? 0) * 100),
+            budgetCollection = MoneyHelper.ToCents(collectionForm.BudgetCollection),
             startDateCollection = collectionForm.StartDateCollection.ToString("yyyy-MM-ddTHH:mm:ssZ"),
             endDateCollection = collectionForm.EndDateCollection.ToString("yyyy-MM-ddTHH:mm:ssZ"),
             del = collectionForm.Del,
