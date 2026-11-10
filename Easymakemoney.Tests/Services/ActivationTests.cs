@@ -65,7 +65,7 @@ public class ActivationTests
         Assert.Equal(string.Empty, SiteService.CleanSiteInput("   "));
     }
 
-    [Fact(Skip = "BUG : DeviceInfo.Manufacturer statique MAUI non mockable lève NotImplementedInReferenceAssemblyException sous net10.0")]
+    [Fact]
     public async Task ActivateWithKeyAsync_ValidResponse_ReturnsSuccessWithTenantContext()
     {
         var jsonResponse = """
@@ -87,7 +87,7 @@ public class ActivationTests
         });
 
         var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
-        var siteService = new SiteService(httpClient);
+        var siteService = new SiteService(httpClient, new FakeDeviceInfoService { DeviceName = "Appareil Test" });
 
         var result = await siteService.ActivateWithKeyAsync("IZ-ADM-ABCD-1234-EF56");
 
@@ -99,7 +99,7 @@ public class ActivationTests
         Assert.Equal("Appareil Test", result.Tenant.Label);
     }
 
-    [Fact(Skip = "BUG : DeviceInfo.Manufacturer statique MAUI non mockable lève NotImplementedInReferenceAssemblyException sous net10.0")]
+    [Fact]
     public async Task ActivateWithKeyAsync_404AppKeyInvalid_ReturnsFailureWithApiError()
     {
         var jsonResponse = """
@@ -116,7 +116,7 @@ public class ActivationTests
         });
 
         var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
-        var siteService = new SiteService(httpClient);
+        var siteService = new SiteService(httpClient, new FakeDeviceInfoService());
 
         var result = await siteService.ActivateWithKeyAsync("IZ-ADM-ABCD-1234-EF56");
 
@@ -131,7 +131,7 @@ public class ActivationTests
     {
         var handler = new TestHttpMessageHandler(_ => new HttpResponseMessage(HttpStatusCode.OK));
         var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
-        var siteService = new SiteService(httpClient);
+        var siteService = new SiteService(httpClient, new FakeDeviceInfoService());
 
         var result = await siteService.ActivateWithKeyAsync("CLE_INVALIDE");
 
@@ -145,7 +145,7 @@ public class ActivationTests
     {
         var handler = new TestHttpMessageHandler(_ => new HttpResponseMessage(HttpStatusCode.OK));
         var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
-        var siteService = new SiteService(httpClient);
+        var siteService = new SiteService(httpClient, new FakeDeviceInfoService());
 
         var result = await siteService.CheckSiteCodeAsync("   ");
 
@@ -174,7 +174,7 @@ public class ActivationTests
         });
 
         var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
-        var siteService = new SiteService(httpClient);
+        var siteService = new SiteService(httpClient, new FakeDeviceInfoService());
 
         var result = await siteService.CheckSiteCodeAsync("deux.exemple.test");
 
@@ -202,7 +202,7 @@ public class ActivationTests
         });
 
         var httpClient = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
-        var siteService = new SiteService(httpClient);
+        var siteService = new SiteService(httpClient, new FakeDeviceInfoService());
 
         var result = await siteService.CheckSiteCodeAsync("inconnu.exemple.test");
 

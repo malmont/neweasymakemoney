@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Easymakemoney.Models.Api;
 using Easymakemoney.Models.Tenant;
+using Easymakemoney.Services.Device;
 using Easymakemoney.Services.Tenant;
 using Newtonsoft.Json.Linq;
 
@@ -14,10 +15,12 @@ public class SiteService : ISiteService
     private static readonly Regex NonAlphaNumericRegex = new("[^a-zA-Z0-9]", RegexOptions.Compiled);
 
     private readonly HttpClient _httpClient;
+    private readonly IDeviceInfoService _deviceInfoService;
 
-    public SiteService(HttpClient httpClient)
+    public SiteService(HttpClient httpClient, IDeviceInfoService deviceInfoService)
     {
         _httpClient = httpClient;
+        _deviceInfoService = deviceInfoService;
     }
 
     /// <summary>
@@ -90,7 +93,7 @@ public class SiteService : ISiteService
             return SiteResult.Failure("Le format de la clé d'activation est invalide (attendu : IZ-ADM-XXXX-XXXX-XXXX).");
         }
 
-        var deviceName = $"{DeviceInfo.Manufacturer} {DeviceInfo.Model}".Trim();
+        var deviceName = _deviceInfoService.GetDeviceName();
         var requestPayload = new
         {
             key = rawKey.Trim(),

@@ -191,4 +191,97 @@ public class HttpServiceTests : IDisposable
         Assert.Equal("Budget", ex.ApiError.Errors[0].Path);
         Assert.Equal("Montant invalide.", ex.ApiError.Errors[0].Message);
     }
+
+    [Fact]
+    public async Task CurrencyExtraction_SiteCurrencyPrecedesCurrency_UpdatesWithSiteCurrency()
+    {
+        var json = """{ "id": 1, "siteCurrency": "EUR", "currency": "USD" }""";
+        var handler = new TestHttpMessageHandler(_ => new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent(json, Encoding.UTF8, "application/json")
+        });
+
+        var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
+        var httpService = new HttpService(client);
+
+        Assert.Null(SiteCurrency.CurrentCurrency);
+
+        await httpService.GetAsync<SampleItem>("items/1");
+
+        Assert.Equal("EUR", SiteCurrency.CurrentCurrency);
+    }
+
+    [Fact]
+    public async Task CurrencyExtraction_PurchaseCurrencyPresent_DoesNotChangeSiteCurrency()
+    {
+        SiteCurrency.SetCurrency("EUR");
+        var json = """{ "id": 1, "purchaseCurrency": "USD", "currency": "GBP" }""";
+        var handler = new TestHttpMessageHandler(_ => new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent(json, Encoding.UTF8, "application/json")
+        });
+
+        var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
+        var httpService = new HttpService(client);
+
+        await httpService.GetAsync<SampleItem>("items/1");
+
+        Assert.Equal("EUR", SiteCurrency.CurrentCurrency);
+    }
+
+    [Fact]
+    public async Task PatchAsyncWithAuth_SendsPatchMethodWithJsonBody()
+    {
+        HttpRequestMessage? capturedRequest = null;
+        string? capturedBody = null;
+
+        var handler = new TestHttpMessageHandler(async req =>
+        {
+            capturedRequest = req;
+            if (req.Content != null)
+            {
+                capturedBody = await req.Content.ReadAsStringAsync();
+            }
+            return new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("""{ "id": 42, "name": "Mis à jour" }""", Encoding.UTF8, "application/json")
+            };
+        });
+
+        var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
+        var httpService = new HttpService(client);
+
+        var result = await httpService.PatchAsyncWithAuth<SampleItem>("periodes/42", new { budget = 150000 });
+
+        Assert.NotNull(result);
+        Assert.Equal(42, result.Id);
+        Assert.NotNull(capturedRequest);
+        Assert.Equal(HttpMethod.Patch, capturedRequest.Method);
+        Assert.Contains("150000", capturedBody);
+    }
+
+    [Fact]
+    public async Task PatchAsyncWithAuth_ErrorResponse_ThrowsApiExceptionWithParsedApiError()
+    {
+        var errorJson = """
+        {
+            "error": "PERIOD_CLOSED",
+            "message": "Cette période est clôturée"
+        }
+        """;
+
+        var handler = new TestHttpMessageHandler(_ => new HttpResponseMessage(HttpStatusCode.Conflict)
+        {
+            Content = new StringContent(errorJson, Encoding.UTF8, "application/json")
+        });
+
+        var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
+        var httpService = new HttpService(client);
+
+        var ex = await Assert.ThrowsAsync<ApiException>(() =>
+            httpService.PatchAsyncWithAuth<SampleItem>("periodes/42", new { budget = 1000 }));
+
+        Assert.Equal(HttpStatusCode.Conflict, ex.StatusCode);
+        Assert.Equal("PERIOD_CLOSED", ex.ApiError.Code);
+    }
 }
