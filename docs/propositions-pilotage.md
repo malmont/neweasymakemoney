@@ -204,3 +204,17 @@ Le gérant vérifie toujours avant création, le total calculé est comparé à 
 2. Volet publicité.
 3. Budgets et simulateur.
 4. Guide IA, qui s'appuie sur tout le reste.
+
+## Vignettes d'accueil (décision du propriétaire, 10/11/2026)
+
+Trois vignettes au plus sur l'écran d'accueil, triées par urgence. Chacune mène au bon écran, et le gérant peut l'écarter.
+
+| Famille | Exemples | Source |
+|---|---|---|
+| Premiers pas | « Lisez votre première facture : le stock se créera seul », « Photographiez vos reçus » | Règles simples, sans IA |
+| Alertes chiffrées | Stock bas sur des articles qui se vendent, fonds de roulement bas, dépenses au-dessus du prévu, budget journalier du voyage qui fond | Calculées par le backend |
+| Conseils | Formulés et classés par l'IA à partir des chiffres, avec leurs sources | Guide IA (G1) |
+
+Première version : premiers pas et stock bas. Le reste suit les budgets (B1), qui gagnent une notion de **voyage** (dates, lieu, budget total et journalier), et le guide IA (G1).
+
+**À trancher :** notifications sur le téléphone, réservées aux alertes vraiment urgentes.
