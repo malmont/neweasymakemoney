@@ -113,6 +113,9 @@ namespace Easymakemoney.Models
         /// <summary>Hausse conseillée sur ce qui part vite : le gérant peut l'appliquer directement (lot P4).</summary>
         public bool CanChangePrice => IsNew && kind == "FAST_SELLER";
 
+        /// <summary>Promotion conseillée sur ce qui dort ou en fin de période : le gérant peut la créer directement (lot P5).</summary>
+        public bool CanCreatePromotion => IsNew && kind is "SLOW_STOCK" or "END_CLEARANCE";
+
         public double? SuggestedPercent =>
             sources.FirstOrDefault(source => source.unit == "percent" && source.value?.Type is JTokenType.Integer or JTokenType.Float)?.value?.Value<double>();
 

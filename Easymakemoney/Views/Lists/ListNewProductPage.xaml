@@ -55,6 +55,9 @@
                     <SwipeView Margin="0,0,0,10">
                         <SwipeView.RightItems>
                             <SwipeItems Mode="Reveal">
+                                <SwipeItem Text="Promo" BackgroundColor="#B45309"
+                                           Command="{Binding Path=BindingContext.CreatePromotionCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                           CommandParameter="{Binding .}" />
                                 <SwipeItem Text="Prix" BackgroundColor="#334155"
                                            Command="{Binding Path=BindingContext.ChangePriceCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
                                            CommandParameter="{Binding .}" />

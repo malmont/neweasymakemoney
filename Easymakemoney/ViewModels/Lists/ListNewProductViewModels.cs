@@ -105,6 +105,14 @@ namespace Easymakemoney.ViewModels.Lists
                 await shell.GoToAsync($"{nameof(PriceChangePage)}?ProductId={product.id}");
         }
 
+        /// <summary>Promotion datée sur un article : le prix normal revient tout seul à la fin.</summary>
+        [RelayCommand]
+        private async Task CreatePromotion(ListProduct? product)
+        {
+            if (product != null && Shell.Current is { } shell)
+                await shell.GoToAsync($"{nameof(PromotionCreatePage)}?ProductId={product.id}");
+        }
+
         [RelayCommand]
         private async Task OpenAttachProducts()
         {

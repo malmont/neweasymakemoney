@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             x:DataType="list:PromotionCreateViewModel"
+             x:Class="Easymakemoney.Views.Lists.PromotionCreatePage"
+             Style="{StaticResource UiPage}"
+             Title="Créer une promotion">
+
+    <ContentPage.Resources>
+        <!-- Styles de formulaire : ils ne sont pas globaux -->
+        <Style x:Key="FormDate" TargetType="handlers:BorderlessDatePicker">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="FormLabel" TargetType="Label">
+            <Setter Property="FontFamily" Value="InterMedium" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextSecondary}" />
+        </Style>
+        <Style x:Key="FormField" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="MinimumHeightRequest" Value="48" />
+            <Setter Property="Padding" Value="12,0" />
+        </Style>
+        <Style x:Key="FormEntry" TargetType="handlers:BorderlessEntry">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="PlaceholderColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="FormPicker" TargetType="Picker">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="TitleColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Créer une promotion" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <Label Text="{Binding ScopeText}" Style="{StaticResource UiBody}" FontSize="14" />
+
+                <Label Text="Remise (en %)" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Ex. : 20" Keyboard="Numeric" Text="{Binding PercentText}" />
+                </Border>
+
+                <Label Text="Arrondi du prix promotionnel" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <Picker Style="{StaticResource FormPicker}" ItemsSource="{Binding Roundings}" SelectedItem="{Binding SelectedRounding}" />
+                </Border>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12" RowDefinitions="Auto,Auto" RowSpacing="8">
+                    <Label Text="Début" Style="{StaticResource FormLabel}" />
+                    <Label Grid.Column="1" Text="Fin (90 jours au plus)" Style="{StaticResource FormLabel}" />
+                    <Border Grid.Row="1" Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessDatePicker Style="{StaticResource FormDate}" Date="{Binding StartDate}" MinimumDate="{Binding MinStartDate}" Format="dd/MM/yyyy" />
+                    </Border>
+                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessDatePicker Style="{StaticResource FormDate}" Date="{Binding EndDate}" MinimumDate="{Binding StartDate}"
+                                                       MaximumDate="{Binding MaxEndDate}" Format="dd/MM/yyyy" />
+                    </Border>
+                </Grid>
+
+                <Button Text="Voir l'aperçu" Command="{Binding ComputePreviewCommand}"
+                        BackgroundColor="{DynamicResource ThemePrimaryTint}" TextColor="{DynamicResource ThemePrimary}"
+                        FontFamily="InterBold" FontSize="15" CornerRadius="12" HeightRequest="48" />
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" />
+
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding HasPreview}">
+                    <Label Text="{Binding Preview.PeriodText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                    <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Rows}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:PromotionPreviewRow">
+                                <components:UiCard Style="{StaticResource UiCard}" Padding="12">
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="{Binding name}" Style="{StaticResource UiTitle}" FontSize="15" LineBreakMode="TailTruncation" />
+                                        <Label Text="{Binding PriceText}" FontFamily="InterBold" FontSize="15" TextColor="{StaticResource UiTextPrimary}" />
+                                        <Label Text="{Binding MarginText}" Style="{StaticResource UiBody}" FontSize="13" />
+                                        <Label Text="{Binding VariantsText}" IsVisible="{Binding HasVariantsText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                        <Label Text="{Binding AlertsText}" IsVisible="{Binding HasAlerts}" FontFamily="InterSemiBold" FontSize="12" TextColor="#B45309">
+                                            <Label.Triggers>
+                                                <DataTrigger TargetType="Label" Binding="{Binding IsBlocking}" Value="True">
+                                                    <Setter Property="TextColor" Value="#B91C1C" />
+                                                </DataTrigger>
+                                            </Label.Triggers>
+                                        </Label>
+                                    </VerticalStackLayout>
+                                </components:UiCard>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                    <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding Preview.HasBelowCost}">
+                        <Label Text="Autoriser les prix sous le coût" Style="{StaticResource FormLabel}" VerticalOptions="Center" />
+                        <Switch Grid.Column="1" IsToggled="{Binding AllowBelowCost}" OnColor="#B91C1C" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding Preview.HasBigChange}">
+                        <Label Text="Autoriser les remises de plus de 50 %" Style="{StaticResource FormLabel}" VerticalOptions="Center" />
+                        <Switch Grid.Column="1" IsToggled="{Binding AllowBigChange}" OnColor="#B91C1C" />
+                    </Grid>
+                    <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding Preview.HasExisting}">
+                        <Label Text="Remplacer les promotions existantes" Style="{StaticResource FormLabel}" VerticalOptions="Center" />
+                        <Switch Grid.Column="1" IsToggled="{Binding AllowReplace}" OnColor="#B45309" />
+                    </Grid>
+
+                    <Label Text="{Binding Preview.CaveatsText}" IsVisible="{Binding Preview.HasCaveats}" Style="{StaticResource UiBody}" FontSize="12" />
+
+                    <Button Text="{Binding ApplyText}" Command="{Binding ApplyCommand}" IsEnabled="{Binding CanApply}" Margin="0,4,0,16"
+                            HeightRequest="52" CornerRadius="14" FontFamily="InterBold" FontSize="16"
+                            BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

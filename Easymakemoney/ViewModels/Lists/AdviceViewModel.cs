@@ -168,6 +168,19 @@ namespace Easymakemoney.ViewModels.Lists
             await shell.GoToAsync($"{nameof(PriceChangePage)}?AdviceId={advice.id}{percent}");
         }
 
+        /// <summary>Crée la promotion conseillée : aperçu, dates, puis confirmation ; le conseil est marqué fait par le backend.</summary>
+        [RelayCommand]
+        private async Task CreatePromotion(Advice? advice)
+        {
+            if (advice is not { CanCreatePromotion: true } || Shell.Current is not { } shell)
+                return;
+
+            var percent = advice.SuggestedPercent is { } value
+                ? $"&Percent={value.ToString(System.Globalization.CultureInfo.InvariantCulture)}"
+                : string.Empty;
+            await shell.GoToAsync($"{nameof(PromotionCreatePage)}?AdviceId={advice.id}{percent}");
+        }
+
         [RelayCommand]
         private async Task Dismiss(Advice? advice)
         {
