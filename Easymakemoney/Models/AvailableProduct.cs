@@ -30,6 +30,16 @@ namespace Easymakemoney.Models
         [NotifyPropertyChangedFor(nameof(CostText))]
         private long? editedCostCents;
 
+        /// <summary>Quantité achetée dans cette commande ; sans saisie, le backend prend le stock actuel.</summary>
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(QuantityText))]
+        [NotifyPropertyChangedFor(nameof(HasQuantity))]
+        private int? editedQuantity;
+
+        public bool HasQuantity => EditedQuantity.HasValue;
+
+        public string QuantityText => $"Quantité achetée : {EditedQuantity}";
+
         public string CostText
         {
             get

@@ -9,7 +9,7 @@ namespace Easymakemoney.UseCase.ProductAttachmentUseCase
             _service = service;
         }
 
-        public Task<AvailableProductsPage> ExecuteAsync(string? query, int page, int limit) =>
-            _service.GetAvailableAsync(query, page, limit);
+        public Task<AvailableProductsPage> ExecuteAsync(string? query, int page, int limit, bool allProducts = false) =>
+            _service.GetAvailableAsync(query, page, limit, allProducts);
     }
 }

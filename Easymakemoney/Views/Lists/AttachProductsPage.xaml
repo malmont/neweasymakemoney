@@ -5,13 +5,18 @@
              xmlns:x1="clr-namespace:Easymakemoney.Models"
              xmlns:components="clr-namespace:Easymakemoney.Components"
              xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:DataType="list:AttachProductsViewModel"
              x:Class="Easymakemoney.Views.Lists.AttachProductsPage"
              x:Name="Page"
              Style="{StaticResource UiPage}"
              Title="Articles existants">
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto">
+    <ContentPage.Resources>
+        <toolkit:InvertedBoolConverter x:Key="InvertBool" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto">
         <components:AppHeader Title="{Binding PageTitle}" />
 
         <components:UiCard Grid.Row="1" Style="{StaticResource UiCard}" Padding="14,4" Margin="16,12,16,0">
@@ -22,11 +27,16 @@
                    FontSize="16" />
         </components:UiCard>
 
-        <VerticalStackLayout Grid.Row="2" IsVisible="{Binding ShowEmptyState}" VerticalOptions="Center" Spacing="10" Padding="24,0">
+        <Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="20,10,16,0" IsVisible="{Binding IsClassifying, Converter={StaticResource InvertBool}}">
+            <Label Text="Tout le catalogue (réassort)" Style="{StaticResource UiBody}" FontSize="14" VerticalOptions="Center" />
+            <Switch Grid.Column="1" IsToggled="{Binding ShowAllProducts}" OnColor="{DynamicResource ThemePrimary}" />
+        </Grid>
+
+        <VerticalStackLayout Grid.Row="3" IsVisible="{Binding ShowEmptyState}" VerticalOptions="Center" Spacing="10" Padding="24,0">
             <Label Text="{Binding EmptyTitle}" FontFamily="InterBold" FontSize="20" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="Center" />
         </VerticalStackLayout>
 
-        <CollectionView Grid.Row="2"
+        <CollectionView Grid.Row="3"
                         ItemsSource="{Binding Products}"
                         SelectionMode="None"
                         Margin="16,8,16,0"
@@ -46,6 +56,7 @@
                                 <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
                                     <Label Text="{Binding name}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
                                     <Label Text="{Binding CostText}" FontFamily="InterBold" FontSize="14" TextColor="{DynamicResource ThemePrimary}" LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding QuantityText}" IsVisible="{Binding HasQuantity}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
                                     <Label Text="{Binding PriceText}" Style="{StaticResource UiBody}" LineBreakMode="TailTruncation" />
                                 </VerticalStackLayout>
                                 <Border Grid.Column="3"
@@ -92,7 +103,7 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <Button Grid.Row="3"
+        <Button Grid.Row="4"
                 IsVisible="{Binding HasSelection}"
                 Text="{Binding ConfirmText}"
                 Command="{Binding ConfirmCommand}"

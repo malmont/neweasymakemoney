@@ -93,3 +93,5 @@ Ordre des lots backend : L1 lecture des documents, A1 publicité, B1 budgets et 
 **À confirmer par le propriétaire :** variante facultative sur la ligne ; réception non obligatoire pour figer une période ; sort de `product.quantity`.
 
 **Plus tard :** carte « Gestion » dans le back-office, guide d'écran illustré.
+
+**Livré :** L0 le 10/11/2026 (`dev` 48c1a720, vérification sans écart sur les 10 sites) ; application adaptée : réassort depuis « Ajouter des articles existants » (tout le catalogue, quantité et coût saisis). L1 lit les reçus et factures de transport (première lecture réelle réussie sur demo). R1 et la confirmation des factures fournisseur sont en cours, livrés ensemble : stock à la réception seulement, réception en un geste avec `needsVariant`.

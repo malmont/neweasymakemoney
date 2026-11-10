@@ -9,10 +9,12 @@ namespace Easymakemoney.Services
             _httpService = httpService;
         }
 
-        public Task<AvailableProductsPage> GetAvailableAsync(string? query, int page, int limit)
+        public Task<AvailableProductsPage> GetAvailableAsync(string? query, int page, int limit, bool allProducts = false)
         {
             var q = Uri.EscapeDataString(query?.Trim() ?? string.Empty);
-            return _httpService.GetAsync<AvailableProductsPage>($"commandes/products/disponibles?q={q}&page={page}&limit={limit}&locale=fr");
+            // scope=all : tout le catalogue, pour un réassort ; sinon les articles sans aucun achat (« à classer »).
+            var scope = allProducts ? "&scope=all" : string.Empty;
+            return _httpService.GetAsync<AvailableProductsPage>($"commandes/products/disponibles?q={q}&page={page}&limit={limit}&locale=fr{scope}");
         }
 
         public async Task AttachAsync(int commandId, IEnumerable<AvailableProduct> products)
@@ -24,6 +26,10 @@ namespace Easymakemoney.Services
                 if (product.EditedCostCents.HasValue)
                 {
                     line["purchasePrice"] = product.EditedCostCents.Value;
+                }
+                if (product.EditedQuantity.HasValue)
+                {
+                    line["quantity"] = product.EditedQuantity.Value;
                 }
                 return line;
             }).ToList();

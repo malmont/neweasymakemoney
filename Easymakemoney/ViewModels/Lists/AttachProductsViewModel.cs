@@ -40,9 +40,16 @@ namespace Easymakemoney.ViewModels.Lists
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(PageTitle))]
         [NotifyPropertyChangedFor(nameof(ConfirmText))]
+        [NotifyPropertyChangedFor(nameof(IsClassifying))]
         private int commandId;
 
         public bool IsClassifying => CommandId == 0;
+
+        /// <summary>Réassort : tout le catalogue, y compris les articles déjà achetés dans une autre commande.</summary>
+        [ObservableProperty]
+        private bool showAllProducts;
+
+        partial void OnShowAllProductsChanged(bool value) => _ = LoadFirstPageAsync();
 
         public string PageTitle => IsClassifying ? "À classer" : "Articles existants";
 
@@ -92,7 +99,7 @@ namespace Easymakemoney.ViewModels.Lists
 
             try
             {
-                var result = await _getAvailableProductsUseCase.ExecuteAsync(SearchText, 1, PageSize);
+                var result = await _getAvailableProductsUseCase.ExecuteAsync(SearchText, 1, PageSize, ShowAllProducts && !IsClassifying);
                 if (version != _loadVersion)
                     return;
 
@@ -124,7 +131,7 @@ namespace Easymakemoney.ViewModels.Lists
             var version = _loadVersion;
             try
             {
-                var result = await _getAvailableProductsUseCase.ExecuteAsync(SearchText, _page + 1, PageSize);
+                var result = await _getAvailableProductsUseCase.ExecuteAsync(SearchText, _page + 1, PageSize, ShowAllProducts && !IsClassifying);
                 if (version != _loadVersion)
                     return;
 
@@ -174,6 +181,24 @@ namespace Easymakemoney.ViewModels.Lists
         {
             var page = Application.Current?.MainPage;
             if (product == null || page == null)
+                return;
+
+            var choice = await page.DisplayActionSheet(product.name, "Annuler", null, "Coût d'achat", "Quantité achetée");
+            if (choice == "Quantité achetée")
+            {
+                var quantityText = await page.DisplayPromptAsync("Quantité achetée", product.name, "Valider", "Annuler", keyboard: Keyboard.Numeric);
+                if (string.IsNullOrWhiteSpace(quantityText))
+                    return;
+                if (!int.TryParse(quantityText.Trim(), out var quantity) || quantity <= 0)
+                {
+                    await _dialogService.ShowInfoAsync("Quantité invalide.");
+                    return;
+                }
+                product.EditedQuantity = quantity;
+                SetSelected(product, true);
+                return;
+            }
+            if (choice != "Coût d'achat")
                 return;
 
             var text = await page.DisplayPromptAsync(
