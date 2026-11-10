@@ -64,3 +64,19 @@ toucher à l'existant. **À confirmer aussi :** l'application e-commerce mobile 
 3. **Prévisionnel de collection** et simulateur de coefficients (voir `propositions-pilotage.md`), puis les frais fixes.
 4. Pilotage mobile et Conseiller IA.
 5. Version web, avec bilan, comptabilité et support.
+
+## Lecture des documents : décisions du propriétaire (10/11/2026)
+
+Trois types de documents, lus par l'IA, jamais créés sans validation :
+
+| Document | Vérification | À la validation |
+|---|---|---|
+| **Facture fournisseur** | Une carte par produit : photo, nom, quantité, coût hors taxes, prix de vente, taille, couleur, nouvel article ou déjà connu | Commande classée par sa date, articles créés (invisibles en boutique) ou rattachés |
+| **Note de frais** | Montant, date, type, description ; la photo du reçu sert de justificatif | Note de frais classée par sa date |
+| **Facture de transport** | Transporteur, montant, date, numéro de suivi | Frais de port de **la commande choisie**, une facture pour une commande |
+
+**Règles de l'écran :** lignes douteuses en premier, compteur de lignes validées, bouton « Tout valider », correction possible sur chaque ligne, travail sauvegardé ligne par ligne, photo par article facultative.
+
+**Lecture en arrière-plan :** le téléphone envoie le document, puis récupère le résultat, pour tenir sur un réseau faible. Facture datée dans une période clôturée : « enregistrer dans la période en cours » ou « rouvrir ». Les tailles et couleurs d'un même modèle forment un seul article avec ses variantes.
+
+Ordre des lots backend : L1 lecture des documents, A1 publicité, B1 budgets et simulateur, G1 guide IA, chacun avec son contrat avant le code.
