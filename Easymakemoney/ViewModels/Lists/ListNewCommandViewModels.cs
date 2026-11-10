@@ -114,6 +114,17 @@ namespace Easymakemoney.ViewModels.Lists
                 await shell.GoToAsync($"{nameof(ListNewProductPage)}?CommandId={command.id}&Closed={IsClosed}", true);
         }
 
+        /// <summary>
+        /// Prix de vente des articles de la commande (coefficient sur le coût payé). Permis même en période fermée :
+        /// le prix de vente n'est pas une donnée de période.
+        /// </summary>
+        [RelayCommand]
+        private async Task ChangePrices(ListCommand? command)
+        {
+            if (command != null && Shell.Current is { } shell)
+                await shell.GoToAsync($"{nameof(PriceChangePage)}?CommandeId={command.id}");
+        }
+
 
         [RelayCommand]
         public async Task ShowBottomSheet()

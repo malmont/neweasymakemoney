@@ -56,6 +56,11 @@
                                             CommandParameter="{Binding .}"
                                             BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}"
                                             FontFamily="InterBold" FontSize="15" CornerRadius="12" HeightRequest="46" />
+                                    <Button Text="Changer les prix" IsVisible="{Binding CanChangePrice}"
+                                            Command="{Binding Path=BindingContext.ChangePriceCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="{DynamicResource ThemePrimaryTint}" TextColor="{DynamicResource ThemePrimary}"
+                                            FontFamily="InterBold" FontSize="15" CornerRadius="12" HeightRequest="46" />
                                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                                         <Button Text="C'est fait"
                                                 Command="{Binding Path=BindingContext.DoneCommand, Source={x:Reference Page}, x:DataType=ContentPage}"

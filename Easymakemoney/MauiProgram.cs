@@ -118,6 +118,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<ISimulationService, SimulationService>();
 		builder.Services.AddTransient<ITripService, TripService>();
 		builder.Services.AddTransient<IAdviceService, AdviceService>();
+		builder.Services.AddTransient<IPriceService, PriceService>();
 		builder.Services.AddTransient<Easymakemoney.UseCase.DocumentUseCase.DocumentReaderUseCase>();
 		builder.Services.AddTransient<Easymakemoney.UseCase.RepriseUseCase.RepriseUseCase>();
 		builder.Services.AddTransient<Easymakemoney.UseCase.PeriodResultUseCase.GetPeriodResultUseCase>();
@@ -203,6 +204,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<TripFormPage>();
 		builder.Services.AddTransient<TripFollowUpPage>();
 		builder.Services.AddTransient<AdvicePage>();
+		builder.Services.AddTransient<PriceChangePage>();
+		builder.Services.AddTransient<PriceBatchListPage>();
 		builder.Services.AddTransient<ListNewProductVariantPage>();
 		builder.Services.AddTransient<ListNewNoteDeFraisPage>();
 		builder.Services.AddTransient<ListNewFournisseurPage>();
@@ -247,6 +250,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<TripFormViewModel>();
 		builder.Services.AddTransient<TripFollowUpViewModel>();
 		builder.Services.AddTransient<AdviceViewModel>();
+		builder.Services.AddTransient<PriceChangeViewModel>();
+		builder.Services.AddTransient<PriceBatchListViewModel>();
 		builder.Services.AddTransient<ProductFormModel>();
 		builder.Services.AddTransient<ProductVariantFormModel>();
 		builder.Services.AddTransient<ListNewProductsVariantViewModel>();

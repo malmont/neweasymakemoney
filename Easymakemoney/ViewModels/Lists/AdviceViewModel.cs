@@ -155,6 +155,19 @@ namespace Easymakemoney.ViewModels.Lists
             await LoadAsync();
         }
 
+        /// <summary>Applique la hausse conseillée : aperçu puis confirmation ; le conseil est marqué fait par le backend.</summary>
+        [RelayCommand]
+        private async Task ChangePrice(Advice? advice)
+        {
+            if (advice is not { CanChangePrice: true } || Shell.Current is not { } shell)
+                return;
+
+            var percent = advice.SuggestedPercent is { } value
+                ? $"&Percent={value.ToString(System.Globalization.CultureInfo.InvariantCulture)}"
+                : string.Empty;
+            await shell.GoToAsync($"{nameof(PriceChangePage)}?AdviceId={advice.id}{percent}");
+        }
+
         [RelayCommand]
         private async Task Dismiss(Advice? advice)
         {

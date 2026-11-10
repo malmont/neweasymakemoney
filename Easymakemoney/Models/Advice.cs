@@ -110,6 +110,9 @@ namespace Easymakemoney.Models
             _ => null,
         };
 
+        /// <summary>Hausse conseillée sur ce qui part vite : le gérant peut l'appliquer directement (lot P4).</summary>
+        public bool CanChangePrice => IsNew && kind == "FAST_SELLER";
+
         public double? SuggestedPercent =>
             sources.FirstOrDefault(source => source.unit == "percent" && source.value?.Type is JTokenType.Integer or JTokenType.Float)?.value?.Value<double>();
 
