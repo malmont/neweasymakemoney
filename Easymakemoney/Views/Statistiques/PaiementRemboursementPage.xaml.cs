@@ -15,13 +15,17 @@ namespace Easymakemoney.Views.Statistiques
             _paiementRemboursementUseCase = paiementRemboursementUseCase;
         }
 
+        private readonly StatistiquesPageLoader _loader = new();
+
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            var data = await _paiementRemboursementUseCase.GetPaiementRemboursementEvolutionAsync();
-            _viewModel.LoadDataPaiement(data);
-            _viewModel.UpdatePaiementData(1);
-        
+            await _loader.RunOnceAsync(async () =>
+            {
+                var data = await _paiementRemboursementUseCase.GetPaiementRemboursementEvolutionAsync();
+                _viewModel.LoadDataPaiement(data);
+                _viewModel.UpdatePaiementData(1);
+            });
         }
     }
 }

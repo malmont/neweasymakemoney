@@ -100,7 +100,7 @@ namespace Easymakemoney.ViewModels.Statistiques
 
             CurrentPeriode = "Semaine en cours";
             LastPeriode = "Semaine précédente";
-            TypeDataValue = "Commande journalière";
+            TypeDataValue = "Commandes par jour";
 
             // Utilisation des propriétés de l'interface IAllDataStatistics
             CurrentDataValueWeek = data.CurrentWeekCountAchatClientCompletee;
@@ -156,8 +156,8 @@ namespace Easymakemoney.ViewModels.Statistiques
                     LastDataValue = lastDataValueWeek;
                     CurrentPeriode = "Semaine en cours";
                     LastPeriode = "Semaine précédente";
-                    TypeDataValue = "Commande complétée";
-                    WeekChart = ChartGenerator.GenerateChart(AllDataValue);
+                    TypeDataValue = "Commandes par jour";
+                    WeekChart = ChartGenerator.GenerateChart(AllDataValue, isMoney: false);
                     IsWeekChartVisible = true;
                     CurrentWeekOrderDeliveryValue = currentWeekOrderDelivery;
                     LastWeekOrderDeliveryValue = lastWeekOrderDelivery;
@@ -165,9 +165,9 @@ namespace Easymakemoney.ViewModels.Statistiques
                     LastWeekOrderCancellationValue = lastWeekOrderCancellation;
                     CurrentWeekReturnOrderCompleteValue = currentWeekReturnOrderComplete;
                     LastWeekReturnOrderCompleteValue = lastWeekReturnOrderComplete;
-                    WeekChartdailycurrentWeekOrderDelivery = ChartGenerator.GenerateChart(dailycurrentWeekOrderDelivery);
-                    WeekChartdailyLcurrentWeekOrderCancellation = ChartGenerator.GenerateChart(dailyLcurrentWeekOrderCancellation);
-                    WeekChartdailycurrentWeekReturnOrderComplete = ChartGenerator.GenerateChart(dailycurrentWeekReturnOrderComplete);
+                    WeekChartdailycurrentWeekOrderDelivery = ChartGenerator.GenerateChart(dailycurrentWeekOrderDelivery, isMoney: false);
+                    WeekChartdailyLcurrentWeekOrderCancellation = ChartGenerator.GenerateChart(dailyLcurrentWeekOrderCancellation, isMoney: false);
+                    WeekChartdailycurrentWeekReturnOrderComplete = ChartGenerator.GenerateChart(dailycurrentWeekReturnOrderComplete, isMoney: false);
                     break;
 
                 case 2: // Mois
@@ -177,7 +177,7 @@ namespace Easymakemoney.ViewModels.Statistiques
                     CurrentPeriode = "Mois en cours";
                     LastPeriode = "Mois précédent";
                     TypeDataValue = "Commande mensuelle";
-                    MonthChart = ChartGenerator.GenerateChart(AllDataValue);
+                    MonthChart = ChartGenerator.GenerateChart(AllDataValue, isMoney: false);
                     IsMonthChartVisible = true;
                     break;
 
@@ -188,7 +188,7 @@ namespace Easymakemoney.ViewModels.Statistiques
                     CurrentPeriode = "Année en cours";
                     LastPeriode = "Année précédente";
                     TypeDataValue = "Commande annuelle";
-                    YearChart = ChartGenerator.GenerateChart(AllDataValue);
+                    YearChart = ChartGenerator.GenerateChart(AllDataValue, isMoney: false);
                     IsYearChartVisible = true;
                     break;
             }

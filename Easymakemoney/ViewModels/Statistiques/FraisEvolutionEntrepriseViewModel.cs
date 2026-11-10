@@ -41,8 +41,8 @@ namespace Easymakemoney.ViewModels.Statistiques
             _fraisEvolutionUseCase = fraisEvolutionUseCase;
             periodeTypeChoices = new List<PeriodeType>
             {
-                new PeriodeType { id = 1, typePeriode = "Mois", photoPeriode = "month.png" },
-                new PeriodeType { id = 2, typePeriode = "Année", photoPeriode = "years.png" }
+                new PeriodeType { id = 1, typePeriode = "Par mois", photoPeriode = "month.png" },
+                new PeriodeType { id = 2, typePeriode = "Cette semaine", photoPeriode = "years.png" }
             };
         }
 
@@ -76,7 +76,7 @@ namespace Easymakemoney.ViewModels.Statistiques
             LabelFrais = "frais par mois";
             FraisParMois = data.FraisParMois;
             FraisParJour = data.FraisParJour;
-            PeriodeFrais = "Frais annuels";
+            PeriodeFrais = "Frais de l'année, mois par mois";
 
             if (fraisParMois != null)
                 ApplyAlternateRowColors(fraisParMois);
@@ -92,14 +92,14 @@ namespace Easymakemoney.ViewModels.Statistiques
             switch (periodeTypeId)
             {
                 case 1:
-                    PeriodeFrais = "Frais annuels";
-                    AllFraisValue = fraisParMois.Cast<IFraisData>().ToList();
+                    PeriodeFrais = "Frais de l'année, mois par mois";
+                    AllFraisValue = (fraisParMois ?? new()).Cast<IFraisData>().ToList();
                     LabelFrais = "frais par mois";
                     IsMonthChartVisible = true;
                     break;
                 case 2:
-                    PeriodeFrais = "Frais quotidien";
-                    AllFraisValue = fraisParJour.Cast<IFraisData>().ToList();
+                    PeriodeFrais = "Frais de la semaine, jour par jour";
+                    AllFraisValue = (fraisParJour ?? new()).Cast<IFraisData>().ToList();
                     LabelFrais = "frais par Jours";
                     IsYearChartVisible = true;
                     break;

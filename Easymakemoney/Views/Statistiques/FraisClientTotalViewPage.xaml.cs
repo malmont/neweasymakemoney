@@ -20,13 +20,18 @@ namespace Easymakemoney.Views.Statistiques
         }
       
 
+        private readonly StatistiquesPageLoader _loader = new();
+
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            var CarrierData = await _getFraisClientCarrierUseCase.Execute();
-            var TaxData = await _getFraisClientTaxUseCase.Execute();
-            _viewModel.LoadDataFrais(TaxData, CarrierData);
-             _viewModel.UpdateFraisData(1);
+            await _loader.RunOnceAsync(async () =>
+            {
+                var CarrierData = await _getFraisClientCarrierUseCase.Execute();
+                var TaxData = await _getFraisClientTaxUseCase.Execute();
+                _viewModel.LoadDataFrais(TaxData, CarrierData);
+                 _viewModel.UpdateFraisData(1);
+            });
         }
     }
 }

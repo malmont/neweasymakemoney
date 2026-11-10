@@ -8,9 +8,11 @@ namespace Easymakemoney.Utilities
 {
     public static class ChartGenerator
     {
-        public static Chart GenerateChart(List<IStatistiqueData> dataList)
+        /// <param name="isMoney">Faux pour des quantités (commandes, articles) : la valeur n'est pas affichée en monnaie.</param>
+        public static Chart GenerateChart(List<IStatistiqueData>? dataList, bool isMoney = true)
         {
             var entries = new List<ChartEntry>();
+            dataList ??= new List<IStatistiqueData>();
             int totalItems = dataList.Count;
 
             for (int i = 0; i < totalItems; i++)
@@ -25,7 +27,9 @@ namespace Easymakemoney.Utilities
                 entries.Add(new ChartEntry(Convert.ToSingle(data.Data2))
                 {
                     Label = label,
-                    ValueLabel = SiteCurrency.FormatCents(data.Data2, CultureInfo.CurrentCulture),
+                    ValueLabel = isMoney
+                        ? SiteCurrency.FormatCents(data.Data2, CultureInfo.CurrentCulture)
+                        : data.Data2.ToString("0", CultureInfo.CurrentCulture),
                     Color = color
                 });
             }
@@ -34,7 +38,7 @@ namespace Easymakemoney.Utilities
             {
                 Entries = entries,
                 BackgroundColor = SKColors.Transparent,
-                LabelTextSize = 30,
+                LabelTextSize = 24,
                 PointSize = 15
             };
         }

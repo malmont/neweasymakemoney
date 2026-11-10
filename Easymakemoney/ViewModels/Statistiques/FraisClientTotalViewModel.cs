@@ -39,7 +39,7 @@ namespace Easymakemoney.ViewModels.Statistiques
             periodeTypeChoices = new List<PeriodeType>
             {
                 new PeriodeType { id = 1, typePeriode = "Taxes", photoPeriode = "week.png" },
-                new PeriodeType { id = 2, typePeriode = "Carriers", photoPeriode = "month.png" },
+                new PeriodeType { id = 2, typePeriode = "Transporteurs", photoPeriode = "month.png" },
                 
             };
         }
@@ -90,14 +90,14 @@ namespace Easymakemoney.ViewModels.Statistiques
             switch (periodeTypeId)
             {
                 case 1:
-                    TitreFraisMonth = "Taxe du mois";
+                    TitreFraisMonth = "Taxes par mois";
                     FraisTotal = monhthlyTaxesForCurrentYear;
                     MonhthlyTaxesChart = ChartGenerator.GenerateChart(MonhthlyTaxesForCurrentYear); 
                     IsmonhthlyTaxesChartVisible = true;
                     break;
 
                 case 2:
-                    TitreFraisMonth = "Carrier du mois";
+                    TitreFraisMonth = "Transporteurs par mois";
                     FraisTotal = monthlyCarrierForCurrentYear;
                     MonthlyCarrierChart = ChartGenerator.GenerateChart(fraisTotal); 
                     IsmonthlyCarrierChartVisible = true;

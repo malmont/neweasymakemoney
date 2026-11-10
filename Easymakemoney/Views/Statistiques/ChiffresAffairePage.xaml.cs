@@ -14,12 +14,17 @@ namespace Easymakemoney.Views.Statistiques
             this.BindingContext = _viewModel;
         }
 
+        private readonly StatistiquesPageLoader _loader = new();
+
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            var data = await _chiffreAffaireUseCase.GetRevenueStatistics();
-            _viewModel.LoadDataChiffreAffaire(data);
-            _viewModel.UpdateRevenueData(1);
+            await _loader.RunOnceAsync(async () =>
+            {
+                var data = await _chiffreAffaireUseCase.GetRevenueStatistics();
+                _viewModel.LoadDataChiffreAffaire(data);
+                _viewModel.UpdateRevenueData(1);
+            });
         }
     }
 }

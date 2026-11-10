@@ -92,7 +92,7 @@ namespace Easymakemoney.ViewModels.Statistiques
 
             CurrentPeriode = "Semaine en cours";
             LastPeriode = "Semaine précédente";
-            TypeDataValue = "Recette journalière";
+            TypeDataValue = "Recette par jour";
 
             // Utilisation des propriétés de l'interface IAllDataStatistics
             CurrentDataValueWeek = data.CurrentWeekData;
@@ -133,7 +133,7 @@ namespace Easymakemoney.ViewModels.Statistiques
                     LastDataValue = lastDataValueWeek;
                     CurrentPeriode = "Semaine en cours";
                     LastPeriode = "Semaine précédente";
-                    TypeDataValue = "Recette journalière";
+                    TypeDataValue = "Recette par jour";
                     WeekChart = ChartGenerator.GenerateChart(AllDataValue); 
                     IsWeekChartVisible = true;
                     break;
@@ -144,7 +144,7 @@ namespace Easymakemoney.ViewModels.Statistiques
                     LastDataValue = lastDataValueMonth;
                     CurrentPeriode = "Mois en cours";
                     LastPeriode = "Mois précédent";
-                    TypeDataValue = "Recette mensuelle";
+                    TypeDataValue = "Recette par semaine";
                     MonthChart = ChartGenerator.GenerateChart(AllDataValue); 
                     IsMonthChartVisible = true;
                     break;
@@ -155,7 +155,7 @@ namespace Easymakemoney.ViewModels.Statistiques
                     LastDataValue = lastDataValueYear;
                     CurrentPeriode = "Année en cours";
                     LastPeriode = "Année précédente";
-                    TypeDataValue = "Recette annuelle";
+                    TypeDataValue = "Recette par mois";
                     YearChart = ChartGenerator.GenerateChart(AllDataValue); 
                     IsYearChartVisible = true;
                     break;

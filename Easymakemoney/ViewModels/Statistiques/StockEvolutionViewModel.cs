@@ -107,21 +107,21 @@ namespace Easymakemoney.ViewModels.Statistiques
                 case 1: // Semaine
                     AllDataValue = stockMouvementDataValueWeek;
                     StockCurrentPeriode = "stock semaine";
-                    WeekChart = ChartGenerator.GenerateChart(AllDataValue); 
+                    WeekChart = ChartGenerator.GenerateChart(AllDataValue, isMoney: false); 
                     IsWeekChartVisible = true;
                     break;
 
                 case 2: // Mois
                     AllDataValue = stockMouvementDataValueMonth;
                     StockCurrentPeriode = "Stock du mois";
-                    MonthChart = ChartGenerator.GenerateChart(AllDataValue); 
+                    MonthChart = ChartGenerator.GenerateChart(AllDataValue, isMoney: false); 
                     IsMonthChartVisible = true;
                     break;
 
                 case 3: // Année
                     AllDataValue = stockMouvementDataValueYear;
                     StockCurrentPeriode = "Stock année";
-                    YearChart = ChartGenerator.GenerateChart(AllDataValue); 
+                    YearChart = ChartGenerator.GenerateChart(AllDataValue, isMoney: false); 
                     IsYearChartVisible = true;
                     break;
             }

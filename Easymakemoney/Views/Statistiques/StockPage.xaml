@@ -40,9 +40,9 @@
                 </Grid>
                 <components:UiCard Style="{StaticResource UiCard}">
                     <VerticalStackLayout Spacing="4">
-                        <Label Text="{Binding StockDataValueCurrentMonth.Month}"
+                        <Label Text="{Binding StockDataValueCurrentMonth.MonthText}"
                                Style="{StaticResource UiBody}"/>
-                        <Label Text="{Binding StockDataValueCurrentMonth.StockValue, Converter={StaticResource CurrencyConverter}}"
+                        <Label Text="{Binding StockDataValueCurrentMonth.StockValueCents, Converter={StaticResource CurrencyConverter}}"
                                FontFamily="InterBold"
                                FontSize="22"
                                TextColor="{DynamicResource ThemePrimary}"/>
