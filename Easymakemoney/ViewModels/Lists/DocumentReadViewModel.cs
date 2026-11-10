@@ -34,13 +34,29 @@ namespace Easymakemoney.ViewModels.Lists
             _dialogService = dialogService;
         }
 
-        /// <summary>« note » ou « transport ».</summary>
+        /// <summary>« note », « transport » ou « facture » (facture fournisseur, vérifiée dans InvoiceReviewPage).</summary>
         public string DocType { get; set; } = "note";
         public int CommandeId { get; set; }
 
         public bool IsNote => DocType == "note";
         public bool IsTransport => DocType == "transport";
-        public string PageTitle => IsNote ? "Lire un reçu" : "Lire une facture de transport";
+        public bool IsInvoice => DocType == "facture";
+        public bool CanEnterManually => !IsInvoice;
+        public string PageTitle => DocType switch
+        {
+            "note" => "Lire un reçu",
+            "facture" => "Lire une facture fournisseur",
+            _ => "Lire une facture de transport",
+        };
+
+        public string IntroText => IsInvoice
+            ? "Photographiez la facture du fournisseur ou choisissez des photos (6 pages au plus), ou un PDF. Vous vérifierez ensuite chaque ligne : rien n'est enregistré avant votre validation."
+            : "Photographiez le document ou choisissez des photos (6 pages au plus), ou un PDF. Rien n'est enregistré avant votre validation.";
+
+        /// <summary>Factures déjà lues et pas encore validées : le gérant reprend sa vérification.</summary>
+        public ObservableCollection<PendingInvoice> PendingInvoices { get; } = new();
+
+        [ObservableProperty] private bool hasPendingInvoices;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsChoosing))]
@@ -90,8 +106,14 @@ namespace Easymakemoney.ViewModels.Lists
             _stopped = false;
             OnPropertyChanged(nameof(IsNote));
             OnPropertyChanged(nameof(IsTransport));
+            OnPropertyChanged(nameof(IsInvoice));
+            OnPropertyChanged(nameof(CanEnterManually));
             OnPropertyChanged(nameof(PageTitle));
+            OnPropertyChanged(nameof(IntroText));
             OnPropertyChanged(nameof(AmountLabel));
+
+            if (IsInvoice)
+                await LoadPendingInvoicesAsync();
 
             try
             {
@@ -111,6 +133,32 @@ namespace Easymakemoney.ViewModels.Lists
                 Console.WriteLine(e);
                 await _dialogService.ShowErrorAsync(e);
             }
+        }
+
+        private async Task LoadPendingInvoicesAsync()
+        {
+            try
+            {
+                var documents = await _documents.ListAsync("facture", "extracted");
+                PendingInvoices.Clear();
+                foreach (var document in documents.Where(d => d.id > 0))
+                    PendingInvoices.Add(new PendingInvoice(document.id, PendingInvoice.TextFor(document.createdAt)));
+            }
+            catch (Exception e)
+            {
+                // Sans la liste, le gérant peut toujours lire une nouvelle facture.
+                Console.WriteLine(e);
+            }
+            HasPendingInvoices = PendingInvoices.Count > 0;
+        }
+
+        [RelayCommand]
+        private async Task ResumeInvoice(PendingInvoice? invoice)
+        {
+            if (invoice == null)
+                return;
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync($"../{nameof(InvoiceReviewPage)}?DocumentId={invoice.Id}", true);
         }
 
         [RelayCommand]
@@ -295,15 +343,22 @@ namespace Easymakemoney.ViewModels.Lists
 
                 switch (document.status)
                 {
+                    case "extracted" when IsInvoice:
+                        // Une facture fournisseur se vérifie ligne par ligne sur son propre écran, qui remplace celui-ci.
+                        if (Shell.Current is { } shell)
+                            await shell.GoToAsync($"../{nameof(InvoiceReviewPage)}?DocumentId={_documentId}", true);
+                        return;
                     case "extracted":
                         Prefill(document.extraction);
                         Step = "verify";
                         return;
                     case "failed":
-                        FailureText = document.error switch
+                        FailureText = (document.error, IsInvoice) switch
                         {
-                            "DOCUMENT_UNREADABLE" => "Le document est illisible. Reprenez une photo plus nette, ou saisissez les informations à la main.",
-                            "AI_TOO_MANY_FAILURES" => "La lecture a échoué plusieurs fois. Réessayez plus tard, ou saisissez les informations à la main.",
+                            ("DOCUMENT_UNREADABLE", true) => "La facture est illisible. Reprenez une photo plus nette.",
+                            ("AI_TOO_MANY_FAILURES", true) => "La lecture a échoué plusieurs fois. Réessayez plus tard.",
+                            ("DOCUMENT_UNREADABLE", _) => "Le document est illisible. Reprenez une photo plus nette, ou saisissez les informations à la main.",
+                            ("AI_TOO_MANY_FAILURES", _) => "La lecture a échoué plusieurs fois. Réessayez plus tard, ou saisissez les informations à la main.",
                             _ => "Le service de lecture est indisponible pour le moment. Aucun crédit n'a été utilisé.",
                         };
                         Step = "failed";
@@ -317,7 +372,9 @@ namespace Easymakemoney.ViewModels.Lists
 
             if (!_stopped)
             {
-                FailureText = "La lecture prend plus de temps que prévu. Revenez plus tard ou saisissez les informations à la main.";
+                FailureText = IsInvoice
+                    ? "La lecture prend plus de temps que prévu. Revenez plus tard : la facture sera proposée en haut de cet écran."
+                    : "La lecture prend plus de temps que prévu. Revenez plus tard ou saisissez les informations à la main.";
                 Step = "failed";
             }
         }
@@ -325,6 +382,9 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private void ManualEntry()
         {
+            if (IsInvoice)
+                return;
+
             Prefill(null);
             Step = "verify";
         }
@@ -464,5 +524,23 @@ namespace Easymakemoney.ViewModels.Lists
             if (Shell.Current is { } shell)
                 await shell.GoToAsync("..", true);
         }
+    }
+
+    /// <summary>Facture fournisseur lue, en attente de vérification.</summary>
+    public sealed class PendingInvoice
+    {
+        public PendingInvoice(int id, string text)
+        {
+            Id = id;
+            Text = text;
+        }
+
+        public int Id { get; }
+        public string Text { get; }
+
+        public static string TextFor(string? createdAt) =>
+            DateTimeOffset.TryParse(createdAt, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
+                ? $"Facture lue le {date.ToLocalTime():dd/MM/yyyy à HH:mm}"
+                : "Facture lue, à vérifier";
     }
 }

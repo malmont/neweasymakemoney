@@ -39,6 +39,13 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
         [RelayCommand]
+        private async Task NavigateToSupplierInvoice()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync($"{nameof(DocumentReadPage)}?Type=facture");
+        }
+
+        [RelayCommand]
         private async Task NavigateToToClassify()
         {
             if (Shell.Current is { } shell)

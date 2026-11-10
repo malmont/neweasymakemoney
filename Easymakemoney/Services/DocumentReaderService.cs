@@ -1,4 +1,5 @@
 using Easymakemoney.Services.Api;
+using Newtonsoft.Json.Linq;
 
 namespace Easymakemoney.Services
 {
@@ -19,11 +20,22 @@ namespace Easymakemoney.Services
         public Task<GestionDocument> GetAsync(int id) =>
             _httpService.GetAsync<GestionDocument>($"{BaseUrl}/{id}");
 
+        public async Task<List<GestionDocument>> ListAsync(string type, string status) =>
+            await _httpService.GetAsync<List<GestionDocument>>($"{BaseUrl}?type={Uri.EscapeDataString(type)}&status={Uri.EscapeDataString(status)}&limit=20")
+            ?? new List<GestionDocument>();
+
         public Task<GestionDocument> RereadAsync(int id) =>
             _httpService.PostAsyncWithAuth<GestionDocument>($"{BaseUrl}/{id}/relire", null!);
 
-        public async Task ConfirmAsync(int id, object body) =>
-            await _httpService.PostAsyncWithAuth<object>($"{BaseUrl}/{id}/confirmer", body);
+        public async Task SaveDraftAsync(int id, object draft) =>
+            await _httpService.PatchAsyncWithAuth<object>($"{BaseUrl}/{id}/brouillon", draft);
+
+        public async Task UploadLinePhotoAsync(int id, int n, UploadFile file) =>
+            await _httpService.PostFilesAsync<object>($"{BaseUrl}/{id}/lignes/{n}/photo",
+                new Dictionary<string, string>(), "file", new[] { file });
+
+        public Task<JObject?> ConfirmAsync(int id, object body) =>
+            _httpService.PostAsyncWithAuth<JObject?>($"{BaseUrl}/{id}/confirmer", body);
 
         public async Task DeleteAsync(int id) =>
             await _httpService.DeleAsyncWithAuth<object>($"{BaseUrl}/{id}");

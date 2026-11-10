@@ -10,5 +10,15 @@ namespace Easymakemoney.Models
         public string? status { get; set; }
         public string? error { get; set; }
         public JObject? extraction { get; set; }
+
+        /// <summary>Brouillon de vérification (JSON libre), null s'il n'y en a pas.</summary>
+        public JToken? draft { get; set; }
+
+        /// <summary>Photos des lignes : objet dont les clés sont les numéros de ligne.</summary>
+        public JToken? linePhotos { get; set; }
+
+        public int? commandeId { get; set; }
+
+        public string? createdAt { get; set; }
     }
 }

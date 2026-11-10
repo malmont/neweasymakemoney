@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             x:DataType="list:InvoiceReviewViewModel"
+             x:Class="Easymakemoney.Views.Lists.InvoiceReviewPage"
+             Style="{StaticResource UiPage}"
+             Title="Vérifier la facture">
+
+    <ContentPage.Resources>
+        <!-- Mêmes styles que DocumentReadPage : ils ne sont pas globaux -->
+        <Style x:Key="FormDate" TargetType="handlers:BorderlessDatePicker">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="FormLabel" TargetType="Label">
+            <Setter Property="FontFamily" Value="InterMedium" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextSecondary}" />
+        </Style>
+        <Style x:Key="FormField" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="MinimumHeightRequest" Value="48" />
+            <Setter Property="Padding" Value="12,0" />
+        </Style>
+        <Style x:Key="FormEntry" TargetType="handlers:BorderlessEntry">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="PlaceholderColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="FormPicker" TargetType="Picker">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="TitleColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="DocAction" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimaryTint}" />
+            <Setter Property="TextColor" Value="{DynamicResource ThemePrimary}" />
+            <Setter Property="FontFamily" Value="InterBold" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="HeightRequest" Value="44" />
+            <Setter Property="Padding" Value="8,0" />
+        </Style>
+        <Style x:Key="DocMain" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimary}" />
+            <Setter Property="TextColor" Value="{DynamicResource ThemeOnPrimary}" />
+            <Setter Property="FontFamily" Value="InterBold" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="HeightRequest" Value="52" />
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="Disabled">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="{StaticResource UiBorder}" />
+                                <Setter Property="TextColor" Value="{StaticResource UiTextMuted}" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
+        <Style x:Key="SectionTitle" TargetType="Label">
+            <Setter Property="FontFamily" Value="InterBold" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <components:AppHeader Title="Vérifier la facture" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+
+                <!-- Chargement -->
+                <VerticalStackLayout IsVisible="{Binding IsLoading}" Spacing="14" Padding="0,60">
+                    <ActivityIndicator IsRunning="{Binding IsLoading}" Color="{DynamicResource ThemePrimary}" />
+                    <Label Text="Ouverture de la facture…" Style="{StaticResource UiTitle}" HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+
+                <!-- Impossible d'ouvrir -->
+                <VerticalStackLayout IsVisible="{Binding HasLoadError}" Spacing="12">
+                    <Border StrokeThickness="0" StrokeShape="RoundRectangle 12" BackgroundColor="#FEF3C7" Padding="12,10">
+                        <Label Text="{Binding LoadError}" FontFamily="InterSemiBold" FontSize="14" TextColor="#B45309" />
+                    </Border>
+                    <Button Text="Réessayer" Command="{Binding ReloadCommand}" Style="{StaticResource DocAction}" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout IsVisible="{Binding IsLoaded}" Spacing="12">
+
+                    <!-- Remarques de la lecture, telles quelles -->
+                    <Border IsVisible="{Binding HasRemarks}" StrokeThickness="0" StrokeShape="RoundRectangle 12" BackgroundColor="#FEF3C7" Padding="12,10">
+                        <Label Text="{Binding RemarksText}" FontFamily="InterSemiBold" FontSize="14" TextColor="#B45309" />
+                    </Border>
+                    <Label Text="Vérifiez chaque ligne, corrigez si besoin, puis validez la facture. Rien n'est créé avant votre validation."
+                           Style="{StaticResource UiBody}" FontSize="14" />
+
+                    <!-- Fournisseur -->
+                    <components:UiCard Style="{StaticResource UiCard}">
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Fournisseur" Style="{StaticResource SectionTitle}" />
+                            <Label Text="{Binding SupplierReadText}" Style="{StaticResource UiBody}" FontSize="14" />
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                <Button Text="Déjà connu" Command="{Binding ChooseExistingSupplierCommand}" Style="{StaticResource DocAction}">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button" Binding="{Binding IsExistingSupplier}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimary}" />
+                                            <Setter Property="TextColor" Value="{DynamicResource ThemeOnPrimary}" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+                                <Button Grid.Column="1" Text="Nouveau" Command="{Binding ChooseNewSupplierCommand}" Style="{StaticResource DocAction}">
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button" Binding="{Binding IsNewSupplier}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimary}" />
+                                            <Setter Property="TextColor" Value="{DynamicResource ThemeOnPrimary}" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+                            </Grid>
+
+                            <VerticalStackLayout IsVisible="{Binding IsExistingSupplier}" Spacing="6">
+                                <Label Text="Choisir le fournisseur" Style="{StaticResource FormLabel}" />
+                                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                                    <Picker Style="{StaticResource FormPicker}" Title="Choisir un fournisseur"
+                                            ItemsSource="{Binding SupplierChoices}"
+                                            SelectedItem="{Binding SelectedSupplier}"
+                                            ItemDisplayBinding="{Binding Label, x:DataType=list:InvoiceSupplierChoice}" />
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout IsVisible="{Binding IsNewSupplier}" Spacing="6">
+                                <Label Text="Nom du nouveau fournisseur" Style="{StaticResource FormLabel}" />
+                                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Nom" Text="{Binding NewSupplierName}" />
+                                </Border>
+                                <Label Text="Type de fournisseur" Style="{StaticResource FormLabel}" />
+                                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                                    <Picker Style="{StaticResource FormPicker}" Title="Choisir un type"
+                                            ItemsSource="{Binding SupplierTypes}"
+                                            SelectedItem="{Binding SelectedSupplierType}"
+                                            ItemDisplayBinding="{Binding name, x:DataType=models:TypeFournisseur}" />
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <Label IsVisible="{Binding HasSupplierWarning}" Text="{Binding SupplierWarning}" FontFamily="InterSemiBold" FontSize="13" TextColor="#B45309" />
+                        </VerticalStackLayout>
+                    </components:UiCard>
+
+                    <!-- Facture -->
+                    <components:UiCard Style="{StaticResource UiCard}">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Facture" Style="{StaticResource SectionTitle}" />
+                            <Label Text="Numéro de facture" Style="{StaticResource FormLabel}" />
+                            <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                                <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Numéro" Text="{Binding InvoiceNumber}" />
+                            </Border>
+                            <Label Text="Date de la facture" Style="{StaticResource FormLabel}" />
+                            <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                                <handlers:BorderlessDatePicker Style="{StaticResource FormDate}" Date="{Binding InvoiceDate}" Format="dd/MM/yyyy" />
+                            </Border>
+                            <Label Text="{Binding CurrencyText}" Style="{StaticResource UiBody}" FontSize="13" />
+                            <VerticalStackLayout IsVisible="{Binding NeedsExchangeRate}" Spacing="6">
+                                <Label Text="{Binding ExchangeRateLabel}" Style="{StaticResource FormLabel}" />
+                                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Par exemple 1,35" Keyboard="Numeric" Text="{Binding ExchangeRateText}" />
+                                </Border>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </components:UiCard>
+
+                    <!-- Totaux -->
+                    <components:UiCard Style="{StaticResource UiCard}" IsVisible="{Binding HasTotals}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="Totaux" Style="{StaticResource SectionTitle}" />
+                            <components:UiAmountRow Title="Total lu sur la facture" Value="{Binding ReadTotalText}" />
+                            <components:UiAmountRow Title="Total recalculé" Value="{Binding ComputedTotalText}" />
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                                <Label Text="Écart" Style="{StaticResource UiBody}" FontSize="14" TextColor="{Binding DifferenceColor}" />
+                                <Label Grid.Column="1" Text="{Binding DifferenceText}" FontFamily="InterBold" FontSize="14" TextColor="{Binding DifferenceColor}" />
+                            </Grid>
+                            <components:UiAmountRow Title="Total de vos lignes (hors taxes)" Value="{Binding LinesTotalText}" IsTotal="True" />
+                        </VerticalStackLayout>
+                    </components:UiCard>
+
+                    <!-- Frais de port -->
+                    <components:UiCard Style="{StaticResource UiCard}" IsVisible="{Binding HasShipping}">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Frais de port" Style="{StaticResource SectionTitle}" />
+                            <Label Text="{Binding ShippingLabel}" Style="{StaticResource UiBody}" FontSize="14" />
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                <CheckBox IsChecked="{Binding IncludeShipping}" Color="{DynamicResource ThemePrimary}" VerticalOptions="Center" />
+                                <Label Grid.Column="1" Text="Ajouter comme frais de port" Style="{StaticResource UiTitle}" FontSize="15" VerticalOptions="Center" />
+                            </Grid>
+                            <VerticalStackLayout IsVisible="{Binding IncludeShipping}" Spacing="6">
+                                <Label Text="Montant hors taxes" Style="{StaticResource FormLabel}" />
+                                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="0,00" Keyboard="Numeric" Text="{Binding ShippingAmountText}" />
+                                </Border>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </components:UiCard>
+
+                    <!-- Lignes -->
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" Margin="0,8,0,0">
+                        <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                            <Label Text="Lignes de la facture" Style="{StaticResource SectionTitle}" />
+                            <Label Text="{Binding ValidatedText}" Style="{StaticResource UiBody}" FontSize="14" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="1" Text="Tout valider" IsVisible="{Binding HasLinesToValidate}"
+                                Command="{Binding ValidateAllCommand}" Style="{StaticResource DocAction}" Padding="14,0" />
+                    </Grid>
+
+                    <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Lines}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="list:InvoiceLineItemViewModel">
+                                <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                    <VerticalStackLayout Spacing="10">
+                                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                            <components:UiThumb Source="{Binding PhotoSource}" Icon="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8" VerticalOptions="Start" />
+                                            <VerticalStackLayout Grid.Column="1" Spacing="3">
+                                                <Label Text="{Binding Title}" Style="{StaticResource UiTitle}" FontSize="16" />
+                                                <Label Text="{Binding StatusText}" FontFamily="InterBold" FontSize="13" TextColor="{DynamicResource ThemePrimary}" />
+                                                <Label Text="{Binding QuantityCostText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                                <Label Text="{Binding SalePriceText}" Style="{StaticResource UiBody}" FontSize="13" />
+                                                <Label Text="{Binding SizeColorText}" IsVisible="{Binding HasSizeColor}" Style="{StaticResource UiBody}" FontSize="13" />
+                                                <Label Text="{Binding GroupText}" IsVisible="{Binding HasGroup}" Style="{StaticResource UiBody}" FontSize="13" />
+                                                <Label Text="Photo ajoutée" IsVisible="{Binding HasPhoto}" Style="{StaticResource UiBody}" FontSize="13" />
+                                                <Label Text="{Binding DoubtReason}" IsVisible="{Binding ShowDoubt}" FontFamily="InterSemiBold" FontSize="13" TextColor="#B45309" />
+                                            </VerticalStackLayout>
+                                        </Grid>
+
+                                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                                            <Button Text="Modifier" Command="{Binding ToggleEditCommand}" Style="{StaticResource DocAction}" />
+                                            <Button Grid.Column="1" Text="{Binding PhotoText}" Command="{Binding AddPhotoCommand}" Style="{StaticResource DocAction}" FontSize="13" />
+                                            <Button Grid.Column="2" Text="{Binding ValidateText}" Command="{Binding ValidateCommand}" Style="{StaticResource DocAction}">
+                                                <Button.Triggers>
+                                                    <DataTrigger TargetType="Button" Binding="{Binding IsValidated}" Value="True">
+                                                        <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimary}" />
+                                                        <Setter Property="TextColor" Value="{DynamicResource ThemeOnPrimary}" />
+                                                    </DataTrigger>
+                                                </Button.Triggers>
+                                            </Button>
+                                        </Grid>
+                                        <ActivityIndicator IsVisible="{Binding IsUploadingPhoto}" IsRunning="{Binding IsUploadingPhoto}" Color="{DynamicResource ThemePrimary}" HeightRequest="24" />
+
+                                        <!-- Corrections de la ligne -->
+                                        <VerticalStackLayout IsVisible="{Binding IsEditing}" Spacing="6">
+                                            <Label Text="{Binding ReadLabel, StringFormat='Lu sur la facture : {0}'}" Style="{StaticResource UiBody}" FontSize="13" />
+                                            <Label Text="{Binding ReadCostText}" IsVisible="{Binding HasReadCost}" Style="{StaticResource UiBody}" FontSize="13" />
+
+                                            <Label Text="Article" Style="{StaticResource FormLabel}" />
+                                            <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                                                <Picker Style="{StaticResource FormPicker}" Title="Nouvel article ou déjà connu"
+                                                        ItemsSource="{Binding LinkOptions}"
+                                                        SelectedItem="{Binding SelectedLink}"
+                                                        ItemDisplayBinding="{Binding Label, x:DataType=list:InvoiceLinkOption}" />
+                                            </Border>
+
+                                            <VerticalStackLayout IsVisible="{Binding IsNew}" Spacing="6">
+                                                <Label Text="Nom du nouvel article" Style="{StaticResource FormLabel}" />
+                                                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                                                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Nom" Text="{Binding Name}" />
+                                                </Border>
+                                                <Label Text="Coefficient (prix de vente = coût × coefficient)" Style="{StaticResource FormLabel}" />
+                                                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                                                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="2" Keyboard="Numeric" Text="{Binding CoefficientText}" />
+                                                </Border>
+                                            </VerticalStackLayout>
+
+                                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                                <VerticalStackLayout Spacing="6">
+                                                    <Label Text="Quantité" Style="{StaticResource FormLabel}" />
+                                                    <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                                                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="1" Keyboard="Numeric" Text="{Binding QuantityText}" />
+                                                    </Border>
+                                                </VerticalStackLayout>
+                                                <VerticalStackLayout Grid.Column="1" Spacing="6">
+                                                    <Label Text="Coût HT l'unité" Style="{StaticResource FormLabel}" />
+                                                    <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                                                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="0,00" Keyboard="Numeric" Text="{Binding UnitCostText}" />
+                                                    </Border>
+                                                </VerticalStackLayout>
+                                            </Grid>
+
+                                            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                                                <VerticalStackLayout Spacing="6">
+                                                    <Label Text="Taille" Style="{StaticResource FormLabel}" />
+                                                    <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                                                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Taille" Text="{Binding Size}" />
+                                                    </Border>
+                                                </VerticalStackLayout>
+                                                <VerticalStackLayout Grid.Column="1" Spacing="6">
+                                                    <Label Text="Couleur" Style="{StaticResource FormLabel}" />
+                                                    <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                                                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Couleur" Text="{Binding Color}" />
+                                                    </Border>
+                                                </VerticalStackLayout>
+                                            </Grid>
+                                        </VerticalStackLayout>
+                                    </VerticalStackLayout>
+                                </components:UiCard>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                    <Label Text="{Binding DraftStatusText}" Style="{StaticResource UiBody}" FontSize="13" HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Validation de la facture -->
+        <VerticalStackLayout Grid.Row="2" IsVisible="{Binding IsLoaded}" Padding="16,8,16,24" Spacing="6" BackgroundColor="{StaticResource UiBackground}">
+            <Label Text="{Binding ConfirmHint}" Style="{StaticResource UiBody}" FontSize="13" HorizontalTextAlignment="Center" />
+            <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" HeightRequest="24" />
+            <Button Text="Valider la facture" Command="{Binding ConfirmCommand}" Style="{StaticResource DocMain}" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>
