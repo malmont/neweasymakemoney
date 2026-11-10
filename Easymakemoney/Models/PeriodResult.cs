@@ -38,7 +38,8 @@ namespace Easymakemoney.Models
             }
         }
 
-        public string InvestmentText => Money(investment.total);
+        /// <summary>Achats de marchandises seulement : les frais de port sont déjà comptés dans les frais du résultat.</summary>
+        public string InvestmentText => Money(investment.purchases);
         public string OtherRevenueText => Money(otherRevenue.total);
 
         public bool IsLoss => result.net < 0;
@@ -111,6 +112,8 @@ namespace Easymakemoney.Models
 
     public sealed class PeriodInvestment
     {
+        public long purchases { get; set; }
+        public long shipping { get; set; }
         public long total { get; set; }
     }
 }

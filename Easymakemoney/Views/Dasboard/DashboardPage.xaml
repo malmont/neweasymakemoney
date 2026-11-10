@@ -3,8 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:dashboard="clr-namespace:Easymakemoney.ViewModels.Dashboard"
              xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
              x:DataType="dashboard:DashboardPageViewModel"
              x:Class="Easymakemoney.Views.Dasboard.DashboardPage"
+             x:Name="Page"
              Style="{StaticResource UiPage}"
              Title="Accueil">
 
@@ -14,6 +16,44 @@
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Padding="16,24" Spacing="12">
                 <Label Text="Accueil" Style="{StaticResource UiH1}" Margin="0,0,0,8" />
+
+                <!-- Vignettes d'accueil : premiers pas et alertes, les plus urgentes d'abord -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding HasTiles}" Margin="0,0,0,8"
+                                     BindableLayout.ItemsSource="{Binding Tiles}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:HomeTile">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenTileCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                    <components:UiThumb Grid.Column="0" Icon="{Binding Icon}" VerticalOptions="Start" />
+                                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                                        <Label Text="{Binding KindText}" FontFamily="InterSemiBold" FontSize="12" TextColor="{DynamicResource ThemePrimary}">
+                                            <Label.Triggers>
+                                                <DataTrigger TargetType="Label" Binding="{Binding IsAlert}" Value="True">
+                                                    <Setter Property="TextColor" Value="#B45309" />
+                                                </DataTrigger>
+                                            </Label.Triggers>
+                                        </Label>
+                                        <Label Text="{Binding title}" Style="{StaticResource UiTitle}" FontSize="16" />
+                                        <Label Text="{Binding text}" Style="{StaticResource UiBody}" FontSize="14" />
+                                        <Label Text="{Binding SourcesText}" IsVisible="{Binding HasSources}" Style="{StaticResource UiBody}" FontSize="12" />
+                                    </VerticalStackLayout>
+                                    <Button Grid.Column="2" Text="✕" VerticalOptions="Start"
+                                            IsVisible="{Binding dismissible}"
+                                            Command="{Binding Path=BindingContext.DismissTileCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                            CommandParameter="{Binding .}"
+                                            SemanticProperties.Description="Masquer cette vignette"
+                                            WidthRequest="36" HeightRequest="36" Padding="0" CornerRadius="18"
+                                            FontSize="14" BackgroundColor="Transparent" TextColor="{StaticResource UiTextMuted}" />
+                                </Grid>
+                            </components:UiCard>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
                 <components:UiTile Command="{Binding NavigateToAllListsPageCommand}" Icon="M4 6h16M4 12h16M4 18h10" Title="Gestion" Text="Périodes, fournisseurs, notes de frais et frais de port" />
                 <components:UiTile Command="{Binding NavigateTDashboardPageCommand}" Icon="M4 20V10M10 20V4M16 20v-7M22 20H2" Title="Tableau de bord" Text="Budget, dépenses et durée de chaque période" />
                 <components:UiTile Command="{Binding NavigateToStatistiquesPageCommand}" Icon="M3 17l6-6 4 4 8-8M15 7h6v6" Title="Statistiques" Text="Chiffre d’affaires, achats, panier, stock, frais et caisse" />

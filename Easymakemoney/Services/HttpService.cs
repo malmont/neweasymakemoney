@@ -87,6 +87,31 @@ namespace Easymakemoney.Services
             }
         }
 
+        public async Task<T> PutAsyncWithAuth<T>(string url, object data)
+        {
+            HttpContent? content = null;
+            if (data != null)
+            {
+                var json = JsonConvert.SerializeObject(data);
+                content = new StringContent(json, Encoding.UTF8, "application/json");
+            }
+
+            HttpResponseMessage response;
+            try
+            {
+                response = await _httpClient.PutAsync(url, content);
+            }
+            catch (Exception ex) when (ex is HttpRequestException or IOException or OperationCanceledException or TimeoutException)
+            {
+                throw ApiException.NoConnection(ex);
+            }
+
+            using (response)
+            {
+                return await HandleResponseAsync<T>(response);
+            }
+        }
+
         public async Task<T> PostFilesAsync<T>(string url, IDictionary<string, string> fields, string fileField, IEnumerable<UploadFile> files)
         {
             using var content = new MultipartFormDataContent();

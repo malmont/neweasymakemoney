@@ -47,6 +47,16 @@
                             MinimumHeightRequest="48"
                             Command="{Binding EditBudgetCommand}" />
 
+                    <Button Text="Budget par poste"
+                            IsVisible="{Binding IsPeriod}"
+                            BackgroundColor="{DynamicResource ThemePrimaryTint}"
+                            TextColor="{DynamicResource ThemePrimary}"
+                            FontFamily="InterSemiBold"
+                            FontSize="15"
+                            CornerRadius="12"
+                            MinimumHeightRequest="48"
+                            Command="{Binding OpenBudgetLinesCommand}" />
+
                     <!-- Bouton de clôture : seules les collections manuelles se clôturent à la main -->
                     <Button Text="{Binding CloseButtonText}"
                             IsVisible="{Binding CanClose}"

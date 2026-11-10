@@ -155,6 +155,15 @@ namespace Easymakemoney.ViewModels.Dashboard
         }
 
         [RelayCommand]
+        private async Task OpenBudgetLines()
+        {
+            if (CollectionId <= 0 || !IsPeriod || Shell.Current is not { } shell)
+                return;
+
+            await shell.GoToAsync($"{nameof(PeriodBudgetPage)}?PeriodId={CollectionId}&ReadOnly={(IsClosed ? 1 : 0)}");
+        }
+
+        [RelayCommand]
         private async Task EditBudget()
         {
             var page = Application.Current?.MainPage;
@@ -165,7 +174,8 @@ namespace Easymakemoney.ViewModels.Dashboard
             if (string.IsNullOrWhiteSpace(text))
                 return;
 
-            if (!double.TryParse(text.Trim().Replace(',', '.'), System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.InvariantCulture, out var amount))
+            // Accepte « 1 500,50 » comme « 1500.50 » (même lecture que les autres montants saisis).
+            if (Easymakemoney.Converters.DecimalInputConverter.Parse(text) is not { } amount || amount < 0)
             {
                 await _dialogService.ShowInfoAsync("Montant invalide.");
                 return;

@@ -37,7 +37,7 @@ public class PeriodResultTests : IDisposable
             "cogs": { "amount": 70818, "unknownCostItems": 3, "estimatedItems": 2, "estimatedAmount": 25000 },
             "expenses": { "shipping": 5000, "notes": 4000, "other": [ { "amount": 1000 } ] },
             "result": { "gross": 59180, "net": -40620, "netRate": -31.2 },
-            "investment": { "total": 99800 }
+            "investment": { "purchases": 94800, "shipping": 5000, "total": 99800 }
         }
         """;
 
@@ -61,6 +61,9 @@ public class PeriodResultTests : IDisposable
         Assert.Equal(-40620L, pr.result.net);
         Assert.Equal(-31.2, pr.result.netRate);
         Assert.Equal(99800L, pr.investment.total);
+        // « Investi en stock » : achats seuls, les frais de port sont déjà dans les frais.
+        Assert.Equal(94800L, pr.investment.purchases);
+        Assert.Contains("948", pr.InvestmentText.Replace(" ", "").Replace(" ", "").Replace(" ", "").Replace(",", "").Replace(".", ""));
 
         Assert.True(pr.IsLoss);
         Assert.True(pr.HasUnknownCost);

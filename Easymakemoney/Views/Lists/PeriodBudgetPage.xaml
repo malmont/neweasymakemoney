@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             x:DataType="list:PeriodBudgetViewModel"
+             x:Class="Easymakemoney.Views.Lists.PeriodBudgetPage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Budget par poste">
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Budget par poste" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <Label Text="{Binding PeriodName}" Style="{StaticResource UiTitle}" FontSize="18" />
+                <Label Text="Période fermée : le budget est en lecture seule." IsVisible="{Binding ReadOnly}"
+                       Style="{StaticResource UiBody}" FontSize="13" />
+                <Label Text="Touchez un poste pour saisir son prévu." IsVisible="{Binding CanEdit}"
+                       Style="{StaticResource UiBody}" FontSize="13" />
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" />
+
+                <!-- Total des postes -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="16" IsVisible="{Binding HasBudget}">
+                    <VerticalStackLayout Spacing="6">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Total des postes" Style="{StaticResource UiTitle}" FontSize="16" />
+                            <Label Grid.Column="1" Text="{Binding Budget.total.StatusText}" IsVisible="{Binding Budget.TotalComparable}"
+                                   FontFamily="InterSemiBold" FontSize="13" TextColor="{Binding Budget.total.StatusColor}" />
+                        </Grid>
+                        <ProgressBar Progress="{Binding Budget.total.Progress}" ProgressColor="{Binding Budget.total.StatusColor}" IsVisible="{Binding Budget.TotalComparable}" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="{Binding Budget.total.ActualText}" FontFamily="InterBold" FontSize="15" TextColor="{StaticResource UiTextPrimary}" />
+                            <Label Grid.Column="1" Text="{Binding Budget.total.PlannedText}" Style="{StaticResource UiBody}" FontSize="14" />
+                        </Grid>
+                        <Label Text="{Binding Budget.total.RemainingText}" IsVisible="{Binding Budget.TotalComparable}" Style="{StaticResource UiBody}" FontSize="13" />
+                        <Label Text="Le total se compare au prévu quand chaque poste en a un. Voyez le détail poste par poste."
+                               IsVisible="{Binding Budget.ShowTotalHint}" Style="{StaticResource UiBody}" FontSize="12" />
+                    </VerticalStackLayout>
+                </components:UiCard>
+                <Label Text="{Binding Budget.GlobalBudgetText}" IsVisible="{Binding Budget.HasGlobalBudget}"
+                       Style="{StaticResource UiBody}" FontSize="13" />
+
+                <!-- Un poste par carte : stock, voyage, frais de port, publicité, autres -->
+                <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Lines}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:PeriodBudgetLine">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.EditLineCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="6">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding label}" Style="{StaticResource UiTitle}" FontSize="16" />
+                                        <Label Grid.Column="1" Text="{Binding StatusText}" FontFamily="InterSemiBold" FontSize="13" TextColor="{Binding StatusColor}" />
+                                    </Grid>
+                                    <ProgressBar Progress="{Binding Progress}" ProgressColor="{Binding StatusColor}" IsVisible="{Binding HasPlanned}" />
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding ActualText}" FontFamily="InterBold" FontSize="15" TextColor="{StaticResource UiTextPrimary}" />
+                                        <Label Grid.Column="1" Text="{Binding PlannedText}" Style="{StaticResource UiBody}" FontSize="14" />
+                                    </Grid>
+                                    <Label Text="{Binding RemainingText}" IsVisible="{Binding HasPlanned}" Style="{StaticResource UiBody}" FontSize="13" />
+                                    <Label Text="{Binding DetailsText}" IsVisible="{Binding HasDetails}" Style="{StaticResource UiBody}" FontSize="12" />
+                                </VerticalStackLayout>
+                            </components:UiCard>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Button Text="Reprendre le prévu de l'an dernier"
+                        IsVisible="{Binding CanEdit}"
+                        Command="{Binding CopyLastYearCommand}"
+                        BackgroundColor="{DynamicResource ThemePrimaryTint}"
+                        TextColor="{DynamicResource ThemePrimary}"
+                        FontFamily="InterSemiBold" FontSize="15" CornerRadius="12" MinimumHeightRequest="48" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>
