@@ -47,7 +47,7 @@
                 <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
                     <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
                                               Placeholder="Prix"
-                                              Text="{Binding FraisDePortForm.Prix, Mode=TwoWay}" />
+                                              Text="{Binding FraisDePortForm.Prix, Mode=OneWayToSource, Converter={StaticResource DecimalInput}}" />
                 </Border>
             </VerticalStackLayout>
             <VerticalStackLayout Spacing="6">

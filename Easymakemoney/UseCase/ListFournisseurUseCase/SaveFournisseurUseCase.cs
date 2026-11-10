@@ -19,6 +19,7 @@ namespace Easymakemoney.UseCase.ListFournisseurUseCase
                 ville = FourniseursForm.Ville,
                 pays = FourniseursForm.Pays,
                 tel = FourniseursForm.Tel,
+                currency = FourniseursForm.CurrencyCode,
                 typeFournisseur = FourniseursForm.SelectedTypeFournisseur.id,
             };
 

@@ -5,15 +5,15 @@ namespace Easymakemoney.ViewModels.Lists
 	{
 		private readonly ListNewCommandViewModel _commandViewModel;
 		private readonly SaveCommandUseCase _saveCommandUseCase;
-		private readonly CommandFormModel _commandFormModel;
+		private readonly IServiceProvider _services;
 		private readonly Easymakemoney.Services.Dialog.IDialogService _dialogService;
 
 		public AllListsViewModel(ListNewCommandViewModel commandViewModel, SaveCommandUseCase saveCommandUseCase,
-			CommandFormModel commandFormModel, Easymakemoney.Services.Dialog.IDialogService dialogService)
+			IServiceProvider services, Easymakemoney.Services.Dialog.IDialogService dialogService)
 		{
 			_commandViewModel = commandViewModel;
 			_saveCommandUseCase = saveCommandUseCase;
-			_commandFormModel = commandFormModel;
+			_services = services;
 			_dialogService = dialogService;
         }
 
@@ -26,7 +26,8 @@ namespace Easymakemoney.ViewModels.Lists
                 commandViewModel: _commandViewModel,
                 isCommandForm: true,
                 saveCommandUseCase: _saveCommandUseCase,
-                commandFormModel: _commandFormModel,
+                // Formulaire neuf : la liste des fournisseurs est relue, et rien ne reste de la saisie précédente.
+                commandFormModel: Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<CommandFormModel>(_services),
                 dialogService: _dialogService);
 
             var popup = new BottomSheetPopup(viewModel);

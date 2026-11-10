@@ -75,6 +75,15 @@
                 </Border>
             </VerticalStackLayout>
             <VerticalStackLayout Spacing="6">
+                <Label Text="Devise d'achat" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <Picker Style="{StaticResource FormPicker}"
+                            Title="Choisir une devise"
+                            ItemsSource="{Binding FournisseurForm.CurrencyChoices}"
+                            SelectedItem="{Binding FournisseurForm.SelectedCurrency}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6">
                 <Label Text="Type de fournisseur" Style="{StaticResource FormLabel}" />
                 <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
                     <Picker Style="{StaticResource FormPicker}"

@@ -46,7 +46,7 @@
                     <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
                                               Placeholder="Budget"
                                               Keyboard="Numeric"
-                                              Text="{Binding CollectionForm.BudgetCollection, Mode=TwoWay}" />
+                                              Text="{Binding CollectionForm.BudgetCollection, Mode=OneWayToSource, Converter={StaticResource DecimalInput}}" />
                 </Border>
             </VerticalStackLayout>
             <VerticalStackLayout Spacing="6">

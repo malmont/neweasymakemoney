@@ -49,7 +49,7 @@
                                 <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
                                     <Label Text="{Binding CommandeName}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
                                     <Label Text="{Binding DetailText}" Style="{StaticResource UiBody}" LineBreakMode="TailTruncation" />
-                                    <Label Text="{Binding Price, Converter={StaticResource CurrencyConverter}}"
+                                    <Label Text="{Binding PriceText}"
                                            IsVisible="{Binding HasFrais}"
                                            FontFamily="InterBold"
                                            FontSize="15"

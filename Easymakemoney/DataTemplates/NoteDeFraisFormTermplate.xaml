@@ -46,7 +46,7 @@
                     <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
                                               Placeholder="Montant"
                                               Keyboard="Numeric"
-                                              Text="{Binding NoteDeFraisForm.Montant, Mode=TwoWay}" />
+                                              Text="{Binding NoteDeFraisForm.Montant, Mode=OneWayToSource, Converter={StaticResource DecimalInput}}" />
                 </Border>
             </VerticalStackLayout>
             <VerticalStackLayout Spacing="6">

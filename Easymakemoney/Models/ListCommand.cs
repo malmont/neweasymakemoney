@@ -10,6 +10,17 @@ namespace Easymakemoney.Models
         public int collectionId { get; set; }
         public ListFournisseur? fournisseur { get; set; }
 
+        /// <summary>Devise de la commande ; son budget et ses frais de port sont dans cette devise.</summary>
+        [Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string? currency { get; set; }
+
+        [Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public double? exchangeRate { get; set; }
+
+        public string BudgetText => budget.HasValue
+            ? Utilities.SiteCurrency.FormatCents(budget.Value, System.Globalization.CultureInfo.CurrentCulture, currency)
+            : string.Empty;
+
         // Implémentation de l'interface IListItem
         public int Id => id;
         public string Name => name;

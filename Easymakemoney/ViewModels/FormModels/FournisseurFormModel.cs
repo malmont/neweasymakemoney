@@ -2,6 +2,20 @@ namespace Easymakemoney.ViewModels.FormModels
 {
     public class FournisseurFormModel : ObservableObject
     {
+        private const string SiteCurrencyChoice = "Devise du site";
+
+        public IReadOnlyList<string> CurrencyChoices { get; } = new[] { SiteCurrencyChoice, "CAD", "EUR", "USD" };
+
+        private string _selectedCurrency = SiteCurrencyChoice;
+        public string SelectedCurrency
+        {
+            get => _selectedCurrency;
+            set { _selectedCurrency = value; OnPropertyChanged(nameof(SelectedCurrency)); }
+        }
+
+        /// <summary>Code à envoyer ; null pour la devise du site.</summary>
+        public string? CurrencyCode => SelectedCurrency == SiteCurrencyChoice ? null : SelectedCurrency;
+
         private string _name;
         public string Name
         {

@@ -49,12 +49,12 @@
                 </Border>
             </VerticalStackLayout>
             <VerticalStackLayout Spacing="6">
-                <Label Text="Budget" Style="{StaticResource FormLabel}" />
+                <Label Text="{Binding CommandForm.BudgetLabel}" Style="{StaticResource FormLabel}" />
                 <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
                     <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
                                               Placeholder="Budget"
                                               Keyboard="Numeric"
-                                              Text="{Binding CommandForm.Budget, Mode=TwoWay}" />
+                                              Text="{Binding CommandForm.Budget, Mode=OneWayToSource, Converter={StaticResource DecimalInput}}" />
                 </Border>
             </VerticalStackLayout>
             <VerticalStackLayout Spacing="6">
@@ -73,6 +73,15 @@
                             ItemsSource="{Binding CommandForm.Fournisseurs}"
                             SelectedItem="{Binding CommandForm.SelectedFournisseurs}"
                             ItemDisplayBinding="{Binding name}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout Spacing="6" IsVisible="{Binding CommandForm.NeedsExchangeRate}">
+                <Label Text="{Binding CommandForm.ExchangeRateLabel}" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}"
+                                              Placeholder="Par exemple 1,36"
+                                              Keyboard="Numeric"
+                                              Text="{Binding CommandForm.ExchangeRate, Mode=OneWayToSource, Converter={StaticResource DecimalInput}}" />
                 </Border>
             </VerticalStackLayout>
         </VerticalStackLayout>

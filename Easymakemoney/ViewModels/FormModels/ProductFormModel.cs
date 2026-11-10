@@ -28,8 +28,8 @@ namespace Easymakemoney.ViewModels.FormModels
             set { _purchasePrice = value; OnPropertyChanged(nameof(PurchasePrice)); }
         }
 
-        private int _coefficientMultiplier;
-        public int CoefficientMultiplier
+        private double? _coefficientMultiplier;
+        public double? CoefficientMultiplier
         {
             get => _coefficientMultiplier;
             set { _coefficientMultiplier = value; OnPropertyChanged(nameof(CoefficientMultiplier)); }

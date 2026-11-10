@@ -21,7 +21,8 @@ public class SaveCommandUseCase
             name = commandForm.Name,
             photo = commandForm.Photo,
             collectionId =  CollectionId,
-            fournisseur = commandForm.SelectedFournisseurs
+            fournisseur = commandForm.SelectedFournisseurs,
+            exchangeRate = commandForm.NeedsExchangeRate ? commandForm.ExchangeRate : null
         };
 
         var result = await _createCommandUseCase.ExecuteAsync(newCommand, CollectionId);

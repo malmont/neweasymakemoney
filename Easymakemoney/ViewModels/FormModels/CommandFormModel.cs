@@ -36,8 +36,34 @@ namespace Easymakemoney.ViewModels.FormModels
         public ListFournisseur SelectedFournisseurs
         {
             get => _selectedFournisseurs;
-            set { _selectedFournisseurs = value; OnPropertyChanged(nameof(SelectedFournisseurs)); }
+            set
+            {
+                _selectedFournisseurs = value;
+                OnPropertyChanged(nameof(SelectedFournisseurs));
+                OnPropertyChanged(nameof(NeedsExchangeRate));
+                OnPropertyChanged(nameof(BudgetLabel));
+                OnPropertyChanged(nameof(ExchangeRateLabel));
+            }
         }
+
+        private double? _exchangeRate;
+        public double? ExchangeRate
+        {
+            get => _exchangeRate;
+            set { _exchangeRate = value; OnPropertyChanged(nameof(ExchangeRate)); }
+        }
+
+        private string? PurchaseCurrency => SelectedFournisseurs?.purchaseCurrency;
+
+        /// <summary>Un fournisseur dans une autre devise que le site demande un taux.</summary>
+        public bool NeedsExchangeRate => !string.IsNullOrEmpty(PurchaseCurrency)
+            && !string.Equals(PurchaseCurrency, Utilities.SiteCurrency.CurrentCurrency, StringComparison.OrdinalIgnoreCase);
+
+        public string BudgetLabel => NeedsExchangeRate ? $"Budget ({PurchaseCurrency})" : "Budget";
+
+        public string ExchangeRateLabel => NeedsExchangeRate
+            ? $"Taux : 1 {PurchaseCurrency} en {Utilities.SiteCurrency.CurrentCurrency ?? "devise du site"}"
+            : string.Empty;
 
         private readonly GetListFournisseursUseCase _getListFournisseursUseCase;
 

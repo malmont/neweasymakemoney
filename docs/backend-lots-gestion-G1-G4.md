@@ -152,4 +152,4 @@ Tous les montants deviennent des **entiers en centimes**, en entrée et en sorti
 - **Export CSV :** montants convertis, colonnes « Devise d'achat » et « Taux » ajoutées en fin.
 - **Rattachement :** en devise étrangère, `purchasePrice` est obligatoire sur chaque ligne (422, code `PURCHASE_PRICE_REQUIRED`, chemin `products[i].purchasePrice`).
 
-**Côté application :** rien d'obligatoire tant qu'aucun fournisseur n'a de devise. À adapter : champ devise du fournisseur, taux à la création d'une commande, affichage dans la devise de la commande.
+**Adapté dans l'application le 10/11/2026 :** devise d'achat à la création d'un fournisseur, taux demandé à la création d'une commande dans une autre devise, budget et frais de port affichés dans la devise de la commande. Essai sur demo avec un fournisseur en USD, puis données d'essai supprimées.

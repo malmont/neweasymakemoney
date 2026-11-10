@@ -60,7 +60,7 @@
                                                                           CommandParameter="{Binding .}" />
                                                 </Label.GestureRecognizers>
                                             </Label>
-                                            <Label Text="{Binding budget, Converter={StaticResource CurrencyConverter}}" FontFamily="InterSemiBold" FontSize="14"
+                                            <Label Text="{Binding BudgetText}" FontFamily="InterSemiBold" FontSize="14"
                                                    TextColor="{DynamicResource ThemePrimary}" LineBreakMode="TailTruncation" VerticalOptions="Center" />
                                         </HorizontalStackLayout>
                                     </VerticalStackLayout>

@@ -18,7 +18,9 @@ namespace Easymakemoney.Models
 
         public bool CanDeleteFrais => Frais != null && !PeriodClosed;
 
-        public long? Price => Frais?.price;
+        public string PriceText => Frais?.price is long price
+            ? Utilities.SiteCurrency.FormatCents(price, System.Globalization.CultureInfo.CurrentCulture, Commande.currency)
+            : string.Empty;
 
         public string Image => Frais?.image ?? Commande.Photo;
 
