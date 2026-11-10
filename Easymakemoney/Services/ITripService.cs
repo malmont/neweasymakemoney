@@ -8,6 +8,9 @@ namespace Easymakemoney.Services
         Task<Trip> CreateAsync(TripRequest request);
         Task<Trip> UpdateAsync(int tripId, TripRequest request);
         Task DeleteAsync(int tripId);
+
+        /// <summary>Choix du gérant : rattache (ou détache avec null) des notes de frais ; il n'est plus déplacé par la date.</summary>
+        Task AttachNotesAsync(int? tripId, IEnumerable<int> noteIds);
     }
 
     public class TripService : ITripService
@@ -32,5 +35,8 @@ namespace Easymakemoney.Services
         public Task<Trip> UpdateAsync(int tripId, TripRequest request) => _httpService.PatchAsyncWithAuth<Trip>($"gestion/voyages/{tripId}", request);
 
         public async Task DeleteAsync(int tripId) => await _httpService.DeleAsyncWithAuth<object>($"gestion/voyages/{tripId}");
+
+        public async Task AttachNotesAsync(int? tripId, IEnumerable<int> noteIds) =>
+            await _httpService.PostAsyncWithAuth<object>("gestion/voyages/rattacher", new { tripId, noteIds = noteIds.ToList() });
     }
 }

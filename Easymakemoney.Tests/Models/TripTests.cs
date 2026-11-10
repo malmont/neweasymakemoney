@@ -65,3 +65,28 @@ public class TripTests
         Assert.Equal("Ces dates chevauchent un autre voyage.", ApiError.GetFallbackMessage("TRIP_OVERLAP", System.Net.HttpStatusCode.Conflict, null));
     }
 }
+
+public class NoteDeFraisTripTests
+{
+    [Fact]
+    public void TripId_IsReadButNeverSentBack()
+    {
+        var note = JsonConvert.DeserializeObject<NoteDeFrais>("""{ "id": 5, "name": "Hôtel", "montant": 12000, "date": "2026-11-10", "tripId": 3 }""")!;
+
+        Assert.True(note.HasTrip);
+        var json = JsonConvert.SerializeObject(note);
+        Assert.DoesNotContain("tripId", json);
+        Assert.DoesNotContain("HasTrip", json);
+    }
+
+    [Fact]
+    public async Task AttachNotes_UsesDedicatedRoute()
+    {
+        var fakeHttp = new FakeHttpService();
+        await new TripService(fakeHttp).AttachNotesAsync(null, new[] { 5 });
+
+        var (url, body) = Assert.Single(fakeHttp.PostedAuthData);
+        Assert.Equal("gestion/voyages/rattacher", url);
+        Assert.Equal("{\"tripId\":null,\"noteIds\":[5]}", JsonConvert.SerializeObject(body));
+    }
+}

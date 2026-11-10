@@ -25,8 +25,10 @@ namespace Easymakemoney.ViewModels.Lists
           SaveNoteDeFraisUseCase saveNoteDeFraisUseCase, NoteDeFraisForModel noteDeFraisForModel, SaveCollectionUseCase saveCollectionUseCase,
           ListNewCollectionViewModel listNewCollectionViewModel, CollectionFormModel collectionFormModel,
           Easymakemoney.UseCase.PeriodResultUseCase.PeriodUseCase periodUseCase,
-          IDialogService dialogService)
+          IDialogService dialogService,
+          ITripService tripService)
         {
+            _tripService = tripService;
             _periodUseCase = periodUseCase;
             _collectionFormModel = collectionFormModel;
             _listNewCollectionViewModel = listNewCollectionViewModel;
@@ -137,6 +139,58 @@ namespace Easymakemoney.ViewModels.Lists
             {
                 IsBusy = false;
             }
+        }
+
+        private readonly ITripService _tripService;
+
+        /// <summary>
+        /// Rattache la note à un voyage d'achat, ou la détache. Choix du gérant : la note n'est plus déplacée par sa date.
+        /// </summary>
+        [RelayCommand]
+        private async Task ChooseTrip(NoteDeFrais? note)
+        {
+            if (note == null || !CanEdit || IsBusy || Shell.Current is not { } shell)
+                return;
+
+            List<Trip> trips;
+            try
+            {
+                trips = await _tripService.GetTripsAsync(1, 20);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
+                return;
+            }
+
+            const string none = "Aucun voyage";
+            var labels = trips.Select(trip => $"{trip.Title} ({trip.DatesText})").ToList();
+            if (note.HasTrip)
+                labels.Add(none);
+            if (labels.Count == 0)
+            {
+                await _dialogService.ShowInfoAsync("Aucun voyage d'achat. Créez-en un dans Gestion › Voyages d'achat.");
+                return;
+            }
+
+            var choice = await shell.DisplayActionSheetAsync("Voyage de cette note", "Annuler", null, labels.ToArray());
+            if (choice == null || choice == "Annuler")
+                return;
+
+            int? tripId = choice == none ? null : trips[labels.IndexOf(choice)].id;
+            try
+            {
+                await _tripService.AttachNotesAsync(tripId, new[] { note.id });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
+                return;
+            }
+
+            await GetListNoteDeFraisAsync();
         }
 
         private async Task DeleteNoteDeFrais(NoteDeFrais? noteDeFrais)
