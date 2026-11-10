@@ -126,5 +126,32 @@ public class SiteCurrencyTests : IDisposable
         var resNull = converter.Convert(null!, typeof(string), null!, cultureFr);
         Assert.Equal(string.Empty, resNull);
     }
+
+    [Theory]
+    [InlineData("CAD", "$")]
+    [InlineData("EUR", "€")]
+    [InlineData("USD", "$")]
+    public void GetCurrencySymbol_KnownCurrency_ContainsExpectedSymbol(string code, string expectedSubstring)
+    {
+        var symbol = SiteCurrency.GetCurrencySymbol(code);
+        Assert.Contains(expectedSubstring, symbol);
+    }
+
+    [Fact]
+    public void GetCurrencySymbol_UnknownIsoCode_ReturnsIsoCode()
+    {
+        var symbol = SiteCurrency.GetCurrencySymbol("XYZ");
+        Assert.Equal("XYZ", symbol);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData(null)]
+    public void GetCurrencySymbol_NullOrEmpty_ReturnsEmptyString(string? code)
+    {
+        var symbol = SiteCurrency.GetCurrencySymbol(code!);
+        Assert.Equal(string.Empty, symbol);
+    }
 }
 

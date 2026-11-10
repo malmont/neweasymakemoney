@@ -4,6 +4,7 @@ using Easymakemoney.Services.Site;
 using Easymakemoney.Services.Auth;
 using Easymakemoney.Services.Session;
 using Easymakemoney.Services.Dialog;
+using Easymakemoney.Services.Device;
 
 namespace Easymakemoney;
 
@@ -62,6 +63,7 @@ public static class MauiProgram
 		builder.Services.AddHttpClient<ISiteService, SiteService>(ConfigureBackendHttpClient)
 			.AddHttpMessageHandler<TenantHandler>();
 
+		builder.Services.AddSingleton<IDeviceInfoService, MauiDeviceInfoService>();
 		builder.Services.AddSingleton<ITenantStore, TenantStore>();
 		builder.Services.AddSingleton<Easymakemoney.Services.Theme.ISiteBrandingService, Easymakemoney.Services.Theme.SiteBrandingService>();
 		builder.Services.AddSingleton<ISiteDataCleaner, SiteDataCleaner>();

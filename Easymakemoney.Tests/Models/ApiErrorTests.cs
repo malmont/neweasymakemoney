@@ -182,5 +182,42 @@ public class ApiErrorTests
         Assert.Equal("FOURNISSEUR_NOT_FOUND", error.Code);
         Assert.Equal("Le fournisseur sélectionné n'existe plus.", error.Message);
     }
+
+    [Theory]
+    [InlineData("PERIOD_CLOSED", HttpStatusCode.Conflict, "Cette période est clôturée : plus rien ne peut y être ajouté.")]
+    [InlineData("PERIOD_NOT_DELETABLE", HttpStatusCode.Conflict, "Une période ne peut pas être supprimée.")]
+    [InlineData("NOT_CLOSED", HttpStatusCode.Conflict, "Cette période est déjà ouverte.")]
+    public void FromHttpResponse_PeriodFallbackCodes_ReturnsExplicitFrenchMessageWithoutRawCode(string code, HttpStatusCode status, string expectedMessage)
+    {
+        var json = $"{{\"error\":\"{code}\"}}";
+
+        var error = ApiError.FromHttpResponse(json, status, null);
+
+        Assert.Equal(code, error.Code);
+        Assert.Equal(expectedMessage, error.Message);
+        Assert.DoesNotContain(code, error.Message);
+    }
+
+    [Fact]
+    public void FromHttpResponse_OutsidePeriodFieldValidation_TranslatesToFriendlyMessage()
+    {
+        var json = """
+        {
+            "error": "VALIDATION_FAILED",
+            "message": "Erreur de validation",
+            "fields": {
+                "date": "OUTSIDE_PERIOD"
+            }
+        }
+        """;
+
+        var error = ApiError.FromHttpResponse(json, HttpStatusCode.UnprocessableEntity, null);
+
+        Assert.Equal("VALIDATION_FAILED", error.Code);
+        Assert.Single(error.Errors);
+        Assert.Equal("Date", error.Errors[0].Path);
+        Assert.Equal("La date doit être comprise dans cette période.", error.Errors[0].Message);
+        Assert.DoesNotContain("OUTSIDE_PERIOD", error.Errors[0].Message);
+    }
 }
 
