@@ -95,6 +95,13 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
         [RelayCommand]
+        private async Task NavigateToToReceive()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(ToReceivePage));
+        }
+
+        [RelayCommand]
         private async Task NavigateToPriceBatches()
         {
             if (Shell.Current is { } shell)

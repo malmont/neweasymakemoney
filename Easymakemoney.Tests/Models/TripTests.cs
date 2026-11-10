@@ -90,3 +90,28 @@ public class NoteDeFraisTripTests
         Assert.Equal("{\"tripId\":null,\"noteIds\":[5]}", JsonConvert.SerializeObject(body));
     }
 }
+
+public class CommandeTripTests
+{
+    [Fact]
+    public void CommandeTripId_IsReadButNeverSentBack()
+    {
+        var commande = JsonConvert.DeserializeObject<ListCommand>("""{ "id": 4, "name": "Réassort", "photo": "", "date": "2026-11-10", "tripId": 2 }""")!;
+
+        Assert.True(commande.HasTrip);
+        var json = JsonConvert.SerializeObject(commande);
+        Assert.DoesNotContain("tripId", json);
+        Assert.DoesNotContain("HasTrip", json);
+    }
+
+    [Fact]
+    public async Task AttachCommandes_UsesDedicatedRoute()
+    {
+        var fakeHttp = new FakeHttpService();
+        await new TripService(fakeHttp).AttachCommandesAsync(2, new[] { 4 });
+
+        var (url, body) = Assert.Single(fakeHttp.PostedAuthData);
+        Assert.Equal("gestion/voyages/rattacher", url);
+        Assert.Equal("{\"tripId\":2,\"commandeIds\":[4]}", JsonConvert.SerializeObject(body));
+    }
+}

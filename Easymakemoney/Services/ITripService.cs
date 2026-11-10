@@ -11,6 +11,9 @@ namespace Easymakemoney.Services
 
         /// <summary>Choix du gérant : rattache (ou détache avec null) des notes de frais ; il n'est plus déplacé par la date.</summary>
         Task AttachNotesAsync(int? tripId, IEnumerable<int> noteIds);
+
+        /// <summary>Même choix pour des commandes fournisseurs (achats faits pendant le voyage).</summary>
+        Task AttachCommandesAsync(int? tripId, IEnumerable<int> commandeIds);
     }
 
     public class TripService : ITripService
@@ -38,5 +41,8 @@ namespace Easymakemoney.Services
 
         public async Task AttachNotesAsync(int? tripId, IEnumerable<int> noteIds) =>
             await _httpService.PostAsyncWithAuth<object>("gestion/voyages/rattacher", new { tripId, noteIds = noteIds.ToList() });
+
+        public async Task AttachCommandesAsync(int? tripId, IEnumerable<int> commandeIds) =>
+            await _httpService.PostAsyncWithAuth<object>("gestion/voyages/rattacher", new { tripId, commandeIds = commandeIds.ToList() });
     }
 }

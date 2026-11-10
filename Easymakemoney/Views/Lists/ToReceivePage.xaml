@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             x:DataType="list:ToReceiveViewModel"
+             x:Class="Easymakemoney.Views.Lists.ToReceivePage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="À recevoir">
+
+    <Grid RowDefinitions="Auto,Auto,*">
+        <components:AppHeader Title="Marchandise à recevoir" />
+
+        <Label Grid.Row="1" Padding="16,12,16,0" Style="{StaticResource UiBody}" FontSize="13"
+               Text="Les articles commandés qui ne sont pas encore arrivés. Une fois reçus, ils entrent dans le stock." />
+
+        <VerticalStackLayout Grid.Row="2" IsVisible="{Binding IsEmpty}" VerticalOptions="Center" Spacing="8" Padding="24,0">
+            <Label Text="Tout est reçu" FontFamily="InterBold" FontSize="20" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="Center" />
+            <Label Text="Aucune marchandise en attente pour le moment." Style="{StaticResource UiBody}" FontSize="15" HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Groups}" SelectionMode="None" Margin="16,12,16,0">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:ToReceiveGroup">
+                    <components:UiCard Style="{StaticResource UiCard}" Padding="14" Margin="0,0,0,12">
+                        <VerticalStackLayout Spacing="8">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding Name}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation">
+                                    <Label.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenCommandeCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Label.GestureRecognizers>
+                                </Label>
+                                <Label Text="{Binding DateText}" Style="{StaticResource UiBody}" FontSize="12" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding .}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:ToReceiveLine">
+                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                            <VerticalStackLayout Spacing="1">
+                                                <Label Text="{Binding Title}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" LineBreakMode="TailTruncation" />
+                                                <Label Text="{Binding VariantText}" IsVisible="{Binding HasVariant}" Style="{StaticResource UiBody}" FontSize="12" />
+                                            </VerticalStackLayout>
+                                            <Label Grid.Column="1" Text="{Binding QuantityText}" Style="{StaticResource UiBody}" FontSize="12" VerticalOptions="Center" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+                            <Button Text="Tout recevoir" Command="{Binding Path=BindingContext.ReceiveAllCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                    CommandParameter="{Binding .}"
+                                    BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}"
+                                    FontFamily="InterBold" FontSize="15" CornerRadius="12" HeightRequest="44" />
+                        </VerticalStackLayout>
+                    </components:UiCard>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

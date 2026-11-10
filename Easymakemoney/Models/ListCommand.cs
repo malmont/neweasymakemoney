@@ -17,6 +17,18 @@ namespace Easymakemoney.Models
         [Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public double? exchangeRate { get; set; }
 
+        /// <summary>
+        /// Voyage d'achat de la commande (lecture seule, lot backend B1a). Jamais renvoyé à l'enregistrement :
+        /// le rattachement passe par la route dédiée voyages/rattacher.
+        /// </summary>
+        public int? tripId { get; set; }
+
+        public bool ShouldSerializetripId() => false;
+
+        public bool HasTrip => tripId.HasValue;
+
+        public bool ShouldSerializeHasTrip() => false;
+
         public string BudgetText => budget.HasValue
             ? Utilities.SiteCurrency.FormatCents(budget.Value, System.Globalization.CultureInfo.CurrentCulture, currency)
             : string.Empty;

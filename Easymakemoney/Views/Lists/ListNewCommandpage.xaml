@@ -37,6 +37,9 @@
                     <SwipeView Margin="0,0,0,10">
                         <SwipeView.RightItems>
                             <SwipeItems Mode="Reveal">
+                                <SwipeItem Text="Voyage" BackgroundColor="#334155" IsVisible="{Binding Path=BindingContext.CanEdit, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                           Command="{Binding Path=BindingContext.ChooseTripCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                           CommandParameter="{Binding .}" />
                                 <SwipeItem Text="Prix" BackgroundColor="#475569"
                                            Command="{Binding Path=BindingContext.ChangePricesCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
                                            CommandParameter="{Binding .}" />
@@ -66,6 +69,7 @@
                                             <Label Text="{Binding BudgetText}" FontFamily="InterSemiBold" FontSize="14"
                                                    TextColor="{DynamicResource ThemePrimary}" LineBreakMode="TailTruncation" VerticalOptions="Center" />
                                         </HorizontalStackLayout>
+                                        <Label Text="Rattachée à un voyage d'achat" IsVisible="{Binding HasTrip}" Style="{StaticResource UiBody}" FontSize="12" />
                                     </VerticalStackLayout>
                                 </Grid>
                             </components:UiCard>

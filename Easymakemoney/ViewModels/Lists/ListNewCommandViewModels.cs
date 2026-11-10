@@ -18,8 +18,10 @@ namespace Easymakemoney.ViewModels.Lists
         public ListNewCommandViewModel(GetListCommandUseCase getListCommandUseCase,SaveCommandUseCase saveCommandUseCase,
         DeleteCommandUseCase deleteCommandUseCase,
         CommandFormModel commandFormModel,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        ITripService tripService)
         {
+            _tripService = tripService;
             _saveCommandUseCase = saveCommandUseCase;
             _getListCommandUseCase = getListCommandUseCase;
             _commandFormModel = commandFormModel;
@@ -112,6 +114,59 @@ namespace Easymakemoney.ViewModels.Lists
             // Navigate to the ListNewCommandPage and pass the collection ID
             if (Shell.Current is { } shell)
                 await shell.GoToAsync($"{nameof(ListNewProductPage)}?CommandId={command.id}&Closed={IsClosed}", true);
+        }
+
+        private readonly ITripService _tripService;
+
+        /// <summary>
+        /// Rattache la commande à un voyage d'achat, ou la détache (choix du gérant : elle n'est plus déplacée par sa date).
+        /// Ses achats apparaissent alors à part dans le suivi du voyage.
+        /// </summary>
+        [RelayCommand]
+        private async Task ChooseTrip(ListCommand? command)
+        {
+            if (command == null || !CanEdit || Shell.Current is not { } shell)
+                return;
+
+            List<Trip> trips;
+            try
+            {
+                trips = await _tripService.GetTripsAsync(1, 20);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
+                return;
+            }
+
+            const string none = "Aucun voyage";
+            var labels = trips.Select(trip => $"{trip.Title} ({trip.DatesText})").ToList();
+            if (command.HasTrip)
+                labels.Add(none);
+            if (labels.Count == 0)
+            {
+                await _dialogService.ShowInfoAsync("Aucun voyage d'achat. Créez-en un dans Gestion › Voyages d'achat.");
+                return;
+            }
+
+            var choice = await shell.DisplayActionSheetAsync("Voyage de cette commande", "Annuler", null, labels.ToArray());
+            if (choice == null || choice == "Annuler")
+                return;
+
+            int? tripId = choice == none ? null : trips[labels.IndexOf(choice)].id;
+            try
+            {
+                await _tripService.AttachCommandesAsync(tripId, new[] { command.id });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
+                return;
+            }
+
+            await GetListCommandAsync();
         }
 
         /// <summary>
