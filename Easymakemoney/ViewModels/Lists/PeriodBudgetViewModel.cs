@@ -61,7 +61,7 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private async Task EditLine(PeriodBudgetLine? line)
         {
-            var page = Application.Current?.MainPage;
+            var page = Application.Current?.Windows.FirstOrDefault()?.Page;
             if (line?.category == null || page == null || !CanEdit || IsBusy)
                 return;
 
