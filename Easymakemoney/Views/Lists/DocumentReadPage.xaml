@@ -11,6 +11,12 @@
 
     <ContentPage.Resources>
         <!-- Mêmes styles que les formulaires existants (DataTemplates/*FormTemplate.xaml) -->
+        <Style x:Key="FormDate" TargetType="handlers:BorderlessDatePicker">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
         <Style x:Key="FormLabel" TargetType="Label">
             <Setter Property="FontFamily" Value="InterMedium" />
             <Setter Property="FontSize" Value="14" />
@@ -110,7 +116,7 @@
 
                     <Label Text="Date du document" Style="{StaticResource FormLabel}" />
                     <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
-                        <DatePicker Date="{Binding Date}" Format="dd/MM/yyyy" />
+                        <handlers:BorderlessDatePicker Style="{StaticResource FormDate}" Date="{Binding Date}" Format="dd/MM/yyyy" />
                     </Border>
 
                     <VerticalStackLayout IsVisible="{Binding IsNote}" Spacing="12">
