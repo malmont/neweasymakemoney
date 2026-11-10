@@ -80,3 +80,16 @@ Trois types de documents, lus par l'IA, jamais créés sans validation :
 **Lecture en arrière-plan :** le téléphone envoie le document, puis récupère le résultat, pour tenir sur un réseau faible. Facture datée dans une période clôturée : « enregistrer dans la période en cours » ou « rouvrir ». Les tailles et couleurs d'un même modèle forment un seul article avec ses variantes.
 
 Ordre des lots backend : L1 lecture des documents, A1 publicité, B1 budgets et simulateur, G1 guide IA, chacun avec son contrat avant le code.
+
+## Lignes d'achat et réception (avis de la session backend de la caisse, retenu le 10/11/2026)
+
+**Constat :** un article n'appartient qu'à une commande fournisseur, avec un seul coût. Un réassort du même article à un autre prix est impossible, et la lecture de factures buterait dessus. Par ailleurs, les achats n'alimentent pas le stock de la caisse et de la boutique.
+
+**Nouvel ordre backend :** L0 lignes d'achat, fin de L1 (confirmation d'une facture), R1 réception, puis A1 publicité, B1 budgets et simulateur, G1 guide IA. Le reste de L1 ne dépend pas de ce changement.
+
+- **L0 :** une ligne par achat (commande, article, variante facultative, quantité commandée et reçue, coût). Coût d'une vente proposé : moyenne pondérée glissante à la date de la vente.
+- **R1 :** réception explicite, jamais automatique à la confirmation d'une facture, qui crée les mouvements de stock par variante.
+
+**À confirmer par le propriétaire :** variante facultative sur la ligne ; réception non obligatoire pour figer une période ; sort de `product.quantity`.
+
+**Plus tard :** carte « Gestion » dans le back-office, guide d'écran illustré.
