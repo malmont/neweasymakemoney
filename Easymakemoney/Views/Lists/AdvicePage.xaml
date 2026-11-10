@@ -74,6 +74,30 @@
                     </BindableLayout.ItemTemplate>
                 </VerticalStackLayout>
 
+                <!-- Conseils appliqués et leur effet mesuré sur 14 jours -->
+                <Label Text="Conseils appliqués" FontFamily="InterBold" FontSize="17" TextColor="{StaticResource UiTextPrimary}"
+                       IsVisible="{Binding HasDone}" Margin="0,8,0,0" />
+                <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding DoneAdvices}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:Advice">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="{Binding AppliedText}" FontFamily="InterSemiBold" FontSize="12" TextColor="{DynamicResource ThemePrimary}" />
+                                    <Label Text="{Binding title}" Style="{StaticResource UiTitle}" FontSize="15" />
+                                    <Label Text="{Binding MeasurementText}" Style="{StaticResource UiBody}" FontSize="14">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding HasMeasuredGain}" Value="True">
+                                                <Setter Property="FontFamily" Value="InterBold" />
+                                                <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </VerticalStackLayout>
+                            </components:UiCard>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
                 <Label Text="{Binding List.AiText}" IsVisible="{Binding HasList}" Style="{StaticResource UiBody}" FontSize="12" />
                 <Button Text="{Binding List.RefreshText}" IsVisible="{Binding HasList}" IsEnabled="{Binding List.CanRefresh}"
                         Command="{Binding RefreshCommand}" BackgroundColor="Transparent" TextColor="{DynamicResource ThemePrimary}"

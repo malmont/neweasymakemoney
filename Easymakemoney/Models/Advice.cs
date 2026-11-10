@@ -75,8 +75,43 @@ namespace Easymakemoney.Models
         public string? status { get; set; }
         public int rank { get; set; }
 
+        /// <summary>Ce que le gérant a appliqué (G1b-1) et sa date.</summary>
+        public JToken? applied { get; set; }
+        public string? appliedOn { get; set; }
+
+        /// <summary>Mesure après application, nulle si le conseil n'est pas fait ou pas mesurable.</summary>
+        public AdviceMeasurement? measurement { get; set; }
+
         [JsonIgnore]
         public string? Currency { get; set; }
+
+        /// <summary>Faux : le conseil n'est plus détecté (il reste dans l'historique).</summary>
+        public bool active { get; set; } = true;
+
+        public bool IsNew => status == "new" && active;
+        public bool IsDone => status == "done";
+
+        public string AppliedText => appliedOn != null ? $"Appliqué le {TreasuryDates.Short(appliedOn[..Math.Min(10, appliedOn.Length)])}" : "Appliqué";
+
+        public string MeasurementText => measurement?.text is { Length: > 0 } text
+            ? text
+            : measurement == null ? "Pas de mesure chiffrée pour ce conseil." : "Mesure en cours…";
+
+        public bool HasMeasuredGain => measurement?.complete == true;
+
+        /// <summary>
+        /// Ce que le gérant peut préciser au « C'est fait » : hausse de prix ou promotion, préremplie avec le pourcentage conseillé.
+        /// Nul : le conseil n'a pas de pourcentage à préciser.
+        /// </summary>
+        public string? AppliedPercentField => kind switch
+        {
+            "FAST_SELLER" => "pricePercent",
+            "SLOW_STOCK" or "END_CLEARANCE" => "promotionPercent",
+            _ => null,
+        };
+
+        public double? SuggestedPercent =>
+            sources.FirstOrDefault(source => source.unit == "percent" && source.value?.Type is JTokenType.Integer or JTokenType.Float)?.value?.Value<double>();
 
         public string MomentText => MomentLabel(moment);
 
@@ -131,6 +166,19 @@ namespace Easymakemoney.Models
 
         [JsonProperty("params")]
         public JToken? @params { get; set; }
+    }
+
+    public class AdviceMeasurement
+    {
+        public bool complete { get; set; }
+        public AdviceChange? change { get; set; }
+        public string? text { get; set; }
+    }
+
+    public class AdviceChange
+    {
+        public long? grossMargin { get; set; }
+        public long? revenue { get; set; }
     }
 
     public class AdviceEffect

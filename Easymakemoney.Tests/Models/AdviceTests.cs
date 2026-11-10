@@ -93,7 +93,7 @@ public class AdviceTests
         await service.DismissAsync(4);
         await service.RefreshAsync(8);
 
-        Assert.Equal("gestion/conseils?status=new&locale=fr", Assert.Single(fakeHttp.RequestedUrls));
+        Assert.Equal("gestion/conseils?status=all&locale=fr", Assert.Single(fakeHttp.RequestedUrls));
         Assert.Equal(new[] { "gestion/conseils/3/fait", "gestion/conseils/4/ecarter", "gestion/conseils/actualiser" },
             fakeHttp.PostedAuthData.Select(post => post.Url));
         Assert.Equal("{\"periodId\":8}", JsonConvert.SerializeObject(fakeHttp.PostedAuthData[2].Data));
@@ -105,5 +105,46 @@ public class AdviceTests
         Assert.Equal("{\"percent\":20.0,\"scope\":\"products\",\"productIds\":[15]}",
             JsonConvert.SerializeObject(new SimulationPromotion { percent = 20, scope = "products", productIds = new List<int> { 15 } }));
         Assert.Equal("{\"percent\":10.0,\"scope\":\"all\"}", JsonConvert.SerializeObject(new SimulationPromotion { percent = 10 }));
+    }
+}
+
+public class AdviceMeasurementTests
+{
+    [Fact]
+    public void DoneAdvice_ShowsMeasurement_AndPercentFieldDependsOnKind()
+    {
+        var advice = JsonConvert.DeserializeObject<Advice>("""
+        { "id": 2, "kind": "FAST_SELLER", "status": "done", "active": true, "appliedOn": "2026-11-12",
+          "applied": { "pricePercent": 5 },
+          "sources": [ { "label": "Hausse proposée", "value": 5, "unit": "percent" } ],
+          "measurement": { "complete": true, "change": { "grossMargin": 3500, "revenue": 9000 },
+                           "text": "Hausse de 5 % appliquée le 12 novembre : marge +35,00 $ en 14 jours (estimé : +3,00 $)." } }
+        """)!;
+
+        Assert.True(advice.IsDone);
+        Assert.False(advice.IsNew);
+        Assert.Equal("Appliqué le 12/11/2026", advice.AppliedText);
+        Assert.StartsWith("Hausse de 5 %", advice.MeasurementText);
+        Assert.True(advice.HasMeasuredGain);
+        Assert.Equal("pricePercent", advice.AppliedPercentField);
+        Assert.Equal(5, advice.SuggestedPercent);
+
+        Assert.Equal("promotionPercent", new Advice { kind = "SLOW_STOCK" }.AppliedPercentField);
+        Assert.Null(new Advice { kind = "CASH_TIGHT" }.AppliedPercentField);
+        Assert.Equal("Pas de mesure chiffrée pour ce conseil.", new Advice { status = "done" }.MeasurementText);
+        Assert.False(new Advice { status = "new", active = false }.IsNew);
+    }
+
+    [Fact]
+    public async Task Done_SendsAppliedOnlyWhenGiven()
+    {
+        var fakeHttp = new FakeHttpService();
+        var service = new AdviceService(fakeHttp);
+
+        await service.DoneAsync(2, applied: new Dictionary<string, object> { ["promotionPercent"] = 20.0 });
+        await service.DoneAsync(3);
+
+        Assert.Equal("{\"applied\":{\"promotionPercent\":20.0}}", JsonConvert.SerializeObject(fakeHttp.PostedAuthData[0].Data));
+        Assert.Equal("{}", JsonConvert.SerializeObject(fakeHttp.PostedAuthData[1].Data));
     }
 }

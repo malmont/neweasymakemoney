@@ -33,8 +33,14 @@ namespace Easymakemoney.ViewModels.Lists
 
         public ObservableCollection<Advice> Advices { get; } = new();
 
+        /// <summary>Conseils appliqués, avec leur mesure (« marge +35,00 $ en 14 jours »).</summary>
+        public ObservableCollection<Advice> DoneAdvices { get; } = new();
+
         [ObservableProperty]
         private bool _isEmpty;
+
+        [ObservableProperty]
+        private bool _hasDone;
 
         public async Task LoadAsync()
         {
@@ -48,11 +54,19 @@ namespace Easymakemoney.ViewModels.Lists
                 List = list;
                 Advices.Clear();
                 var ordered = list.advices
+                    .Where(advice => advice.IsNew)
                     .OrderByDescending(advice => advice.id == FocusAdviceId)
                     .ThenBy(advice => advice.rank);
                 foreach (var advice in ordered)
                     Advices.Add(advice);
                 IsEmpty = Advices.Count == 0;
+
+                DoneAdvices.Clear();
+                foreach (var advice in list.advices.Where(advice => advice.IsDone)
+                             .OrderByDescending(advice => advice.id == FocusAdviceId)
+                             .ThenByDescending(advice => advice.appliedOn))
+                    DoneAdvices.Add(advice);
+                HasDone = DoneAdvices.Count > 0;
 
                 if (list.generating)
                     SchedulePoll();
@@ -100,14 +114,45 @@ namespace Easymakemoney.ViewModels.Lists
             if (advice == null)
                 return;
 
-            var confirmed = await _dialogService.ConfirmAsync(
-                "Conseil appliqué",
-                "Marquer ce conseil comme fait ? Il ne reviendra plus pour cette période.",
-                "C'est fait", "Annuler");
-            if (!confirmed)
-                return;
+            // Hausse de prix ou promotion : le gérant précise le pourcentage réellement appliqué, pour que l'effet soit mesuré.
+            Dictionary<string, object>? applied = null;
+            if (advice.AppliedPercentField is { } field && Application.Current?.Windows.FirstOrDefault()?.Page is { } page)
+            {
+                var question = field == "pricePercent" ? "Hausse de prix appliquée (en %)" : "Promotion appliquée (en %)";
+                var initial = advice.SuggestedPercent is { } suggested ? suggested.ToString("0.##") : string.Empty;
+                var text = await page.DisplayPromptAsync(
+                    "Conseil appliqué",
+                    $"{question}. Le guide mesurera l'effet sur 14 jours à partir d'aujourd'hui.",
+                    "C'est fait", "Annuler", initialValue: initial, keyboard: Keyboard.Numeric);
+                if (text == null)
+                    return;
 
-            await CloseAsync(advice, () => _adviceService.DoneAsync(advice.id));
+                if (Converters.DecimalInputConverter.Parse(text) is { } percent && percent != 0)
+                    applied = new Dictionary<string, object> { [field] = percent };
+            }
+            else
+            {
+                var confirmed = await _dialogService.ConfirmAsync(
+                    "Conseil appliqué",
+                    "Marquer ce conseil comme fait ? Il ne reviendra plus pour cette période.",
+                    "C'est fait", "Annuler");
+                if (!confirmed)
+                    return;
+            }
+
+            try
+            {
+                await _adviceService.DoneAsync(advice.id, applied: applied);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
+                return;
+            }
+
+            // Recharge : le conseil passe dans « Conseils appliqués », où sa mesure apparaîtra.
+            await LoadAsync();
         }
 
         [RelayCommand]

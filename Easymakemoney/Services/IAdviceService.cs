@@ -3,7 +3,8 @@ namespace Easymakemoney.Services
     public interface IAdviceService
     {
         Task<AdviceList> GetAsync(int? periodId = null);
-        Task DoneAsync(int adviceId, string? note = null);
+        /// <param name="applied">Ce qui a été appliqué (pricePercent ou promotionPercent…), nul : repli du backend sur le conseil.</param>
+        Task DoneAsync(int adviceId, string? note = null, IDictionary<string, object>? applied = null);
         Task DismissAsync(int adviceId);
         Task RefreshAsync(int? periodId = null);
     }
@@ -23,14 +24,17 @@ namespace Easymakemoney.Services
         public async Task<AdviceList> GetAsync(int? periodId = null)
         {
             var period = periodId is > 0 ? $"periodId={periodId}&" : string.Empty;
-            return (await _httpService.GetAsync<AdviceList>($"gestion/conseils?{period}status=new&locale={Locale}")).WithCurrency();
+            // status=all : les conseils faits reviennent avec leur mesure ; les écartés sont filtrés par l'écran.
+            return (await _httpService.GetAsync<AdviceList>($"gestion/conseils?{period}status=all&locale={Locale}")).WithCurrency();
         }
 
-        public async Task DoneAsync(int adviceId, string? note = null)
+        public async Task DoneAsync(int adviceId, string? note = null, IDictionary<string, object>? applied = null)
         {
             var body = new Dictionary<string, object>();
             if (!string.IsNullOrWhiteSpace(note))
                 body["note"] = note.Trim();
+            if (applied is { Count: > 0 })
+                body["applied"] = applied;
             await _httpService.PostAsyncWithAuth<object>($"gestion/conseils/{adviceId}/fait", body);
         }
 

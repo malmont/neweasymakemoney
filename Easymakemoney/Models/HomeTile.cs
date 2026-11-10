@@ -25,7 +25,10 @@ namespace Easymakemoney.Models
 
         public string SourcesText => sources == null || sources.Count == 0
             ? string.Empty
-            : string.Join(" · ", sources.Select(source => $"{source.label} : {source.Format(null)}"));
+            : string.Join(" · ", sources.Select(source => $"{source.label} : {source.Format(currency)}"));
+
+        /// <summary>Devise du site pour les montants de la vignette ; absente : celle déjà connue de l'application.</summary>
+        public string? currency { get; set; }
 
         public bool HasSources => SourcesText.Length > 0;
 
