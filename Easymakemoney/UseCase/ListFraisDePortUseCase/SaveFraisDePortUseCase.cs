@@ -1,3 +1,5 @@
+using Easymakemoney.Utilities;
+
 namespace Easymakemoney.UseCase.ListFraisDePortUseCase
 {
     public class SaveFraisDePortUseCase
@@ -18,7 +20,7 @@ namespace Easymakemoney.UseCase.ListFraisDePortUseCase
                 tracknumber = FraisDePortForm.Tracknumber,
                 image = FraisDePortForm.Image,
                 transporteur= FraisDePortForm.SelectedTransporteur,
-                price = (long)Math.Round((FraisDePortForm.Prix ?? 0) * 100),
+                price = MoneyHelper.ToCents(FraisDePortForm.Prix),
             };
             return await _createFraisDePortUseCase.ExecuteAsync(newFraisDePort, commandId);
         }

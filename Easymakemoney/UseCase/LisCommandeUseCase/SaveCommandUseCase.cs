@@ -1,3 +1,5 @@
+using Easymakemoney.Utilities;
+
 namespace Easymakemoney.UseCase.LisCommandeUseCase
 {
 public class SaveCommandUseCase
@@ -14,7 +16,7 @@ public class SaveCommandUseCase
     {
         var newCommand = new ListCommand
         {
-            budget = (long)Math.Round((commandForm.Budget ?? 0) * 100),
+            budget = MoneyHelper.ToCents(commandForm.Budget),
             date = commandForm.Date.ToString("yyyy-MM-ddTHH:mm:ssZ"),
             name = commandForm.Name,
             photo = commandForm.Photo,

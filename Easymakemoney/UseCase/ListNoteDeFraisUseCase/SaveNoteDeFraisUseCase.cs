@@ -1,4 +1,5 @@
 using Easymakemoney.UseCase.ListNoteDeFraisUseCase;
+using Easymakemoney.Utilities;
 
 namespace Easymakemoney.UseCase.ListNoteDeFraisUseCase
 {
@@ -18,7 +19,7 @@ namespace Easymakemoney.UseCase.ListNoteDeFraisUseCase
             name = NoteDeFraisForm.Name,
             date = NoteDeFraisForm.Date.ToString("yyyy-MM-ddTHH:mm:ssZ"),
             description = NoteDeFraisForm.Description,
-            montant = (long)Math.Round((NoteDeFraisForm.Montant ?? 0) * 100),
+            montant = MoneyHelper.ToCents(NoteDeFraisForm.Montant),
             typeNoteDeFraisId = NoteDeFraisForm.SelectedTypeNoteDeFrais.id,
      
         };
