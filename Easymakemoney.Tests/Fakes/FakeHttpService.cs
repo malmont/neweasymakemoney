@@ -6,6 +6,7 @@ namespace Easymakemoney.Tests.Fakes;
 public class FakeHttpService : IHttpService
 {
     public List<(string Url, object Data)> PostedAuthData { get; } = new();
+    public List<(string Url, IDictionary<string, string> Fields, string FileField, IEnumerable<Easymakemoney.Services.Api.UploadFile> Files)> PostedFilesData { get; } = new();
     public List<(string Url, object Data)> PostedWithoutAuthData { get; } = new();
     public List<string> RequestedUrls { get; } = new();
     public List<string> DeletedUrls { get; } = new();
@@ -20,6 +21,7 @@ public class FakeHttpService : IHttpService
 
     public Task<T> PostFilesAsync<T>(string url, IDictionary<string, string> fields, string fileField, IEnumerable<Easymakemoney.Services.Api.UploadFile> files)
     {
+        PostedFilesData.Add((url, fields, fileField, files));
         PostedAuthData.Add((url, fields));
         return Task.FromResult((T)(ResultToReturn ?? default(T)!));
     }

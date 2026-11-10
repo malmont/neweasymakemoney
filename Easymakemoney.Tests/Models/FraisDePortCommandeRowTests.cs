@@ -1,16 +1,34 @@
+using System.Globalization;
 using Easymakemoney.Models;
+using Easymakemoney.Utilities;
 using Xunit;
 
 namespace Easymakemoney.Tests.Models;
 
-public class FraisDePortCommandeRowTests
+[Collection("SiteCurrency")]
+public class FraisDePortCommandeRowTests : IDisposable
 {
-    private static ListCommand MakeCommand(string name = "Commande Test") => new()
+    private readonly CultureInfo _originalCulture;
+
+    public FraisDePortCommandeRowTests()
+    {
+        _originalCulture = CultureInfo.CurrentCulture;
+        SiteCurrency.Reset();
+    }
+
+    public void Dispose()
+    {
+        SiteCurrency.Reset();
+        CultureInfo.CurrentCulture = _originalCulture;
+    }
+
+    private static ListCommand MakeCommand(string name = "Commande Test", string? currency = null) => new()
     {
         name = name,
         date = "2026-10-15T00:00:00Z",
         photo = "photo.png",
         collectionId = 1,
+        currency = currency,
         fournisseur = new ListFournisseur { name = "Fournisseur A" }
     };
 
@@ -96,5 +114,55 @@ public class FraisDePortCommandeRowTests
         };
 
         Assert.Equal("Livraison directe", row.DetailText);
+    }
+
+    [Fact]
+    public void PriceText_WhenFraisNull_ReturnsEmpty()
+    {
+        var row = new FraisDePortCommandeRow
+        {
+            Commande = MakeCommand(),
+            Frais = null
+        };
+
+        Assert.Equal(string.Empty, row.PriceText);
+    }
+
+    [Fact]
+    public void PriceText_WhenCommandeCurrencySpecified_FormatsInCommandCurrencyNotSiteCurrency()
+    {
+        SiteCurrency.SetCurrency("EUR");
+        CultureInfo.CurrentCulture = new CultureInfo("fr-FR");
+
+        var row = new FraisDePortCommandeRow
+        {
+            Commande = MakeCommand(currency: "USD"),
+            Frais = new FraisDePort { name = "Express", image = "img.png", price = 2500 }
+        };
+
+        var text = row.PriceText;
+        Assert.False(string.IsNullOrWhiteSpace(text));
+        Assert.True(text.Contains("$") || text.Contains("US$"));
+        Assert.DoesNotContain("€", text);
+        Assert.Contains("25", text);
+    }
+
+    [Fact]
+    public void PriceText_WhenCommandeCurrencyNull_FallsBackToSiteCurrency()
+    {
+        SiteCurrency.SetCurrency("EUR");
+        CultureInfo.CurrentCulture = new CultureInfo("fr-FR");
+
+        var row = new FraisDePortCommandeRow
+        {
+            Commande = MakeCommand(currency: null),
+            Frais = new FraisDePort { name = "Express", image = "img.png", price = 2500 }
+        };
+
+        var text = row.PriceText;
+        Assert.False(string.IsNullOrWhiteSpace(text));
+        Assert.Contains("€", text);
+        Assert.DoesNotContain("$", text);
+        Assert.Contains("25", text);
     }
 }
