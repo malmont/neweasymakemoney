@@ -67,6 +67,9 @@ namespace Easymakemoney.ViewModels.Dashboard
                 case "periode.budget" when int.TryParse(tile.Param("periodId"), out var periodId):
                     await shell.GoToAsync($"{nameof(PeriodBudgetPage)}?PeriodId={periodId}");
                     break;
+                case "voyages.suivi" when int.TryParse(tile.Param("tripId"), out var tripId):
+                    await shell.GoToAsync($"{nameof(TripFollowUpPage)}?TripId={tripId}");
+                    break;
                 case "tresorerie":
                     await shell.GoToAsync(nameof(TreasuryPage));
                     break;

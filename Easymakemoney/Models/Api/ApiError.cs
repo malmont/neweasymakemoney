@@ -177,6 +177,11 @@ public class ApiError
             "INVALID_DATE" => "La date est invalide.",
             "INVALID_ID" => "L'identifiant est invalide.",
             "OUTSIDE_PERIOD" => "La date doit être comprise dans cette période.",
+            "BEFORE_START" => "La date de fin doit suivre la date de début.",
+            "MUST_BE_POSITIVE" => "Le montant doit être supérieur à zéro.",
+            "EXCHANGE_RATE_REQUIRED" => "Saisissez le taux de change.",
+            "INVALID_CURRENCY" => "Devise inconnue.",
+            "DATE_IN_FUTURE" => "La date ne peut pas être dans le futur.",
             _ => !string.IsNullOrWhiteSpace(errorCode) ? errorCode : "Valeur invalide."
         };
     }
@@ -196,6 +201,10 @@ public class ApiError
             "PERIOD_CLOSED" => "Cette période est clôturée : plus rien ne peut y être ajouté.",
             "PERIOD_NOT_DELETABLE" => "Une période ne peut pas être supprimée.",
             "NOT_CLOSED" => "Cette période est déjà ouverte.",
+            "TRIP_OVERLAP" => "Ces dates chevauchent un autre voyage.",
+            "TRIP_NOT_FOUND" => "Ce voyage n'existe plus.",
+            "BUDGET_SOURCE_NOT_FOUND" => "Aucun budget à reprendre pour la même période l'an dernier.",
+            "BALANCE_DATE_TAKEN" => "Un solde est déjà saisi à cette date.",
             _ => (int)statusCode switch
             {
                 429 => $"Trop de tentatives. Veuillez patienter {retryAfterSeconds ?? 60} secondes.",

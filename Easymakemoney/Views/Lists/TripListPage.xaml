@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             x:DataType="list:TripListViewModel"
+             x:Class="Easymakemoney.Views.Lists.TripListPage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Voyages d'achat">
+
+    <Grid RowDefinitions="Auto,Auto,*">
+        <components:AppHeader Title="Voyages d'achat" />
+
+        <VerticalStackLayout Grid.Row="1" Padding="16,12,16,0" Spacing="8">
+            <Button Text="Nouveau voyage" Command="{Binding NewTripCommand}" HeightRequest="52" CornerRadius="14"
+                    FontFamily="InterBold" FontSize="16" BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" />
+            <Label Text="Les notes de frais et les commandes datées pendant un voyage y sont rattachées toutes seules."
+                   Style="{StaticResource UiBody}" FontSize="13" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Row="2" IsVisible="{Binding IsEmpty}" VerticalOptions="Center" Spacing="10" Padding="24,0">
+            <Label Text="Aucun voyage" FontFamily="InterBold" FontSize="20" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="Center" />
+            <Label Text="Créez un voyage avec ses dates et son budget pour suivre vos dépenses jour par jour."
+                   Style="{StaticResource UiBody}" FontSize="15" HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Trips}" SelectionMode="None" Margin="16,12,16,0">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Trip">
+                    <components:UiCard Style="{StaticResource UiCard}" Padding="14" Margin="0,0,0,10">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                  CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <components:UiThumb Icon="M2 16l20-8-6 12-3-5-5-2zM13 15l-2 5" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                                <Label Text="{Binding Title}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding DatesText}" Style="{StaticResource UiBody}" FontSize="13" />
+                                <Label Text="{Binding BudgetText}" FontFamily="InterSemiBold" FontSize="13" TextColor="{DynamicResource ThemePrimary}" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </components:UiCard>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

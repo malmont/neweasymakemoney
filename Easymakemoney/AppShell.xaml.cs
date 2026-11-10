@@ -30,6 +30,9 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute("TreasuryPage", typeof(TreasuryPage));
 		Routing.RegisterRoute("TreasuryMovementPage", typeof(TreasuryMovementPage));
 		Routing.RegisterRoute("PeriodSimulationPage", typeof(PeriodSimulationPage));
+		Routing.RegisterRoute("TripListPage", typeof(TripListPage));
+		Routing.RegisterRoute("TripFormPage", typeof(TripFormPage));
+		Routing.RegisterRoute("TripFollowUpPage", typeof(TripFollowUpPage));
 		Routing.RegisterRoute("LoginPage", typeof(LoginPage));
         Routing.RegisterRoute("AllListsPage", typeof(AllListsPage));
         Routing.RegisterRoute("ListNewCollectionPage", typeof(ListNewCollectionPage));

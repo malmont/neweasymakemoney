@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             x:DataType="list:TripFormViewModel"
+             x:Class="Easymakemoney.Views.Lists.TripFormPage"
+             Style="{StaticResource UiPage}"
+             Title="Voyage">
+
+    <ContentPage.Resources>
+        <!-- Styles de formulaire : ils ne sont pas globaux -->
+        <Style x:Key="FormDate" TargetType="handlers:BorderlessDatePicker">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="FormLabel" TargetType="Label">
+            <Setter Property="FontFamily" Value="InterMedium" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextSecondary}" />
+        </Style>
+        <Style x:Key="FormField" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="MinimumHeightRequest" Value="48" />
+            <Setter Property="Padding" Value="12,0" />
+        </Style>
+        <Style x:Key="FormEntry" TargetType="handlers:BorderlessEntry">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="PlaceholderColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="FormPicker" TargetType="Picker">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="TitleColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="{Binding PageTitle}" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" />
+
+                <Label Text="Nom du voyage" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Ex. : Salon du prêt-à-porter" Text="{Binding Name}" />
+                </Border>
+
+                <Label Text="Lieu (facultatif)" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Ex. : Paris" Text="{Binding Place}" />
+                </Border>
+
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12" RowDefinitions="Auto,Auto" RowSpacing="8">
+                    <Label Text="Départ" Style="{StaticResource FormLabel}" />
+                    <Label Grid.Column="1" Text="Retour" Style="{StaticResource FormLabel}" />
+                    <Border Grid.Row="1" Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessDatePicker Style="{StaticResource FormDate}" Date="{Binding StartDate}" Format="dd/MM/yyyy" />
+                    </Border>
+                    <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessDatePicker Style="{StaticResource FormDate}" Date="{Binding EndDate}" MinimumDate="{Binding StartDate}" Format="dd/MM/yyyy" />
+                    </Border>
+                </Grid>
+                <Label Text="{Binding DaysText}" Style="{StaticResource UiBody}" FontSize="13" />
+
+                <Label Text="Devise du budget" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <Picker Style="{StaticResource FormPicker}" Title="Choisir une devise" ItemsSource="{Binding CurrencyChoices}" SelectedItem="{Binding SelectedCurrency}" />
+                </Border>
+                <VerticalStackLayout IsVisible="{Binding NeedsExchangeRate}" Spacing="8">
+                    <Label Text="{Binding ExchangeRateLabel}" Style="{StaticResource FormLabel}" />
+                    <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Ex. : 1,48" Keyboard="Numeric" Text="{Binding ExchangeRateText}" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <Label Text="{Binding BudgetLabel}" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="0,00" Keyboard="Numeric" Text="{Binding BudgetTotalText}" />
+                </Border>
+                <Label Text="Le budget couvre les frais du voyage : déplacement, hôtel, repas. Les achats de marchandises restent dans le budget « Stock » de la période."
+                       Style="{StaticResource UiBody}" FontSize="12" />
+
+                <Label Text="Budget par jour (facultatif)" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Calculé : budget total ÷ nombre de jours" Keyboard="Numeric" Text="{Binding BudgetDailyText}" />
+                </Border>
+
+                <Label Text="Notes (facultatif)" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Fournisseurs à voir, objectifs…" Text="{Binding Notes}" />
+                </Border>
+
+                <Button Text="Enregistrer le voyage" Command="{Binding SaveCommand}" Margin="0,8,0,16"
+                        HeightRequest="52" CornerRadius="14" FontFamily="InterBold" FontSize="16"
+                        BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

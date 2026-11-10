@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             x:DataType="list:TripFollowUpViewModel"
+             x:Class="Easymakemoney.Views.Lists.TripFollowUpPage"
+             Style="{StaticResource UiPage}"
+             Title="Suivi du voyage">
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Suivi du voyage" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" />
+
+                <VerticalStackLayout Spacing="2" IsVisible="{Binding HasFollowUp}">
+                    <Label Text="{Binding Trip.Title}" Style="{StaticResource UiTitle}" FontSize="18" />
+                    <Label Text="{Binding Trip.DatesText}" Style="{StaticResource UiBody}" FontSize="13" />
+                </VerticalStackLayout>
+
+                <components:UiCard Style="{StaticResource UiCard}" Padding="16" IsVisible="{Binding HasFollowUp}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="{Binding FollowUp.StatusText}" FontFamily="InterBold" FontSize="17" TextColor="{Binding FollowUp.StatusColor}" />
+                        <ProgressBar Progress="{Binding FollowUp.Progress}" ProgressColor="{Binding FollowUp.StatusColor}" />
+                        <Label Text="{Binding FollowUp.SpentText}" FontFamily="InterBold" FontSize="15" TextColor="{StaticResource UiTextPrimary}" />
+                        <Label Text="{Binding FollowUp.RemainingText}" Style="{StaticResource UiBody}" FontSize="14" />
+                        <Label Text="{Binding FollowUp.AllowanceText}" Style="{StaticResource UiBody}" FontSize="13" />
+                        <Label Text="{Binding FollowUp.TodayText}" IsVisible="{Binding FollowUp.HasToday}" Style="{StaticResource UiBody}" FontSize="13" />
+                        <Label Text="{Binding FollowUp.AverageText}" Style="{StaticResource UiBody}" FontSize="13" />
+                        <Label Text="{Binding FollowUp.PurchasesText}" Style="{StaticResource UiBody}" FontSize="13" />
+                        <Label Text="{Binding FollowUp.ScopeText}" Style="{StaticResource UiBody}" FontSize="12" />
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <Label Text="Dépenses jour par jour" FontFamily="InterBold" FontSize="17" TextColor="{StaticResource UiTextPrimary}" IsVisible="{Binding HasFollowUp}" />
+                <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Days}">
+                    <BindableLayout.EmptyView>
+                        <Label Text="Aucune dépense rattachée pour l'instant." Style="{StaticResource UiBody}" FontSize="13" />
+                    </BindableLayout.EmptyView>
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:TripDay">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="12">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="{Binding DateText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                        <Label Text="{Binding DetailText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="1" Text="{Binding SpentText}" FontFamily="InterBold" FontSize="15" VerticalOptions="Center"
+                                           TextColor="{StaticResource UiTextPrimary}">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding IsOver}" Value="True">
+                                                <Setter Property="TextColor" Value="#B91C1C" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </Grid>
+                            </components:UiCard>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Button Text="Modifier le voyage" Command="{Binding EditCommand}" IsVisible="{Binding HasFollowUp}"
+                        BackgroundColor="{DynamicResource ThemePrimaryTint}" TextColor="{DynamicResource ThemePrimary}"
+                        FontFamily="InterBold" FontSize="15" CornerRadius="12" HeightRequest="48" />
+                <Button Text="Supprimer le voyage" Command="{Binding DeleteCommand}" IsVisible="{Binding HasFollowUp}"
+                        BackgroundColor="Transparent" TextColor="#B91C1C" FontFamily="InterSemiBold" FontSize="14" Margin="0,0,0,16" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>
