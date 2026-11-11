@@ -75,4 +75,56 @@ public class PreparationTests
         Assert.Equal("gestion/preparation/valider", url);
         Assert.Equal("hash", Assert.IsType<Dictionary<string, object>>(data)["previewHash"]);
     }
+
+    [Fact]
+    public async Task PreparationService_SimulateAsync_SendsPostToContractRoute()
+    {
+        var fakeHttp = new FakeHttpService { ResultToReturn = new PreparationSimulation() };
+        var service = new PreparationService(fakeHttp);
+        var request = new PreparationRequest { Date = "2026-12-01", SalesAmount = 400000 };
+
+        await service.SimulateAsync(request);
+
+        var (url, data) = Assert.Single(fakeHttp.PostedAuthData);
+        Assert.Equal("gestion/preparation/simulation", url);
+        var body = Assert.IsType<Dictionary<string, object>>(data);
+        Assert.Equal("2026-12-01", body["date"]);
+    }
+
+    [Fact]
+    public async Task PreparationService_AdviseAsync_CallsRouteWithLocaleFr_AndPreparesAdvice()
+    {
+        var candidate1 = new PreparationCandidate { key = "c1", label = "Option 1" };
+        var candidate2 = new PreparationCandidate { key = "c2", label = "Option 2" };
+        var adviceReturn = new PreparationAdvice
+        {
+            simulation = new PreparationSimulation { currency = "EUR" },
+            candidates = new List<PreparationCandidate> { candidate1, candidate2 },
+            comment = new SimulationCommentText { recommended = "c2" }
+        };
+
+        var fakeHttp = new FakeHttpService { ResultToReturn = adviceReturn };
+        var service = new PreparationService(fakeHttp);
+        var request = new PreparationRequest { Date = "2026-12-01" };
+
+        var result = await service.AdviseAsync(request);
+
+        var (url, _) = Assert.Single(fakeHttp.PostedAuthData);
+        Assert.Equal("gestion/preparation/avis?locale=fr", url);
+        Assert.NotNull(result);
+        Assert.False(result.candidates[0].IsRecommended);
+        Assert.Equal("EUR", result.candidates[0].Currency);
+        Assert.True(result.candidates[1].IsRecommended);
+        Assert.Equal("EUR", result.candidates[1].Currency);
+    }
+
+    [Fact]
+    public void Cents_ToleratesInvalidTextAndMalformedTokens()
+    {
+        Assert.Null(PreparationValues.Cents(JToken.Parse("\"1500\"")));
+        Assert.Null(PreparationValues.Cents(new JValue("invalid")));
+        Assert.Null(PreparationValues.Cents(JToken.Parse("""{ "amount": "invalid" }""")));
+        Assert.Null(PreparationValues.Cents(JToken.Parse("[ 1, 2, 3 ]")));
+        Assert.Null(PreparationValues.Cents(new JValue(true)));
+    }
 }

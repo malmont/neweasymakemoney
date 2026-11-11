@@ -129,4 +129,51 @@ public class TreasuryTests
         Assert.Equal("{\"includeEstimatedSales\":true}", JsonConvert.SerializeObject(settingsBody));
         Assert.Equal("gestion/tresorerie/mouvements/3", Assert.Single(fakeHttp.DeletedUrls));
     }
+
+    [Fact]
+    public async Task Service_ReadAndQueryRoutes_MatchContract()
+    {
+        var fakeHttp = new FakeHttpService
+        {
+            ResultToReturn = new TreasuryOverview()
+        };
+        var service = new TreasuryService(fakeHttp);
+
+        await service.GetOverviewAsync(30);
+        await service.GetOverviewAsync();
+
+        fakeHttp.ResultToReturn = new List<TreasuryBalance>();
+        await service.GetBalancesAsync(5);
+        await service.GetBalancesAsync();
+
+        await service.DeleteBalanceAsync(42);
+
+        fakeHttp.ResultToReturn = new List<TreasuryMovement>();
+        await service.GetMovementsAsync();
+
+        Assert.Contains("gestion/tresorerie?days=30&locale=fr", fakeHttp.RequestedUrls);
+        Assert.Contains("gestion/tresorerie?days=90&locale=fr", fakeHttp.RequestedUrls);
+        Assert.Contains("gestion/tresorerie/soldes?limit=5", fakeHttp.RequestedUrls);
+        Assert.Contains("gestion/tresorerie/soldes?limit=10", fakeHttp.RequestedUrls);
+        Assert.Contains("gestion/tresorerie/soldes/42", fakeHttp.DeletedUrls);
+        Assert.Contains("gestion/tresorerie/mouvements?locale=fr", fakeHttp.RequestedUrls);
+    }
+
+    [Fact]
+    public void Overview_WithNullSeries_DoesNotThrowAndReturnsFallbacks()
+    {
+        var overview = JsonConvert.DeserializeObject<TreasuryOverview>(
+            """{ "currency": "CAD", "settings": { "threshold": 10000, "includeEstimatedSales": false }, "balance": null, "projection": null, "projectionWithSales": null, "alertSeries": null, "status": "no_balance", "byCategory": [], "caveats": [] }""")!;
+
+        Assert.Null(overview.AlertSeries);
+        Assert.Equal("—", overview.Low14Text);
+        Assert.Equal("—", overview.LowText);
+        Assert.Equal("—", overview.EndText);
+        Assert.False(overview.HasBelowThreshold);
+        Assert.Equal(string.Empty, overview.BelowThresholdText);
+
+        var upcoming = overview.UpcomingDays(DateTime.Today);
+        Assert.NotNull(upcoming);
+        Assert.Empty(upcoming);
+    }
 }

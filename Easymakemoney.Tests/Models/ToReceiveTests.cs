@@ -1,3 +1,5 @@
+using System.Net;
+using System.Text;
 using Easymakemoney.Models;
 using Easymakemoney.Services;
 using Easymakemoney.Tests.Fakes;
@@ -43,5 +45,26 @@ public class ToReceiveTests
         await new ToReceiveService(fakeHttp).GetLinesAsync();
 
         Assert.Equal("commandes/lignes/a-recevoir?page=1&limit=200", Assert.Single(fakeHttp.RequestedUrls));
+    }
+
+    [Fact]
+    public async Task ToReceiveService_EmptyApiResponse_ReturnsEmptyListAndBuildsEmptyGroups()
+    {
+        var handler = new TestHttpMessageHandler(_ => new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent("[]", Encoding.UTF8, "application/json")
+        });
+        var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
+        var httpService = new HttpService(client);
+        var service = new ToReceiveService(httpService);
+
+        var lines = await service.GetLinesAsync();
+
+        Assert.NotNull(lines);
+        Assert.Empty(lines);
+
+        var groups = ToReceiveGroup.Build(lines);
+        Assert.NotNull(groups);
+        Assert.Empty(groups);
     }
 }
