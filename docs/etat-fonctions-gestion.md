@@ -80,6 +80,8 @@ propriétaire qui en fixent les règles. Les contrats détaillés sont dans les 
   **après MOD**. Choix : adresse de réception fournie par la plateforme (le commerçant y redirige sa boîte) ; module payant à part dont
   l'IA consomme les unités mensuelles du site ; délai de réponse affiché réglable par site (48 h ouvrées par défaut) ; demandes conservées
   3 ans puis anonymisées (Loi 25, RGPD). Onglet « Assistance » dans l'appli de gestion mobile et web (module `/admin/support`).
+  **Rôle « Assistance »** (décision du 11/11) : un compte de support n'accède qu'au module Assistance (demandes, commandes et ventes liées,
+  actions de support confirmées) ; il ne voit ni la gestion, ni les prix, ni la trésorerie, ni les réglages du site.
 - **Promotion par variante** (11/11/2026) : feu vert pour cadrer la règle de prix par variante (variantes à prix propre comprises),
   activable par site et activée seulement quand la caisse, la boutique Next et l'application mobile savent l'appliquer. Contrat backend
   d'abord, puis plans des trois fronts.
