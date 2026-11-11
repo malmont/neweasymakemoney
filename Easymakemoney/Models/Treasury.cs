@@ -204,6 +204,9 @@ namespace Easymakemoney.Models
 
         public string RecurrenceText => TreasuryChoices.RecurrenceLabel(recurrence);
 
+        /// <summary>Montant et équivalent mensuel, pour l'écran Frais fixes.</summary>
+        public string FixedCostText => FixedCosts.MonthlyText(this);
+
         public string ScheduleText
         {
             get

@@ -213,6 +213,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<PromotionCreatePage>();
 		builder.Services.AddTransient<PromotionListPage>();
 		builder.Services.AddTransient<PreparationPage>();
+		builder.Services.AddTransient<FixedCostsPage>();
 		builder.Services.AddTransient<ListNewProductVariantPage>();
 		builder.Services.AddTransient<ListNewNoteDeFraisPage>();
 		builder.Services.AddTransient<ListNewFournisseurPage>();
@@ -263,6 +264,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<PromotionCreateViewModel>();
 		builder.Services.AddTransient<PromotionListViewModel>();
 		builder.Services.AddTransient<PreparationViewModel>();
+		builder.Services.AddTransient<FixedCostsViewModel>();
 		builder.Services.AddTransient<ProductFormModel>();
 		builder.Services.AddTransient<ProductVariantFormModel>();
 		builder.Services.AddTransient<ListNewProductsVariantViewModel>();

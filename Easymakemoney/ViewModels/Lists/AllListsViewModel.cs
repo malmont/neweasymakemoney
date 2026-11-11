@@ -123,6 +123,13 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
         [RelayCommand]
+        private async Task NavigateToFixedCosts()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(FixedCostsPage));
+        }
+
+        [RelayCommand]
         private async Task NavigateToTreasury()
         {
             if (Shell.Current is { } shell)

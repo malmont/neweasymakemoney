@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             x:DataType="list:FixedCostsViewModel"
+             x:Class="Easymakemoney.Views.Lists.FixedCostsPage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Frais fixes">
+
+    <Grid RowDefinitions="Auto,Auto,*">
+        <components:AppHeader Title="Frais fixes" />
+
+        <VerticalStackLayout Grid.Row="1" Padding="16,12,16,0" Spacing="10">
+            <components:UiCard Style="{StaticResource UiCard}" Padding="16">
+                <VerticalStackLayout Spacing="4">
+                    <components:UiTerm Term="frais-fixes" Text="Total des frais fixes par mois" FontSize="14" />
+                    <Label Text="{Binding MonthlyTotalText}" FontFamily="InterBold" FontSize="24" TextColor="{StaticResource UiTextPrimary}" />
+                    <Label Text="Loyer, salaires, assurances, abonnements, électricité… Saisis une fois, ils comptent chaque mois dans la trésorerie."
+                           Style="{StaticResource UiBody}" FontSize="12" />
+                </VerticalStackLayout>
+            </components:UiCard>
+            <Button Text="Ajouter un frais fixe" Command="{Binding AddCommand}" HeightRequest="48" CornerRadius="12"
+                    FontFamily="InterBold" FontSize="15" BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Grid.Row="2" IsVisible="{Binding IsEmpty}" VerticalOptions="Center" Spacing="8" Padding="24,0">
+            <Label Text="Aucun frais fixe" FontFamily="InterBold" FontSize="20" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="Center" />
+            <Label Text="Ajoutez votre loyer, vos salaires, vos assurances… avec leur fréquence (par mois, par trimestre, par an)."
+                   Style="{StaticResource UiBody}" FontSize="15" HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Items}" SelectionMode="None" Margin="16,12,16,0">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:TreasuryMovement">
+                    <SwipeView Margin="0,0,0,10">
+                        <SwipeView.RightItems>
+                            <SwipeItems Mode="Reveal">
+                                <SwipeItem Text="Supprimer" BackgroundColor="#B91C1C"
+                                           Command="{Binding Path=BindingContext.DeleteCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                           CommandParameter="{Binding .}" />
+                            </SwipeItems>
+                        </SwipeView.RightItems>
+                        <Grid BackgroundColor="{StaticResource UiBackground}">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                <VerticalStackLayout Spacing="3">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding label}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
+                                        <Label Grid.Column="1" Text="{Binding categoryLabel}" Style="{StaticResource UiBody}" FontSize="12" VerticalOptions="Center" />
+                                    </Grid>
+                                    <Label Text="{Binding FixedCostText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                    <Label Text="{Binding ScheduleText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                </VerticalStackLayout>
+                            </components:UiCard>
+                        </Grid>
+                    </SwipeView>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
