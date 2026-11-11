@@ -58,8 +58,11 @@ namespace Easymakemoney.Utilities
             ["mesure"] = new("Mesure", "Après un conseil appliqué, le guide compare les 14 jours suivants aux 14 jours précédents pour voir ce qu'il a vraiment rapporté."),
 
             // Statistiques et publicité
-            ["panier-moyen"] = new("Panier moyen", "Le montant moyen d'une commande : ventes ÷ nombre de commandes."),
-            ["valeur-stock"] = new("Valeur du stock", "Le stock en magasin valorisé au prix de vente affiché : quantité × prix de chaque variante."),
+            ["panier-moyen"] = new("Panier moyen", "Le montant moyen d'une vente, hors taxes : ventes ÷ nombre de ventes. Un retour ne fait pas baisser le panier du jour où il arrive."),
+            ["valeur-stock"] = new("Valeur du stock", "Le stock en magasin valorisé au prix de vente affiché : quantité × prix de chaque variante. La comparaison dans le temps vient d'une photo du stock prise chaque jour à 10 h."),
+            ["commandes"] = new("Commandes", "Le nombre de ventes contenant au moins un article, en boutique en ligne, en caisse et dans l'application. Les commandes annulées ou incomplètes ne comptent pas."),
+            ["taux-retour"] = new("Taux de retour", "Le montant des articles retournés ÷ les ventes avant retours. À 5 %, sur 100 $ vendus, 5 $ ont été rendus."),
+            ["evolution"] = new("Évolution", "La variation par rapport à la plage précédente (par exemple le mois dernier, aux mêmes jours) et à la même plage l'an dernier. Pour un taux, l'écart est en points."),
             ["gain-marge"] = new("Gain en marge", "La marge gagnée pendant la campagne par rapport à avant, pour chaque dollar dépensé en publicité. Au-dessus de 1 $, la campagne rapporte plus qu'elle ne coûte."),
             ["occupation"] = new("Taux d'occupation", "Le temps où un article est loué, rapporté au temps où il pourrait l'être. À 80 %, l'article est loué 8 heures sur 10 d'ouverture."),
             ["recurrent"] = new("Revenu mensuel récurrent", "Ce que vos abonnements actifs rapportent chaque mois, ramené au mois quelle que soit leur fréquence."),

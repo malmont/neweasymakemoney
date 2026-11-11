@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             x:DataType="models:StatsCard"
+             x:Class="Easymakemoney.Components.StatsCardView">
+    <components:UiCard Style="{StaticResource UiCard}" Padding="14,12" VerticalOptions="Fill">
+        <VerticalStackLayout Spacing="2">
+            <components:UiTerm Term="{Binding Term}" Text="{Binding Title}" FontSize="13" />
+            <Label Text="{Binding ValueText}" FontFamily="InterBold" FontSize="19" TextColor="{StaticResource UiTextPrimary}" LineBreakMode="TailTruncation" />
+            <components:SparklineView Values="{Binding Spark}" IsVisible="{Binding HasSpark}" Margin="0,4" />
+            <Label Text="{Binding PreviousText}" IsVisible="{Binding HasPreviousText}" TextColor="{Binding PreviousColor}" FontFamily="InterSemiBold" FontSize="11" />
+            <Label Text="{Binding LastYearText}" IsVisible="{Binding HasLastYearText}" TextColor="{Binding LastYearColor}" FontFamily="InterSemiBold" FontSize="11" />
+            <Label Text="{Binding Detail}" IsVisible="{Binding HasDetail}" Style="{StaticResource UiBody}" FontSize="11" />
+        </VerticalStackLayout>
+    </components:UiCard>
+</ContentView>
