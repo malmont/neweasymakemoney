@@ -69,6 +69,15 @@ propriétaire qui en fixent les règles. Les contrats détaillés sont dans les 
   **unités IA mensuelles** du site comme dans les autres modules.
 - Appli de gestion **web** : clone complet de l'application mobile, en plus complet, espace à plusieurs modules (gestion, support boutique,
   autres) ; IA au cœur (console IA, assistant comptable, apprentissage du chef d'entreprise). Vision et lots : `docs/web/appli-web-gestion.md`.
+- **Conformité par pays** (11/11/2026) : la gestion et la comptabilité s'adaptent à la **France, au Canada et aux États-Unis**, tous les
+  trois. Un profil pays par site (pays, province ou État, régime de taxes) pilote les taxes (TVA ; TPS, TVQ, TVH, TVP ; sales tax),
+  le plan de comptes (PCG en France), les exports (FEC en France, formats QuickBooks et Sage ailleurs), les mentions obligatoires et les
+  échéances. Les règles sont des données datées et versionnées, et chaque paquet sera validé par un comptable du pays (que le propriétaire
+  trouvera). Points lourds pour la France : facturation électronique et **certification NF525 de la caisse** (procédure du propriétaire
+  auprès d'un organisme agréé). Lot PAYS : audit de l'existant d'abord.
+- **Promotion par variante** (11/11/2026) : feu vert pour cadrer la règle de prix par variante (variantes à prix propre comprises),
+  activable par site et activée seulement quand la caisse, la boutique Next et l'application mobile savent l'appliquer. Contrat backend
+  d'abord, puis plans des trois fronts.
 - Connexion directe aux banques par un agrégateur : **plus tard**, **depuis l'appli web uniquement** ; elle devra couvrir les banques **canadiennes et américaines**
   (pistes : Plaid pour le Canada et les États-Unis, Flinks pour le Canada, MX ou Finicity pour les États-Unis ; à choisir sur coût,
   couverture des banques des clients, sécurité et consentement). Elle remplacera seulement le fichier importé : même calcul derrière.
