@@ -69,6 +69,8 @@ namespace Easymakemoney.Utilities
             ["taux-retour"] = new("Taux de retour", "Le montant des articles retournés ÷ les ventes avant retours. À 5 %, sur 100 $ vendus, 5 $ ont été rendus."),
             ["evolution"] = new("Évolution", "La variation par rapport à la plage précédente (par exemple le mois dernier, aux mêmes jours) et à la même plage l'an dernier. Pour un taux, l'écart est en points."),
             ["gain-marge"] = new("Gain en marge", "La marge gagnée pendant la campagne par rapport à avant, pour chaque dollar dépensé en publicité. Au-dessus de 1 $, la campagne rapporte plus qu'elle ne coûte."),
+            ["revenu-location"] = new("Revenu des locations", "Ce que les locations ont rapporté, compté à la date de la vente, comme dans le résultat de période. Une réservation annulée mais non remboursée reste comptée : l'argent est gardé."),
+            ["revenu-date-location"] = new("Revenu à la date de location", "Le même revenu, réparti sur les jours où l'article est réellement loué : une location du 30 au 2 compte pour moitié dans chaque mois."),
             ["occupation"] = new("Taux d'occupation", "Le temps où un article est loué, rapporté au temps où il pourrait l'être. À 80 %, l'article est loué 8 heures sur 10 d'ouverture."),
             ["recurrent"] = new("Revenu mensuel récurrent", "Ce que vos abonnements actifs rapportent chaque mois, ramené au mois quelle que soit leur fréquence."),
             ["taux-depart"] = new("Taux de départ", "La part des abonnés qui arrêtent leur abonnement chaque mois."),

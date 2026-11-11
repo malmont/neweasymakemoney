@@ -252,6 +252,13 @@ namespace Easymakemoney.ViewModels.Statistiques
         }
 
         [RelayCommand]
+        private async Task NavigateToRentals()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(RentalStatisticsPage));
+        }
+
+        [RelayCommand]
         private async Task NavigateToStock()
         {
             if (Shell.Current is { } shell)

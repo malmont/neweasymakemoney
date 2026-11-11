@@ -39,6 +39,7 @@
             <VerticalStackLayout Padding="16" Spacing="14">
 
                 <components:UiTile Command="{Binding NavigateToYearCommand}" Icon="M4 20V10M10 20V4M16 20v-7M22 20H2" Title="L'année de l'entreprise" Text="Mois par mois, rentabilité, ce qui manque et les leviers" />
+                <components:UiTile Command="{Binding NavigateToRentalsCommand}" Icon="M4 7h16v13H4zM8 3v4M16 3v4M4 11h16" Title="Locations" Text="Occupation par article et par jour, revenu des locations" />
 
                 <!-- Plage -->
                 <FlexLayout Wrap="Wrap" Direction="Row" Margin="0,0,0,-8" BindableLayout.ItemsSource="{Binding Ranges}">

@@ -50,6 +50,11 @@ namespace Easymakemoney.Utilities
                     await shell.GoToAsync($"{nameof(PeriodBudgetPage)}?PeriodId={Int("periodId")}");
                     return true;
 
+                case "locations":
+                    // Conseils de location (RENT1 à RENT3) : l'écran des statistiques de location.
+                    await shell.GoToAsync(nameof(RentalStatisticsPage));
+                    return true;
+
                 case "tresorerie":
                     await shell.GoToAsync(nameof(TreasuryPage));
                     return true;

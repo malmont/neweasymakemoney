@@ -15,6 +15,16 @@ public class StatsChartView : GraphicsView, IDrawable
     public static readonly BindableProperty IsMoneyProperty =
         BindableProperty.Create(nameof(IsMoney), typeof(bool), typeof(StatsChartView), true, propertyChanged: Redraw);
 
+    /// <summary>Valeurs en pour cent (occupation) : « 80 % ».</summary>
+    public static readonly BindableProperty IsPercentProperty =
+        BindableProperty.Create(nameof(IsPercent), typeof(bool), typeof(StatsChartView), false, propertyChanged: Redraw);
+
+    public bool IsPercent
+    {
+        get => (bool)GetValue(IsPercentProperty);
+        set => SetValue(IsPercentProperty, value);
+    }
+
     public static readonly BindableProperty CurrencyProperty =
         BindableProperty.Create(nameof(Currency), typeof(string), typeof(StatsChartView), null, propertyChanged: Redraw);
 
@@ -195,7 +205,9 @@ public class StatsChartView : GraphicsView, IDrawable
         }
     }
 
-    private string Format(double value) => IsMoney
+    private string Format(double value) => IsPercent
+        ? value.ToString("0.#") + " %"
+        : IsMoney
         ? SiteCurrency.FormatCents(value, null, Currency)
         : Math.Round(value).ToString("N0");
 
