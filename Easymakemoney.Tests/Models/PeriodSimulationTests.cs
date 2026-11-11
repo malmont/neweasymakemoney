@@ -63,6 +63,23 @@ public class PeriodSimulationTests
         Assert.Equal("periodes/7/simulation?locale=fr", url);
         Assert.Equal("{\"pricePercent\":5.0,\"promotion\":{\"percent\":10.0,\"scope\":\"all\"}}", JsonConvert.SerializeObject(body));
     }
+
+    [Fact]
+    public void Rows_WithEmptyOrNullScenarios_GeneratesAllRowsWithDashesWithoutThrowing()
+    {
+        var simulation = new PeriodSimulation { @base = null, simulated = null };
+        var rows = simulation.Rows();
+
+        Assert.Equal(9, rows.Count);
+        Assert.All(rows, row =>
+        {
+            Assert.Equal("—", row.BaseText);
+            Assert.Equal("—", row.SimulatedText);
+            Assert.Equal(string.Empty, row.DeltaText);
+            Assert.Equal(0, row.Tone);
+            Assert.False(string.IsNullOrWhiteSpace(row.Help), row.Label);
+        });
+    }
 }
 
 [Collection("SiteCurrency")]

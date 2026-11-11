@@ -64,6 +64,53 @@ public class TripTests
         Assert.Equal("La date de fin doit suivre la date de début.", ApiError.TranslateValidationCode("BEFORE_START"));
         Assert.Equal("Ces dates chevauchent un autre voyage.", ApiError.GetFallbackMessage("TRIP_OVERLAP", System.Net.HttpStatusCode.Conflict, null));
     }
+
+    [Fact]
+    public async Task Service_ListUpdateAndDelete_MatchContract()
+    {
+        var fakeHttp = new FakeHttpService
+        {
+            ResultToReturn = new List<Trip>()
+        };
+        var service = new TripService(fakeHttp);
+
+        await service.GetTripsAsync(2, 15);
+        await service.GetTripsAsync();
+
+        var request = new TripRequest
+        {
+            name = "Salon Paris",
+            startDate = "2026-11-20",
+            endDate = "2026-11-24",
+            budgetTotal = 200000,
+            budgetDaily = 40000,
+            place = "Paris",
+            currency = "EUR",
+            exchangeRate = 1.48,
+            notes = "Notes voyage"
+        };
+        fakeHttp.ResultToReturn = new Trip();
+        await service.UpdateAsync(7, request);
+
+        await service.DeleteAsync(7);
+
+        Assert.Contains("gestion/voyages?page=2&limit=15", fakeHttp.RequestedUrls);
+        Assert.Contains("gestion/voyages?page=1&limit=30", fakeHttp.RequestedUrls);
+
+        var patchCall = fakeHttp.PostedAuthData.Find(p => p.Url == "gestion/voyages/7");
+        Assert.NotNull(patchCall.Data);
+        var patchJson = JsonConvert.SerializeObject(patchCall.Data);
+        Assert.Contains("\"name\":\"Salon Paris\"", patchJson);
+        Assert.Contains("\"startDate\":\"2026-11-20\"", patchJson);
+        Assert.Contains("\"endDate\":\"2026-11-24\"", patchJson);
+        Assert.Contains("\"budgetTotal\":200000", patchJson);
+        Assert.Contains("\"budgetDaily\":40000", patchJson);
+        Assert.Contains("\"place\":\"Paris\"", patchJson);
+        Assert.Contains("\"currency\":\"EUR\"", patchJson);
+        Assert.Contains("\"notes\":\"Notes voyage\"", patchJson);
+
+        Assert.Contains("gestion/voyages/7", fakeHttp.DeletedUrls);
+    }
 }
 
 public class NoteDeFraisTripTests

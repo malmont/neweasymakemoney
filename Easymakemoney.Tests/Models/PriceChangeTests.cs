@@ -96,4 +96,24 @@ public class PriceChangeTests
         Assert.Equal("Des prix ont été retouchés depuis", batch.StatusText);
         Assert.False(batch.CanUndo);
     }
+
+    [Fact]
+    public async Task PriceService_PreviewAsync_SendsPostWithSingleScope()
+    {
+        var fakeHttp = new FakeHttpService { ResultToReturn = new PricePreview() };
+        var service = new PriceService(fakeHttp);
+        var request = new PriceChangeRequest { CommandeId = 3, Mode = "percent", Value = 10, Rounding = "ends_99" };
+
+        await service.PreviewAsync(request);
+
+        var (url, data) = Assert.Single(fakeHttp.PostedAuthData);
+        Assert.Equal("gestion/prix/apercu", url);
+        var body = Assert.IsType<Dictionary<string, object>>(data);
+        Assert.Equal(3, body["commandeId"]);
+        Assert.False(body.ContainsKey("adviceId"));
+        Assert.False(body.ContainsKey("productIds"));
+        Assert.Equal("percent", body["mode"]);
+        Assert.Equal(10.0, body["value"]);
+        Assert.Equal("ends_99", body["rounding"]);
+    }
 }

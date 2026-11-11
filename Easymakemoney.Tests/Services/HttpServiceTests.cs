@@ -450,4 +450,137 @@ public class HttpServiceTests : IDisposable
 
         Assert.Equal("NO_CONNECTION", ex.ApiError.Code);
     }
+
+    [Fact]
+    public async Task PutAsyncWithAuth_SendsPutMethodWithJsonBodyAndReturnsDeserializedObject()
+    {
+        HttpRequestMessage? capturedRequest = null;
+        string? capturedBody = null;
+
+        var handler = new TestHttpMessageHandler(async req =>
+        {
+            capturedRequest = req;
+            if (req.Content != null)
+            {
+                capturedBody = await req.Content.ReadAsStringAsync();
+            }
+            return new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent("""{ "id": 55, "name": "Mis à jour en PUT" }""", Encoding.UTF8, "application/json")
+            };
+        });
+
+        var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
+        var httpService = new HttpService(client);
+
+        var result = await httpService.PutAsyncWithAuth<SampleItem>("items/55", new { name = "Mis à jour en PUT" });
+
+        Assert.NotNull(result);
+        Assert.Equal(55, result.Id);
+        Assert.Equal("Mis à jour en PUT", result.Name);
+
+        Assert.NotNull(capturedRequest);
+        Assert.Equal(HttpMethod.Put, capturedRequest.Method);
+        Assert.Equal("application/json", capturedRequest.Content?.Headers.ContentType?.MediaType);
+        Assert.Contains("Mis à jour en PUT", capturedBody);
+    }
+
+    [Fact]
+    public async Task PutAsyncWithAuth_409Conflict_ThrowsApiExceptionWithParsedCode()
+    {
+        var errorJson = """{ "error": "PRICE_EDITED_SINCE", "message": "Conflit d'édition" }""";
+        var handler = new TestHttpMessageHandler(_ => new HttpResponseMessage(HttpStatusCode.Conflict)
+        {
+            Content = new StringContent(errorJson, Encoding.UTF8, "application/json")
+        });
+
+        var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
+        var httpService = new HttpService(client);
+
+        var ex = await Assert.ThrowsAsync<ApiException>(() =>
+            httpService.PutAsyncWithAuth<SampleItem>("items/55", new { name = "test" }));
+
+        Assert.Equal(HttpStatusCode.Conflict, ex.StatusCode);
+        Assert.Equal("PRICE_EDITED_SINCE", ex.ApiError.Code);
+    }
+
+    [Fact]
+    public async Task PutAsyncWithAuth_422ValidationError_ThrowsApiExceptionWithParsedFields()
+    {
+        var errorJson = """
+        {
+            "error": "VALIDATION_FAILED",
+            "message": "Erreur de validation",
+            "fields": { "threshold": "MUST_BE_INTEGER_CENTS" }
+        }
+        """;
+        var handler = new TestHttpMessageHandler(_ => new HttpResponseMessage(HttpStatusCode.UnprocessableEntity)
+        {
+            Content = new StringContent(errorJson, Encoding.UTF8, "application/json")
+        });
+
+        var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
+        var httpService = new HttpService(client);
+
+        var ex = await Assert.ThrowsAsync<ApiException>(() =>
+            httpService.PutAsyncWithAuth<SampleItem>("items/55", new { threshold = "invalid" }));
+
+        Assert.Equal(HttpStatusCode.UnprocessableEntity, ex.StatusCode);
+        Assert.Equal("VALIDATION_FAILED", ex.ApiError.Code);
+        Assert.Single(ex.ApiError.Errors);
+    }
+
+    [Fact]
+    public async Task PutAsyncWithAuth_NetworkFailure_ThrowsApiExceptionWithNoConnection()
+    {
+        var handler = new TestHttpMessageHandler((Func<HttpRequestMessage, HttpResponseMessage>)(_ =>
+            throw new HttpRequestException("Connexion impossible")));
+
+        var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
+        var httpService = new HttpService(client);
+
+        var ex = await Assert.ThrowsAsync<ApiException>(() =>
+            httpService.PutAsyncWithAuth<SampleItem>("items/55", new { name = "test" }));
+
+        Assert.Equal("NO_CONNECTION", ex.ApiError.Code);
+    }
+
+    [Fact]
+    public async Task PutAsyncWithAuth_Timeout_ThrowsApiExceptionWithNoConnection()
+    {
+        var handler = new TestHttpMessageHandler((Func<HttpRequestMessage, HttpResponseMessage>)(_ =>
+            throw new TaskCanceledException("Délai dépassé")));
+
+        var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
+        var httpService = new HttpService(client);
+
+        var ex = await Assert.ThrowsAsync<ApiException>(() =>
+            httpService.PutAsyncWithAuth<SampleItem>("items/55", new { name = "test" }));
+
+        Assert.Equal("NO_CONNECTION", ex.ApiError.Code);
+    }
+
+    [Theory]
+    [InlineData("PRICES_CHANGED", HttpStatusCode.Conflict)]
+    [InlineData("PROMOTION_EDITED_SINCE", HttpStatusCode.Conflict)]
+    [InlineData("PRICE_EDITED_SINCE", HttpStatusCode.Conflict)]
+    [InlineData("COMMENT_LIMIT", (HttpStatusCode)429)]
+    [InlineData("TRIP_OVERLAP", HttpStatusCode.Conflict)]
+    public async Task BusinessErrors_ExpectedByScreens_PropagateExactCodeAndStatusCode(string errorCode, HttpStatusCode statusCode)
+    {
+        var errorJson = $"{{\"error\":\"{errorCode}\"}}";
+        var handler = new TestHttpMessageHandler(_ => new HttpResponseMessage(statusCode)
+        {
+            Content = new StringContent(errorJson, Encoding.UTF8, "application/json")
+        });
+
+        var client = new HttpClient(handler) { BaseAddress = new Uri("http://localhost/api/") };
+        var httpService = new HttpService(client);
+
+        var ex = await Assert.ThrowsAsync<ApiException>(() =>
+            httpService.PostAsyncWithAuth<SampleItem>("test/endpoint", new { }));
+
+        Assert.Equal(statusCode, ex.StatusCode);
+        Assert.Equal(errorCode, ex.ApiError.Code);
+    }
 }

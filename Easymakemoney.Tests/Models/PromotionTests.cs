@@ -77,4 +77,77 @@ public class PromotionTests
         Assert.True(new Advice { status = "new", kind = "SLOW_STOCK" }.CanCreatePromotion);
         Assert.False(new Advice { status = "new", kind = "FAST_SELLER" }.CanCreatePromotion);
     }
+
+    [Fact]
+    public async Task PromotionService_PreviewAsync_SendsPostWithSingleScopeAndIsoDates()
+    {
+        var fakeHttp = new FakeHttpService { ResultToReturn = new PromotionPreview() };
+        var service = new PromotionService(fakeHttp);
+        var request = new PromotionRequest
+        {
+            AdviceId = 5,
+            Percent = 25,
+            Rounding = "none",
+            StartDate = new DateTime(2026, 11, 15),
+            EndDate = new DateTime(2026, 11, 29)
+        };
+
+        await service.PreviewAsync(request);
+
+        var (url, data) = Assert.Single(fakeHttp.PostedAuthData);
+        Assert.Equal("gestion/promotions/apercu", url);
+        var body = Assert.IsType<Dictionary<string, object>>(data);
+        Assert.Equal(5, body["adviceId"]);
+        Assert.False(body.ContainsKey("commandeId"));
+        Assert.False(body.ContainsKey("productIds"));
+        Assert.Equal("2026-11-15", body["startDate"]);
+        Assert.Equal("2026-11-29", body["endDate"]);
+        Assert.Equal(25.0, body["percent"]);
+    }
+
+    [Fact]
+    public async Task PromotionService_ApplyAsync_SendsPreviewHashAndThreeAgreements()
+    {
+        var fakeHttp = new FakeHttpService { ResultToReturn = new PriceApplyResult() };
+        var service = new PromotionService(fakeHttp);
+        var request = new PromotionRequest
+        {
+            ProductIds = new List<int> { 12, 14 },
+            Percent = 20,
+            Rounding = "ends_99",
+            StartDate = new DateTime(2026, 11, 12),
+            EndDate = new DateTime(2026, 11, 25)
+        };
+
+        await service.ApplyAsync(request, previewHash: "hash-promo-123", allowBelowCost: true, allowBigChange: false, allowReplace: true);
+
+        var (url, data) = Assert.Single(fakeHttp.PostedAuthData);
+        Assert.Equal("gestion/promotions/appliquer", url);
+        var body = Assert.IsType<Dictionary<string, object>>(data);
+        Assert.Equal("hash-promo-123", body["previewHash"]);
+        Assert.Equal(true, body["allowBelowCost"]);
+        Assert.Equal(false, body["allowBigChange"]);
+        Assert.Equal(true, body["allowReplace"]);
+        Assert.Equal(new List<int> { 12, 14 }, body["productIds"]);
+    }
+
+    [Fact]
+    public void PromotionItem_DatesTextIn_UsesExplicitTimeZoneToShiftIsoDate()
+    {
+        var toronto = TimeZoneInfo.FindSystemTimeZoneById("America/Toronto");
+
+        var itemSameDay = new PromotionItem
+        {
+            startsAt = "2026-10-01T04:00:00+00:00",
+            endsAt = "2026-10-15T04:00:00+00:00"
+        };
+        Assert.Equal("Du 01/10/2026 au 15/10/2026", itemSameDay.DatesTextIn(toronto));
+
+        var itemPreviousDay = new PromotionItem
+        {
+            startsAt = "2026-10-01T03:00:00+00:00",
+            endsAt = "2026-10-15T03:00:00+00:00"
+        };
+        Assert.Equal("Du 30/09/2026 au 14/10/2026", itemPreviousDay.DatesTextIn(toronto));
+    }
 }
