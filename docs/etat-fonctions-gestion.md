@@ -31,7 +31,13 @@ propriétaire qui en fixent les règles. Les contrats détaillés sont dans les 
 | Changer les prix | Pourcentage ou coefficient sur le coût, arrondi, aperçu ; depuis un conseil, une commande ou un article | P4 |
 | Créer une promotion | Remise, dates (90 jours au plus), aperçu ; depuis un conseil ou un article | P5 |
 | Notes de frais, commandes | Action « Voyage » pour rattacher ou détacher à la main | B1a (`gestion/voyages/rattacher`) |
-| Statistiques | Choix Semaine / Mois / Année gardé, erreurs affichées sans plantage | routes historiques |
+| Statistiques | Cartes (ventes, marge, taux de marque, commandes, panier, retours, valeur du stock) comparées à la plage précédente et à l'an dernier ; plage aujourd'hui, 7 jours, mois, année (exercice), période, dates ; canal ; graphique avec l'an dernier ; les 5 anciens écrans détaillés restent jusqu'à S2 | S1 (`gestion/statistiques`) |
+| Statistiques › L'année de l'entreprise | Résultat de l'entreprise, fin d'exercice estimée, point mort, ce qui manque, mois par mois, leviers chiffrés, périodes ; exercice terminé : bilan, « ce qui aurait suffi », avis du guide | AN (`gestion/statistiques/annee`) |
+| Statistiques › Locations | Revenu à la vente et à la date de location, occupation par jour et par article, jours pleins et creux ; écran des conseils de location | LOC1, LOC2 |
+| Gestion › Exercice comptable | Mois de début de l'exercice, par site | EX (`gestion/reglages/exercice`) |
+| Gestion › Frais fixes | Total par mois et par catégorie, actifs, à venir, terminés ; case « Frais fixe » des mouvements ; résultat après frais fixes (période, simulateur, préparation) | FF1, FF2 |
+| Gestion › Trésorerie : rapprochement | Écart entre le solde saisi et l'attendu, explication ou écart non justifié | RAP |
+| Boîtes de dialogue | Au style de l'application (carte arrondie, Inter, couleurs du thème, bouton rouge pour supprimer), en surimpression sans recharger la page | application |
 
 ## Décisions du propriétaire (10/11/2026)
 
@@ -42,6 +48,21 @@ propriétaire qui en fixent les règles. Les contrats détaillés sont dans les 
 - Fuseau des promotions saisies dans l'administration : à corriger (lot P5b), avec décalage des 3 promotions d'exemple existantes.
 - Préparer une période entière : validé (lot P6), y compris les achats et le voyage faits avant la période.
 - Relecture du code backend par Fable : en attente de la décision du propriétaire.
+
+## Décisions du propriétaire (11/11/2026)
+
+- Exercice comptable réglable par client (pas seulement l'année civile).
+- Anciens écrans de statistiques : retirés dès qu'un écran unifié les remplace (Chiffre d'affaires, Panier, Achats retirés ; Caisse,
+  Paiements, Stock, Frais, Total frais remplacés par S2, qui gagne les frais de port par transporteur).
+- Assistant IA « Faire le point » validé (lots IA) : bilan de ce qui manque ou ne colle pas, questions posées par l'IA, aperçu, validation
+  et annulation ; rien n'est modifié sans l'accord du gérant ; l'IA formule, l'application calcule. Il reprend et remplace l'assistant
+  « Point de départ » (DEP). Emplacement : vignette en tête de l'Accueil tant que la configuration n'est pas complète, entrée
+  permanente dans Gestion ; une fenêtre explique avant de commencer que des données vont être mises à jour.
+- Relevés bancaires : import PDF, CSV et OFX (solde, prélèvements récurrents proposés en frais fixes, dépenses manquantes proposées en
+  notes de frais, rapprochement) ; le PDF est supprimé après lecture, seules les lignes extraites sont gardées, numéro de compte masqué.
+- Connexion directe aux banques par un agrégateur : **plus tard** ; elle devra couvrir les banques **canadiennes et américaines**
+  (pistes : Plaid pour le Canada et les États-Unis, Flinks pour le Canada, MX ou Finicity pour les États-Unis ; à choisir sur coût,
+  couverture des banques des clients, sécurité et consentement). Elle remplacera seulement le fichier importé : même calcul derrière.
 
 ## Lots en cours ou à venir
 
@@ -58,6 +79,10 @@ propriétaire qui en fixent les règles. Les contrats détaillés sont dans les 
 | Lexique | Chaque terme technique de l'application (marge, taux de marque, point mort, coefficient, prévu, solde, seuil, occupation…) devient un lien vers sa définition, à partir d'un lexique unique | demandé le 10/11, en cours côté app |
 | FF | Frais fixes mensuels : saisie sur les mouvements prévus, équivalent mensuel, résultat de période « après frais fixes », point mort et guide | validé, après RAP (écran Frais fixes déjà dans l'application) |
 | AN | Statistiques › Année : mois par mois et cumul, résultat de l'entreprise (avec locations, abonnements et frais fixes), point mort annuel, ce qui manque, leviers chiffrés, bilan de fin d'année et leçons | validé le 10/11, après S1 et FF2 |
-| Ordre backend | RAP, FF1, FF2, S1, AN, LOC, DEP, ABO, REG, INV, CLO, S2, S3 | fixé par Claude avec l'accord du propriétaire |
-| Mise à niveau | Rapprochement bancaire dans Trésorerie, assistant « Point de départ », régularisations, inventaire, clôture du mois | proposé, en attente du choix du propriétaire |
+| IA1 | Bilan de configuration : ce qui manque ou ne colle pas (solde absent ou ancien, aucun frais fixe, notes qui ressemblent à des frais fixes, articles sans coût, périodes sans budget, écarts bancaires, stock négatif, exercice par défaut…), pourcentage, vignette d'Accueil | validé le 11/11 (remplace DEP), contrat à demander |
+| IA2 | Assistant : questions de l'IA, aperçu, application tout ou rien, journal, annulation | validé le 11/11, après IA1 |
+| IA3 | Import de relevés bancaires PDF, CSV, OFX : solde, frais fixes, dépenses, rapprochement | validé le 11/11, après IA2 |
+| IA4 | Connexion directe aux banques (agrégateur, Canada et États-Unis) | plus tard |
+| Ordre backend | ~~RAP, FF1, FF2, S1, AN~~ (livrés), LOC (LOC1 et LOC2 livrés, LOC3 en développement, LOC3 en ligne sur feu vert du propriétaire), IA1, IA2, ABO, REG, INV, CLO, IA3, S2, S3 | fixé par Claude avec l'accord du propriétaire |
+| Mise à niveau | Rapprochement bancaire (livré), assistant IA (lots IA), régularisations, inventaire, clôture du mois | validé |
 | Notifications | Inscription du téléphone et réglages | attend Firebase (nom de l'application) |
