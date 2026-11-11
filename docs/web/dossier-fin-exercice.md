@@ -305,7 +305,7 @@ exigences s'imposent aux contrats du backend (IA3, INV, CLO) et aux écrans web.
 - **Annulation (C16)** :
   - possible **24 heures**, comme pour les changements de prix ;
   - refusée avec `409 UNDO_EDITED_SINCE` si une donnée créée a été modifiée depuis ;
-  - refusée avec `423 PERIOD_CLOSED` si la période est fermée ;
+  - refusée avec `409 PERIOD_CLOSED` si la période est fermée (code existant du backend ; 423 est réservé à `FISCAL_YEAR_CLOSED`) ;
   - le message dit quoi faire.
 
 **Dossier et clôture**
