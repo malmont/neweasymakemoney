@@ -115,7 +115,10 @@ namespace Easymakemoney.Models
 
         public string PriceText => $"{SiteCurrency.FormatCents(regularPrice ?? 0)} → {SiteCurrency.FormatCents(specialPrice ?? 0)}";
 
-        public string DatesText => $"Du {Local(startsAt)} au {Local(endsAt)}";
+        public string DatesText => DatesTextIn(TimeZoneInfo.Local);
+
+        /// <summary>Dates dans un fuseau donné (testable sans dépendre du fuseau de la machine).</summary>
+        public string DatesTextIn(TimeZoneInfo zone) => $"Du {Local(startsAt, zone)} au {Local(endsAt, zone)}";
 
         public string StatusText => status switch
         {
@@ -128,9 +131,9 @@ namespace Easymakemoney.Models
         public bool FromAdmin => !batchId.HasValue;
 
         /// <summary>Les bornes sont des instants UTC : affichées au jour local du téléphone.</summary>
-        private static string Local(string? iso) =>
+        private static string Local(string? iso, TimeZoneInfo zone) =>
             DateTimeOffset.TryParse(iso, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
-                ? date.ToLocalTime().ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)
+                ? TimeZoneInfo.ConvertTime(date, zone).ToString("dd/MM/yyyy", CultureInfo.InvariantCulture)
                 : iso ?? "—";
     }
 
