@@ -252,27 +252,6 @@ namespace Easymakemoney.ViewModels.Statistiques
         }
 
         [RelayCommand]
-        private async Task NavigateToChiffreAffaire()
-        {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(ChiffresAffairePage));
-        }
-
-        [RelayCommand]
-        private async Task NavigateToPurchasing()
-        {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(OrderNumberPage));
-        }
-
-        [RelayCommand]
-        private async Task NavigateToPanier()
-        {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(PanierMoyenPage));
-        }
-
-        [RelayCommand]
         private async Task NavigateToStock()
         {
             if (Shell.Current is { } shell)
