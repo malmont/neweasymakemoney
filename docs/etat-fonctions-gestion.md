@@ -51,4 +51,9 @@ propriétaire qui en fixent les règles. Les contrats détaillés sont dans les 
 | Statistiques B1–B7 | Valeur du stock par variantes en cents, paiements échoués exclus, panier moyen, commandes, transporteurs, caisse | validé, après P5b |
 | P6 | Préparer une période (estimation des ventes, achats × coefficient, voyage, trésorerie, avis, valider) | contrat validé, après P5b |
 | Variantes en promotion | Règle de prix par variante, bascule par site | à cadrer |
+| LOC | Onglet Location : occupation, revenu, jours creux et pleins par article ; conseils (hausse ciblée, promotion en semaine, baisse) ; promotion datée ou changement de grille ; projection et mesure ; jamais une réservation déjà faite | validé le 10/11, contrat demandé (après P6) |
+| ABO | Onglet Abonnements : revenu mensuel récurrent, actifs, nouveaux, départs, revenu par abonné, valeur sur la durée, échecs de paiement ; conseils ; nouveau tarif **pour les nouveaux abonnés seulement** (Stripe), offre de bienvenue ; projection 3, 6, 12 mois | validé le 10/11, après LOC |
+| Ensuite | Réservations futures dans la trésorerie et « Préparer une période » ; vignettes sur la dérive de l'occupation ou des départs | à cadrer |
+| Plus tard | Forfaits location + vente ; saisonnalité des locations ; relance des anciens abonnés | idées retenues |
+| Mise à niveau | Rapprochement bancaire dans Trésorerie, assistant « Point de départ », régularisations, inventaire, clôture du mois | proposé, en attente du choix du propriétaire |
 | Notifications | Inscription du téléphone et réglages | attend Firebase (nom de l'application) |
