@@ -50,6 +50,8 @@ public static class MauiProgram
 		// Configuration HTTP partagée (L5, M1) et gestionnaires de requêtes
 		builder.Services.AddTransient<TenantHandler>();
 		builder.Services.AddTransient<AuthHandler>();
+		builder.Services.AddTransient<Easymakemoney.Services.Module.ModuleGateHandler>();
+		builder.Services.AddSingleton<Easymakemoney.Services.Module.IModuleInactiveNotifier, Easymakemoney.Services.Module.ModuleInactiveNotifier>();
 
 		// Client nommé "auth" pour les routes publiques (M1, M2) : BaseAddress + TenantHandler seulement
 		builder.Services.AddHttpClient("auth", ConfigureBackendHttpClient)
@@ -58,7 +60,8 @@ public static class MauiProgram
 		// Client HTTP principal : BaseAddress + TenantHandler + AuthHandler
 		builder.Services.AddHttpClient<IHttpService, HttpService>(ConfigureBackendHttpClient)
 			.AddHttpMessageHandler<TenantHandler>()
-			.AddHttpMessageHandler<AuthHandler>();
+			.AddHttpMessageHandler<AuthHandler>()
+			.AddHttpMessageHandler<Easymakemoney.Services.Module.ModuleGateHandler>();
 
 		builder.Services.AddHttpClient<ISiteService, SiteService>(ConfigureBackendHttpClient)
 			.AddHttpMessageHandler<TenantHandler>();
@@ -112,6 +115,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<IRentalPromotionService, RentalPromotionService>();
 		builder.Services.AddTransient<IRentalGridService, RentalGridService>();
 		builder.Services.AddTransient<IVariantPromotionService, VariantPromotionService>();
+		builder.Services.AddTransient<IManagementModuleService, ManagementModuleService>();
 		builder.Services.AddTransient<IPeriodService, PeriodService>();
 		builder.Services.AddTransient<Easymakemoney.UseCase.PeriodResultUseCase.PeriodUseCase>();
 		builder.Services.AddTransient<IRepriseService, RepriseService>();
@@ -208,6 +212,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<TripFormPage>();
 		builder.Services.AddTransient<TripFollowUpPage>();
 		builder.Services.AddTransient<AdvicePage>();
+		builder.Services.AddTransient<ModuleInactivePage>();
 		builder.Services.AddTransient<PriceChangePage>();
 		builder.Services.AddTransient<PriceBatchListPage>();
 		builder.Services.AddTransient<ToReceivePage>();
@@ -265,6 +270,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<TripFormViewModel>();
 		builder.Services.AddTransient<TripFollowUpViewModel>();
 		builder.Services.AddTransient<AdviceViewModel>();
+		builder.Services.AddTransient<ModuleInactiveViewModel>();
 		builder.Services.AddTransient<PriceChangeViewModel>();
 		builder.Services.AddTransient<PriceBatchListViewModel>();
 		builder.Services.AddTransient<ToReceiveViewModel>();

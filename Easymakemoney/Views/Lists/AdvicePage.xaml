@@ -19,6 +19,7 @@
                     <Label Text="{Binding List.period.name}" Style="{StaticResource UiTitle}" FontSize="18" />
                     <Label Text="{Binding List.MomentsText}" FontFamily="InterSemiBold" FontSize="13" TextColor="{DynamicResource ThemePrimary}" />
                 </VerticalStackLayout>
+                <Label Text="{Binding AiCreditsText}" IsVisible="{Binding HasAi}" Style="{StaticResource UiBody}" FontSize="12" />
 
                 <!-- Phrase de synthèse de l'IA -->
                 <Border IsVisible="{Binding List.HasHeadline}" StrokeThickness="0" StrokeShape="RoundRectangle 14"

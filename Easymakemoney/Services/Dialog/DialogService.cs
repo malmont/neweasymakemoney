@@ -26,6 +26,13 @@ public class DialogService : IDialogService
             return;
         }
 
+        // Lot MOD : module de gestion non accordé : l'écran « non activée » s'ouvre à la place (ModuleGateHandler)
+        if (exception is ApiException { ApiError.Code: Models.ModuleInactiveInfo.Code })
+        {
+            Debug.WriteLine($"[DialogService] Module inactif, écran dédié : {exception.Message}");
+            return;
+        }
+
         // Règle P2 : Un seul message d'erreur affiché à la fois
         if (!_errorDialogLock.Wait(0))
         {

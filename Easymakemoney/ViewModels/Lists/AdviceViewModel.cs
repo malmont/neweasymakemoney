@@ -13,13 +13,39 @@ namespace Easymakemoney.ViewModels.Lists
 
         private readonly IAdviceService _adviceService;
         private readonly IDialogService _dialogService;
+        private readonly IManagementModuleService? _moduleService;
         private int _polls;
         private bool _pollScheduled;
 
-        public AdviceViewModel(IAdviceService adviceService, IDialogService dialogService)
+        public AdviceViewModel(IAdviceService adviceService, IDialogService dialogService, IManagementModuleService? moduleService = null)
         {
             _adviceService = adviceService;
             _dialogService = dialogService;
+            _moduleService = moduleService;
+        }
+
+        /// <summary>Lot MOD : unités IA du mois (GET /api/gestion/ia). Absentes tant que la route n'existe pas.</summary>
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasAi), nameof(AiCreditsText))]
+        private ManagementAi? _ai;
+
+        public bool HasAi => Ai != null && !string.IsNullOrEmpty(Ai.CreditsText);
+        public string AiCreditsText => Ai?.CreditsText ?? string.Empty;
+
+        /// <summary>Lecture silencieuse : une erreur (route absente, réseau) cache seulement la ligne des unités.</summary>
+        public async Task LoadAiAsync()
+        {
+            if (_moduleService == null)
+                return;
+            try
+            {
+                Ai = await _moduleService.GetAiAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[AdviceViewModel] Unités IA indisponibles : {ex.Message}");
+                Ai = null;
+            }
         }
 
         /// <summary>Conseil mis en tête (ouvert depuis une vignette).</summary>

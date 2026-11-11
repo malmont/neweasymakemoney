@@ -20,6 +20,7 @@ namespace Easymakemoney.Views.Lists
         {
             base.OnAppearing();
             await _viewModel.LoadAsync();
+            await _viewModel.LoadAiAsync();
         }
     }
 }

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             x:DataType="list:ModuleInactiveViewModel"
+             x:Class="Easymakemoney.Views.Lists.ModuleInactivePage"
+             Style="{StaticResource UiPage}"
+             Shell.NavBarIsVisible="False"
+             Title="Application de gestion">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,48" Spacing="16" VerticalOptions="Center">
+            <Border StrokeThickness="0" StrokeShape="RoundRectangle 32" BackgroundColor="{DynamicResource ThemePrimaryTint}"
+                    WidthRequest="64" HeightRequest="64" HorizontalOptions="Center">
+                <Label Text="🔒" FontSize="28" HorizontalOptions="Center" VerticalOptions="Center" />
+            </Border>
+
+            <Label Text="Application de gestion non activée" Style="{StaticResource UiH1}" HorizontalTextAlignment="Center" />
+            <Label Text="Ce site peut se connecter, mais le module Gestion (commandes fournisseurs, stock, périodes, statistiques, trésorerie, guide) n'est pas encore activé."
+                   Style="{StaticResource UiBody}" FontSize="15" HorizontalTextAlignment="Center" />
+
+            <components:UiCard Style="{StaticResource UiCard}" Padding="16">
+                <Label Text="{Binding Explanation}" FontFamily="InterSemiBold" FontSize="15" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="Center" />
+            </components:UiCard>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" HeightRequest="28" />
+
+            <Button Text="{Binding RequestButtonText}" Command="{Binding RequestCommand}" IsVisible="{Binding CanRequest}"
+                    HeightRequest="52" CornerRadius="14" FontFamily="InterSemiBold" FontSize="16"
+                    BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" />
+
+            <Button Text="Réessayer" Command="{Binding RetryCommand}"
+                    HeightRequest="46" CornerRadius="12" FontFamily="InterSemiBold" FontSize="15"
+                    BackgroundColor="{StaticResource UiSurface}" TextColor="{DynamicResource ThemePrimary}"
+                    BorderColor="{DynamicResource ThemePrimary}" BorderWidth="1" />
+
+            <Label Text="L'offre et le forfait du site se gèrent aussi sur le site, dans « Mon site »."
+                   Style="{StaticResource UiBody}" FontSize="12" HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
