@@ -358,3 +358,17 @@ Posées le 11/11/2026 ; ne rien coder qui en dépend avant sa réponse.
 3. **(B5) Sites en espagnol** : la gestion n'existe qu'en français et en anglais. Recommandation : un site en espagnol l'affiche en anglais.
 4. **(C9) PDF protégé par mot de passe** : recommandation, le refuser en expliquant comment retirer le mot de passe, plutôt que de
    demander le mot de passe.
+
+### Réponses du propriétaire (11/11/2026)
+
+1. **(A1)** La gestion web est un **module activable par site**, comme les autres modules de la plateforme (clé dans
+   `/api/site/features`, sinon 403 `MODULE_INACTIVE`).
+2. **(A2)** L'appli de gestion web est un **clone complet de l'application mobile, en plus complet**, avec des modules supplémentaires
+   impossibles sur mobile (dossier de fin d'exercice, import de relevés en masse, connexion bancaire, console IA…). C'est un gros chantier,
+   assumé ; la plupart des routes existent déjà côté backend. Elle se **construit entièrement** sur le web, en s'inspirant de ce que les
+   applications web actuelles de la plateforme font déjà bien : connexion, multi-sites (un domaine = un site), modules activables,
+   navigation.
+3. **(B5)** Pas d'espagnol pour l'instant : la gestion existe en français et en anglais ; un site en espagnol l'affiche en anglais.
+4. **(C9)** Laissé à Claude : un PDF protégé par mot de passe est **refusé**, avec l'explication pour retirer le mot de passe.
+5. **L'IA est au cœur de l'appli web**, avec une console IA ; propositions de Claude sur l'assistant comptable et l'apprentissage du chef
+   d'entreprise en attente de validation du propriétaire.
