@@ -25,3 +25,17 @@ public class StatistiquesFixTests
         Assert.Empty(Assert.IsType<Microcharts.PointChart>(ChartGenerator.GenerateChart(null)).Entries);
     }
 }
+
+public class StockMovementLabelTests
+{
+    [Fact]
+    public void Movements_UseFrenchLabelsFromCode()
+    {
+        var items = JsonConvert.DeserializeObject<List<StockEvolutionData>>("""
+        [ { "type": "Entrant", "quantity": 3, "code": "in" }, { "type": "Return", "quantity": 0, "code": "return" },
+          { "type": "Réception fournisseur", "quantity": 7, "code": "reception" }, { "type": "Return", "quantity": 1 } ]
+        """)!;
+
+        Assert.Equal(new[] { "Entrées", "Retours", "Réceptions fournisseur", "Retours" }, items.Select(i => i.Data1));
+    }
+}

@@ -128,9 +128,24 @@ namespace Easymakemoney.Models
         [JsonProperty("quantity")]
         public double Quantity { get; set; }
 
+        /// <summary>Code stable du type (in, out, return, adjustment, reception), envoyé par le backend depuis le lot B2.</summary>
+        [JsonProperty("code")]
+        public string? Code { get; set; }
+
+        /// <summary>Libellé français : le libellé historique du backend peut être en anglais (« Return »).</summary>
+        public string Label => Code switch
+        {
+            "in" => "Entrées",
+            "out" => "Sorties (ventes)",
+            "return" => "Retours",
+            "adjustment" => "Ajustements",
+            "reception" => "Réceptions fournisseur",
+            _ => Type == "Return" ? "Retours" : Type,
+        };
+
         public Color BackgroundColor { get; set; } = Colors.LightGray.WithAlpha(0.3f);
 
-        public string Data1 => Type;
+        public string Data1 => Label;
         public double Data2 => Quantity;
     }
 }

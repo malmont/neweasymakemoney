@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             x:DataType="list:PreparationViewModel"
+             x:Class="Easymakemoney.Views.Lists.PreparationPage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Préparer une période">
+
+    <ContentPage.Resources>
+        <!-- Styles de formulaire : ils ne sont pas globaux -->
+        <Style x:Key="FormDate" TargetType="handlers:BorderlessDatePicker">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="FormLabel" TargetType="Label">
+            <Setter Property="FontFamily" Value="InterMedium" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextSecondary}" />
+        </Style>
+        <Style x:Key="FormField" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="MinimumHeightRequest" Value="48" />
+            <Setter Property="Padding" Value="12,0" />
+        </Style>
+        <Style x:Key="FormEntry" TargetType="handlers:BorderlessEntry">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="PlaceholderColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="FormPicker" TargetType="Picker">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="TitleColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="Step" TargetType="Label">
+            <Setter Property="FontFamily" Value="InterBold" />
+            <Setter Property="FontSize" Value="17" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="Margin" Value="0,10,0,0" />
+        </Style>
+        <Style x:Key="DocAction" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimaryTint}" />
+            <Setter Property="TextColor" Value="{DynamicResource ThemePrimary}" />
+            <Setter Property="FontFamily" Value="InterBold" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="HeightRequest" Value="48" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Préparer une période" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="10">
+                <Label Text="Prévoyez vos ventes, vos achats et votre voyage, voyez le résultat et la trésorerie, puis validez : le budget est créé."
+                       Style="{StaticResource UiBody}" FontSize="13" />
+
+                <!-- 1. Période -->
+                <Label Text="1. Période" Style="{StaticResource Step}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <Picker Style="{StaticResource FormPicker}" ItemsSource="{Binding Targets}" SelectedItem="{Binding SelectedTarget}" />
+                </Border>
+                <Label Text="{Binding PeriodTitle}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+
+                <!-- 2. Ventes -->
+                <Label Text="2. Ventes prévues" Style="{StaticResource Step}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <Picker Style="{StaticResource FormPicker}" ItemsSource="{Binding SalesMethods}" SelectedItem="{Binding SelectedSalesMethod}" />
+                </Border>
+                <Label Text="{Binding RecommendationText}" Style="{StaticResource UiBody}" FontSize="12" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12" IsVisible="{Binding IsCustomSales}">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Mon objectif de ventes" Keyboard="Numeric" Text="{Binding CustomSalesText}" />
+                </Border>
+
+                <!-- 3. Achats -->
+                <Label Text="3. Achats de stock prévus" Style="{StaticResource Step}" />
+                <Label Text="Même avant la période : chaque achat compte dans le budget de la période de sa date." Style="{StaticResource UiBody}" FontSize="12" />
+                <VerticalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding Purchases}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:PreparationPurchase">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Text="{Binding Text}" Style="{StaticResource UiBody}" FontSize="13" VerticalOptions="Center" />
+                                <Button Grid.Column="1" Text="Retirer" Padding="8,0" HeightRequest="34" BackgroundColor="Transparent" TextColor="#B91C1C"
+                                        FontFamily="InterSemiBold" FontSize="13"
+                                        Command="{Binding Path=BindingContext.RemovePurchaseCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                        CommandParameter="{Binding .}" />
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                    <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessDatePicker Style="{StaticResource FormDate}" Date="{Binding PurchaseDate}" MinimumDate="{Binding Today}" Format="dd/MM/yy" />
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Montant" Keyboard="Numeric" Text="{Binding PurchaseAmountText}" />
+                    </Border>
+                    <Border Grid.Column="2" Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Coef." Keyboard="Numeric" Text="{Binding PurchaseCoefficientText}" />
+                    </Border>
+                </Grid>
+                <Button Text="Ajouter cet achat" Command="{Binding AddPurchaseCommand}" Style="{StaticResource DocAction}" />
+
+                <!-- 4. Voyage -->
+                <Grid ColumnDefinitions="*,Auto" Margin="0,10,0,0">
+                    <Label Text="4. Voyage d'achat" Style="{StaticResource Step}" Margin="0" VerticalOptions="Center" />
+                    <Switch Grid.Column="1" IsToggled="{Binding HasTrip}" OnColor="{DynamicResource ThemePrimary}" />
+                </Grid>
+                <VerticalStackLayout Spacing="8" IsVisible="{Binding HasTrip}">
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                        <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                            <handlers:BorderlessDatePicker Style="{StaticResource FormDate}" Date="{Binding TripStart}" MinimumDate="{Binding Today}" Format="dd/MM/yyyy" />
+                        </Border>
+                        <Border Grid.Column="1" Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                            <handlers:BorderlessDatePicker Style="{StaticResource FormDate}" Date="{Binding TripEnd}" MinimumDate="{Binding TripStart}" Format="dd/MM/yyyy" />
+                        </Border>
+                    </Grid>
+                    <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Lieu (facultatif)" Text="{Binding TripPlace}" />
+                    </Border>
+                    <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Budget des frais du voyage" Keyboard="Numeric" Text="{Binding TripBudgetText}" />
+                    </Border>
+                </VerticalStackLayout>
+
+                <!-- 5. Autres frais -->
+                <Label Text="5. Autres frais prévus" Style="{StaticResource Step}" />
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                    <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Port" Keyboard="Numeric" Text="{Binding ShippingText}" />
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Publicité" Keyboard="Numeric" Text="{Binding AdvertisingText}" />
+                    </Border>
+                    <Border Grid.Column="2" Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Autres" Keyboard="Numeric" Text="{Binding OtherText}" />
+                    </Border>
+                </Grid>
+
+                <Button Text="Calculer le plan" Command="{Binding SimulateCommand}" Margin="0,10,0,0"
+                        HeightRequest="52" CornerRadius="14" FontFamily="InterBold" FontSize="16"
+                        BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" />
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" />
+
+                <!-- Résultat du plan -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding HasSimulation}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Touchez un titre pour sa définition" Style="{StaticResource UiBody}" FontSize="11" />
+                        <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Rows}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:SimulationRow">
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                        <Label Text="{Binding Label}" FontFamily="InterMedium" FontSize="13" VerticalOptions="Center"
+                                               TextColor="{DynamicResource ThemePrimary}" TextDecorations="Underline">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Path=BindingContext.ShowHelpCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                                      CommandParameter="{Binding .}" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                        <Label Grid.Column="1" Text="{Binding BaseText}" FontFamily="InterBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                        <Label Text="{Binding Simulation.CashLowDateText}" Style="{StaticResource UiBody}" FontSize="12" />
+                        <Label Text="{Binding Simulation.LastYearText}" IsVisible="{Binding Simulation.HasLastYear}" Style="{StaticResource UiBody}" FontSize="13" />
+                        <Label Text="Budget qui sera enregistré :" FontFamily="InterSemiBold" FontSize="13" TextColor="{StaticResource UiTextPrimary}" />
+                        <Label Text="{Binding Simulation.PlannedText}" Style="{StaticResource UiBody}" FontSize="12" />
+                        <Label Text="{Binding Simulation.CaveatsText}" IsVisible="{Binding Simulation.HasCaveats}" Style="{StaticResource UiBody}" FontSize="12" />
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <Button Text="Avis du guide sur ce plan" Command="{Binding AskGuideCommand}" IsVisible="{Binding HasSimulation}" Style="{StaticResource DocAction}" />
+                <ActivityIndicator IsRunning="{Binding IsAdvising}" IsVisible="{Binding IsAdvising}" Color="{DynamicResource ThemePrimary}" />
+                <Border IsVisible="{Binding HasAdvice}" StrokeThickness="0" StrokeShape="RoundRectangle 14"
+                        BackgroundColor="{DynamicResource ThemePrimaryTint}" Padding="14,12">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="{Binding Advice.comment.title}" FontFamily="InterBold" FontSize="16" TextColor="{DynamicResource ThemePrimary}" />
+                        <Label Text="{Binding Advice.comment.text}" FontFamily="Inter" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                        <Label Text="{Binding Advice.SourceText}" Style="{StaticResource UiBody}" FontSize="12" />
+                    </VerticalStackLayout>
+                </Border>
+                <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Candidates}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:PreparationCandidate">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="12">
+                                <VerticalStackLayout Spacing="3">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding label}" Style="{StaticResource UiTitle}" FontSize="15" />
+                                        <Label Grid.Column="1" Text="Conseillé" IsVisible="{Binding IsRecommended}" FontFamily="InterBold" FontSize="12" TextColor="{DynamicResource ThemePrimary}" />
+                                    </Grid>
+                                    <Label Text="{Binding SummaryText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                    <Label Text="{Binding ResultText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                    <Label Text="{Binding CashText}" IsVisible="{Binding HasCash}" Style="{StaticResource UiBody}" FontSize="12" />
+                                </VerticalStackLayout>
+                            </components:UiCard>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Button Text="Valider ce plan" Command="{Binding ValidateCommand}" IsVisible="{Binding HasSimulation}" Margin="0,6,0,20"
+                        HeightRequest="52" CornerRadius="14" FontFamily="InterBold" FontSize="16"
+                        BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>
