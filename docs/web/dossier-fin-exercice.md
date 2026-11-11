@@ -257,3 +257,104 @@ Elles sont à trancher avec le propriétaire et le backend avant le contrat. Ne 
 - [ ] Erreurs 409, 422 et 429 et coupure réseau affichées sans plantage.
 - [ ] Interface en français et en anglais ; utilisable au clavier ; lisible sur un écran d'ordinateur portable.
 - [ ] Les chiffres du résultat sont identiques à ceux de Statistiques › Année de l'application mobile pour le même exercice.
+
+## 14. Réponses aux questions de la session web (11/11/2026)
+
+Les questions de la session « appli de gestion web » sont tranchées ici, sauf celles du § 15 qui reviennent au propriétaire. Ces
+exigences s'imposent aux contrats du backend (IA3, INV, CLO) et aux écrans web.
+
+**Lexique (B4)**
+- Le backend sert le lexique : `GET /api/gestion/lexique?locale=fr|en`, avec les mêmes clés que `Glossaire.cs`.
+- L'application mobile passera dessus ensuite : une seule source pour les deux applications.
+- La session « new easymakemoney » fournit le texte français et la traduction anglaise de départ.
+
+**Import des relevés (IA3)**
+- **Lecture asynchrone (C6)** :
+  - `POST` d'un fichier → `202 { importId }` ;
+  - suivi de l'état : `pending`, `reading`, `read`, `needs_review`, `failed` avec un code ;
+  - par interrogation régulière : la première version n'utilise pas de flux continu ;
+  - les imports non validés restent côté serveur et réapparaissent si le gérant quitte la page.
+- **Envoi (C7)** :
+  - un fichier par requête, avec une clé d'idempotence (en-tête), et reprise sans doublon ;
+  - 20 Mo au plus par fichier et 24 fichiers par dépôt (12 mois × 2 comptes), sous la limite de 110 Mo du relais ;
+  - codes `FILE_TOO_LARGE` et `TOO_MANY_FILES`.
+- **Codes stables (C8)**, en séparant les **bloquants** des **avertissements** :
+  - bloquants : `PDF_ENCRYPTED`, `FORMAT_UNKNOWN`, `FILE_TOO_LARGE`, `ACCOUNT_MISMATCH`, `PERIOD_DUPLICATE`, `AI_QUOTA_EXCEEDED` ;
+  - avertissements : `SCAN_LOW_QUALITY`, `PERIOD_GAP`, `BALANCE_CHAIN_BROKEN`, `CROSSES_FISCAL_YEAR`, `IRREGULAR_PERIOD`,
+    `FEWER_THAN_3_STATEMENTS`, `UNCERTAIN_LINES`.
+- **CSV (C10)** :
+  - le backend tente de reconnaître le format seul : colonnes, sens débit/crédit, date JJ/MM ou MM/JJ, virgule ou point décimal ;
+  - s'il n'est pas sûr, il rend `CSV_MAPPING_REQUIRED` avec un aperçu de 10 lignes, et le web affiche un écran d'**association des colonnes** ;
+  - l'association est mémorisée par compte pour les fois suivantes ;
+  - sans solde de début ou de fin dans le CSV, le gérant le saisit, ou il est déduit du relevé voisin et marqué « déduit ».
+- **Chevauchements (C11)** : le backend retire les lignes en double (même compte, date, montant, libellé normalisé) et indique combien
+  il en a retiré.
+- **Lignes incertaines (C12)** :
+  - date, libellé, montant et sens sont modifiables ;
+  - une route enregistre la correction avant validation et recalcule l'enchaînement des soldes.
+- **Consentement (C13)** :
+  - un par dépôt, envoyé avec la première requête (version du texte, date) ;
+  - tracé par le backend dans le journal d'audit.
+- **Numéro de compte (C14)** :
+  - masqué par le backend **avant toute réponse** ; le web ne reçoit jamais le numéro complet ;
+  - la reconnaissance du compte se fait par une empreinte calculée et gardée côté serveur.
+- **Propositions (C15)** :
+  - le gérant peut décocher une proposition ou changer sa catégorie avant d'appliquer ;
+  - chaque changement redemande un aperçu (nouvelle empreinte) ;
+  - l'application se fait ensuite **tout ou rien** sur la sélection.
+- **Annulation (C16)** :
+  - possible **24 heures**, comme pour les changements de prix ;
+  - refusée avec `409 UNDO_EDITED_SINCE` si une donnée créée a été modifiée depuis ;
+  - refusée avec `423 PERIOD_CLOSED` si la période est fermée ;
+  - le message dit quoi faire.
+
+**Dossier et clôture**
+- **Complétude (D17)** :
+  - calculée par le backend uniquement ;
+  - chaque ligne vaut `{ key, status, detail, count, target: { screen, params } }`, avec une **clé d'écran logique**, jamais une URL ;
+  - c'est le même format que les vignettes et les conseils de l'application mobile.
+- **Exercices (D18)** :
+  - une route liste les exercices (en cours et précédents) : libellé, dates, état (`in_progress`, `finished`, `closed`) ;
+  - un exercice **clôturé garde ses dates** même si le mois de début change ensuite ;
+  - pour les exercices non clôturés, les dates suivent le nouveau réglage, comme aujourd'hui pour Statistiques › Année.
+- **Lecture seule (D19)** :
+  - une écriture refusée sur un exercice clôturé rend `423 FISCAL_YEAR_CLOSED` ;
+  - la réouverture est réservée à `ROLE_ADMIN` du site, avec un motif obligatoire et un journal d'audit.
+
+**Export (E20)**
+- Le PDF, le tableur XLSX et l'archive sont produits par le backend, avec les mêmes chiffres que Statistiques › Année.
+- Production en tâche de fond : `202 { exportId }`, puis suivi de l'état et **lien de téléchargement temporaire** (24 h).
+- Jamais de réponse géante à travers le relais.
+
+**Connexion bancaire (F21, pour IA4)**
+- **Une seule adresse de retour centrale** sur le domaine de la plateforme, qui renvoie ensuite vers le domaine du site. Les domaines des
+  clients ne sont pas déclarés chez l'agrégateur.
+- Les scripts tiers du widget (Plaid Link, Flinks) sont à autoriser seulement sur l'écran de connexion (politique de sécurité du contenu).
+- Les jetons restent uniquement côté backend.
+
+**Données d'essai sur demo (G22)** : le backend crée des données **fictives** :
+- 2 ou 3 comptes : banque, carte, Stripe ;
+- un exercice qui commence en avril ;
+- des relevés dans chaque format (PDF texte, PDF scanné, CSV en français et en anglais, OFX, QFX), avec un trou, un doublon et une
+  rupture de soldes volontaires ;
+- des crédits IA pour lire les PDF.
+Jamais de vrais relevés d'un client.
+
+**Plusieurs sites (§ 11, question 6)** : un domaine correspond à un site, donc un dossier par site. C'est réglé.
+
+## 15. Décisions attendues du propriétaire
+
+Posées le 11/11/2026 ; ne rien coder qui en dépend avant sa réponse.
+
+1. **(A1) Emplacement de la gestion sur le web** : `/gestion/...` sur le domaine de chaque site, `ROLE_ADMIN`, connexion par
+   `/admin/login`. Faut-il en faire un **module accordé par la plateforme** (clé dans `/api/site/features`, sinon 403
+   `MODULE_INACTIVE`), par exemple pour une offre payante, ou le donner à tous les sites ?
+2. **(A2) Ampleur de la gestion web** :
+   - (a) refaire tous les écrans de gestion sur le web ;
+   - (b) des écrans web minimaux de correction, pour ce que le dossier corrige souvent (catégorie et justificatif d'une note de frais,
+     coût d'un article, frais fixes) ;
+   - (c) un renvoi « à corriger dans l'application mobile » pour le reste.
+   Recommandation : (b) + (c) pour commencer, avec un cadre « Gestion » (menu, tableau de bord) prêt pour IA1, IA2 et IA4 (question A3).
+3. **(B5) Sites en espagnol** : la gestion n'existe qu'en français et en anglais. Recommandation : un site en espagnol l'affiche en anglais.
+4. **(C9) PDF protégé par mot de passe** : recommandation, le refuser en expliquant comment retirer le mot de passe, plutôt que de
+   demander le mot de passe.
