@@ -59,10 +59,14 @@ namespace Easymakemoney.Models
             set => CurrentYearAverage = value;
         }
 
-        public double LastYearData // Propriété vide car l'API ne retourne pas la dernière moyenne annuelle
+        /// <summary>Panier moyen de l'année civile précédente, en cents (lot backend B3).</summary>
+        [JsonProperty("lastYearAverage")]
+        public double? LastYearAverage { get; set; }
+
+        public double LastYearData
         {
-            get => 0;
-            set { } 
+            get => LastYearAverage ?? 0;
+            set => LastYearAverage = value;
         }
 
         public List<MonthlyAverageOrderValueData> MonthlyDataForCurrentYear

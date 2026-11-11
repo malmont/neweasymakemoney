@@ -25,8 +25,12 @@ namespace Easymakemoney.Models
         [JsonProperty("carrier_count")]
         public double CarrierCount { get; set; }
 
+        /// <summary>Port réellement facturé aux clients, en cents (lot backend B5) ; l'ancien champ additionne le prix catalogue.</summary>
+        [JsonProperty("shippingBilled")]
+        public double? ShippingBilled { get; set; }
+
         public string Data1 => MonthHelper.FormatMonthName(Month);
-        public double Data2 => CarrierCount;
+        public double Data2 => ShippingBilled ?? CarrierCount;
         public Color BackgroundColor { get; set; } = Colors.Transparent;
     }
 

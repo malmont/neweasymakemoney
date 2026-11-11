@@ -67,5 +67,36 @@ namespace Easymakemoney.Models
 
         [JsonProperty("monthlyCountForCurrentYear")]
         public List<MonthlyOrderData> MonthlyCountForCurrentYear { get; set; } = new();
+
+        // Lot backend B4 : ventes seules (type 1, hors incomplètes et annulées), comme le résultat de période.
+        // Quand elles sont présentes, elles remplacent les anciens totaux, qui comptaient aussi les retours et les annulées.
+        [JsonProperty("currentMonthSalesCount")]
+        public double? CurrentMonthSalesCount { get; set; }
+
+        [JsonProperty("lastMonthSalesCount")]
+        public double? LastMonthSalesCount { get; set; }
+
+        [JsonProperty("currentYearSalesCount")]
+        public double? CurrentYearSalesCount { get; set; }
+
+        [JsonProperty("lastYearSalesCount")]
+        public double? LastYearSalesCount { get; set; }
+
+        [JsonProperty("weeklySalesCountForCurrentMonth")]
+        public List<WeeklyOrderData>? WeeklySalesCountForCurrentMonth { get; set; }
+
+        [JsonProperty("monthlySalesCountForCurrentYear")]
+        public List<MonthlyOrderData>? MonthlySalesCountForCurrentYear { get; set; }
+
+        [System.Runtime.Serialization.OnDeserialized]
+        internal void PreferSalesCounts(System.Runtime.Serialization.StreamingContext context)
+        {
+            if (CurrentMonthSalesCount is { } currentMonth) CurrentMonthCount = currentMonth;
+            if (LastMonthSalesCount is { } lastMonth) LastMonthCount = lastMonth;
+            if (CurrentYearSalesCount is { } currentYear) CurrentYearCount = currentYear;
+            if (LastYearSalesCount is { } lastYear) LastYearCount = lastYear;
+            if (WeeklySalesCountForCurrentMonth is { } weekly) WeeklyCountForCurrentMonth = weekly;
+            if (MonthlySalesCountForCurrentYear is { } monthly) MonthlyCountForCurrentYear = monthly;
+        }
     }
 }
