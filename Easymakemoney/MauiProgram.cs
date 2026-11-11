@@ -166,12 +166,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<GetListTransporteurUseCase>();
 		builder.Services.AddTransient<GetDashBoardCollectionUseCase>();
 		builder.Services.AddTransient<GetDashboardCommandUseCase>();
-		builder.Services.AddTransient<OrderNumberPage>();
-		builder.Services.AddTransient<PanierMoyenPage>();
 		builder.Services.AddTransient<StockPage>();
-		builder.Services.AddTransient<ChiffreAffaireUseCase>();
-		builder.Services.AddTransient<OrderCountUseCase>();
-		builder.Services.AddTransient<AverageOrderValueUseCase>();
 		builder.Services.AddTransient<StockEvolutionUseCase>();
 		builder.Services.AddTransient<StockValueEvolutionUseCase>();
 		builder.Services.AddTransient<FraisEvolutionUseCase>();
@@ -228,7 +223,6 @@ public static class MauiProgram
 		builder.Services.AddTransient<DashBoardCommandPage>();
 		builder.Services.AddTransient<DashBoardProductPage>();
 		builder.Services.AddTransient<StatistiquesPage>();
-		builder.Services.AddTransient<ChiffresAffairePage>();
 		builder.Services.AddTransient<FraisEvolutionEntreprisePage>();
 		builder.Services.AddTransient<PaiementRemboursementPage>();
 		builder.Services.AddTransient<TransactionCaissePage>();
@@ -288,8 +282,6 @@ public static class MauiProgram
 		builder.Services.AddTransient<DashBoardCommandViewModel>();
 		builder.Services.AddTransient<DashBoardProductViewModel>();
 		builder.Services.AddTransient<StatistiquesViewModel>();
-		builder.Services.AddTransient<StatistiquesDataValueViewmodel>();
-		builder.Services.AddTransient<OrderCountViewModel>();
 		builder.Services.AddTransient<StockEvolutionViewModel>();
 		builder.Services.AddTransient<FraisEvolutionEntrepriseViewModel>();
 		builder.Services.AddTransient<PaiementRemboursementViewModel>();
