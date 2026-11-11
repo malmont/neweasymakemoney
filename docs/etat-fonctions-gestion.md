@@ -65,6 +65,10 @@ propriétaire qui en fixent les règles. Les contrats détaillés sont dans les 
 - Dossier de fin d'exercice pour le comptable (appli **web**) : les 12 relevés de chaque compte, soldes d'ouverture, inventaire de
   clôture, emprunts, taxes ; jauge de complétude, export PDF et tableur, clôture et réouverture tracée ; l'application prépare, seul le
   comptable valide. Cahier des charges : `docs/web/dossier-fin-exercice.md`.
+- Module de gestion **payant et activable** par site, **web et mobile**, comme les autres modules ; l'IA de la gestion consomme les
+  **unités IA mensuelles** du site comme dans les autres modules.
+- Appli de gestion **web** : clone complet de l'application mobile, en plus complet, espace à plusieurs modules (gestion, support boutique,
+  autres) ; IA au cœur (console IA, assistant comptable, apprentissage du chef d'entreprise). Vision et lots : `docs/web/appli-web-gestion.md`.
 - Connexion directe aux banques par un agrégateur : **plus tard**, **depuis l'appli web uniquement** ; elle devra couvrir les banques **canadiennes et américaines**
   (pistes : Plaid pour le Canada et les États-Unis, Flinks pour le Canada, MX ou Finicity pour les États-Unis ; à choisir sur coût,
   couverture des banques des clients, sécurité et consentement). Elle remplacera seulement le fichier importé : même calcul derrière.
