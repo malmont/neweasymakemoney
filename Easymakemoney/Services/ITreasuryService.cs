@@ -9,10 +9,12 @@ namespace Easymakemoney.Services
         Task<ReconciliationList> GetReconciliationsAsync(int limit = 10);
         Task DecideGapAsync(int balanceId, string decision, string? note);
         Task DeleteBalanceAsync(int balanceId);
+        /// <summary>Corrige un solde déjà saisi (montant, note) ; le rapprochement se recalcule.</summary>
+        Task UpdateBalanceAsync(int balanceId, long amountCents, string? note);
         Task<List<TreasuryMovement>> GetMovementsAsync();
         Task AddMovementAsync(TreasuryMovementRequest request);
         Task DeleteMovementAsync(int movementId);
-        Task UpdateSettingsAsync(long? threshold, bool? includeEstimatedSales);
+        Task UpdateSettingsAsync(long? threshold, bool? includeEstimatedSales, long? tolerance = null);
         /// <summary>Frais fixes (lot FF1) ; all : aussi ceux à venir et terminés.</summary>
         Task<FixedCostList> GetFixedCostsAsync(bool all);
     }

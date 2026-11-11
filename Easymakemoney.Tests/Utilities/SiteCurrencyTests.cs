@@ -155,3 +155,47 @@ public class SiteCurrencyTests : IDisposable
     }
 }
 
+
+[Collection("SiteCurrency")]
+public class SiteCurrencySymbolRuleTests
+{
+    // Le symbole dépend du pays de la culture en cours, recalculé à chaque appel (plus de cache figé au premier appel).
+    [Theory]
+    [InlineData("fr-CA", "CAD", "$")]      // dans le pays de la devise : le symbole local
+    [InlineData("en-US", "CAD", "CA$")]    // ailleurs : le symbole propre à la devise (« $ » est partagé)
+    [InlineData("fr-CA", "EUR", "€")]      // « € » n'appartient qu'à l'euro : jamais « EUR »
+    [InlineData("fr-FR", "EUR", "€")]
+    [InlineData("fr-FR", "USD", "US$")]
+    public void Symbol_FollowsCurrentCulture_AndPrefersUnambiguousSymbol(string culture, string currency, string expected)
+    {
+        var previous = System.Globalization.CultureInfo.CurrentCulture;
+        try
+        {
+            System.Globalization.CultureInfo.CurrentCulture = new System.Globalization.CultureInfo(culture);
+            Assert.Equal(expected, Easymakemoney.Utilities.SiteCurrency.GetCurrencySymbol(currency));
+        }
+        finally
+        {
+            System.Globalization.CultureInfo.CurrentCulture = previous;
+        }
+    }
+
+    [Fact]
+    public void Symbol_DoesNotDependOnCallOrder()
+    {
+        var previous = System.Globalization.CultureInfo.CurrentCulture;
+        try
+        {
+            System.Globalization.CultureInfo.CurrentCulture = new System.Globalization.CultureInfo("en-US");
+            var first = Easymakemoney.Utilities.SiteCurrency.GetCurrencySymbol("EUR");
+            System.Globalization.CultureInfo.CurrentCulture = new System.Globalization.CultureInfo("fr-FR");
+            var second = Easymakemoney.Utilities.SiteCurrency.GetCurrencySymbol("EUR");
+            Assert.Equal("€", first);
+            Assert.Equal("€", second);
+        }
+        finally
+        {
+            System.Globalization.CultureInfo.CurrentCulture = previous;
+        }
+    }
+}

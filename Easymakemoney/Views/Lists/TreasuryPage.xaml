@@ -192,6 +192,14 @@
                        FontFamily="InterSemiBold" FontSize="13" TextColor="#B45309" />
                 <Label Text="Chaque solde saisi est comparé à ce que l'application attendait. Touchez un écart pour le traiter."
                        IsVisible="{Binding HasReconciliations}" Style="{StaticResource UiBody}" FontSize="12" />
+                <Grid ColumnDefinitions="*,Auto">
+                    <Label Text="{Binding Overview.ToleranceText}" Style="{StaticResource UiBody}" FontSize="13" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="Modifier" FontFamily="InterSemiBold" FontSize="13" TextColor="{DynamicResource ThemePrimary}" VerticalOptions="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding EditToleranceCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Grid>
                 <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Reconciliations}">
                     <BindableLayout.ItemTemplate>
                         <DataTemplate x:DataType="models:Reconciliation">
@@ -215,6 +223,8 @@
                 </VerticalStackLayout>
 
                 <Label Text="Derniers soldes saisis" Style="{StaticResource SectionTitle}" />
+                <Label Text="Touchez un solde pour le corriger ; glissez vers la gauche pour le supprimer." IsVisible="{Binding HasBalances}"
+                       Style="{StaticResource UiBody}" FontSize="12" />
                 <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Balances}">
                     <BindableLayout.ItemTemplate>
                         <DataTemplate x:DataType="models:TreasuryBalance">
@@ -228,6 +238,10 @@
                                 </SwipeView.RightItems>
                                 <Grid BackgroundColor="{StaticResource UiBackground}">
                                     <components:UiCard Style="{StaticResource UiCard}" Padding="12">
+                                        <components:UiCard.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.EditBalanceCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </components:UiCard.GestureRecognizers>
                                         <Grid ColumnDefinitions="*,Auto">
                                             <VerticalStackLayout Spacing="2">
                                                 <Label Text="{Binding DateText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />

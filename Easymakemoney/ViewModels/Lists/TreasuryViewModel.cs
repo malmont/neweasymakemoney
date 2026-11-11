@@ -36,6 +36,9 @@ namespace Easymakemoney.ViewModels.Lists
 
         public bool HasNoMovements => !HasMovements;
 
+        [ObservableProperty]
+        private bool _hasBalances;
+
         /// <summary>Réglage « compter les ventes estimées » ; le changer l'enregistre aussitôt.</summary>
         [ObservableProperty]
         private bool _includeEstimatedSales;
@@ -95,6 +98,7 @@ namespace Easymakemoney.ViewModels.Lists
                     balance.Currency = overview.currency;
                     Balances.Add(balance);
                 }
+                HasBalances = Balances.Count > 0;
 
                 Reconciliations.Clear();
                 foreach (var reconciliation in reconciliationsTask.Result.items)
@@ -238,6 +242,70 @@ namespace Easymakemoney.ViewModels.Lists
                 return;
 
             await RunAndReloadAsync(() => _treasuryService.DeleteBalanceAsync(balance.id));
+        }
+
+        /// <summary>Corriger un solde déjà saisi : montant (un « - » pour un découvert), puis la note.</summary>
+        [RelayCommand]
+        private async Task EditBalance(TreasuryBalance? balance)
+        {
+            var page = Application.Current?.Windows.FirstOrDefault()?.Page;
+            if (balance == null || page == null || IsBusy)
+                return;
+
+            var initial = (balance.amount / 100.0).ToString("0.00", System.Globalization.CultureInfo.CurrentCulture);
+            var text = await page.DisplayPromptAsync(
+                $"Solde du {balance.DateText}",
+                "Le solde exact du compte ce jour-là. Mettez un « - » devant pour un découvert.",
+                "Suivant", "Annuler", initialValue: initial, keyboard: Keyboard.Text);
+            if (text == null)
+                return;
+            if (ParseSignedAmount(text) is not { } amount)
+            {
+                await _dialogService.ShowInfoAsync("Montant invalide. Exemple : 2 450,30 ou -150,00.");
+                return;
+            }
+
+            var note = await page.DisplayPromptAsync("Note (facultatif)", "Par exemple : relevé du soir.", "Enregistrer", "Annuler",
+                initialValue: balance.note ?? string.Empty, maxLength: 255);
+            if (note == null)
+                return;
+
+            await RunAndReloadAsync(() => _treasuryService.UpdateBalanceAsync(balance.id, MoneyHelper.ToCents(amount), note));
+        }
+
+        /// <summary>Montant avec signe (« -150,00 », « −150 ») : le convertisseur commun refuse les signes.</summary>
+        public static double? ParseSignedAmount(string? text)
+        {
+            var trimmed = text?.Trim() ?? string.Empty;
+            var negative = trimmed.StartsWith('-') || trimmed.StartsWith('−');
+            if (negative || trimmed.StartsWith('+'))
+                trimmed = trimmed[1..];
+            return DecimalInputConverter.Parse(trimmed) is { } value ? (negative ? -value : value) : null;
+        }
+
+        [RelayCommand]
+        private async Task EditTolerance()
+        {
+            var page = Application.Current?.Windows.FirstOrDefault()?.Page;
+            if (page == null || Overview == null || IsBusy)
+                return;
+
+            var initial = (Overview.Tolerance / 100.0).ToString("0.##", System.Globalization.CultureInfo.CurrentCulture);
+            var text = await page.DisplayPromptAsync(
+                "Écart toléré",
+                "Un écart plus petit que ce montant entre le solde saisi et l'attendu est considéré comme rapproché (arrondis, petits frais).",
+                "Valider", "Annuler", initialValue: initial, keyboard: Keyboard.Numeric);
+            if (text == null)
+                return;
+
+            var amount = string.IsNullOrWhiteSpace(text) ? 0 : DecimalInputConverter.Parse(text);
+            if (amount is null or < 0)
+            {
+                await _dialogService.ShowInfoAsync("Montant invalide.");
+                return;
+            }
+
+            await RunAndReloadAsync(() => _treasuryService.UpdateSettingsAsync(null, null, MoneyHelper.ToCents(amount)));
         }
 
         [RelayCommand]

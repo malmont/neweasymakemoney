@@ -46,7 +46,10 @@ public static class SiteCurrency
 
         var code = isoCurrencyCode.Trim().ToUpperInvariant();
 
-        if (_symbolCache.TryGetValue(code, out var cachedSymbol))
+        // Le symbole dépend du pays courant (« $ » au Canada, « CA$ » ailleurs) : le cache est donc par devise ET par pays.
+        // Avec la devise seule, le premier appel figeait le symbole pour toute la durée du processus, selon la culture de ce moment-là.
+        var cacheKey = $"{code}|{SafeRegionName()}";
+        if (_symbolCache.TryGetValue(cacheKey, out var cachedSymbol))
             return cachedSymbol;
 
         string discoveredSymbol = code;
@@ -61,8 +64,27 @@ public static class SiteCurrency
             discoveredSymbol = code;
         }
 
-        _symbolCache[code] = discoveredSymbol;
+        _symbolCache[cacheKey] = discoveredSymbol;
         return discoveredSymbol;
+    }
+
+    private static string SafeRegionName() => CurrentRegionOrNull()?.Name ?? string.Empty;
+
+    /// <summary>
+    /// Pays de la culture en cours. RegionInfo.CurrentRegion est mis en cache par .NET au premier appel et ne suit pas les changements
+    /// de culture : on le recalcule depuis CultureInfo.CurrentCulture.
+    /// </summary>
+    private static RegionInfo? CurrentRegionOrNull()
+    {
+        try
+        {
+            var culture = CultureInfo.CurrentCulture;
+            return string.IsNullOrEmpty(culture.Name) ? null : new RegionInfo(culture.Name);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     /// <summary>
@@ -71,14 +93,49 @@ public static class SiteCurrency
     /// </summary>
     private static string? FindSymbol(string code)
     {
-        var current = RegionInfo.CurrentRegion;
-        if (string.Equals(current.ISOCurrencySymbol, code, StringComparison.OrdinalIgnoreCase)
+        var current = CurrentRegionOrNull();
+        if (current != null && string.Equals(current.ISOCurrencySymbol, code, StringComparison.OrdinalIgnoreCase)
             && !string.IsNullOrWhiteSpace(current.CurrencySymbol))
         {
             return current.CurrencySymbol;
         }
 
-        string? best = null;
+        // Hors du pays de la devise : le symbole qui n'appartient qu'à elle, le plus court (« € » pour l'euro, « CA$ » pour le dollar
+        // canadien, puisque « $ » est partagé par plusieurs devises). Sans symbole propre : le plus long, le plus explicite.
+        if (!SymbolsByCurrency.Value.TryGetValue(code, out var symbols) || symbols.Count == 0)
+            return null;
+
+        var unique = symbols
+            .Where(symbol => SymbolOwners.Value.TryGetValue(symbol, out var owners) && owners.Count == 1)
+            .OrderBy(symbol => symbol.Length)
+            .ThenBy(symbol => symbol, StringComparer.Ordinal)
+            .FirstOrDefault();
+        return unique ?? symbols
+            .OrderByDescending(symbol => symbol.Length)
+            .ThenBy(symbol => symbol, StringComparer.Ordinal)
+            .First();
+    }
+
+    /// <summary>Symboles de chaque devise, relevés une fois dans toutes les cultures du système (indépendants de la culture courante).</summary>
+    private static readonly Lazy<Dictionary<string, HashSet<string>>> SymbolsByCurrency = new(BuildSymbols);
+
+    /// <summary>Pour chaque symbole, les devises qui l'utilisent.</summary>
+    private static readonly Lazy<Dictionary<string, HashSet<string>>> SymbolOwners = new(() =>
+    {
+        var owners = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
+        foreach (var (currency, symbols) in SymbolsByCurrency.Value)
+            foreach (var symbol in symbols)
+            {
+                if (!owners.TryGetValue(symbol, out var set))
+                    owners[symbol] = set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                set.Add(currency);
+            }
+        return owners;
+    });
+
+    private static Dictionary<string, HashSet<string>> BuildSymbols()
+    {
+        var map = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase);
         foreach (var culture in CultureInfo.GetCultures(CultureTypes.SpecificCultures))
         {
             RegionInfo region;
@@ -91,21 +148,15 @@ public static class SiteCurrency
                 continue; // Culture non prise en charge par RegionInfo
             }
 
+            var iso = region.ISOCurrencySymbol;
             var symbol = region.CurrencySymbol;
-            if (!string.Equals(region.ISOCurrencySymbol, code, StringComparison.OrdinalIgnoreCase)
-                || string.IsNullOrWhiteSpace(symbol))
-            {
+            if (string.IsNullOrWhiteSpace(iso) || string.IsNullOrWhiteSpace(symbol))
                 continue;
-            }
-
-            if (best == null || symbol.Length > best.Length
-                || (symbol.Length == best.Length && string.CompareOrdinal(symbol, best) < 0))
-            {
-                best = symbol;
-            }
+            if (!map.TryGetValue(iso, out var set))
+                map[iso] = set = new HashSet<string>(StringComparer.Ordinal);
+            set.Add(symbol);
         }
-
-        return best;
+        return map;
     }
 
     /// <summary>

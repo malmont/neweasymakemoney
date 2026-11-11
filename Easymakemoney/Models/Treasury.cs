@@ -22,6 +22,11 @@ namespace Easymakemoney.Models
 
         public bool HasUnexplained => reconciliation?.unexplained is { count: > 0 };
 
+        /// <summary>Écart toléré au rapprochement (100 cents par défaut).</summary>
+        public long Tolerance => reconciliation?.tolerance is > 0 or 0 ? reconciliation.tolerance : 100;
+
+        public string ToleranceText => $"Écart toléré : {Money(Tolerance)}";
+
         public string UnexplainedText => reconciliation?.unexplained is { count: > 0 } u
             ? $"{u.count} écart(s) non justifié(s) : {Money(u.total)}"
             : string.Empty;

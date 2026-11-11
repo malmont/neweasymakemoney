@@ -68,3 +68,45 @@ public class ReconciliationTests
         Assert.Equal("{\"decision\":\"explained\",\"note\":\"Dépôt d'espèces\"}", JsonConvert.SerializeObject(body));
     }
 }
+
+[Collection("SiteCurrency")]
+public class TreasuryBalanceEditTests
+{
+    [Theory]
+    [InlineData("2 450,30", 2450.30)]
+    [InlineData("-150,00", -150.0)]
+    [InlineData("−150", -150.0)]
+    [InlineData("+20", 20.0)]
+    public void SignedAmount_Parses(string text, double expected) =>
+        Assert.Equal(expected, Easymakemoney.ViewModels.Lists.TreasuryViewModel.ParseSignedAmount(text)!.Value, 2);
+
+    [Fact]
+    public void SignedAmount_RejectsGarbage() =>
+        Assert.Null(Easymakemoney.ViewModels.Lists.TreasuryViewModel.ParseSignedAmount("abc"));
+
+    [Fact]
+    public async Task Service_PatchBalance_AndTolerance()
+    {
+        var fakeHttp = new Easymakemoney.Tests.Fakes.FakeHttpService();
+        var service = new Easymakemoney.Services.TreasuryService(fakeHttp);
+
+        await service.UpdateBalanceAsync(12, -15000, "  découvert  ");
+        await service.UpdateBalanceAsync(13, 245030, "   ");
+        await service.UpdateSettingsAsync(null, null, 250);
+
+        Assert.Equal("gestion/tresorerie/soldes/12", fakeHttp.PostedAuthData[0].Url);
+        Assert.Equal("{\"amount\":-15000,\"note\":\"découvert\"}", Newtonsoft.Json.JsonConvert.SerializeObject(fakeHttp.PostedAuthData[0].Data));
+        Assert.Equal("{\"amount\":245030}", Newtonsoft.Json.JsonConvert.SerializeObject(fakeHttp.PostedAuthData[1].Data));
+        var (url, body) = Assert.Single(fakeHttp.PutData);
+        Assert.Equal("gestion/tresorerie/reglages", url);
+        Assert.Equal("{\"tolerance\":250}", Newtonsoft.Json.JsonConvert.SerializeObject(body));
+    }
+
+    [Fact]
+    public void Overview_ToleranceDefaultsTo100()
+    {
+        Assert.Equal(100, new Easymakemoney.Models.TreasuryOverview().Tolerance);
+        var overview = Newtonsoft.Json.JsonConvert.DeserializeObject<Easymakemoney.Models.TreasuryOverview>("""{ "reconciliation": { "tolerance": 500 } }""")!;
+        Assert.Equal(500, overview.Tolerance);
+    }
+}

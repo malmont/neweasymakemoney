@@ -42,6 +42,14 @@ namespace Easymakemoney.Services
         public async Task DeleteBalanceAsync(int balanceId) =>
             await _httpService.DeleAsyncWithAuth<object>($"gestion/tresorerie/soldes/{balanceId}");
 
+        public async Task UpdateBalanceAsync(int balanceId, long amountCents, string? note)
+        {
+            var body = new Dictionary<string, object> { ["amount"] = amountCents };
+            if (!string.IsNullOrWhiteSpace(note))
+                body["note"] = note.Trim();
+            await _httpService.PatchAsyncWithAuth<object>($"gestion/tresorerie/soldes/{balanceId}", body);
+        }
+
         public async Task<List<TreasuryMovement>> GetMovementsAsync() =>
             await _httpService.GetAsync<List<TreasuryMovement>>($"gestion/tresorerie/mouvements?locale={Locale}") ?? new();
 
@@ -54,9 +62,11 @@ namespace Easymakemoney.Services
         public async Task<FixedCostList> GetFixedCostsAsync(bool all) =>
             await _httpService.GetAsync<FixedCostList>($"gestion/frais-fixes?{(all ? "all=1&" : string.Empty)}locale={Locale}") ?? new FixedCostList();
 
-        public async Task UpdateSettingsAsync(long? threshold, bool? includeEstimatedSales)
+        public async Task UpdateSettingsAsync(long? threshold, bool? includeEstimatedSales, long? tolerance = null)
         {
             var body = new Dictionary<string, object>();
+            if (tolerance.HasValue)
+                body["tolerance"] = tolerance.Value;
             if (threshold.HasValue)
                 body["threshold"] = threshold.Value;
             if (includeEstimatedSales.HasValue)
