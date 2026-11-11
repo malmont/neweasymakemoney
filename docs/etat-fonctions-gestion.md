@@ -60,7 +60,12 @@ propriétaire qui en fixent les règles. Les contrats détaillés sont dans les 
   permanente dans Gestion ; une fenêtre explique avant de commencer que des données vont être mises à jour.
 - Relevés bancaires : import PDF, CSV et OFX (solde, prélèvements récurrents proposés en frais fixes, dépenses manquantes proposées en
   notes de frais, rapprochement) ; le PDF est supprimé après lecture, seules les lignes extraites sont gardées, numéro de compte masqué.
-- Connexion directe aux banques par un agrégateur : **plus tard** ; elle devra couvrir les banques **canadiennes et américaines**
+- Import des relevés : **au moins 3 relevés** demandés (récurrences et enchaînement des soldes) ; un seul accepté, avec un avertissement
+  (solde et dépenses à jour, frais fixes non détectés avec certitude).
+- Dossier de fin d'exercice pour le comptable (appli **web**) : les 12 relevés de chaque compte, soldes d'ouverture, inventaire de
+  clôture, emprunts, taxes ; jauge de complétude, export PDF et tableur, clôture et réouverture tracée ; l'application prépare, seul le
+  comptable valide. Cahier des charges : `docs/web/dossier-fin-exercice.md`.
+- Connexion directe aux banques par un agrégateur : **plus tard**, **depuis l'appli web uniquement** ; elle devra couvrir les banques **canadiennes et américaines**
   (pistes : Plaid pour le Canada et les États-Unis, Flinks pour le Canada, MX ou Finicity pour les États-Unis ; à choisir sur coût,
   couverture des banques des clients, sécurité et consentement). Elle remplacera seulement le fichier importé : même calcul derrière.
 
@@ -81,8 +86,9 @@ propriétaire qui en fixent les règles. Les contrats détaillés sont dans les 
 | AN | Statistiques › Année : mois par mois et cumul, résultat de l'entreprise (avec locations, abonnements et frais fixes), point mort annuel, ce qui manque, leviers chiffrés, bilan de fin d'année et leçons | validé le 10/11, après S1 et FF2 |
 | IA1 | Bilan de configuration : ce qui manque ou ne colle pas (solde absent ou ancien, aucun frais fixe, notes qui ressemblent à des frais fixes, articles sans coût, périodes sans budget, écarts bancaires, stock négatif, exercice par défaut…), pourcentage, vignette d'Accueil | validé le 11/11 (remplace DEP), contrat à demander |
 | IA2 | Assistant : questions de l'IA, aperçu, application tout ou rien, journal, annulation | validé le 11/11, après IA1 |
-| IA3 | Import de relevés bancaires PDF, CSV, OFX : solde, frais fixes, dépenses, rapprochement | validé le 11/11, après IA2 |
-| IA4 | Connexion directe aux banques (agrégateur, Canada et États-Unis) | plus tard |
+| IA3 | Import de relevés bancaires PDF, CSV, OFX, QFX (au moins 3 demandés) : solde, frais fixes, dépenses, rapprochement ; dépôt de plusieurs fichiers sur le web | validé le 11/11, après CLO |
+| CLO | Clôture du mois et de l'exercice ; dossier de fin d'exercice (web, `docs/web/dossier-fin-exercice.md`) | validé le 11/11 |
+| IA4 | Connexion directe aux banques (agrégateur, Canada et États-Unis), depuis le web uniquement | plus tard |
 | Ordre backend | ~~RAP, FF1, FF2, S1, AN~~ (livrés), LOC (LOC1 et LOC2 livrés, LOC3 en développement, LOC3 en ligne sur feu vert du propriétaire), IA1, IA2, ABO, REG, INV, CLO, IA3, S2, S3 | fixé par Claude avec l'accord du propriétaire |
 | Mise à niveau | Rapprochement bancaire (livré), assistant IA (lots IA), régularisations, inventaire, clôture du mois | validé |
 | Notifications | Inscription du téléphone et réglages | attend Firebase (nom de l'application) |
