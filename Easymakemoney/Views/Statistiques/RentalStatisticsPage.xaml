@@ -123,6 +123,29 @@
                     </VerticalStackLayout>
                 </components:UiCard>
 
+                <!-- Promotions de location en cours et à venir -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding HasPromotions}">
+                    <VerticalStackLayout Spacing="10">
+                        <components:UiTerm Term="promotion-location" Text="Promotions de location" FontSize="15" FontFamily="InterBold" />
+                        <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Promotions}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:RentalPromotionItem">
+                                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="8">
+                                        <Label Text="{Binding Title}" Style="{StaticResource UiTitle}" FontSize="14" />
+                                        <Label Grid.Column="1" Text="{Binding StatusText}" FontFamily="InterSemiBold" FontSize="12" TextColor="{DynamicResource ThemePrimary}" />
+                                        <Label Grid.Row="1" Text="{Binding DatesText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                        <Label Grid.Row="1" Grid.Column="1" Text="Terminer" IsVisible="{Binding CanEnd}" FontFamily="InterSemiBold" FontSize="13" TextColor="#B91C1C">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Path=BindingContext.EndPromotionCommand, Source={x:Reference Page}, x:DataType=ContentPage}" CommandParameter="{Binding .}" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </components:UiCard>
+
                 <!-- Articles -->
                 <Label Text="Par article" Style="{StaticResource UiTitle}" FontSize="17" IsVisible="{Binding Data.HasProducts}" />
                 <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Products}">
@@ -140,6 +163,11 @@
                                     </Grid>
                                     <Label Text="{Binding DetailText}" Style="{StaticResource UiBody}" FontSize="12" />
                                     <Label Text="{Binding TimeText}" IsVisible="{Binding HasTime}" Style="{StaticResource UiBody}" FontSize="11" />
+                                    <Label Text="Mettre en promotion" FontFamily="InterSemiBold" FontSize="13" TextColor="{DynamicResource ThemePrimary}" Margin="0,4,0,0">
+                                        <Label.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.CreatePromotionCommand, Source={x:Reference Page}, x:DataType=ContentPage}" CommandParameter="{Binding .}" />
+                                        </Label.GestureRecognizers>
+                                    </Label>
                                 </VerticalStackLayout>
                             </components:UiCard>
                         </DataTemplate>

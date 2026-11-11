@@ -138,6 +138,7 @@ namespace Easymakemoney.Models
     {
         public RentalProductRow(RentalProduct product, string? currency)
         {
+            ProductId = product.productId;
             Name = product.name ?? $"Article {product.productId}";
             Occupancy = Math.Clamp((product.occupancy ?? 0) / 100.0, 0, 1);
             OccupancyText = RentalFormat.Percent(product.occupancy);
@@ -155,6 +156,7 @@ namespace Easymakemoney.Models
             Tone = (product.occupancy ?? 0) >= 80 ? 1 : (product.occupancy ?? 0) < 15 ? -1 : 0;
         }
 
+        public int ProductId { get; }
         public string Name { get; }
         public double Occupancy { get; }
         public string OccupancyText { get; }

@@ -12,15 +12,21 @@ namespace Easymakemoney.ViewModels.Statistiques
         private readonly IRentalStatisticsService _service;
         private readonly IListCollectionService _periods;
         private readonly IDialogService _dialogService;
+        private readonly IRentalPromotionService? _promotions;
+
+        /// <summary>Mis à vrai quand une promotion est créée : la liste se relit au retour sur l'écran.</summary>
+        public static bool PromotionsChanged { get; set; }
         private int _requestVersion;
         private RentalQuery _query = new();
         private bool _loaded;
 
-        public RentalStatisticsViewModel(IRentalStatisticsService service, IListCollectionService periods, IDialogService dialogService)
+        public RentalStatisticsViewModel(IRentalStatisticsService service, IListCollectionService periods, IDialogService dialogService,
+            IRentalPromotionService? promotions = null)
         {
             _service = service;
             _periods = periods;
             _dialogService = dialogService;
+            _promotions = promotions;
             Ranges = StatsChoice.List(("current", "Période en cours"), ("30d", "30 jours"), ("period", "Autre période"), ("custom", "Dates"));
             StatsChoice.Select(Ranges, "current");
         }
@@ -28,6 +34,10 @@ namespace Easymakemoney.ViewModels.Statistiques
         public IReadOnlyList<StatsChoice> Ranges { get; }
         public ObservableCollection<RentalProductRow> Products { get; } = new();
         public ObservableCollection<ListCollection> Periods { get; } = new();
+        public ObservableCollection<RentalPromotionItem> Promotions { get; } = new();
+
+        [ObservableProperty]
+        private bool _hasPromotions;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(ShowsPeriodPicker), nameof(ShowsCustomDates))]
@@ -65,9 +75,72 @@ namespace Easymakemoney.ViewModels.Statistiques
         public async Task InitializeAsync()
         {
             if (_loaded)
+            {
+                if (PromotionsChanged)
+                {
+                    PromotionsChanged = false;
+                    await LoadPromotionsAsync();
+                }
                 return;
+            }
             _loaded = true;
+            PromotionsChanged = false;
             await LoadAsync();
+            await LoadPromotionsAsync();
+        }
+
+        /// <summary>Promotions de location en cours et à venir (lot LOC3).</summary>
+        public async Task LoadPromotionsAsync()
+        {
+            if (_promotions == null)
+                return;
+            try
+            {
+                var items = await _promotions.GetPromotionsAsync();
+                Promotions.Clear();
+                foreach (var item in items.Where(p => p.IsVisible))
+                    Promotions.Add(item);
+                HasPromotions = Promotions.Count > 0;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
+            }
+        }
+
+        [RelayCommand]
+        private async Task EndPromotion(RentalPromotionItem? promotion)
+        {
+            if (promotion is not { CanEnd: true } || _promotions == null)
+                return;
+            var message = promotion.status == "upcoming"
+                ? $"La promotion « {promotion.Title} » n'a pas commencé : elle ne s'appliquera jamais."
+                : $"La promotion « {promotion.Title} » s'arrête ce soir. Une location qui commence aujourd'hui la garde. Les réservations déjà faites ne changent pas.";
+            if (!await _dialogService.ConfirmAsync("Terminer la promotion", message, "Terminer", "Annuler"))
+                return;
+            try
+            {
+                await _promotions.EndAsync(promotion.batchId);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
+            }
+            await LoadPromotionsAsync();
+        }
+
+        [RelayCommand]
+        private async Task CreatePromotion(RentalProductRow? product)
+        {
+            if (product == null || Shell.Current is not { } shell)
+                return;
+            await shell.GoToAsync(nameof(RentalPromotionPage), new ShellNavigationQueryParameters
+            {
+                ["ProductId"] = product.ProductId.ToString(CultureInfo.InvariantCulture),
+                ["ProductName"] = product.Name,
+            });
         }
 
         [RelayCommand]

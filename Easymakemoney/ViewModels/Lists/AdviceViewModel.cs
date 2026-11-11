@@ -178,7 +178,9 @@ namespace Easymakemoney.ViewModels.Lists
             var percent = advice.SuggestedPercent is { } value
                 ? $"&Percent={value.ToString(System.Globalization.CultureInfo.InvariantCulture)}"
                 : string.Empty;
-            await shell.GoToAsync($"{nameof(PromotionCreatePage)}?AdviceId={advice.id}{percent}");
+            // Conseil de location (RENT2) : promotion de location, jours et pourcentage pris dans le conseil par le backend.
+            var page = advice.IsRentalPromotion ? nameof(RentalPromotionPage) : nameof(PromotionCreatePage);
+            await shell.GoToAsync($"{page}?AdviceId={advice.id}{percent}");
         }
 
         [RelayCommand]
