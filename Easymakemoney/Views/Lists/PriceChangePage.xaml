@@ -58,7 +58,7 @@
                     <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="{Binding ValuePlaceholder}" Keyboard="Numeric" Text="{Binding ValueText}" />
                 </Border>
 
-                <Label Text="Arrondi" Style="{StaticResource FormLabel}" />
+                <components:UiTerm Term="arrondi" Text="Arrondi" FontSize="14" />
                 <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
                     <Picker Style="{StaticResource FormPicker}" ItemsSource="{Binding Roundings}" SelectedItem="{Binding SelectedRounding}" />
                 </Border>
@@ -95,7 +95,7 @@
                     </VerticalStackLayout>
 
                     <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding Preview.HasBelowCost}">
-                        <Label Text="Autoriser les prix sous le coût" Style="{StaticResource FormLabel}" VerticalOptions="Center" />
+                        <components:UiTerm Term="sous-le-cout" Text="Autoriser les prix sous le coût" FontSize="14" VerticalOptions="Center" />
                         <Switch Grid.Column="1" IsToggled="{Binding AllowBelowCost}" OnColor="#B91C1C" />
                     </Grid>
                     <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding Preview.HasBigChange}">

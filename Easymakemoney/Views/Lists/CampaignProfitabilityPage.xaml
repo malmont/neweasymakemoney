@@ -61,7 +61,7 @@
                     <components:UiCard Style="{StaticResource UiCard}" Padding="16">
                         <VerticalStackLayout Spacing="6">
                             <Grid ColumnDefinitions="*,Auto">
-                                <Label Text="Gain en marge" Style="{StaticResource UiBody}" FontSize="14" VerticalOptions="Center" />
+                                <components:UiTerm Term="gain-marge" Text="Gain en marge" FontSize="14" VerticalOptions="Center" />
                                 <Border Grid.Column="1" StrokeThickness="0" StrokeShape="RoundRectangle 10" BackgroundColor="{DynamicResource ThemePrimaryTint}" Padding="10,4">
                                     <Label Text="Estimation" FontFamily="InterBold" FontSize="12" TextColor="{DynamicResource ThemePrimary}" />
                                 </Border>
@@ -82,7 +82,7 @@
                         <VerticalStackLayout Spacing="8">
                             <Label Text="Hausse (pendant − avant)" Style="{StaticResource UiTitle}" FontSize="15" />
                             <components:UiAmountRow Title="Ventes" Value="{Binding Report.RevenueUpliftText}" />
-                            <components:UiAmountRow Title="Marge" Value="{Binding Report.MarginUpliftText}" />
+                            <components:UiAmountRow Title="Marge" Term="marge" Value="{Binding Report.MarginUpliftText}" />
                         </VerticalStackLayout>
                     </components:UiCard>
 

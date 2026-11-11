@@ -39,7 +39,7 @@
                         <DataTemplate x:DataType="models:Advice">
                             <components:UiCard Style="{StaticResource UiCard}" Padding="16">
                                 <VerticalStackLayout Spacing="8">
-                                    <Label Text="{Binding ConfidenceText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                    <components:UiTerm Term="confiance" Text="{Binding ConfidenceText}" FontSize="12" />
                                     <Label Text="{Binding title}" Style="{StaticResource UiTitle}" FontSize="16" />
                                     <Label Text="{Binding text}" Style="{StaticResource UiBody}" FontSize="14" />
                                     <Label Text="{Binding EffectText}" IsVisible="{Binding HasEffect}" FontFamily="InterBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}">

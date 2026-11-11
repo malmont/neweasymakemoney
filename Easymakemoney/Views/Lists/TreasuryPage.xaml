@@ -76,22 +76,22 @@
                         <Label Text="{Binding Overview.StatusDetail}" Style="{StaticResource UiBody}" FontSize="14" />
 
                         <VerticalStackLayout Spacing="8" Margin="0,6,0,0" IsVisible="{Binding Overview.HasBalance}">
-                            <components:UiAmountRow Title="Solde saisi" Value="{Binding Overview.BalanceText}" />
-                            <components:UiAmountRow Title="Point bas sur 14 jours" Value="{Binding Overview.Low14Text}" />
-                            <components:UiAmountRow Title="Point bas sur 90 jours" Value="{Binding Overview.LowText}" />
+                            <components:UiAmountRow Title="Solde saisi" Term="solde" Value="{Binding Overview.BalanceText}" />
+                            <components:UiAmountRow Title="Point bas sur 14 jours" Term="point-bas" Value="{Binding Overview.Low14Text}" />
+                            <components:UiAmountRow Title="Point bas sur 90 jours" Term="point-bas" Value="{Binding Overview.LowText}" />
                             <components:UiAmountRow Title="Dans 90 jours" Value="{Binding Overview.EndText}" />
                             <Label Text="{Binding Overview.BelowThresholdText}" IsVisible="{Binding Overview.HasBelowThreshold}"
                                    FontFamily="InterSemiBold" FontSize="13" TextColor="#B91C1C" />
                         </VerticalStackLayout>
 
                         <Grid ColumnDefinitions="*,Auto" Margin="0,6,0,0">
-                            <Label Text="{Binding Overview.ThresholdText}" Style="{StaticResource UiBody}" FontSize="14" VerticalOptions="Center" />
+                            <components:UiTerm Term="seuil" Text="{Binding Overview.ThresholdText}" FontSize="14" VerticalOptions="Center" />
                             <Button Grid.Column="1" Text="Modifier" Command="{Binding EditThresholdCommand}" Padding="12,0" HeightRequest="36"
                                     BackgroundColor="Transparent" TextColor="{DynamicResource ThemePrimary}" FontFamily="InterSemiBold" FontSize="14" />
                         </Grid>
                         <Grid ColumnDefinitions="*,Auto">
                             <VerticalStackLayout Spacing="2" VerticalOptions="Center">
-                                <Label Text="Compter les ventes à venir" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                <components:UiTerm Term="ventes-a-venir" Text="Compter les ventes à venir" FontFamily="InterSemiBold" FontSize="14" />
                                 <Label Text="{Binding Overview.ReceiptsText}" Style="{StaticResource UiBody}" FontSize="12" />
                             </VerticalStackLayout>
                             <Switch Grid.Column="1" IsToggled="{Binding IncludeEstimatedSales}" OnColor="{DynamicResource ThemePrimary}" VerticalOptions="Center" />
@@ -136,7 +136,7 @@
                     </Border>
                 </Grid>
                 <Grid ColumnDefinitions="*,Auto">
-                    <Label Text="Découvert (solde négatif)" Style="{StaticResource FormLabel}" VerticalOptions="Center" />
+                    <components:UiTerm Term="decouvert" Text="Découvert (solde négatif)" FontSize="14" VerticalOptions="Center" />
                     <Switch Grid.Column="1" IsToggled="{Binding BalanceIsOverdraft}" OnColor="#B91C1C" />
                 </Grid>
                 <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
@@ -145,7 +145,7 @@
                 <Button Text="Enregistrer le solde" Command="{Binding AddBalanceCommand}" Style="{StaticResource DocMain}" />
 
                 <!-- Mouvements prévus -->
-                <Label Text="Mouvements prévus" Style="{StaticResource SectionTitle}" />
+                <components:UiTerm Term="mouvement-prevu" Text="Mouvements prévus" FontFamily="InterBold" FontSize="17" Margin="0,8,0,0" />
                 <Label Text="Loyer, salaires, prêt, taxes… Vos commandes, notes de frais, frais de port et publicités sont déjà comptés : ne les ajoutez pas ici."
                        Style="{StaticResource UiBody}" FontSize="13" />
                 <Button Text="Ajouter un mouvement" Command="{Binding AddMovementCommand}" Style="{StaticResource DocAction}" />

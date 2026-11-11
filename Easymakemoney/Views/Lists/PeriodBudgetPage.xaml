@@ -34,7 +34,7 @@
                         <ProgressBar Progress="{Binding Budget.total.Progress}" ProgressColor="{Binding Budget.total.StatusColor}" IsVisible="{Binding Budget.TotalComparable}" />
                         <Grid ColumnDefinitions="*,Auto">
                             <Label Text="{Binding Budget.total.ActualText}" FontFamily="InterBold" FontSize="15" TextColor="{StaticResource UiTextPrimary}" />
-                            <Label Grid.Column="1" Text="{Binding Budget.total.PlannedText}" Style="{StaticResource UiBody}" FontSize="14" />
+                            <components:UiTerm Grid.Column="1" Term="prevu" Text="{Binding Budget.total.PlannedText}" FontSize="14" />
                         </Grid>
                         <Label Text="{Binding Budget.total.RemainingText}" IsVisible="{Binding Budget.TotalComparable}" Style="{StaticResource UiBody}" FontSize="13" />
                         <Label Text="Le total se compare au prévu quand chaque poste en a un. Voyez le détail poste par poste."
@@ -61,7 +61,7 @@
                                     <ProgressBar Progress="{Binding Progress}" ProgressColor="{Binding StatusColor}" IsVisible="{Binding HasPlanned}" />
                                     <Grid ColumnDefinitions="*,Auto">
                                         <Label Text="{Binding ActualText}" FontFamily="InterBold" FontSize="15" TextColor="{StaticResource UiTextPrimary}" />
-                                        <Label Grid.Column="1" Text="{Binding PlannedText}" Style="{StaticResource UiBody}" FontSize="14" />
+                                        <components:UiTerm Grid.Column="1" Term="prevu" Text="{Binding PlannedText}" FontSize="14" />
                                     </Grid>
                                     <Label Text="{Binding RemainingText}" IsVisible="{Binding HasPlanned}" Style="{StaticResource UiBody}" FontSize="13" />
                                     <Label Text="{Binding DetailsText}" IsVisible="{Binding HasDetails}" Style="{StaticResource UiBody}" FontSize="12" />

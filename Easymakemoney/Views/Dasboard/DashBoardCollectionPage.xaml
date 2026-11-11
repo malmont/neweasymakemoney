@@ -116,20 +116,20 @@
                                     </DataTrigger>
                                 </Label.Triggers>
                             </Label>
-                            <components:UiAmountRow Title="Ventes d'articles" Value="{Binding PeriodResult.RevenueText}" />
-                            <components:UiAmountRow Title="Ventes sans coût connu" Value="{Binding PeriodResult.UnknownRevenueText}" IsVisible="{Binding PeriodResult.HasUnknownRevenue}" />
-                            <components:UiAmountRow Title="Coût des articles vendus" Value="{Binding PeriodResult.CogsText}" />
+                            <components:UiAmountRow Title="Ventes d'articles" Term="ventes" Value="{Binding PeriodResult.RevenueText}" />
+                            <components:UiAmountRow Title="Ventes sans coût connu" Term="ventes-sans-cout" Value="{Binding PeriodResult.UnknownRevenueText}" IsVisible="{Binding PeriodResult.HasUnknownRevenue}" />
+                            <components:UiAmountRow Title="Coût des articles vendus" Term="cout-articles-vendus" Value="{Binding PeriodResult.CogsText}" />
                             <Label Text="{Binding PeriodResult.EstimatedCogsText}" IsVisible="{Binding PeriodResult.HasEstimatedCogs}" Style="{StaticResource UiBody}" HorizontalOptions="End" />
-                            <components:UiAmountRow Title="Marge" Value="{Binding PeriodResult.GrossText}" IsTotal="True" />
+                            <components:UiAmountRow Title="Marge" Term="marge" Value="{Binding PeriodResult.GrossText}" IsTotal="True" />
                             <components:UiAmountRow Title="Frais de port" Value="{Binding PeriodResult.ShippingText}" />
                             <components:UiAmountRow Title="Notes de frais" Value="{Binding PeriodResult.NotesText}" />
                             <components:UiAmountRow Title="{Binding PeriodResult.OtherExpensesTitle}" Value="{Binding PeriodResult.OtherExpensesText}" IsVisible="{Binding PeriodResult.HasOtherExpenses}" />
-                            <components:UiAmountRow Title="Résultat" Value="{Binding PeriodResult.NetText}" IsTotal="True" />
+                            <components:UiAmountRow Title="Résultat" Term="resultat" Value="{Binding PeriodResult.NetText}" IsTotal="True" />
                         </VerticalStackLayout>
                     </components:UiCard>
                     <components:UiCard Style="{StaticResource UiCard}">
                         <VerticalStackLayout Spacing="2">
-                            <Label Text="Investi en stock pendant la période" Style="{StaticResource UiBody}" />
+                            <components:UiTerm Term="investi-stock" Text="Investi en stock pendant la période" FontSize="14" />
                             <Label Text="{Binding PeriodResult.InvestmentText}" FontFamily="InterBold" FontSize="20" TextColor="{StaticResource UiTextPrimary}" />
                         </VerticalStackLayout>
                     </components:UiCard>

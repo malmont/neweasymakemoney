@@ -59,7 +59,7 @@
                     <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Ex. : 20" Keyboard="Numeric" Text="{Binding PercentText}" />
                 </Border>
 
-                <Label Text="Arrondi du prix promotionnel" Style="{StaticResource FormLabel}" />
+                <components:UiTerm Term="arrondi" Text="Arrondi du prix promotionnel" FontSize="14" />
                 <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
                     <Picker Style="{StaticResource FormPicker}" ItemsSource="{Binding Roundings}" SelectedItem="{Binding SelectedRounding}" />
                 </Border>
@@ -92,7 +92,7 @@
                                         <Label Text="{Binding name}" Style="{StaticResource UiTitle}" FontSize="15" LineBreakMode="TailTruncation" />
                                         <Label Text="{Binding PriceText}" FontFamily="InterBold" FontSize="15" TextColor="{StaticResource UiTextPrimary}" />
                                         <Label Text="{Binding MarginText}" Style="{StaticResource UiBody}" FontSize="13" />
-                                        <Label Text="{Binding VariantsText}" IsVisible="{Binding HasVariantsText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                        <components:UiTerm Term="variante-prix-propre" Text="{Binding VariantsText}" IsVisible="{Binding HasVariantsText}" FontSize="12" />
                                         <Label Text="{Binding AlertsText}" IsVisible="{Binding HasAlerts}" FontFamily="InterSemiBold" FontSize="12" TextColor="#B45309">
                                             <Label.Triggers>
                                                 <DataTrigger TargetType="Label" Binding="{Binding IsBlocking}" Value="True">
@@ -107,7 +107,7 @@
                     </VerticalStackLayout>
 
                     <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding Preview.HasBelowCost}">
-                        <Label Text="Autoriser les prix sous le coût" Style="{StaticResource FormLabel}" VerticalOptions="Center" />
+                        <components:UiTerm Term="sous-le-cout" Text="Autoriser les prix sous le coût" FontSize="14" VerticalOptions="Center" />
                         <Switch Grid.Column="1" IsToggled="{Binding AllowBelowCost}" OnColor="#B91C1C" />
                     </Grid>
                     <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding Preview.HasBigChange}">

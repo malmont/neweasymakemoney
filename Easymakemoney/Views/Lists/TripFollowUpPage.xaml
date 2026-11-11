@@ -27,7 +27,7 @@
                         <ProgressBar Progress="{Binding FollowUp.Progress}" ProgressColor="{Binding FollowUp.StatusColor}" />
                         <Label Text="{Binding FollowUp.SpentText}" FontFamily="InterBold" FontSize="15" TextColor="{StaticResource UiTextPrimary}" />
                         <Label Text="{Binding FollowUp.RemainingText}" Style="{StaticResource UiBody}" FontSize="14" />
-                        <Label Text="{Binding FollowUp.AllowanceText}" Style="{StaticResource UiBody}" FontSize="13" />
+                        <components:UiTerm Term="budget-a-ce-jour" Text="{Binding FollowUp.AllowanceText}" FontSize="13" />
                         <Label Text="{Binding FollowUp.TodayText}" IsVisible="{Binding FollowUp.HasToday}" Style="{StaticResource UiBody}" FontSize="13" />
                         <Label Text="{Binding FollowUp.AverageText}" Style="{StaticResource UiBody}" FontSize="13" />
                         <Label Text="{Binding FollowUp.PurchasesText}" Style="{StaticResource UiBody}" FontSize="13" />

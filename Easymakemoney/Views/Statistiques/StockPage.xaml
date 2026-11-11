@@ -33,9 +33,7 @@
                         HorizontalOptions="Start"/>
                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
                     <components:UiGlyph Data="M3 17l6-6 4 4 8-8M15 7h6v6" />
-                    <Label Grid.Column="1"
-                           Text="Valeur du stock"
-                           Style="{StaticResource UiTitle}"
+                    <components:UiTerm Grid.Column="1" Term="valeur-stock" Text="Valeur du stock" FontFamily="InterBold" FontSize="17"
                            VerticalTextAlignment="Center"/>
                 </Grid>
                 <components:UiCard Style="{StaticResource UiCard}">
