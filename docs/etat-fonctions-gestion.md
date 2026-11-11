@@ -56,5 +56,8 @@ propriétaire qui en fixent les règles. Les contrats détaillés sont dans les 
 | Ensuite | Réservations futures dans la trésorerie et « Préparer une période » ; vignettes sur la dérive de l'occupation ou des départs | à cadrer |
 | Plus tard | Forfaits location + vente ; saisonnalité des locations ; relance des anciens abonnés | idées retenues |
 | Lexique | Chaque terme technique de l'application (marge, taux de marque, point mort, coefficient, prévu, solde, seuil, occupation…) devient un lien vers sa définition, à partir d'un lexique unique | demandé le 10/11, en cours côté app |
+| FF | Frais fixes mensuels : saisie sur les mouvements prévus, équivalent mensuel, résultat de période « après frais fixes », point mort et guide | validé, après RAP (écran Frais fixes déjà dans l'application) |
+| AN | Statistiques › Année : mois par mois et cumul, résultat de l'entreprise (avec locations, abonnements et frais fixes), point mort annuel, ce qui manque, leviers chiffrés, bilan de fin d'année et leçons | validé le 10/11, après S1 et FF2 |
+| Ordre backend | RAP, FF1, FF2, S1, AN, LOC, DEP, ABO, REG, INV, CLO, S2, S3 | fixé par Claude avec l'accord du propriétaire |
 | Mise à niveau | Rapprochement bancaire dans Trésorerie, assistant « Point de départ », régularisations, inventaire, clôture du mois | proposé, en attente du choix du propriétaire |
 | Notifications | Inscription du téléphone et réglages | attend Firebase (nom de l'application) |
