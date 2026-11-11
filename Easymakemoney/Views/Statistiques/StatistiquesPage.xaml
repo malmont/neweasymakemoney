@@ -38,6 +38,8 @@
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Padding="16" Spacing="14">
 
+                <components:UiTile Command="{Binding NavigateToYearCommand}" Icon="M4 20V10M10 20V4M16 20v-7M22 20H2" Title="L'année de l'entreprise" Text="Mois par mois, rentabilité, ce qui manque et les leviers" />
+
                 <!-- Plage -->
                 <FlexLayout Wrap="Wrap" Direction="Row" Margin="0,0,0,-8" BindableLayout.ItemsSource="{Binding Ranges}">
                         <BindableLayout.ItemTemplate>

@@ -25,6 +25,7 @@
                 <components:UiTile Command="{Binding NavigateToPromotionsCommand}" Icon="M20 12l-8 8-9-9V3h8zM7 7h.01M9 15l6-6" Title="Promotions" Text="En cours et à venir ; le prix normal revient tout seul" />
                 <components:UiTile Command="{Binding NavigateToPriceBatchesCommand}" Icon="M20 12l-8 8-9-9V3h8zM7 7h.01" Title="Changements de prix" Text="Prix changés depuis l'application, annulables pendant 24 h" />
                 <components:UiTile Command="{Binding NavigateToFixedCostsCommand}" Icon="M4 4h16v16H4zM4 9h16M9 4v16" Title="Frais fixes" Text="Loyer, salaires, assurances… par mois" />
+                <components:UiTile Command="{Binding NavigateToFiscalYearCommand}" Icon="M4 5h16v15H4zM4 10h16M8 3v4M16 3v4" Title="Exercice comptable" Text="Le mois où commence votre année de comptes" />
                 <components:UiTile Command="{Binding NavigateToTreasuryCommand}" Icon="M3 7h18v12H3zM3 11h18M7 15h4" Title="Trésorerie" Text="Solde du compte, échéances et projection sur 90 jours" />
                 <components:UiTile Command="{Binding NavigateToFraisDePortCommand}" Icon="M3 6h11v11H3zM14 10h4l3 3v4h-7M7 20a2 2 0 100-4 2 2 0 000 4zM17 20a2 2 0 100-4 2 2 0 000 4z" Title="Frais de port" Text="Transport des commandes" />
                 <components:UiTile Command="{Binding NavigateToToClassifyCommand}" Icon="M3 6h18M3 12h18M3 18h12" Title="À classer" Text="Articles qui ne sont dans aucune commande" />

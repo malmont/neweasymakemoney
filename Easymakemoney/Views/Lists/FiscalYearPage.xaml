@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:Statistique="clr-namespace:Easymakemoney.ViewModels.Statistiques"
+             x:DataType="Statistique:FiscalYearViewModel"
+             x:Class="Easymakemoney.Views.Lists.FiscalYearPage"
+             Style="{StaticResource UiPage}"
+             Title="Exercice comptable">
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Exercice comptable" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <components:UiCard Style="{StaticResource UiCard}" Padding="16">
+                    <VerticalStackLayout Spacing="6">
+                        <components:UiTerm Term="exercice" Text="Votre exercice" FontSize="14" />
+                        <Label Text="Les 12 mois sur lesquels vous faites vos comptes. Il sert à Statistiques › Année et au choix « Année » des statistiques."
+                               Style="{StaticResource UiBody}" FontSize="13" />
+                        <Label Text="{Binding CurrentText}" FontFamily="InterSemiBold" FontSize="13" TextColor="{StaticResource UiTextPrimary}" />
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <Label Text="L'exercice commence en" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextSecondary}" />
+                <Border BackgroundColor="{StaticResource UiSurface}" Stroke="{StaticResource UiBorder}" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,2">
+                    <Picker Title="Choisir un mois" ItemsSource="{Binding Months}" SelectedItem="{Binding SelectedMonth}"
+                            ItemDisplayBinding="{Binding Label, x:DataType=models:TreasuryChoice}"
+                            FontFamily="Inter" FontSize="16" TextColor="{StaticResource UiTextPrimary}" BackgroundColor="Transparent" />
+                </Border>
+                <Label Text="{Binding PreviewText}" FontFamily="InterBold" FontSize="16" TextColor="{StaticResource UiTextPrimary}" />
+                <Label Text="{Binding AlignmentText}" Style="{StaticResource UiBody}" FontSize="13" />
+
+                <Button Text="Enregistrer" Command="{Binding SaveCommand}" IsEnabled="{Binding IsChanged}" HeightRequest="50" CornerRadius="14"
+                        FontFamily="InterSemiBold" FontSize="16" BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" Margin="0,8,0,0" />
+                <Label Text="Changer l'exercice ne modifie aucune donnée : les chiffres sont recalculés à la lecture."
+                       Style="{StaticResource UiBody}" FontSize="12" HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

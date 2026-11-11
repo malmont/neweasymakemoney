@@ -245,6 +245,13 @@ namespace Easymakemoney.ViewModels.Statistiques
         }
 
         [RelayCommand]
+        private async Task NavigateToYear()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(YearStatisticsPage));
+        }
+
+        [RelayCommand]
         private async Task NavigateToChiffreAffaire()
         {
             if (Shell.Current is { } shell)

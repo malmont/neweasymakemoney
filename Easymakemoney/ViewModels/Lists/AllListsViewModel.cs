@@ -130,6 +130,13 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
         [RelayCommand]
+        private async Task NavigateToFiscalYear()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(FiscalYearPage));
+        }
+
+        [RelayCommand]
         private async Task NavigateToTreasury()
         {
             if (Shell.Current is { } shell)

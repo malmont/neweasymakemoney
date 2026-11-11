@@ -78,46 +78,62 @@ public class StatsChartView : GraphicsView, IDrawable
         canvas.FontSize = 11;
         canvas.FontColor = muted;
 
-        if (points == null || points.Count == 0 || points.All(p => p.Value == 0 && (p.LastYear ?? 0) == 0))
+        if (points == null || points.Count == 0 || points.All(p => p.Value == 0 && (p.LastYear ?? 0) == 0 && !p.IsEstimate))
         {
             canvas.DrawString("Aucune vente sur cette plage, ni l'an dernier aux mêmes dates", rect, HorizontalAlignment.Center, VerticalAlignment.Center);
             return;
         }
 
-        var max = points.Select(p => Math.Max(p.Value, p.LastYear ?? 0)).DefaultIfEmpty(0).Max();
-        if (max <= 0)
+        var max = Math.Max(0, points.Select(p => Math.Max(p.Value, p.LastYear ?? 0)).DefaultIfEmpty(0).Max());
+        var min = Math.Min(0, points.Select(p => Math.Min(p.Value, p.LastYear ?? 0)).DefaultIfEmpty(0).Min());
+        if (max - min <= 0)
             max = 1;
 
         var plot = new RectF(rect.X, rect.Y + Top, rect.Width, rect.Height - Top - Bottom);
         var slot = plot.Width / points.Count;
         var barWidth = Math.Max(2f, Math.Min(slot * 0.62f, 26f));
-        float Y(double value) => plot.Bottom - (float)(value / max) * plot.Height;
+        float Y(double value) => plot.Bottom - (float)((value - min) / (max - min)) * plot.Height;
+        var zero = Y(0);
 
-        // Repères : ligne de base et ligne du maximum, avec sa valeur.
+        // Repères : ligne du zéro, ligne du maximum avec sa valeur (et du minimum s'il est négatif).
         canvas.StrokeColor = border;
         canvas.StrokeSize = 1;
-        canvas.DrawLine(plot.Left, plot.Bottom, plot.Right, plot.Bottom);
+        canvas.DrawLine(plot.Left, zero, plot.Right, zero);
         canvas.StrokeDashPattern = new float[] { 3, 3 };
-        canvas.DrawLine(plot.Left, plot.Top, plot.Right, plot.Top);
+        if (max > 0)
+            canvas.DrawLine(plot.Left, plot.Top, plot.Right, plot.Top);
+        if (min < 0)
+            canvas.DrawLine(plot.Left, plot.Bottom, plot.Right, plot.Bottom);
         canvas.StrokeDashPattern = null;
-        canvas.DrawString(Format(max), rect.X, rect.Y, rect.Width, Top - 4, HorizontalAlignment.Left, VerticalAlignment.Center);
+        if (max > 0)
+            canvas.DrawString(Format(max), rect.X, rect.Y, rect.Width, Top - 4, HorizontalAlignment.Left, VerticalAlignment.Center);
+        if (min < 0)
+            canvas.DrawString(Format(min), rect.X, plot.Bottom - 16, rect.Width, 14, HorizontalAlignment.Right, VerticalAlignment.Center);
 
+        var negative = Color.FromArgb("#B91C1C");
         var selected = SelectedIndex;
         for (var i = 0; i < points.Count; i++)
         {
             var value = points[i].Value;
-            if (value <= 0)
+            if (value == 0)
                 continue;
             var centerX = plot.Left + slot * i + slot / 2;
-            var top = Y(value);
-            canvas.FillColor = selected < 0 || selected == i ? primary : primary.WithAlpha(0.35f);
+            var y = Y(value);
+            var color = value < 0 ? negative : primary;
+            var alpha = selected < 0 || selected == i ? 1f : 0.35f;
+            if (points[i].IsEstimate)
+                alpha *= 0.4f; // estimé : plus clair
+            canvas.FillColor = color.WithAlpha(alpha);
             var radius = Math.Min(4f, barWidth / 2);
-            canvas.FillRoundedRectangle(centerX - barWidth / 2, top, barWidth, plot.Bottom - top, radius, radius, 0, 0);
+            if (value > 0)
+                canvas.FillRoundedRectangle(centerX - barWidth / 2, y, barWidth, zero - y, radius, radius, 0, 0);
+            else
+                canvas.FillRoundedRectangle(centerX - barWidth / 2, zero, barWidth, y - zero, 0, 0, radius, radius);
         }
 
         // An dernier : ligne grise reliant les mêmes dates.
         // Rien à comparer (aucune vente l'an dernier) : pas de ligne plate à zéro.
-        if (points.Any(p => p.LastYear is > 0))
+        if (points.Any(p => p.LastYear is { } last && last != 0))
         {
             var path = new PathF();
             var started = false;
@@ -157,7 +173,7 @@ public class StatsChartView : GraphicsView, IDrawable
             canvas.DrawLine(x, plot.Top, x, plot.Bottom);
         }
 
-        // Axe : premier, milieu et dernier libellés.
+        // Axe (sous la zone de tracé) : premier, milieu et dernier libellés.
         canvas.FontColor = muted;
         var labels = points.Count switch
         {

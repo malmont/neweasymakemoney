@@ -251,7 +251,7 @@ namespace Easymakemoney.Models
         public string ChangeText { get; }
     }
 
-    public sealed record StatsChartPoint(string Key, string Label, string ShortLabel, double Value, double? LastYear);
+    public sealed record StatsChartPoint(string Key, string Label, string ShortLabel, double Value, double? LastYear, bool IsEstimate = false);
 
     public static class StatsFormat
     {

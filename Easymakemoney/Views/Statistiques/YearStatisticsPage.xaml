@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:Statistique="clr-namespace:Easymakemoney.ViewModels.Statistiques"
+             x:DataType="Statistique:YearStatisticsViewModel"
+             x:Class="Easymakemoney.Views.Statistiques.YearStatisticsPage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Année">
+
+    <ContentPage.Resources>
+        <Style x:Key="Chip" TargetType="Border">
+            <Setter Property="StrokeShape" Value="RoundRectangle 18" />
+            <Setter Property="Padding" Value="12,6" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+        </Style>
+        <Style x:Key="ChipText" TargetType="Label">
+            <Setter Property="FontFamily" Value="InterSemiBold" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="L'année de l'entreprise"/>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="14">
+
+                <!-- Exercice affiché -->
+                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                    <Button Text="‹" Command="{Binding PreviousYearCommand}" IsEnabled="{Binding CanGoBack}" WidthRequest="44" HeightRequest="44" CornerRadius="12"
+                            FontFamily="InterBold" FontSize="22" BackgroundColor="{StaticResource UiSurface}" TextColor="{DynamicResource ThemePrimary}" Padding="0" />
+                    <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Text="{Binding Data.Label}" FontFamily="InterBold" FontSize="20" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding Data.StatusText}" Style="{StaticResource UiBody}" FontSize="12" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                    <Button Grid.Column="2" Text="›" Command="{Binding NextYearCommand}" IsEnabled="{Binding CanGoForward}" WidthRequest="44" HeightRequest="44" CornerRadius="12"
+                            FontFamily="InterBold" FontSize="22" BackgroundColor="{StaticResource UiSurface}" TextColor="{DynamicResource ThemePrimary}" Padding="0" />
+                </Grid>
+
+                <Grid ColumnDefinitions="*,Auto">
+                    <components:UiTerm Term="exercice" Text="{Binding FiscalYearText}" FontSize="13" VerticalOptions="Center" />
+                    <Label Grid.Column="1" Text="Modifier" FontFamily="InterSemiBold" FontSize="13" TextColor="{DynamicResource ThemePrimary}" VerticalOptions="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding OpenFiscalYearCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Grid>
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" HeightRequest="24" />
+
+                <!-- Résultat et rentabilité -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="16" IsVisible="{Binding HasData}">
+                    <VerticalStackLayout Spacing="6">
+                        <components:UiTerm Term="resultat-entreprise" Text="Résultat de l'entreprise" FontSize="14" />
+                        <Label Text="{Binding Data.ResultText}" FontFamily="InterBold" FontSize="30" TextColor="{DynamicResource ThemePrimary}">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding Data.IsLoss}" Value="True">
+                                    <Setter Property="TextColor" Value="#B91C1C" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                        <Label Text="{Binding Data.ElapsedText}" Style="{StaticResource UiBody}" FontSize="12" />
+                        <Label Text="{Binding Data.FinishedSummary}" IsVisible="{Binding Data.IsFinished}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                        <BoxView HeightRequest="1" Color="{StaticResource UiBorder}" Margin="0,4" />
+                        <Label Text="{Binding Data.ProjectionText}" IsVisible="{Binding Data.HasProjection}" FontFamily="InterSemiBold" FontSize="15" TextColor="{StaticResource UiTextPrimary}" />
+                        <components:UiTerm Term="projection" Text="Comment c'est estimé" FontSize="12" IsVisible="{Binding Data.HasProjection}" />
+                        <Label Text="{Binding Data.ProjectionMethodText}" IsVisible="{Binding Data.HasProjection}" Style="{StaticResource UiBody}" FontSize="12" />
+                        <Grid ColumnDefinitions="*,Auto">
+                            <components:UiTerm Term="taux-de-marque" Text="Taux de marque" FontSize="13" />
+                            <Label Grid.Column="1" Text="{Binding Data.TauxMarqueText}" FontFamily="InterSemiBold" FontSize="13" TextColor="{StaticResource UiTextPrimary}" />
+                        </Grid>
+                        <Label Text="{Binding Data.BreakEvenText}" Style="{StaticResource UiBody}" FontSize="13" />
+                        <Label Text="{Binding Data.GapText}" IsVisible="{Binding Data.HasGapText}" FontFamily="InterSemiBold" FontSize="14" TextColor="#047857">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding Data.HasGap}" Value="True">
+                                    <Setter Property="TextColor" Value="#B45309" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <!-- Composition du résultat -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="16" IsVisible="{Binding HasData}">
+                    <VerticalStackLayout Spacing="4">
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Composition}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="models:YearRow">
+                                    <components:UiAmountRow Title="{Binding Title}" Term="{Binding Term}" Value="{Binding Value}" IsTotal="{Binding IsTotal}" />
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                        <Label Text="{Binding Data.VariableCostsDetail}" Style="{StaticResource UiBody}" FontSize="11" />
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <!-- Mois par mois -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding HasData}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Mois par mois" Style="{StaticResource UiTitle}" FontSize="16" />
+                        <FlexLayout Wrap="Wrap" Direction="Row" Margin="0,0,0,-8" BindableLayout.ItemsSource="{Binding Metrics}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="Statistique:StatsChoice">
+                                    <Border Style="{StaticResource Chip}">
+                                        <Border.Triggers>
+                                            <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                                <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimaryTint}" />
+                                                <Setter Property="Stroke" Value="{DynamicResource ThemePrimary}" />
+                                            </DataTrigger>
+                                        </Border.Triggers>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.SelectMetricCommand, Source={x:Reference Page}, x:DataType=ContentPage}" CommandParameter="{Binding Code}" />
+                                        </Border.GestureRecognizers>
+                                        <Label Text="{Binding Label}" Style="{StaticResource ChipText}" />
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </FlexLayout>
+                        <components:StatsChartView Points="{Binding ChartPoints}" IsMoney="True" Currency="{Binding Data.currency}"
+                                                   SelectedIndex="{Binding SelectedPointIndex, Mode=TwoWay}" HeightRequest="220" />
+                        <Label Text="{Binding SelectedPointText}" Style="{StaticResource UiBody}" FontSize="12" />
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <!-- Leviers (exercice en cours) -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding HasLevers}">
+                    <components:UiTerm Term="leviers" Text="Ce qui peut changer le résultat" FontSize="17" FontFamily="InterBold" />
+                    <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Levers}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:YearLeverRow">
+                                <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                    <VerticalStackLayout Spacing="4">
+                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                            <Label Text="{Binding Label}" Style="{StaticResource UiTitle}" FontSize="15" />
+                                            <Border Grid.Column="1" IsVisible="{Binding CoversGap}" BackgroundColor="#DCFCE7" StrokeThickness="0" StrokeShape="RoundRectangle 10" Padding="8,2" VerticalOptions="Start">
+                                                <Label Text="Comble l'écart" FontFamily="InterSemiBold" FontSize="11" TextColor="#047857" />
+                                            </Border>
+                                        </Grid>
+                                        <Label Text="{Binding EffectText}" FontFamily="InterBold" FontSize="16" TextColor="{DynamicResource ThemePrimary}" />
+                                        <Label Text="{Binding Detail}" Style="{StaticResource UiBody}" FontSize="13" />
+                                        <Label Text="{Binding RequiredText}" IsVisible="{Binding HasRequired}" Style="{StaticResource UiBody}" FontSize="12" FontFamily="InterSemiBold" />
+                                        <FlexLayout Wrap="Wrap" Direction="Row" Margin="0,4,0,-8" IsVisible="{Binding IsPrice}"
+                                                    BindableLayout.ItemsSource="{Binding Path=BindingContext.PriceChoices, Source={x:Reference Page}, x:DataType=ContentPage}">
+                                            <BindableLayout.ItemTemplate>
+                                                <DataTemplate x:DataType="Statistique:StatsChoice">
+                                                    <Border Style="{StaticResource Chip}">
+                                                        <Border.Triggers>
+                                                            <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                                                <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimaryTint}" />
+                                                                <Setter Property="Stroke" Value="{DynamicResource ThemePrimary}" />
+                                                            </DataTrigger>
+                                                        </Border.Triggers>
+                                                        <Border.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.SelectPriceCommand, Source={x:Reference Page}, x:DataType=ContentPage}" CommandParameter="{Binding Code}" />
+                                                        </Border.GestureRecognizers>
+                                                        <Label Text="{Binding Label}" Style="{StaticResource ChipText}" />
+                                                    </Border>
+                                                </DataTemplate>
+                                            </BindableLayout.ItemTemplate>
+                                        </FlexLayout>
+                                    </VerticalStackLayout>
+                                </components:UiCard>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+                <!-- Exercice terminé -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="16" IsVisible="{Binding Data.IsFinished}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Bilan" Style="{StaticResource UiTitle}" FontSize="16" />
+                        <Label Text="{Binding Data.BestMonthsText, StringFormat='Meilleurs mois : {0}'}" Style="{StaticResource UiBody}" FontSize="13" />
+                        <Label Text="{Binding Data.WorstMonthsText, StringFormat='Mois les plus faibles : {0}'}" Style="{StaticResource UiBody}" FontSize="13" />
+                        <Label Text="{Binding Data.HindsightText}" IsVisible="{Binding Data.HasHindsight}" Style="{StaticResource UiBody}" FontSize="13" />
+                        <Button Text="Demander l'avis du guide" Command="{Binding AskCommentCommand}"
+                                HeightRequest="46" CornerRadius="12" FontFamily="InterSemiBold" FontSize="14"
+                                BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" Margin="0,4,0,0" />
+                        <ActivityIndicator IsRunning="{Binding IsCommentBusy}" IsVisible="{Binding IsCommentBusy}" Color="{DynamicResource ThemePrimary}" HeightRequest="20" />
+                        <VerticalStackLayout Spacing="6" IsVisible="{Binding HasComment}">
+                            <Label Text="{Binding Comment.comment.title}" FontFamily="InterBold" FontSize="15" TextColor="{StaticResource UiTextPrimary}" />
+                            <Label Text="{Binding Comment.comment.text}" Style="{StaticResource UiBody}" FontSize="14" />
+                            <Label Text="{Binding Comment.LessonsText}" Style="{StaticResource UiBody}" FontSize="14" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <!-- Périodes -->
+                <VerticalStackLayout Spacing="8" IsVisible="{Binding HasPeriods}">
+                    <components:UiTerm Term="periode" Text="Les périodes de l'exercice" FontSize="17" FontFamily="InterBold" />
+                    <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Periods}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:YearPeriodRow">
+                                <components:UiCard Style="{StaticResource UiCard}" Padding="14,10">
+                                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="8">
+                                        <Label Text="{Binding Name}" Style="{StaticResource UiTitle}" FontSize="15" />
+                                        <Label Grid.Column="1" Text="{Binding ResultText}" FontFamily="InterBold" FontSize="15" TextColor="{Binding ResultColor}" />
+                                        <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding DatesText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                        <Label Grid.Row="2" Grid.ColumnSpan="2" Text="{Binding NoteText}" Style="{StaticResource UiBody}" FontSize="11" />
+                                    </Grid>
+                                </components:UiCard>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+                <Label Text="{Binding Data.CaveatsText}" IsVisible="{Binding Data.HasCaveats}" Style="{StaticResource UiBody}" FontSize="12" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>
