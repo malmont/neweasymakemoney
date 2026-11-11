@@ -55,5 +55,6 @@ propriétaire qui en fixent les règles. Les contrats détaillés sont dans les 
 | ABO | Onglet Abonnements : revenu mensuel récurrent, actifs, nouveaux, départs, revenu par abonné, valeur sur la durée, échecs de paiement ; conseils ; nouveau tarif **pour les nouveaux abonnés seulement** (Stripe), offre de bienvenue ; projection 3, 6, 12 mois | validé le 10/11, après LOC |
 | Ensuite | Réservations futures dans la trésorerie et « Préparer une période » ; vignettes sur la dérive de l'occupation ou des départs | à cadrer |
 | Plus tard | Forfaits location + vente ; saisonnalité des locations ; relance des anciens abonnés | idées retenues |
+| Lexique | Chaque terme technique de l'application (marge, taux de marque, point mort, coefficient, prévu, solde, seuil, occupation…) devient un lien vers sa définition, à partir d'un lexique unique | demandé le 10/11, en cours côté app |
 | Mise à niveau | Rapprochement bancaire dans Trésorerie, assistant « Point de départ », régularisations, inventaire, clôture du mois | proposé, en attente du choix du propriétaire |
 | Notifications | Inscription du téléphone et réglages | attend Firebase (nom de l'application) |
