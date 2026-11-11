@@ -30,13 +30,43 @@ namespace Easymakemoney.ViewModels.Lists
         private TreasuryChoice? _selectedCategory;
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanBeFixedCost))]
         private TreasuryChoice? _selectedDirection;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(IsRecurring))]
+        [NotifyPropertyChangedFor(nameof(CanBeFixedCost))]
         private TreasuryChoice? _selectedRecurrence;
 
         public bool IsRecurring => SelectedRecurrence?.Code is { } code && code != "none";
+
+        /// <summary>Seule une sortie récurrente peut être un frais fixe (lot FF1).</summary>
+        public bool CanBeFixedCost => FixedCostRule.CanApply(SelectedDirection?.Code, SelectedRecurrence?.Code);
+
+        /// <summary>Suit la règle de la catégorie (loyer, salaires… oui ; prêt, taxes, autres non) tant que le gérant n'y a pas touché.</summary>
+        [ObservableProperty]
+        private bool _isFixedCost;
+
+        private bool _fixedCostTouched;
+        private bool _applyingDefault;
+
+        partial void OnSelectedCategoryChanged(TreasuryChoice? value)
+        {
+            if (_fixedCostTouched)
+                return;
+            _applyingDefault = true;
+            IsFixedCost = FixedCostRule.IsDefault(value?.Code);
+            _applyingDefault = false;
+        }
+
+        partial void OnIsFixedCostChanged(bool value)
+        {
+            if (!_applyingDefault)
+                _fixedCostTouched = true;
+        }
+
+        /// <summary>Le choix n'est envoyé que s'il diffère de la règle par défaut : sinon le backend applique sa règle.</summary>
+        public bool? FixedCostChoice => CanBeFixedCost && IsFixedCost != FixedCostRule.IsDefault(SelectedCategory?.Code) ? IsFixedCost : null;
 
         [ObservableProperty]
         private string? _amountText;
@@ -87,6 +117,7 @@ namespace Easymakemoney.ViewModels.Lists
                 recurrence = SelectedRecurrence?.Code ?? "none",
                 endDate = IsRecurring && HasEndDate ? TreasuryDates.Iso(EndDate) : null,
                 notes = string.IsNullOrWhiteSpace(Notes) ? null : Notes.Trim(),
+                fixedCost = FixedCostChoice,
             };
 
             IsBusy = true;

@@ -104,6 +104,15 @@
                     </Border>
                 </VerticalStackLayout>
 
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12" IsVisible="{Binding CanBeFixedCost}">
+                    <VerticalStackLayout Spacing="2">
+                        <components:UiTerm Term="frais-fixes" Text="Frais fixe" FontSize="15" />
+                        <Label Text="Compté dans le résultat de chaque période, au prorata des jours, et dans l'écran Frais fixes."
+                               Style="{StaticResource UiBody}" FontSize="12" />
+                    </VerticalStackLayout>
+                    <Switch Grid.Column="1" IsToggled="{Binding IsFixedCost}" OnColor="{DynamicResource ThemePrimary}" VerticalOptions="Center" />
+                </Grid>
+
                 <Label Text="Notes (facultatif)" Style="{StaticResource FormLabel}" />
                 <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
                     <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Ex. : prélevé le 1er" Text="{Binding Notes}" />

@@ -50,9 +50,19 @@ namespace Easymakemoney.Models
                 Row("Frais de la période", b.expenses.total, s.expenses.total, higherIsBetter: false),
                 Row("Résultat", b.result, s.result, higherIsBetter: true, isTotal: true),
                 Row("Point mort (ventes nécessaires)", b.breakEven?.revenue, s.breakEven?.revenue, higherIsBetter: false),
+            };
+            // Lot FF2 : variante après frais fixes, seulement s'il y en a (le résultat principal ne change pas).
+            if ((b.fixedCosts ?? 0) > 0 || (s.fixedCosts ?? 0) > 0)
+            {
+                rows.Add(Row("Frais fixes (part de la période)", b.fixedCosts, s.fixedCosts, higherIsBetter: false));
+                rows.Add(Row("Résultat après frais fixes", b.resultAfterFixed, s.resultAfterFixed, higherIsBetter: true, isTotal: true));
+                rows.Add(Row("Point mort après frais fixes", b.breakEvenAfterFixed?.revenue, s.breakEvenAfterFixed?.revenue, higherIsBetter: false));
+            }
+            rows.AddRange(new[]
+            {
                 Row("Stock restant en fin de période", b.stockEnd.saleValue, s.stockEnd.saleValue, higherIsBetter: null),
                 Row("Trésorerie après achats", b.cashAfterPurchases, s.cashAfterPurchases, higherIsBetter: true),
-            };
+            });
             foreach (var row in rows)
                 row.Help = HelpFor(row.Label);
             return rows;
@@ -75,6 +85,12 @@ namespace Easymakemoney.Models
                 "Marge brute moins frais : ce que la période vous rapporte réellement. Un résultat négatif est une perte.",
             "Point mort (ventes nécessaires)" =>
                 "Le montant de ventes à atteindre pour ne pas perdre d'argent sur la période : frais ÷ taux de marque. Au-dessus vous gagnez, en dessous vous perdez.",
+            "Frais fixes (part de la période)" =>
+                "Loyer, salaires, assurances, abonnements… comptés au prorata des jours de la période. Ils se saisissent dans Gestion › Frais fixes.",
+            "Résultat après frais fixes" =>
+                "Le résultat moins la part de frais fixes de la période : ce que l'activité vous rapporte une fois l'entreprise payée.",
+            "Point mort après frais fixes" =>
+                "Les ventes à atteindre pour couvrir les frais de la période et sa part de frais fixes : (frais + frais fixes) ÷ taux de marque.",
             "Stock restant en fin de période" =>
                 "La valeur de vente du stock qu'il vous restera à la fin de la période, si le rythme de vente continue.",
             "Trésorerie après achats" =>
@@ -172,6 +188,11 @@ namespace Easymakemoney.Models
         public SimulationExpenses expenses { get; set; } = new();
         public long? result { get; set; }
         public SimulationBreakEven? breakEven { get; set; }
+
+        /// <summary>Lot FF2 : frais fixes de la période au prorata, résultat et point mort après frais fixes.</summary>
+        public long? fixedCosts { get; set; }
+        public long? resultAfterFixed { get; set; }
+        public SimulationBreakEven? breakEvenAfterFixed { get; set; }
         public SimulationStock stockEnd { get; set; } = new();
         public long? cashAfterPurchases { get; set; }
     }

@@ -203,6 +203,11 @@ namespace Easymakemoney.Models
         public string? notes { get; set; }
         public string? nextDate { get; set; }
 
+        /// <summary>Lot FF1 : compté dans les frais fixes (valeur effective), règle par défaut appliquée, équivalent mensuel en cents.</summary>
+        public bool? fixedCost { get; set; }
+        public bool? fixedCostDefault { get; set; }
+        public long? monthlyEquivalent { get; set; }
+
         [JsonIgnore]
         public string? Currency { get; set; }
 
@@ -213,14 +218,13 @@ namespace Easymakemoney.Models
 
         public string RecurrenceText => TreasuryChoices.RecurrenceLabel(recurrence);
 
-        /// <summary>Montant et équivalent mensuel, pour l'écran Frais fixes.</summary>
-        public string FixedCostText => FixedCosts.MonthlyText(this);
-
         public string ScheduleText
         {
             get
             {
                 var parts = new List<string> { $"{categoryLabel ?? category} · {RecurrenceText}" };
+                if (fixedCost == true)
+                    parts.Add("frais fixe");
                 if (nextDate != null)
                     parts.Add($"prochaine fois le {TreasuryDates.Short(nextDate)}");
                 else
@@ -251,6 +255,7 @@ namespace Easymakemoney.Models
             new TreasuryChoice("salaries", "Salaires"),
             new TreasuryChoice("insurance", "Assurances"),
             new TreasuryChoice("subscription", "Abonnements"),
+            new TreasuryChoice("utilities", "Énergie et télécoms"),
             new TreasuryChoice("loan", "Prêt"),
             new TreasuryChoice("tax", "Taxes et impôts"),
             new TreasuryChoice("other", "Autres"),

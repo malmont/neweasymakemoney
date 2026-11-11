@@ -13,6 +13,8 @@ namespace Easymakemoney.Services
         Task AddMovementAsync(TreasuryMovementRequest request);
         Task DeleteMovementAsync(int movementId);
         Task UpdateSettingsAsync(long? threshold, bool? includeEstimatedSales);
+        /// <summary>Frais fixes (lot FF1) ; all : aussi ceux à venir et terminés.</summary>
+        Task<FixedCostList> GetFixedCostsAsync(bool all);
     }
 
     public sealed class TreasuryMovementRequest
@@ -29,5 +31,9 @@ namespace Easymakemoney.Services
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public string? notes { get; init; }
+
+        /// <summary>Choix du gérant (FF1) ; absent = règle par défaut de la catégorie.</summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public bool? fixedCost { get; init; }
     }
 }

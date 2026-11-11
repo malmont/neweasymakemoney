@@ -125,6 +125,12 @@
                             <components:UiAmountRow Title="Notes de frais" Value="{Binding PeriodResult.NotesText}" />
                             <components:UiAmountRow Title="{Binding PeriodResult.OtherExpensesTitle}" Value="{Binding PeriodResult.OtherExpensesText}" IsVisible="{Binding PeriodResult.HasOtherExpenses}" />
                             <components:UiAmountRow Title="Résultat" Term="resultat" Value="{Binding PeriodResult.NetText}" IsTotal="True" />
+                            <components:UiAmountRow Title="Frais fixes (part de la période)" Term="frais-fixes" Value="{Binding PeriodResult.FixedCostsText}" IsVisible="{Binding PeriodResult.HasFixedCosts}" />
+                            <components:UiAmountRow Title="Résultat après frais fixes" Term="resultat-apres-frais-fixes" Value="{Binding PeriodResult.NetAfterFixedText}" IsTotal="True" IsVisible="{Binding PeriodResult.HasFixedCosts}" />
+                            <Label Text="{Binding PeriodResult.NetAfterFixedRateText}" IsVisible="{Binding PeriodResult.HasNetAfterFixedRate}" Style="{StaticResource UiBody}" FontSize="12" HorizontalOptions="End" />
+                            <Label Text="{Binding PeriodResult.FixedCostsOverlapText}" IsVisible="{Binding PeriodResult.HasFixedCostsOverlap}" Style="{StaticResource UiBody}" FontSize="12" TextColor="#B45309" />
+                            <Label Text="Frais fixes non calculés : la période a été fermée avant leur ajout. Rouvrez-la puis refermez-la pour les compter."
+                                   IsVisible="{Binding PeriodResult.FixedCostsNotComputed}" Style="{StaticResource UiBody}" FontSize="12" />
                         </VerticalStackLayout>
                     </components:UiCard>
                     <components:UiCard Style="{StaticResource UiCard}">

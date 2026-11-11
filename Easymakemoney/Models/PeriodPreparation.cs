@@ -92,13 +92,26 @@ namespace Easymakemoney.Models
                     "Marge brute moins frais : ce que la période vous rapportera si le plan se réalise. Les achats de stock ne sont pas une charge : ils deviennent du stock."),
                 Row("Point mort (ventes nécessaires)", PreparationValues.Cents(plan.breakEven, "revenue"),
                     "Les ventes à atteindre pour ne pas perdre d'argent sur la période : frais ÷ taux de marque."),
+            };
+            // Lot FF2 : variante après frais fixes, seulement s'il y en a.
+            if (PreparationValues.Cents(plan.fixedCosts, "total", "amount") is { } fixedCosts && fixedCosts > 0)
+            {
+                rows.Add(Row("Frais fixes (part de la période)", fixedCosts,
+                    "Loyer, salaires, assurances, abonnements… comptés au prorata des jours de la période visée. Ils se saisissent dans Gestion › Frais fixes."));
+                rows.Add(Row("Résultat après frais fixes", PreparationValues.Cents(plan.resultAfterFixed),
+                    "Le résultat moins la part de frais fixes de la période : ce que l'activité vous rapportera une fois l'entreprise payée."));
+                rows.Add(Row("Point mort après frais fixes", PreparationValues.Cents(plan.breakEvenAfterFixed, "revenue"),
+                    "Les ventes à atteindre pour couvrir les frais de la période et sa part de frais fixes : (frais + frais fixes) ÷ taux de marque."));
+            }
+            rows.AddRange(new[]
+            {
                 Row("Achats prévus", PreparationValues.Cents(plan.purchases, "total"),
                     "Le total des achats de stock que vous prévoyez, voyage compris. Ils deviennent le prévu « Stock » du budget de la période de leur date."),
                 Row("Stock en fin de période", PreparationValues.Cents(plan.stockEnd, "saleValue"),
                     "La valeur de vente du stock qu'il vous restera à la fin de la période, si le plan se réalise."),
                 Row("Point bas de trésorerie", PreparationValues.Cents(plan.cash?["low"], "amount"),
                     "Le solde le plus bas de votre compte d'ici la fin de la période, avec les achats et le voyage à leur date. Un tiret : aucun solde n'est saisi dans Trésorerie."),
-            };
+            });
             return rows;
         }
 
@@ -122,7 +135,7 @@ namespace Easymakemoney.Models
             Label = label,
             BaseText = Money(cents),
             Help = help,
-            IsTotal = label == "Résultat",
+            IsTotal = label is "Résultat" or "Résultat après frais fixes",
         };
     }
 
@@ -134,6 +147,9 @@ namespace Easymakemoney.Models
         public JToken? expenses { get; set; }
         public JToken? result { get; set; }
         public JToken? breakEven { get; set; }
+        public JToken? fixedCosts { get; set; }
+        public JToken? resultAfterFixed { get; set; }
+        public JToken? breakEvenAfterFixed { get; set; }
         public JToken? purchases { get; set; }
         public JToken? stockStart { get; set; }
         public JToken? stockEnd { get; set; }

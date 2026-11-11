@@ -1,11 +1,10 @@
 using Easymakemoney.Services.Dialog;
-using Easymakemoney.Utilities;
 
 namespace Easymakemoney.ViewModels.Lists
 {
     /// <summary>
-    /// Frais fixes : les sorties récurrentes (loyer, salaires, assurances, abonnements…) saisies dans la trésorerie,
-    /// avec leur équivalent mensuel et le total par mois. La saisie réutilise le formulaire des mouvements prévus.
+    /// Frais fixes (lot backend FF1) : loyer, salaires, assurances, abonnements, énergie… avec leur équivalent mensuel,
+    /// le total par mois et par catégorie. Ce sont des mouvements prévus de la trésorerie : la saisie réutilise leur formulaire.
     /// </summary>
     public partial class FixedCostsViewModel : BaseViewModel
     {
@@ -18,7 +17,9 @@ namespace Easymakemoney.ViewModels.Lists
             _dialogService = dialogService;
         }
 
-        public ObservableCollection<TreasuryMovement> Items { get; } = new();
+        public ObservableCollection<FixedCostItem> Items { get; } = new();
+
+        public ObservableCollection<FixedCostCategory> Categories { get; } = new();
 
         [ObservableProperty]
         private string _monthlyTotalText = string.Empty;
@@ -34,13 +35,15 @@ namespace Easymakemoney.ViewModels.Lists
             IsBusy = true;
             try
             {
-                var movements = await _treasuryService.GetMovementsAsync();
-                var fixedCosts = FixedCosts.Select(movements).ToList();
+                var list = await _treasuryService.GetFixedCostsAsync(all: true);
                 Items.Clear();
-                foreach (var item in fixedCosts)
+                foreach (var item in list.SortedItems(DateTime.Today))
                     Items.Add(item);
+                Categories.Clear();
+                foreach (var category in list.Categories())
+                    Categories.Add(category);
                 IsEmpty = Items.Count == 0;
-                MonthlyTotalText = SiteCurrency.FormatCents(FixedCosts.MonthlyTotal(fixedCosts));
+                MonthlyTotalText = list.MonthlyTotalText;
             }
             catch (Exception ex)
             {
@@ -61,18 +64,18 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
         [RelayCommand]
-        private async Task Delete(TreasuryMovement? movement)
+        private async Task Delete(FixedCostItem? item)
         {
-            if (movement?.id is not { } id || !movement.CanDelete)
+            if (item == null || !item.CanDelete)
                 return;
 
-            var confirmed = await _dialogService.ConfirmAsync("Supprimer ce frais fixe", $"Supprimer « {movement.label} » et ses prochaines échéances ?", "Supprimer", "Annuler");
+            var confirmed = await _dialogService.ConfirmAsync("Supprimer ce frais fixe", $"Supprimer « {item.label} » et ses prochaines échéances ?", "Supprimer", "Annuler");
             if (!confirmed)
                 return;
 
             try
             {
-                await _treasuryService.DeleteMovementAsync(id);
+                await _treasuryService.DeleteMovementAsync(item.id);
             }
             catch (Exception ex)
             {

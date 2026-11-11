@@ -51,6 +51,9 @@ namespace Easymakemoney.Services
         public async Task DeleteMovementAsync(int movementId) =>
             await _httpService.DeleAsyncWithAuth<object>($"gestion/tresorerie/mouvements/{movementId}");
 
+        public async Task<FixedCostList> GetFixedCostsAsync(bool all) =>
+            await _httpService.GetAsync<FixedCostList>($"gestion/frais-fixes?{(all ? "all=1&" : string.Empty)}locale={Locale}") ?? new FixedCostList();
+
         public async Task UpdateSettingsAsync(long? threshold, bool? includeEstimatedSales)
         {
             var body = new Dictionary<string, object>();
