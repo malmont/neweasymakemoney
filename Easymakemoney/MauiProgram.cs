@@ -111,6 +111,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<IRentalStatisticsService, RentalStatisticsService>();
 		builder.Services.AddTransient<IRentalPromotionService, RentalPromotionService>();
 		builder.Services.AddTransient<IRentalGridService, RentalGridService>();
+		builder.Services.AddTransient<IVariantPromotionService, VariantPromotionService>();
 		builder.Services.AddTransient<IPeriodService, PeriodService>();
 		builder.Services.AddTransient<Easymakemoney.UseCase.PeriodResultUseCase.PeriodUseCase>();
 		builder.Services.AddTransient<IRepriseService, RepriseService>();
@@ -218,6 +219,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<RentalStatisticsPage>();
 		builder.Services.AddTransient<RentalPromotionPage>();
 		builder.Services.AddTransient<RentalGridPage>();
+		builder.Services.AddTransient<VariantPromotionPage>();
+		builder.Services.AddTransient<VariantPromotionListPage>();
 		builder.Services.AddTransient<FiscalYearPage>();
 		builder.Services.AddTransient<ListNewProductVariantPage>();
 		builder.Services.AddTransient<ListNewNoteDeFraisPage>();
@@ -273,6 +276,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<RentalStatisticsViewModel>();
 		builder.Services.AddTransient<RentalPromotionViewModel>();
 		builder.Services.AddTransient<RentalGridViewModel>();
+		builder.Services.AddTransient<VariantPromotionViewModel>();
+		builder.Services.AddTransient<VariantPromotionListViewModel>();
 		builder.Services.AddTransient<FiscalYearViewModel>();
 		builder.Services.AddTransient<ProductFormModel>();
 		builder.Services.AddTransient<ProductVariantFormModel>();

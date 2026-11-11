@@ -55,6 +55,7 @@ namespace Easymakemoney.Utilities
             ["arrondi"] = new("Arrondi", "Ajuste le nouveau prix pour qu'il « sonne » bien : finir en ,99, aux 0,50 ou à l'unité. Pour une promotion, l'arrondi se fait vers le bas, pour ne jamais annoncer moins de remise."),
             ["sous-le-cout"] = new("Sous le coût", "Le nouveau prix serait inférieur au prix d'achat : chaque vente ferait perdre de l'argent. Il faut l'autoriser explicitement."),
             ["promotion"] = new("Promotion datée", "Un prix réduit pendant des dates choisies, en boutique et en caisse. Le prix normal n'est jamais modifié et revient tout seul à la fin."),
+            ["promotion-variante"] = new("Promotion par variante", "Une remise datée sur une taille ou une couleur précise d'un article (par exemple le XL noir à −20 %), même si la variante a son propre prix. Pendant ses dates, elle remplace la promotion de l'article, sans cumul. Le prix barré reste le prix normal ; le prix normal revient tout seul à la fin."),
             ["variante-prix-propre"] = new("Variante à prix propre", "Une taille ou une couleur qui a son propre prix (par exemple un XL plus cher). Les promotions ne s'y appliquent pas pour l'instant."),
 
             // Guide

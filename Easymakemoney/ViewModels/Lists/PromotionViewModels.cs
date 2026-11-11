@@ -93,6 +93,18 @@ namespace Easymakemoney.ViewModels.Lists
                 : commandeId > 0
                     ? "Articles de cette commande."
                     : "Cet article (ses variantes qui ont leur propre prix ne sont pas concernées).";
+            OnPropertyChanged(nameof(CanChooseVariant));
+        }
+
+        public bool CanChooseVariant => ProductId > 0 && AdviceId <= 0 && CommandeId <= 0;
+
+        /// <summary>Promotion sur une taille ou une couleur précise de cet article (lot VAR).</summary>
+        [RelayCommand]
+        private async Task OpenVariantPromotion()
+        {
+            if (!CanChooseVariant || Shell.Current is not { } shell)
+                return;
+            await shell.GoToAsync($"{nameof(VariantPromotionPage)}?ProductId={ProductId}");
         }
 
         partial void OnStartDateChanged(DateTime value)

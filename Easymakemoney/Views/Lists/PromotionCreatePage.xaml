@@ -53,6 +53,12 @@
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Padding="16" Spacing="12">
                 <Label Text="{Binding ScopeText}" Style="{StaticResource UiBody}" FontSize="14" />
+                <Label Text="Choisir une taille ou une couleur précise →" IsVisible="{Binding CanChooseVariant}"
+                       FontFamily="InterSemiBold" FontSize="14" TextColor="{DynamicResource ThemePrimary}">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenVariantPromotionCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
 
                 <Label Text="Remise (en %)" Style="{StaticResource FormLabel}" />
                 <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
