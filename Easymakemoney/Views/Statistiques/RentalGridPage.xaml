@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:Statistique="clr-namespace:Easymakemoney.ViewModels.Statistiques"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             x:DataType="Statistique:RentalGridViewModel"
+             x:Class="Easymakemoney.Views.Statistiques.RentalGridPage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Grilles de location">
+
+    <ContentPage.Resources>
+        <!-- Styles de formulaire : ils ne sont pas globaux -->
+        <Style x:Key="FormLabel" TargetType="Label">
+            <Setter Property="FontFamily" Value="InterMedium" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextSecondary}" />
+        </Style>
+        <Style x:Key="FormField" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="MinimumHeightRequest" Value="48" />
+            <Setter Property="Padding" Value="12,0" />
+        </Style>
+        <Style x:Key="FormEntry" TargetType="handlers:BorderlessEntry">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="PlaceholderColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Grilles de location" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <components:UiTerm Term="grille-location" Text="Une grille de tarifs sert à tous les articles louables de ses catégories." FontSize="13" />
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" HeightRequest="24" />
+                <Label Text="Aucune grille de location sur ce site." IsVisible="{Binding IsEmpty}" Style="{StaticResource UiBody}" FontSize="14" />
+
+                <!-- Grilles : un appui choisit la grille à changer -->
+                <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Grids}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:RentalGrid">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                <components:UiCard.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.SelectGridCommand, Source={x:Reference Page}, x:DataType=ContentPage}" CommandParameter="{Binding .}" />
+                                </components:UiCard.GestureRecognizers>
+                                <VerticalStackLayout Spacing="4">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding name}" Style="{StaticResource UiTitle}" FontSize="15" />
+                                        <Label Grid.Column="1" Text="Changer" FontFamily="InterSemiBold" FontSize="13" TextColor="{DynamicResource ThemePrimary}" />
+                                    </Grid>
+                                    <Label Text="{Binding RatesText}" FontFamily="InterSemiBold" FontSize="13" TextColor="{StaticResource UiTextPrimary}" />
+                                    <Label Text="{Binding ProductsText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                </VerticalStackLayout>
+                            </components:UiCard>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <!-- Changement de la grille choisie -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="16" IsVisible="{Binding HasSelection}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="{Binding SelectionText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                            <Button Text="Hausse" Command="{Binding SetDirectionCommand}" CommandParameter="up" HeightRequest="42" CornerRadius="12"
+                                    FontFamily="InterSemiBold" FontSize="14" BackgroundColor="{StaticResource UiSurface}" TextColor="{StaticResource UiTextPrimary}"
+                                    BorderColor="{StaticResource UiBorder}" BorderWidth="1">
+                                <Button.Triggers>
+                                    <DataTrigger TargetType="Button" Binding="{Binding IsIncrease}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimary}" />
+                                        <Setter Property="TextColor" Value="{DynamicResource ThemeOnPrimary}" />
+                                    </DataTrigger>
+                                </Button.Triggers>
+                            </Button>
+                            <Button Grid.Column="1" Text="Baisse" Command="{Binding SetDirectionCommand}" CommandParameter="down" HeightRequest="42" CornerRadius="12"
+                                    FontFamily="InterSemiBold" FontSize="14" BackgroundColor="{StaticResource UiSurface}" TextColor="{StaticResource UiTextPrimary}"
+                                    BorderColor="{StaticResource UiBorder}" BorderWidth="1">
+                                <Button.Triggers>
+                                    <DataTrigger TargetType="Button" Binding="{Binding IsDecrease}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimary}" />
+                                        <Setter Property="TextColor" Value="{DynamicResource ThemeOnPrimary}" />
+                                    </DataTrigger>
+                                </Button.Triggers>
+                            </Button>
+                        </Grid>
+                        <Label Text="De combien (en %) : tous les tarifs de la grille" Style="{StaticResource FormLabel}" />
+                        <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                            <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Ex. : 10" Keyboard="Numeric" Text="{Binding PercentText}" />
+                        </Border>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Arrondir au dollar" Style="{StaticResource FormLabel}" VerticalOptions="Center" />
+                            <Switch Grid.Column="1" IsToggled="{Binding RoundToDollar}" OnColor="{DynamicResource ThemePrimary}" />
+                        </Grid>
+                        <Button Text="Voir l'aperçu" Command="{Binding ComputePreviewCommand}" HeightRequest="46" CornerRadius="12"
+                                FontFamily="InterSemiBold" FontSize="15" BackgroundColor="{StaticResource UiSurface}" TextColor="{DynamicResource ThemePrimary}"
+                                BorderColor="{DynamicResource ThemePrimary}" BorderWidth="1" />
+
+                        <VerticalStackLayout Spacing="6" IsVisible="{Binding HasPreview}">
+                            <VerticalStackLayout Spacing="4" BindableLayout.ItemsSource="{Binding ChangeLines}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="x:String">
+                                        <Label Text="{Binding .}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+                            <Label Text="{Binding Preview.SharedText}" IsVisible="{Binding Preview.IsShared}" FontFamily="InterSemiBold" FontSize="13" TextColor="#B45309" />
+                            <Label Text="Changement de plus de 30 % : vérifiez qu'il reste raisonnable pour vos clients." IsVisible="{Binding Preview.HasBigChange}" FontFamily="InterSemiBold" FontSize="12" TextColor="#B45309" />
+                            <Button Text="Changer la grille" Command="{Binding ApplyCommand}" IsVisible="{Binding CanApply}" HeightRequest="50" CornerRadius="14"
+                                    FontFamily="InterSemiBold" FontSize="16" BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" Margin="0,6,0,0" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <!-- Changements récents -->
+                <Label Text="Changements récents" Style="{StaticResource UiTitle}" FontSize="16" IsVisible="{Binding HasModifications}" Margin="0,8,0,0" />
+                <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Modifications}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:RentalGridModification">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                <VerticalStackLayout Spacing="4">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding Title}" Style="{StaticResource UiTitle}" FontSize="14" />
+                                        <Label Grid.Column="1" Text="{Binding StatusText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                    </Grid>
+                                    <Label Text="{Binding SummaryText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                    <Label Text="Annuler ce changement" IsVisible="{Binding CanUndo}" FontFamily="InterSemiBold" FontSize="13" TextColor="#B91C1C" Margin="0,4,0,0">
+                                        <Label.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.UndoCommand, Source={x:Reference Page}, x:DataType=ContentPage}" CommandParameter="{Binding .}" />
+                                        </Label.GestureRecognizers>
+                                    </Label>
+                                </VerticalStackLayout>
+                            </components:UiCard>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

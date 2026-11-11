@@ -123,6 +123,8 @@
                     </VerticalStackLayout>
                 </components:UiCard>
 
+                <components:UiTile Command="{Binding OpenGridsCommand}" Icon="M4 4h16v16H4zM4 9h16M4 14h16M9 4v16" Title="Grilles de tarifs" Text="Changer les tarifs de location d'une grille, annulable 24 h" />
+
                 <!-- Promotions de location en cours et à venir -->
                 <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding HasPromotions}">
                     <VerticalStackLayout Spacing="10">

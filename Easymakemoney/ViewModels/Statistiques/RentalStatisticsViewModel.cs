@@ -132,6 +132,13 @@ namespace Easymakemoney.ViewModels.Statistiques
         }
 
         [RelayCommand]
+        private async Task OpenGrids()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(RentalGridPage));
+        }
+
+        [RelayCommand]
         private async Task CreatePromotion(RentalProductRow? product)
         {
             if (product == null || Shell.Current is not { } shell)
