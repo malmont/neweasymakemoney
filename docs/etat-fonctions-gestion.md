@@ -75,6 +75,11 @@ propriétaire qui en fixent les règles. Les contrats détaillés sont dans les 
   échéances. Les règles sont des données datées et versionnées, et chaque paquet sera validé par un comptable du pays (que le propriétaire
   trouvera). Points lourds pour la France : facturation électronique et **certification NF525 de la caisse** (procédure du propriétaire
   auprès d'un organisme agréé). Lot PAYS : audit de l'existant d'abord.
+- **Module Assistance (support boutique)** (11/11/2026), cadrage backend `docs/assistance.md` (07/11) : boîte de demandes, entrées
+  (formulaire du site, courriel, « Signaler un problème » de la caisse), IA assistante du répondeur, puis chat client borné. Placé
+  **après MOD**. Choix : adresse de réception fournie par la plateforme (le commerçant y redirige sa boîte) ; module payant à part dont
+  l'IA consomme les unités mensuelles du site ; délai de réponse affiché réglable par site (48 h ouvrées par défaut) ; demandes conservées
+  3 ans puis anonymisées (Loi 25, RGPD). Onglet « Assistance » dans l'appli de gestion mobile et web (module `/admin/support`).
 - **Promotion par variante** (11/11/2026) : feu vert pour cadrer la règle de prix par variante (variantes à prix propre comprises),
   activable par site et activée seulement quand la caisse, la boutique Next et l'application mobile savent l'appliquer. Contrat backend
   d'abord, puis plans des trois fronts.
