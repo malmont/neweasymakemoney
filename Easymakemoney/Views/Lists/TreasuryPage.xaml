@@ -186,6 +186,34 @@
                        Style="{StaticResource UiBody}" FontSize="13" />
 
                 <!-- Soldes déjà saisis -->
+                <!-- Rapprochement bancaire : solde saisi contre solde attendu -->
+                <components:UiTerm Term="rapprochement" Text="Rapprochements" FontFamily="InterBold" FontSize="17" Margin="0,8,0,0" />
+                <Label Text="{Binding Overview.UnexplainedText}" IsVisible="{Binding Overview.HasUnexplained}"
+                       FontFamily="InterSemiBold" FontSize="13" TextColor="#B45309" />
+                <Label Text="Chaque solde saisi est comparé à ce que l'application attendait. Touchez un écart pour le traiter."
+                       IsVisible="{Binding HasReconciliations}" Style="{StaticResource UiBody}" FontSize="12" />
+                <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Reconciliations}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:Reconciliation">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="12">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.HandleGapCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="2">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding Title}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                        <Label Grid.Column="1" Text="{Binding StatusText}" FontFamily="InterSemiBold" FontSize="12" TextColor="{Binding StatusColor}"
+                                               LineBreakMode="TailTruncation" MaximumWidthRequest="180" />
+                                    </Grid>
+                                    <Label Text="{Binding GapText}" FontFamily="InterBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                    <Label Text="{Binding AmountsText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                </VerticalStackLayout>
+                            </components:UiCard>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
                 <Label Text="Derniers soldes saisis" Style="{StaticResource SectionTitle}" />
                 <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Balances}">
                     <BindableLayout.ItemTemplate>

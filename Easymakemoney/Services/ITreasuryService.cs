@@ -4,7 +4,10 @@ namespace Easymakemoney.Services
     {
         Task<TreasuryOverview> GetOverviewAsync(int days = 90);
         Task<List<TreasuryBalance>> GetBalancesAsync(int limit = 10);
-        Task AddBalanceAsync(DateTime date, long amountCents, string? note);
+        /// <summary>Enregistre le solde ; rend son rapprochement (null pour le solde d'ouverture).</summary>
+        Task<Reconciliation?> AddBalanceAsync(DateTime date, long amountCents, string? note);
+        Task<ReconciliationList> GetReconciliationsAsync(int limit = 10);
+        Task DecideGapAsync(int balanceId, string decision, string? note);
         Task DeleteBalanceAsync(int balanceId);
         Task<List<TreasuryMovement>> GetMovementsAsync();
         Task AddMovementAsync(TreasuryMovementRequest request);

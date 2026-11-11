@@ -17,6 +17,15 @@ namespace Easymakemoney.Models
         public List<TreasuryCategory> byCategory { get; set; } = new();
         public List<TreasuryCaveat> caveats { get; set; } = new();
 
+        /// <summary>Résumé du rapprochement bancaire (lot backend RAP).</summary>
+        public ReconciliationSummary? reconciliation { get; set; }
+
+        public bool HasUnexplained => reconciliation?.unexplained is { count: > 0 };
+
+        public string UnexplainedText => reconciliation?.unexplained is { count: > 0 } u
+            ? $"{u.count} écart(s) non justifié(s) : {Money(u.total)}"
+            : string.Empty;
+
         public bool HasBalance => balance != null && status != "no_balance";
 
         /// <summary>Série qui sert à l'alerte : avec ou sans les ventes estimées, selon le réglage.</summary>

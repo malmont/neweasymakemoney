@@ -18,12 +18,25 @@ namespace Easymakemoney.Services
         public async Task<List<TreasuryBalance>> GetBalancesAsync(int limit = 10) =>
             await _httpService.GetAsync<List<TreasuryBalance>>($"gestion/tresorerie/soldes?limit={limit}") ?? new();
 
-        public async Task AddBalanceAsync(DateTime date, long amountCents, string? note)
+        public async Task<Reconciliation?> AddBalanceAsync(DateTime date, long amountCents, string? note)
         {
             var body = new Dictionary<string, object> { ["date"] = TreasuryDates.Iso(date), ["amount"] = amountCents };
             if (!string.IsNullOrWhiteSpace(note))
                 body["note"] = note.Trim();
-            await _httpService.PostAsyncWithAuth<object>("gestion/tresorerie/soldes", body);
+            var result = await _httpService.PostAsyncWithAuth<BalanceSaveResult>("gestion/tresorerie/soldes", body);
+            return result?.reconciliation;
+        }
+
+        public async Task<ReconciliationList> GetReconciliationsAsync(int limit = 10) =>
+            (await _httpService.GetAsync<ReconciliationList>($"gestion/tresorerie/rapprochements?limit={limit}") ?? new ReconciliationList()).WithCurrency();
+
+        /// <summary>Décision du gérant sur un écart : unexplained, explained (avec une note) ou open (revenir sur la décision).</summary>
+        public async Task DecideGapAsync(int balanceId, string decision, string? note)
+        {
+            var body = new Dictionary<string, object> { ["decision"] = decision };
+            if (!string.IsNullOrWhiteSpace(note))
+                body["note"] = note.Trim();
+            await _httpService.PostAsyncWithAuth<object>($"gestion/tresorerie/soldes/{balanceId}/ecart", body);
         }
 
         public async Task DeleteBalanceAsync(int balanceId) =>

@@ -66,7 +66,8 @@ namespace Easymakemoney.ViewModels.Lists
                 var overviewTask = _treasuryService.GetOverviewAsync();
                 var movementsTask = _treasuryService.GetMovementsAsync();
                 var balancesTask = _treasuryService.GetBalancesAsync(5);
-                await Task.WhenAll(overviewTask, movementsTask, balancesTask);
+                var reconciliationsTask = _treasuryService.GetReconciliationsAsync(5);
+                await Task.WhenAll(overviewTask, movementsTask, balancesTask, reconciliationsTask);
 
                 var overview = overviewTask.Result;
                 Overview = overview;
@@ -94,6 +95,11 @@ namespace Easymakemoney.ViewModels.Lists
                     balance.Currency = overview.currency;
                     Balances.Add(balance);
                 }
+
+                Reconciliations.Clear();
+                foreach (var reconciliation in reconciliationsTask.Result.items)
+                    Reconciliations.Add(reconciliation);
+                HasReconciliations = Reconciliations.Count > 0;
             }
             catch (Exception ex)
             {
@@ -127,9 +133,10 @@ namespace Easymakemoney.ViewModels.Lists
             }
 
             var cents = MoneyHelper.ToCents(amount) * (BalanceIsOverdraft ? -1 : 1);
+            Reconciliation? reconciliation;
             try
             {
-                await _treasuryService.AddBalanceAsync(BalanceDate, cents, BalanceNote);
+                reconciliation = await _treasuryService.AddBalanceAsync(BalanceDate, cents, BalanceNote);
             }
             catch (Exception ex)
             {
@@ -141,6 +148,82 @@ namespace Easymakemoney.ViewModels.Lists
             BalanceAmountText = null;
             BalanceNote = null;
             BalanceIsOverdraft = false;
+            await LoadAsync();
+
+            // Rapprochement : l'application compare le solde saisi à ce qu'elle attendait et propose de traiter l'écart.
+            if (reconciliation is { IsMatched: true })
+                await _dialogService.ShowInfoAsync("Le solde correspond à ce que l'application attendait. Rien à faire.", "Rapprochement");
+            else if (reconciliation is { IsOpen: true })
+            {
+                reconciliation.Currency = Overview?.currency;
+                await HandleGap(reconciliation);
+            }
+        }
+
+        public ObservableCollection<Reconciliation> Reconciliations { get; } = new();
+
+        [ObservableProperty]
+        private bool _hasReconciliations;
+
+        /// <summary>
+        /// Écart entre le solde saisi et l'attendu : retrouver la dépense oubliée (reçu, note de frais), marquer l'écart
+        /// « non justifié », ou l'expliquer (par exemple un dépôt d'espèces). L'écart reste vivant : une dépense saisie plus tard le réduit.
+        /// </summary>
+        [RelayCommand]
+        private async Task HandleGap(Reconciliation? reconciliation)
+        {
+            if (reconciliation == null || reconciliation.IsMatched || Shell.Current is not { } shell)
+                return;
+
+            const string readReceipt = "Lire un reçu oublié";
+            const string addExpense = "Ajouter une note de frais";
+            const string unexplained = "Marquer « écart non justifié »";
+            const string explain = "Expliquer l'écart (dépôt d'espèces…)";
+            const string reopen = "Revenir à « à traiter »";
+
+            var choices = new List<string> { readReceipt, addExpense };
+            if (reconciliation.status != "unexplained") choices.Add(unexplained);
+            if (reconciliation.status != "explained") choices.Add(explain);
+            if (!reconciliation.IsOpen) choices.Add(reopen);
+
+            var title = $"{reconciliation.GapText}\n\n{reconciliation.CompositionText}\n\n{reconciliation.WindowText}";
+            var choice = await shell.DisplayActionSheetAsync(title, "Plus tard", null, choices.ToArray());
+
+            switch (choice)
+            {
+                case readReceipt:
+                    await shell.GoToAsync($"{nameof(DocumentReadPage)}?Type=note");
+                    break;
+                case addExpense:
+                    await shell.GoToAsync(nameof(ListNewNoteDeFraisPage));
+                    break;
+                case unexplained:
+                    await DecideAsync(reconciliation, "unexplained", null);
+                    break;
+                case explain:
+                    var page = Application.Current?.Windows.FirstOrDefault()?.Page;
+                    var note = page == null ? null : await page.DisplayPromptAsync("Expliquer l'écart", "Par exemple : dépôt d'espèces de la caisse le 08/11.", "Valider", "Annuler", maxLength: 500);
+                    if (!string.IsNullOrWhiteSpace(note))
+                        await DecideAsync(reconciliation, "explained", note);
+                    break;
+                case reopen:
+                    await DecideAsync(reconciliation, "open", null);
+                    break;
+            }
+        }
+
+        private async Task DecideAsync(Reconciliation reconciliation, string decision, string? note)
+        {
+            try
+            {
+                await _treasuryService.DecideGapAsync(reconciliation.balanceId, decision, note);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
+            }
+
             await LoadAsync();
         }
 
