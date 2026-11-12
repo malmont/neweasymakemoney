@@ -152,7 +152,9 @@ avant de mettre un premier client en production, le propriétaire se connectant 
   « Mon code PIN », « Tiroir-caisse »).
 - Appli mobile de gestion : séance sur le téléphone (variantes, « non activée », « Préparer ma gestion », Ma journée, fenêtres de
   l'appli, hors connexion des statistiques et de la trésorerie, formulaires à liaisons compilées).
-- Web : essais déjà faits lot par lot sur demo ; revue d'ensemble à prévoir. Reprise d'historique (W1g) : appliquer et annuler sur un
+- Web : essais déjà faits lot par lot sur demo ; revue d'ensemble à prévoir. W1i (modifier fournisseur, transporteur, frais de port),
+  poussé sans essai : téléphone d'un fournisseur, contact de Nationex, numéro de suivi d'un frais de port, chacun aller-retour ;
+  transporteur « ESSAI W1i » créé, modifié puis supprimé ; relevé avant et après. Reprise d'historique (W1g) : appliquer et annuler sur un
   site où elle a un sens, après le lot backend REPRISE-FIGE (l'annulation doit restaurer les résultats figés des périodes fermées).
 
 ## Lots en cours ou à venir
