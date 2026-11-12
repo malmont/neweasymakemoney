@@ -14,7 +14,27 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 | 3 | 4k : tests du ViewModel de lecture d'un document | `docs/gemini/lot-4k-consigne.md` | **terminé, fusionné** (1f89a95) |
 | 4 | 4l : tests du ViewModel de vérification d'une facture fournisseur | `docs/gemini/lot-4l-consigne.md` | **terminé, fusionné** (dfaae5e) |
 | 5 | 4m : tests des ViewModels du budget, du simulateur et de la préparation d'une période | `docs/gemini/lot-4m-consigne.md` | **terminé, fusionné** (53ae002) |
-| 6 | 4n : tests des ViewModels des listes de gestion | `docs/gemini/lot-4n-consigne.md` | plan à écrire (après le code de 4m) |
+| 6 | 4n : tests des ViewModels des listes de gestion | `docs/gemini/lot-4n-consigne.md` | **plan validé avec réponses, code** (message 14) |
+
+## 12/11/2026 : message 14 : lot 4n, plan validé avec mes réponses, code
+
+Ton plan 4n est **validé**.
+
+**Réponses :**
+1. **`ToReceiveViewModel.ChooseAsync`** : ajouté dans l'application sur `main` (`Func<string, string[], Task<string?>>`, « Plus tard » ou
+   null = reportée). Ton test 20 peut simuler le choix d'une variante et vérifier le second `ReceiveAsync`. Ajoute aussi le cas « Plus
+   tard » : la ligne est reportée et le résumé le dit.
+2. **Refus 409** : oui, c'est conforme. Vérifie que `ShowErrorAsync` reçoit l'`ApiException`, et que son `Message` est le texte du
+   serveur, ou le message de secours d'`ApiError` quand le serveur n'en donne pas. Pour `LINE_RECEIVED`, le message de secours est
+   « Cette ligne a déjà été reçue en stock : annulez d'abord la réception. ».
+3. **Ajout** : un test de suppression d'un article refusée par `PRODUCT_IN_USE` (`ListNewProductViewModel`) : l'article reste dans la
+   liste, et le message montré est celui du serveur ou celui de secours (« Cet article a des ventes, des achats ou des mouvements de
+   stock… »). C'est le refus que le backend vient d'ajouter, pas encore en ligne.
+
+**Branche** : `git fetch origin`, `git switch main && git merge --ff-only origin/main`, puis `git switch -c feature/lot-4n-tests main`.
+
+**Ensuite** : compte rendu **en dernier**, puis accusé de réception (« Dernier message lu : 14 »). La file ne contient pas de lot 4o pour
+l'instant : **quand 4n est fini, arrête-toi et dis-le au propriétaire**, sauf si un nouveau message ouvre un lot.
 
 ## 12/11/2026 : message 13 : lot 4m fusionné
 

@@ -13,6 +13,10 @@ namespace Easymakemoney.ViewModels.Lists
         private readonly ICommandeReceptionService _reception;
         private readonly IDialogService _dialogService;
 
+        /// <summary>Choix dans une liste (variante reçue) ; « Plus tard » ou rien = reportée. Remplaçable dans les tests.</summary>
+        public Func<string, string[], Task<string?>> ChooseAsync { get; set; } = async (title, labels) =>
+            Shell.Current is { } shell ? await shell.DisplayActionSheetAsync(title, "Plus tard", null, labels) : null;
+
         public ToReceiveViewModel(IToReceiveService toReceiveService, ICommandeReceptionService reception, IDialogService dialogService)
         {
             _toReceiveService = toReceiveService;
@@ -80,9 +84,7 @@ namespace Easymakemoney.ViewModels.Lists
                 }
 
                 var labels = need.ChoiceLabels();
-                var choice = Shell.Current is { } shell
-                    ? await shell.DisplayActionSheetAsync($"Quelle variante de « {need.ProductName ?? "cet article"} » avez-vous reçue ?", "Plus tard", null, labels)
-                    : null;
+                var choice = await ChooseAsync($"Quelle variante de « {need.ProductName ?? "cet article"} » avez-vous reçue ?", labels);
                 var index = Array.IndexOf(labels, choice);
                 if (index < 0)
                     postponed++;
