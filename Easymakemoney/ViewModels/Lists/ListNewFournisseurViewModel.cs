@@ -108,12 +108,17 @@ namespace Easymakemoney.ViewModels.Lists
             }
         }
 
+        /// <summary>Lot EDIT : un appui ouvre la fiche modifiable du fournisseur.</summary>
         private async Task OnItemTapped(ListFournisseur? fournisseur)
         {
-            if (fournisseur == null)
+            if (fournisseur == null || IsBusy)
                 return;
-            await Task.CompletedTask;
+            await NavigateAsync(nameof(SupplierEditPage), new Dictionary<string, object> { ["Fournisseur"] = fournisseur });
         }
+
+        /// <summary>Navigation (point d'entrée des tests).</summary>
+        public Func<string, IDictionary<string, object>, Task> NavigateAsync { get; set; } =
+            (route, parameters) => Shell.Current?.GoToAsync(route, new ShellNavigationQueryParameters(parameters)) ?? Task.CompletedTask;
       
 
         [RelayCommand]

@@ -55,8 +55,25 @@
                                            FontSize="15"
                                            TextColor="{DynamicResource ThemePrimary}" />
                                 </VerticalStackLayout>
-                                <Border Grid.Column="2"
-                                        IsVisible="{Binding CanDeleteFrais}"
+                                <HorizontalStackLayout Grid.Column="2" Spacing="0" VerticalOptions="Center">
+                                <Border IsVisible="{Binding CanEditFrais}"
+                                        WidthRequest="44"
+                                        HeightRequest="44"
+                                        StrokeThickness="0"
+                                        BackgroundColor="Transparent"
+                                        VerticalOptions="Center"
+                                        SemanticProperties.Description="Modifier le frais de port">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.EditFraisCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Path Data="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"
+                                          Style="{StaticResource UiIcon}"
+                                          Stroke="{DynamicResource ThemePrimary}"
+                                          HorizontalOptions="Center"
+                                          VerticalOptions="Center" />
+                                </Border>
+                                <Border IsVisible="{Binding CanDeleteFrais}"
                                         WidthRequest="44"
                                         HeightRequest="44"
                                         StrokeThickness="0"
@@ -73,6 +90,7 @@
                                           HorizontalOptions="Center"
                                           VerticalOptions="Center" />
                                 </Border>
+                                </HorizontalStackLayout>
                             </Grid>
 
                             <Grid ColumnDefinitions="*,*" ColumnSpacing="10" IsVisible="{Binding CanAddFrais}">

@@ -17,5 +17,9 @@ namespace Easymakemoney.Models
         /// <summary>À l'écriture : devise choisie. À la lecture : devise de ses commandes.</summary>
         [Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string? currency { get; set; }
+
+        /// <summary>Lecture seulement : type du fournisseur (null sans type). Jamais envoyé à la création.</summary>
+        [Newtonsoft.Json.JsonProperty(NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int? typeFournisseurId { get; set; }
     }
 }

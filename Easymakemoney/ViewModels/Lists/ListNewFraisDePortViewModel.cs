@@ -16,6 +16,7 @@ namespace Easymakemoney.ViewModels.Lists
         private readonly Easymakemoney.UseCase.PeriodResultUseCase.PeriodUseCase _periodUseCase;
         private readonly IServiceProvider _services;
         private readonly IDialogService _dialogService;
+        private readonly IManagementEditService? _editService;
 
         // Une seule réponse doit remplir l'écran : celle de la dernière collection choisie.
         private int _loadVersion;
@@ -24,8 +25,9 @@ namespace Easymakemoney.ViewModels.Lists
             GetListCommandUseCase getListCommandUseCase, GetListFraisDePortUseCase getListFraisDePortUseCase,
             DeleteFraisDePortUseCase deleteFraisDePortUseCase, SaveFraisDePortUseCase saveFraisDePortUseCase,
             Easymakemoney.UseCase.PeriodResultUseCase.PeriodUseCase periodUseCase,
-            IServiceProvider services, IDialogService dialogService)
+            IServiceProvider services, IDialogService dialogService, IManagementEditService? editService = null)
         {
+            _editService = editService;
             _periodUseCase = periodUseCase;
             _getListCollectionsUseCase = getListCollectionsUseCase;
             _getListCommandUseCase = getListCommandUseCase;
@@ -107,9 +109,8 @@ namespace Easymakemoney.ViewModels.Lists
             try
             {
                 var commandes = await _getListCommandUseCase.ExecuteAsync(CollectionId);
-                using var gate = new SemaphoreSlim(MaxConcurrentRequests);
-                var rows = await Task.WhenAll((commandes ?? new ObservableCollection<ListCommand>())
-                    .Select(commande => LoadRowAsync(commande, gate)));
+                var rows = await LoadPeriodRowsAsync(commandes ?? new ObservableCollection<ListCommand>())
+                           ?? await LoadRowsOneByOneAsync(commandes ?? new ObservableCollection<ListCommand>());
 
                 if (version != _loadVersion)
                     return;
@@ -136,6 +137,42 @@ namespace Easymakemoney.ViewModels.Lists
                 if (version == _loadVersion)
                     IsBusy = false;
             }
+        }
+
+        /// <summary>
+        /// Lot B3 bis : les frais de port de toute la période en une lecture (montants convertis par le serveur). Null si la lecture
+        /// n'est pas disponible : l'écran revient alors à une lecture par commande.
+        /// </summary>
+        private async Task<FraisDePortCommandeRow[]?> LoadPeriodRowsAsync(IEnumerable<ListCommand> commandes)
+        {
+            if (_editService == null)
+                return null;
+            try
+            {
+                var period = await _editService.GetPeriodShippingAsync(CollectionId);
+                if (period == null)
+                    return null;
+                var byCommande = period.commandes.ToDictionary(c => c.commandeId, c => c.fraisDePort);
+                return commandes
+                    .Select(commande => new FraisDePortCommandeRow
+                    {
+                        Commande = commande,
+                        Frais = byCommande.TryGetValue(commande.id, out var frais) ? frais : null,
+                        PeriodClosed = IsClosed,
+                    })
+                    .ToArray();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"[FraisDePort] Lecture de la période indisponible, une lecture par commande : {e.Message}");
+                return null;
+            }
+        }
+
+        private async Task<FraisDePortCommandeRow[]> LoadRowsOneByOneAsync(IEnumerable<ListCommand> commandes)
+        {
+            using var gate = new SemaphoreSlim(MaxConcurrentRequests);
+            return await Task.WhenAll(commandes.Select(commande => LoadRowAsync(commande, gate)));
         }
 
         private async Task<FraisDePortCommandeRow> LoadRowAsync(ListCommand commande, SemaphoreSlim gate)
@@ -197,6 +234,19 @@ namespace Easymakemoney.ViewModels.Lists
             await GetListFraisDePort();
             await _dialogService.ShowInfoAsync("Frais de port supprimé avec succès.");
         }
+
+        /// <summary>Lot EDIT : ouvre la modification du frais de port d'une commande (période ouverte).</summary>
+        [RelayCommand]
+        private async Task EditFrais(FraisDePortCommandeRow? row)
+        {
+            if (row == null || !row.CanEditFrais || IsBusy)
+                return;
+            await NavigateAsync(nameof(ShippingEditPage), new Dictionary<string, object> { ["Row"] = row });
+        }
+
+        /// <summary>Navigation (point d'entrée des tests).</summary>
+        public Func<string, IDictionary<string, object>, Task> NavigateAsync { get; set; } =
+            (route, parameters) => Shell.Current?.GoToAsync(route, new ShellNavigationQueryParameters(parameters)) ?? Task.CompletedTask;
 
         [RelayCommand]
         private async Task ReadTransportInvoice(FraisDePortCommandeRow? row)

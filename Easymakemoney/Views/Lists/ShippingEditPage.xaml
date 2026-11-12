@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             x:DataType="list:ShippingEditViewModel"
+             x:Class="Easymakemoney.Views.Lists.ShippingEditPage"
+             Style="{StaticResource UiPage}"
+             Title="Modifier le frais de port">
+
+    <ContentPage.Resources>
+        <Style x:Key="FormLabel" TargetType="Label">
+            <Setter Property="FontFamily" Value="InterMedium" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextSecondary}" />
+        </Style>
+        <Style x:Key="FormField" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="MinimumHeightRequest" Value="48" />
+            <Setter Property="Padding" Value="12,0" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+        </Style>
+        <Style x:Key="FormEntry" TargetType="handlers:BorderlessEntry">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="PlaceholderColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="FormPicker" TargetType="Picker">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="TitleColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <components:AppHeader Title="Modifier le frais de port" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="10">
+                <Label Text="{Binding CommandeName, StringFormat='Commande : {0}'}" Style="{StaticResource UiTitle}" FontSize="16" />
+                <Border IsVisible="{Binding HasError}" Padding="12,10" StrokeThickness="0" StrokeShape="RoundRectangle 12" BackgroundColor="#FEE2E2">
+                    <Label Text="{Binding ErrorText}" FontFamily="InterMedium" FontSize="14" TextColor="#991B1B" />
+                </Border>
+                <Label Text="Nom" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Text="{Binding Name}" />
+                </Border>
+                <Label Text="{Binding PriceLabel}" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Keyboard="Numeric" Placeholder="Ex. : 24,90" Text="{Binding PriceText}" />
+                </Border>
+                <Label Text="Transporteur" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}">
+                    <Picker Style="{StaticResource FormPicker}" Title="Choisir un transporteur" ItemsSource="{Binding Transporteurs}" SelectedItem="{Binding SelectedTransporteur}" ItemDisplayBinding="{Binding name}" />
+                </Border>
+                <Label Text="Numéro de facture" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Text="{Binding Facture}" />
+                </Border>
+                <Label Text="Numéro de suivi" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Text="{Binding Tracknumber}" />
+                </Border>
+                <Label Text="Une période clôturée doit être rouverte avant toute modification. Le prix modifié recalcule les chiffres de la période ; s'il vient d'une facture lue par IA, la correction est notée au journal." Style="{StaticResource UiBody}" FontSize="13" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Button Grid.Row="2" Text="Enregistrer" Command="{Binding SaveCommand}" Margin="16,8,16,16" HeightRequest="50" CornerRadius="14"
+                FontFamily="InterSemiBold" FontSize="15" BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" />
+    </Grid>
+</ContentPage>

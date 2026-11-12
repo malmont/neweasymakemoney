@@ -121,6 +121,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<IVariantPromotionService, VariantPromotionService>();
 		builder.Services.AddTransient<IManagementModuleService, ManagementModuleService>();
 		builder.Services.AddTransient<ISupportService, SupportService>();
+		builder.Services.AddTransient<IManagementEditService, ManagementEditService>();
 		builder.Services.AddSingleton<Easymakemoney.Services.Offline.IHomeSnapshotStore, Easymakemoney.Services.Offline.HomeSnapshotStore>();
 		builder.Services.AddTransient<IPeriodService, PeriodService>();
 		builder.Services.AddTransient<Easymakemoney.UseCase.PeriodResultUseCase.PeriodUseCase>();
@@ -223,6 +224,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<SupportTicketListPage>();
 		builder.Services.AddTransient<SupportTicketPage>();
 		builder.Services.AddTransient<SupportTicketCreatePage>();
+		builder.Services.AddTransient<SupplierEditPage>();
+		builder.Services.AddTransient<ShippingEditPage>();
 		builder.Services.AddTransient<PriceChangePage>();
 		builder.Services.AddTransient<PriceBatchListPage>();
 		builder.Services.AddTransient<ToReceivePage>();
@@ -285,6 +288,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<SupportTicketListViewModel>();
 		builder.Services.AddTransient<SupportTicketViewModel>();
 		builder.Services.AddTransient<SupportTicketCreateViewModel>();
+		builder.Services.AddTransient<SupplierEditViewModel>();
+		builder.Services.AddTransient<ShippingEditViewModel>();
 		builder.Services.AddTransient<PriceChangeViewModel>();
 		builder.Services.AddTransient<PriceBatchListViewModel>();
 		builder.Services.AddTransient<ToReceiveViewModel>();

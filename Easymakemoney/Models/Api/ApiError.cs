@@ -207,6 +207,12 @@ public class ApiError
             "BALANCE_DATE_TAKEN" => "Un solde est déjà saisi à cette date.",
             "LINE_RECEIVED" => "Cette ligne a déjà été reçue en stock : annulez d'abord la réception.",
             "PRODUCT_IN_USE" => "Cet article a des ventes, des achats ou des mouvements de stock : retirez-le de la vente au lieu de le supprimer.",
+            "FOURNISSEUR_CURRENCY_LOCKED" => "Ce fournisseur a déjà des commandes : sa devise d'achat ne peut plus changer.",
+            "FOURNISSEUR_NOT_FOUND" => "Ce fournisseur n'existe plus.",
+            "TRANSPORTEUR_RESERVED" => "Ce transporteur sert aux frais de port lus sur les factures : il ne peut être ni renommé ni supprimé.",
+            "TRANSPORTEUR_NOT_FOUND" => "Ce transporteur n'existe plus.",
+            "COMMANDE_CLOSED" => "Cette commande est clôturée : rouvrez sa période pour la modifier.",
+            "FRAIS_DE_PORT_NOT_FOUND" => "Cette commande n'a plus de frais de port.",
             _ => (int)statusCode switch
             {
                 429 => $"Trop de tentatives. Veuillez patienter {retryAfterSeconds ?? 60} secondes.",

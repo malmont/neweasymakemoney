@@ -132,6 +132,12 @@ Publication sur les stores (Play Store, App Store) : **un lot commun à toutes l
 À reparler avec le propriétaire (jugé pertinent, non décidé) : site de démonstration réinitialisé chaque nuit ; parcours d'accueil d'un
 nouveau client déroulé de bout en bout.
 
+**Lot IA élargi (décision du propriétaire du 12/11/2026)** : l'IA met à jour les données elle-même en posant ses questions (facture en
+pièce jointe enregistrée, commande remplie à partir d'une facture, et le maximum de cette façon) ; un **guide des séquences** montre
+l'avancement global (plusieurs séquences, sur le modèle de « Préparer ma gestion » / readiness : activer un module, préparer une période,
+clôturer l'exercice…) ; l'IA fait avancer ces séquences étape par étape. Règle gardée : l'IA prépare, le serveur calcule, chaque écriture
+passe par un aperçu, la confirmation du gérant, le journal et l'annulation. Constat demandé au backend avant l'extension du contrat d'IA1.
+
 À reparler aussi (idée du propriétaire du 12/11/2026, non décidée) : **démarque et vols**. Avis de Claude, par ordre :
 1. sans matériel : rapport d'anomalies de caisse calculé par le serveur (remboursements sans ticket, annulations, remises et prix
    manuels, ventes sous le coût, réimpressions, écarts au Z, tiroir ouvert sans vente), résumé rédigé par l'IA, et comptage du stock au
