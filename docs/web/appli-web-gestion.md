@@ -83,7 +83,9 @@ L'application mobile reprendra ce qui s'y prête : liens illustrés, « d'où vi
 ## 4 bis. Documents à la demande (lot DOC, décision du 12/11/2026)
 
 **Le principe.**
-- Un onglet « Documents » : une page blanche et une zone de demande, comme le chat d'une IA. Par exemple :
+- Un onglet « Documents » **de l'espace**, hors du module gestion (`/admin/documents`), car un document peut croiser plusieurs
+  modules (gestion, boutique, caisse, assistance). Il n'offre que les données des modules actifs du site et autorisés pour
+  l'utilisateur. C'est une page blanche et une zone de demande, comme le chat d'une IA. Par exemple :
   - « rapport des ventes du trimestre par catégorie » ;
   - « bilan de l'année pour mon comptable » ;
   - « état des stocks dormants avec leur valeur ».
