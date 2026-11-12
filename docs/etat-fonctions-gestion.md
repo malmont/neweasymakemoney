@@ -132,6 +132,15 @@ Publication sur les stores (Play Store, App Store) : **un lot commun à toutes l
 À reparler avec le propriétaire (jugé pertinent, non décidé) : site de démonstration réinitialisé chaque nuit ; parcours d'accueil d'un
 nouveau client déroulé de bout en bout.
 
+À reparler aussi (idée du propriétaire du 12/11/2026, non décidée) : **démarque et vols**. Avis de Claude, par ordre :
+1. sans matériel : rapport d'anomalies de caisse calculé par le serveur (remboursements sans ticket, annulations, remises et prix
+   manuels, ventes sous le coût, réimpressions, écarts au Z, tiroir ouvert sans vente), résumé rédigé par l'IA, et comptage du stock au
+   téléphone qui donne la démarque par article ;
+2. RFID UHF sur les vêtements (inventaire en minutes, lecteur à la porte, puce marquée vendue par la caisse), en essai sur une boutique ;
+3. caméras avec IA plus tard, par un partenaire (Loi 25, transparence envers les employés).
+Toujours « anomalie à vérifier », jamais une accusation. Questions ouvertes : portiques antivol déjà en place ? nombre d'articles par
+boutique ?
+
 ## Lots en cours ou à venir
 
 | Lot | Contenu | État |
