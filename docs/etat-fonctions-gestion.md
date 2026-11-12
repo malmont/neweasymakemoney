@@ -89,6 +89,36 @@ propriétaire qui en fixent les règles. Les contrats détaillés sont dans les 
   (pistes : Plaid pour le Canada et les États-Unis, Flinks pour le Canada, MX ou Finicity pour les États-Unis ; à choisir sur coût,
   couverture des banques des clients, sécurité et consentement). Elle remplacera seulement le fichier importé : même calcul derrière.
 
+## Revue du 12/11/2026 : améliorations et idées retenues par le propriétaire
+
+Améliorations de l'existant :
+- **Essais à l'écran** : les écrans mobiles du 11 et du 12/11 (variantes, « non activée », « Préparer ma gestion », Assistance, fenêtres
+  nettoyées) ne sont vérifiés que par les tests. Séance d'essai sur le téléphone à faire, simulateur à réparer.
+- **Mode dégradé sans réseau** : garder la dernière réponse de l'Accueil et des statistiques, avec « données de telle heure ».
+- **Anglais dans l'appli mobile**, à partir du lexique servi par le backend (LEX).
+- **Une seule façon d'afficher une fenêtre** : remplacer les fenêtres natives restantes (saisie d'un nombre, listes de choix) par celles
+  de l'appli.
+- **Mise en ligne backend par script de contrôle** (cache des interrupteurs compris), toujours sur le go du propriétaire.
+- **Ordre backend** : après PAYS-1c et IMGHOST, IA1 et IA2 passent avant PAYS-2 à PAYS-8.
+- **Notifications** : toujours en attente de Firebase.
+
+Idées de fonctions retenues (à cadrer une par une, contrat backend d'abord) :
+
+| Idée | Contenu |
+|---|---|
+| Ma journée | Sur l'Accueil : ventes du jour, commandes à expédier, demandes d'assistance en retard, solde de trésorerie |
+| Résumé hebdomadaire | Courriel du lundi : ventes, marge, trésorerie, 3 actions conseillées |
+| Assistance depuis une commande | Bouton « Ouvrir une demande » sur une commande, client et commande préremplis |
+| Réponses types | Modèles de réponse dans l'Assistance, rédigés plus tard par l'IA (lot 3 du backend) |
+| Objectifs | Objectif de ventes ou de marge par période, avance ou retard, ce qu'il faut vendre par jour |
+| Réapprovisionnement conseillé | Quantité et date de commande par article, brouillon de commande fournisseur |
+| Fiche client | Achats, retours, demandes d'assistance, valeur totale |
+| Journal d'activité | Qui a changé un prix, lancé une promotion, annulé une vente |
+| Rôle comptable | Lecture seule : statistiques, exports, dossier de fin d'exercice, documents |
+
+À reparler avec le propriétaire (jugé pertinent, non décidé) : site de démonstration réinitialisé chaque nuit ; parcours d'accueil d'un
+nouveau client déroulé de bout en bout.
+
 ## Lots en cours ou à venir
 
 | Lot | Contenu | État |
