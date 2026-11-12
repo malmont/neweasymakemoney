@@ -6,6 +6,7 @@ public class FakeDialogService : IDialogService
 {
     public List<Exception> ShownErrors { get; } = new();
     public List<string> ShownInfos { get; } = new();
+    public List<(string Title, string Message, string Accept, string Cancel)> ConfirmCalls { get; } = new();
     public bool ConfirmResult { get; set; } = true;
 
     public Task ShowErrorAsync(Exception exception)
@@ -22,6 +23,7 @@ public class FakeDialogService : IDialogService
 
     public Task<bool> ConfirmAsync(string title, string message, string accept = "Oui", string cancel = "Non")
     {
+        ConfirmCalls.Add((title, message, accept, cancel));
         return Task.FromResult(ConfirmResult);
     }
 }

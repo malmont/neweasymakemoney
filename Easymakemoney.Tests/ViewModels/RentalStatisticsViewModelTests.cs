@@ -15,21 +15,27 @@ public class RentalStatisticsViewModelTests : IDisposable
     private readonly FakeRentalStatisticsService _rentalService = new();
     private readonly FakeListCollectionService _periodService = new();
     private readonly FakeDialogService _dialogService = new();
+    private readonly FakeRentalPromotionService _promotionService = new();
 
     public RentalStatisticsViewModelTests()
     {
         CultureInfo.CurrentCulture = new CultureInfo("fr-CA");
         SiteCurrency.Reset();
+        RentalStatisticsViewModel.PromotionsChanged = false;
     }
 
     public void Dispose()
     {
         CultureInfo.CurrentCulture = _originalCulture;
         SiteCurrency.Reset();
+        RentalStatisticsViewModel.PromotionsChanged = false;
     }
 
     private RentalStatisticsViewModel CreateViewModel() =>
         new(_rentalService, _periodService, _dialogService);
+
+    private RentalStatisticsViewModel CreateViewModelWithPromotions() =>
+        new(_rentalService, _periodService, _dialogService, _promotionService);
 
     private static RentalStatistics CreateSampleRental()
     {
@@ -144,5 +150,140 @@ public class RentalStatisticsViewModelTests : IDisposable
         vm.SelectedDayIndex = 0;
         Assert.Equal(vm.WeekdayPoints[0].Label, vm.SelectedDayText);
         Assert.Empty(_dialogService.ShownErrors);
+    }
+
+    [Fact]
+    public async Task LoadPromotions_FiltersOnlyActiveAndUpcoming_IncludingEndedToday()
+    {
+        var today = DateTime.Today; // Toutes les dates partent de DateTime.Today
+        _rentalService.ResultToReturn = CreateSampleRental();
+        _promotionService.PromotionsResult = new List<RentalPromotionItem>
+        {
+            new() { id = 1, batchId = 10, name = "Kayak", status = "active", startDate = TreasuryDates.Iso(today.AddDays(-5)), endDate = TreasuryDates.Iso(today.AddDays(10)) },
+            new() { id = 2, batchId = 20, name = "Vélo", status = "upcoming", startDate = TreasuryDates.Iso(today.AddDays(2)), endDate = TreasuryDates.Iso(today.AddDays(20)) },
+            new() { id = 3, batchId = 30, name = "Tente", status = "cancelled", startDate = TreasuryDates.Iso(today.AddDays(-10)), endDate = TreasuryDates.Iso(today) },
+            new() { id = 4, batchId = 40, name = "Planche", status = "ended", startDate = TreasuryDates.Iso(today.AddDays(-20)), endDate = TreasuryDates.Iso(today.AddDays(-1)) },
+            new() { id = 5, batchId = 50, name = "Pédalo", status = "active", endedAt = today.ToString("yyyy-MM-ddTHH:mm:sszzz"), startDate = TreasuryDates.Iso(today.AddDays(-3)), endDate = TreasuryDates.Iso(today.AddDays(5)) }
+        };
+
+        var vm = CreateViewModelWithPromotions();
+        await vm.InitializeAsync();
+
+        // Seules les promotions active, upcoming et active se terminant ce soir sont visibles
+        Assert.Equal(3, vm.Promotions.Count);
+        Assert.Equal(new[] { 1, 2, 5 }, vm.Promotions.Select(p => p.id));
+        Assert.True(vm.HasPromotions);
+
+        var endingToday = vm.Promotions.First(p => p.id == 5);
+        Assert.Equal("Se termine ce soir", endingToday.StatusText);
+        Assert.False(endingToday.CanEnd);
+    }
+
+    [Fact]
+    public async Task EndPromotion_CannotEnd_DoesNothing()
+    {
+        var today = DateTime.Today;
+        _rentalService.ResultToReturn = CreateSampleRental();
+        var promoEndingToday = new RentalPromotionItem
+        {
+            id = 5,
+            batchId = 50,
+            status = "active",
+            endedAt = today.ToString("yyyy-MM-ddTHH:mm:sszzz")
+        };
+        Assert.False(promoEndingToday.CanEnd);
+
+        var vm = CreateViewModelWithPromotions();
+        await vm.EndPromotionCommand.ExecuteAsync(promoEndingToday);
+
+        Assert.Empty(_dialogService.ConfirmCalls);
+        Assert.Empty(_promotionService.EndCalls);
+    }
+
+    [Fact]
+    public async Task EndPromotion_ConfirmationRefused_DoesNotSendRequest()
+    {
+        var today = DateTime.Today;
+        _rentalService.ResultToReturn = CreateSampleRental();
+        var promo = new RentalPromotionItem
+        {
+            id = 1,
+            batchId = 10,
+            name = "Kayak",
+            status = "active",
+            startDate = TreasuryDates.Iso(today)
+        };
+        Assert.True(promo.CanEnd);
+
+        var vm = CreateViewModelWithPromotions();
+        _dialogService.ConfirmResult = false;
+
+        await vm.EndPromotionCommand.ExecuteAsync(promo);
+
+        Assert.Single(_dialogService.ConfirmCalls);
+        Assert.Empty(_promotionService.EndCalls);
+    }
+
+    [Fact]
+    public async Task EndPromotion_Confirmed_DifferentiatesUpcomingAndActiveMessages()
+    {
+        var today = DateTime.Today;
+        _rentalService.ResultToReturn = CreateSampleRental();
+        var upcomingPromo = new RentalPromotionItem
+        {
+            id = 2,
+            batchId = 20,
+            name = "Vélo",
+            percent = 15,
+            status = "upcoming",
+            startDate = TreasuryDates.Iso(today.AddDays(5))
+        };
+        var activePromo = new RentalPromotionItem
+        {
+            id = 1,
+            batchId = 10,
+            name = "Kayak",
+            percent = 20,
+            status = "active",
+            startDate = TreasuryDates.Iso(today.AddDays(-2))
+        };
+
+        var vm = CreateViewModelWithPromotions();
+        _dialogService.ConfirmResult = true;
+
+        // Fin d'une promotion à venir
+        await vm.EndPromotionCommand.ExecuteAsync(upcomingPromo);
+        var upcomingConfirm = Assert.Single(_dialogService.ConfirmCalls);
+        Assert.Contains("n'a pas commencé : elle ne s'appliquera jamais", upcomingConfirm.Message);
+        Assert.Equal(20, Assert.Single(_promotionService.EndCalls));
+
+        // Fin d'une promotion en cours
+        await vm.EndPromotionCommand.ExecuteAsync(activePromo);
+        var activeConfirm = _dialogService.ConfirmCalls.Last();
+        Assert.Contains("s'arrête ce soir. Une location qui commence aujourd'hui la garde", activeConfirm.Message);
+        Assert.Equal(10, _promotionService.EndCalls.Last());
+    }
+
+    [Fact]
+    public async Task InitializeAsync_WhenPromotionsChanged_ReloadsOnlyPromotions()
+    {
+        _rentalService.ResultToReturn = CreateSampleRental();
+        var vm = CreateViewModelWithPromotions();
+
+        await vm.InitializeAsync();
+        Assert.Single(_rentalService.RequestedUrls);
+        Assert.Equal(1, _promotionService.GetPromotionsCalls);
+
+        // Drapeau activé après création d'une promotion
+        RentalStatisticsViewModel.PromotionsChanged = true;
+
+        await vm.InitializeAsync();
+
+        // Les statistiques ne sont PAS rechargées (toujours 1 seul appel d'URL)
+        Assert.Single(_rentalService.RequestedUrls);
+        // Les promotions sont rechargées (2 appels)
+        Assert.Equal(2, _promotionService.GetPromotionsCalls);
+        // Le drapeau est réinitialisé à faux
+        Assert.False(RentalStatisticsViewModel.PromotionsChanged);
     }
 }
