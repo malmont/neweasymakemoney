@@ -96,8 +96,8 @@ propriétaire qui en fixent les règles. Les contrats détaillés sont dans les 
 | P5b | Fuseau des dates de promotion (administration, PATCH) | contrat validé, en code |
 | Statistiques B1–B7 | Valeur du stock par variantes en cents, paiements échoués exclus, panier moyen, commandes, transporteurs, caisse | validé, après P5b |
 | P6 | Préparer une période (estimation des ventes, achats × coefficient, voyage, trésorerie, avis, valider) | contrat validé, après P5b |
-| Variantes en promotion | Règle de prix par variante, bascule par site | à cadrer |
-| LOC | Onglet Location : occupation, revenu, jours creux et pleins par article ; conseils (hausse ciblée, promotion en semaine, baisse) ; promotion datée ou changement de grille ; projection et mesure ; jamais une réservation déjà faite | validé le 10/11, contrat demandé (après P6) |
+| Variantes en promotion (VAR) | Règle de prix par variante, bascule par site (`shop.variant_promotions`) | **en ligne** (backend 32febeff) ; écrans dans l'appli, la caisse, Next et l'appli e-commerce ; essai réel sur demo à faire (interrupteur à allumer) |
+| LOC | Onglet Location : occupation, revenu, jours creux et pleins par article ; conseils (hausse ciblée, promotion en semaine, baisse) ; promotion datée ou changement de grille ; projection et mesure ; jamais une réservation déjà faite | LOC1 à LOC4 **en ligne** et dans l'appli ; LOC5 après S2 |
 | ABO | Onglet Abonnements : revenu mensuel récurrent, actifs, nouveaux, départs, revenu par abonné, valeur sur la durée, échecs de paiement ; conseils ; nouveau tarif **pour les nouveaux abonnés seulement** (Stripe), offre de bienvenue ; projection 3, 6, 12 mois | validé le 10/11, après LOC |
 | Ensuite | Réservations futures dans la trésorerie et « Préparer une période » ; vignettes sur la dérive de l'occupation ou des départs | à cadrer |
 | Plus tard | Forfaits location + vente ; saisonnalité des locations ; relance des anciens abonnés | idées retenues |
@@ -109,6 +109,8 @@ propriétaire qui en fixent les règles. Les contrats détaillés sont dans les 
 | IA3 | Import de relevés bancaires PDF, CSV, OFX, QFX (au moins 3 demandés) : solde, frais fixes, dépenses, rapprochement ; dépôt de plusieurs fichiers sur le web | validé le 11/11, après CLO |
 | CLO | Clôture du mois et de l'exercice ; dossier de fin d'exercice (web, `docs/web/dossier-fin-exercice.md`) | validé le 11/11 |
 | IA4 | Connexion directe aux banques (agrégateur, Canada et États-Unis), depuis le web uniquement | plus tard |
-| Ordre backend | ~~RAP, FF1, FF2, S1, AN~~ (livrés), LOC (LOC1 et LOC2 livrés, LOC3 en développement, LOC3 en ligne sur feu vert du propriétaire), IA1, IA2, ABO, REG, INV, CLO, IA3, S2, S3 | fixé par Claude avec l'accord du propriétaire |
+| MOD | Module de gestion payant et activable ; garde « management » (403 MODULE_INACTIVE, mode live seulement) ; unités IA (`GET /api/gestion/ia`) | **en ligne** le 11/11 (7fbd8ace) ; transition appliquée (demo accordé) ; appli : écran « non activée » et unités IA sur le guide (3c7ce57) |
+| CHE | Cheminement de la gestion : étapes bloquantes et conseillées dans `/api/site/readiness` (avec `appScreen`), page EasyAdmin `/admin/gestion` | contrat validé le 11/11, en code ; appli : écran « Préparer ma gestion » prêt (eeb0189) |
+| Ordre backend | ~~RAP, FF1, FF2, S1, AN, LOC1 à LOC4, VAR, DIR, MOD~~ (livrés), CHE, ASSISTANCE (contrat, ROLE_SUPPORT), PAYS (audit), IA1, IA2, LEX, CAP, ABO, REG, INV, CLO, IA3, S2, S3 | fixé par Claude avec l'accord du propriétaire |
 | Mise à niveau | Rapprochement bancaire (livré), assistant IA (lots IA), régularisations, inventaire, clôture du mois | validé |
 | Notifications | Inscription du téléphone et réglages | attend Firebase (nom de l'application) |
