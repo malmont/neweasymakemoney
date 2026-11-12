@@ -305,12 +305,12 @@ namespace Easymakemoney.Models
 
         public static string Date(string? iso) =>
             DateTimeOffset.TryParse(iso, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
-                ? date.LocalDateTime.ToString("d MMM yyyy", CultureInfo.CurrentCulture)
+                ? date.LocalDateTime.ToString("d MMM yyyy", CultureInfo.GetCultureInfo("fr-CA"))
                 : string.Empty;
 
         public static string DateTime(string? iso) =>
             DateTimeOffset.TryParse(iso, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
-                ? date.LocalDateTime.ToString("d MMM yyyy, HH:mm", CultureInfo.CurrentCulture)
+                ? date.LocalDateTime.ToString("d MMM yyyy, HH:mm", CultureInfo.GetCultureInfo("fr-CA"))
                 : string.Empty;
 
         /// <summary>Message d'erreur du serveur traduit pour le gérant (codes du contrat lot 1).</summary>

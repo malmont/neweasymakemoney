@@ -130,7 +130,7 @@ namespace Easymakemoney.Models
 
         public string ConfirmationText => IsTrial
             ? TrialEndsAt is { } end
-                ? $"Essai ouvert jusqu'au {end.ToString("d MMMM yyyy", CultureInfo.CurrentCulture)}. L'application de gestion est disponible."
+                ? $"Essai ouvert jusqu'au {end.ToString("d MMMM yyyy", CultureInfo.GetCultureInfo("fr-CA"))}. L'application de gestion est disponible."
                 : "Essai ouvert. L'application de gestion est disponible."
             : "Demande envoyée. La plateforme vous répondra par courriel.";
     }
@@ -156,7 +156,7 @@ namespace Easymakemoney.Models
                     return string.Empty;
                 var text = $"Unités IA : {credits.remaining} sur {credits.monthly} ce mois-ci";
                 if (DateTimeOffset.TryParse(credits.resetAt, CultureInfo.InvariantCulture, DateTimeStyles.None, out var reset))
-                    text += $", renouvelées le {reset.LocalDateTime.ToString("d MMMM", CultureInfo.CurrentCulture)}";
+                    text += $", renouvelées le {reset.DateTime.ToString("d MMMM", CultureInfo.GetCultureInfo("fr-CA"))}";
                 return text + ".";
             }
         }

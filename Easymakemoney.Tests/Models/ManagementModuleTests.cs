@@ -282,6 +282,17 @@ public class ManagementModuleTests : IDisposable
         Assert.True(ai.IsIncluded);
         Assert.False(ai.IsExhausted);
         Assert.StartsWith("Unités IA : 63 sur 100 ce mois-ci", ai.CreditsText);
+        // Date en français même sur un téléphone réglé en anglais (vu sur le simulateur : « 1 December »)
+        var previous = CultureInfo.CurrentCulture;
+        CultureInfo.CurrentCulture = new CultureInfo("en-US");
+        try
+        {
+            Assert.Contains("renouvelées le 1 décembre", ai.CreditsText);
+        }
+        finally
+        {
+            CultureInfo.CurrentCulture = previous;
+        }
         Assert.Equal(10, ai.limits!.commentsPerDay);
     }
 
