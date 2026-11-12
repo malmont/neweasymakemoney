@@ -3,6 +3,9 @@ namespace Easymakemoney.ViewModels.Lists
 {
     public partial class AllListsViewModel
 	{
+        /// <summary>Navigation (point d'entrée des tests).</summary>
+        public Func<string, Task> NavigateAsync { get; set; } = route => Shell.Current?.GoToAsync(route) ?? Task.CompletedTask;
+
 		private readonly ListNewCommandViewModel _commandViewModel;
 		private readonly SaveCommandUseCase _saveCommandUseCase;
 		private readonly IServiceProvider _services;
@@ -41,134 +44,115 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private async Task NavigateToSupplierInvoice()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync($"{nameof(DocumentReadPage)}?Type=facture");
+            await NavigateAsync($"{nameof(DocumentReadPage)}?Type=facture");
         }
 
         [RelayCommand]
         private async Task NavigateToToClassify()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(AttachProductsPage));
+            await NavigateAsync(nameof(AttachProductsPage));
         }
 
         [RelayCommand]
         private async Task NavigateToCollection()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(ListNewCollectionPage));
+            await NavigateAsync(nameof(ListNewCollectionPage));
         }
 
         [RelayCommand]
         private async Task NavigateToNoteDeFrais()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(ListNewNoteDeFraisPage));
+            await NavigateAsync(nameof(ListNewNoteDeFraisPage));
         }
 
         [RelayCommand]
         private async Task NavigateToNoteFournisseur()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(ListNewFournisseurPage));
+            await NavigateAsync(nameof(ListNewFournisseurPage));
         }
 
         [RelayCommand]
         private async Task NavigateToFraisDePort()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(ListNewFraisDePortPage));
+            await NavigateAsync(nameof(ListNewFraisDePortPage));
         }
 
         [RelayCommand]
         private async Task NavigateToAdvertising()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(CampaignListPage));
+            await NavigateAsync(nameof(CampaignListPage));
         }
 
         [RelayCommand]
         private async Task NavigateToTrips()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(TripListPage));
+            await NavigateAsync(nameof(TripListPage));
         }
 
         [RelayCommand]
         private async Task NavigateToToReceive()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(ToReceivePage));
+            await NavigateAsync(nameof(ToReceivePage));
         }
 
         [RelayCommand]
         private async Task NavigateToPreparation()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(PreparationPage));
+            await NavigateAsync(nameof(PreparationPage));
         }
 
         [RelayCommand]
         private async Task NavigateToPromotions()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(PromotionListPage));
+            await NavigateAsync(nameof(PromotionListPage));
         }
 
         [RelayCommand]
         private async Task NavigateToVariantPromotions()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(VariantPromotionListPage));
+            await NavigateAsync(nameof(VariantPromotionListPage));
         }
 
         [RelayCommand]
         private async Task NavigateToPriceBatches()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(PriceBatchListPage));
+            await NavigateAsync(nameof(PriceBatchListPage));
         }
 
         [RelayCommand]
         private async Task NavigateToFixedCosts()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(FixedCostsPage));
+            await NavigateAsync(nameof(FixedCostsPage));
         }
 
         [RelayCommand]
         private async Task NavigateToFiscalYear()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(FiscalYearPage));
+            await NavigateAsync(nameof(FiscalYearPage));
         }
 
         [RelayCommand]
         private async Task NavigateToTreasury()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(TreasuryPage));
+            await NavigateAsync(nameof(TreasuryPage));
         }
 
         [RelayCommand]
         private async Task NavigateToSupport()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(SupportTicketListPage));
+            await NavigateAsync(nameof(SupportTicketListPage));
         }
 
         [RelayCommand]
         private async Task NavigateToReadiness()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(ManagementReadinessPage));
+            await NavigateAsync(nameof(ManagementReadinessPage));
         }
 
         [RelayCommand]
         private async Task NavigateToReprise()
         {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(ReprisePage));
+            await NavigateAsync(nameof(ReprisePage));
         }
     }
 }

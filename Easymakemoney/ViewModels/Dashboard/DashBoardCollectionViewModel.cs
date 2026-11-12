@@ -8,6 +8,9 @@ namespace Easymakemoney.ViewModels.Dashboard
 {
     public partial class DashBoardCollectionViewModel:BaseViewModel
     {
+        /// <summary>Navigation (point d'entrée des tests).</summary>
+        public Func<string, Task> NavigateAsync { get; set; } = route => Shell.Current?.GoToAsync(route) ?? Task.CompletedTask;
+
         private readonly GetDashBoardCollectionUseCase _getDashBoardCollectionUseCase;
 
         private readonly SaveCollectionUseCase _saveCollectionUseCase;
@@ -143,7 +146,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             }
         }
 
-        private async Task SelectCollectionAsync(ListCollection collection)
+        public async Task SelectCollectionAsync(ListCollection collection)
         {
             CollectionId = collection.id;
             CollectionImage = collection.Photo;
@@ -159,20 +162,20 @@ namespace Easymakemoney.ViewModels.Dashboard
         [RelayCommand]
         private async Task OpenBudgetLines()
         {
-            if (CollectionId <= 0 || !IsPeriod || Shell.Current is not { } shell)
+            if (CollectionId <= 0 || !IsPeriod)
                 return;
 
-            await shell.GoToAsync($"{nameof(PeriodBudgetPage)}?PeriodId={CollectionId}&ReadOnly={(IsClosed ? 1 : 0)}");
+            await NavigateAsync($"{nameof(PeriodBudgetPage)}?PeriodId={CollectionId}&ReadOnly={(IsClosed ? 1 : 0)}");
         }
 
         /// <summary>Simulateur : seulement pour une période ouverte (une période fermée n'a plus rien à décider).</summary>
         [RelayCommand]
         private async Task OpenSimulation()
         {
-            if (CollectionId <= 0 || !CanEditBudget || Shell.Current is not { } shell)
+            if (CollectionId <= 0 || !CanEditBudget)
                 return;
 
-            await shell.GoToAsync($"{nameof(PeriodSimulationPage)}?PeriodId={CollectionId}");
+            await NavigateAsync($"{nameof(PeriodSimulationPage)}?PeriodId={CollectionId}");
         }
 
         [RelayCommand]
@@ -245,6 +248,17 @@ namespace Easymakemoney.ViewModels.Dashboard
         public async Task CloseCollection()
         {
             if (IsBusy)
+                return;
+
+            // Clôturer fige les chiffres de la période : confirmation, comme pour la réouverture.
+            var confirmed = await _dialogService.ConfirmAsync(
+                IsPeriod ? "Clôturer la période" : "Clôturer la collection",
+                IsPeriod
+                    ? "Clôturer cette période ? Ses chiffres seront figés ; vous pourrez la rouvrir si besoin."
+                    : "Clôturer cette collection ? Ses chiffres seront figés ; vous pourrez la rouvrir si besoin.",
+                "Clôturer",
+                "Annuler");
+            if (!confirmed)
                 return;
 
             IsBusy = true;
@@ -344,8 +358,7 @@ namespace Easymakemoney.ViewModels.Dashboard
                 return;
 
             // Navigate to the ListNewCommandPage and pass the collection ID
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync($"{nameof(DashBoardCommandPage)}?CollectionId={CollectionId}", true);
+            await NavigateAsync($"{nameof(DashBoardCommandPage)}?CollectionId={CollectionId}");
         }
      
     }
