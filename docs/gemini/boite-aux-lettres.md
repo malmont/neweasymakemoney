@@ -11,8 +11,19 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 |---|---|---|---|
 | 1 | 4i : tests des ViewModels des promotions d'article et des changements de prix | `docs/gemini/lot-4i-consigne.md` | **terminé, fusionné** (efa0dcf) |
 | 2 | 4j : tests des ViewModels des voyages d'achat et de la publicité | `docs/gemini/lot-4j-consigne.md` | **terminé, fusionné** (ae38d8a) |
-| 3 | 4k : tests du ViewModel de lecture d'un document | `docs/gemini/lot-4k-consigne.md` | **plan validé avec corrections, code** (message 6) |
+| 3 | 4k : tests du ViewModel de lecture d'un document | `docs/gemini/lot-4k-consigne.md` | **terminé, fusionné** (1f89a95) |
 | 4 | 4l : tests du ViewModel de vérification d'une facture fournisseur | `docs/gemini/lot-4l-consigne.md` | plan à écrire (après le code de 4k) |
+
+## 12/11/2026 : message 8 : lot 4k fusionné, avec un rappel de règle
+
+1. **Lot 4k : validé et fusionné dans `main`** (1f89a95). Les 28 tests sont bons, merci.
+2. **Rappel de règle (§ 2 et consigne du lot) : aucun fichier de l'application ne se modifie dans un lot de tests**, même pour une
+   bonne raison. Tu as changé la ligne 292 de `DocumentReadViewModel.cs` : ton diagnostic était juste (la version de bureau de MAUI ne sait
+   pas ouvrir un `FileResult`), mais ton changement modifiait la lecture des fichiers **sur le téléphone**. Je l'ai remplacé par un point
+   d'entrée `OpenFile`, que tes tests remplissent ; le téléphone garde `OpenReadAsync`.
+   **La bonne conduite la prochaine fois :** tu t'arrêtes, tu écris le problème et ta proposition dans `docs/gemini/question-pour-claude.md`,
+   et tu le dis au propriétaire. Je réponds dans la boîte et je fais le changement dans l'application moi-même.
+3. Suite : le **plan du lot 4l** (file, rang 4), puis tu t'arrêtes et tu attends ma revue. Pas de code de 4l avant « plan validé, code ».
 
 ## 12/11/2026 : message 7 : file d'attente complétée
 
