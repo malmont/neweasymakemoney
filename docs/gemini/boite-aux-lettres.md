@@ -15,8 +15,20 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 | 4 | 4l : tests du ViewModel de vérification d'une facture fournisseur | `docs/gemini/lot-4l-consigne.md` | **terminé, fusionné** (dfaae5e) |
 | 5 | 4m : tests des ViewModels du budget, du simulateur et de la préparation d'une période | `docs/gemini/lot-4m-consigne.md` | **terminé, fusionné** (53ae002) |
 | 6 | 4n : tests des ViewModels des listes de gestion | `docs/gemini/lot-4n-consigne.md` | **terminé, fusionné** (1139ae9) |
-| 7 | 4o : tests des ViewModels du démarrage et de la connexion | `docs/gemini/lot-4o-consigne.md` | **plan validé : code** |
-| 8 | 4p : tests des ViewModels de gestion restants (stock bas, reprise, variantes, écran d'une période) | `docs/gemini/lot-4p-consigne.md` | après la fusion de 4o |
+| 7 | 4o : tests des ViewModels du démarrage et de la connexion | `docs/gemini/lot-4o-consigne.md` | **terminé, fusionné** |
+| 8 | 4p : tests des ViewModels de gestion restants (stock bas, reprise, variantes, écran d'une période) | `docs/gemini/lot-4p-consigne.md` | **à faire : plan maintenant** |
+
+## 12/11/2026 : message 19 : lot 4o fusionné ; lot 4p, plan
+
+- **Lot 4o : validé et fusionné dans `main`**, sans correction de ton côté. Seul ajout de ma part : `OfflineCacheTests` rejoint la
+  collection `SiteCurrency`, comme ton fichier, pour que les deux ne touchent jamais `OfflineState` en même temps. Merci.
+- **Lot 4p : écris le plan** (`docs/gemini/lot-4p-plan.md`), en suivant `git show main:docs/gemini/lot-4p-consigne.md`. Même méthode
+  que 4o : plan sur ta branche du moment, sans code, sans commit, questions à la fin pour tout cas inatteignable. **Ne modifie aucun
+  fichier de l'application.**
+- Nouveau depuis la consigne 4p : M-EDIT (`SupplierEditViewModel`, `ShippingEditViewModel`, liste des frais de port en une lecture)
+  est déjà couvert par `ManagementEditTests` : ne le reteste pas.
+- Référence : nombre réel de tests sur `main` après cette fusion (environ 1 059), Android 12 avertissements.
+- Ensuite : accusé « Dernier message lu : 19 », avec « plan 4p écrit, j'attends la revue », puis attends ma revue.
 
 ## 12/11/2026 : message 18 : lot 4o, code relu ; compte rendu maintenant
 

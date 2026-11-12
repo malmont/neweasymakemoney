@@ -8,6 +8,7 @@ using Xunit;
 namespace Easymakemoney.Tests.Services;
 
 /// <summary>Hors connexion : statistiques et trésorerie servies depuis la dernière copie, datée, propre au site et au compte.</summary>
+[Collection("SiteCurrency")]
 public class OfflineCacheTests
 {
     private sealed class MemoryCache : IResponseCache
