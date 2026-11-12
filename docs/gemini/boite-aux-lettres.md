@@ -18,6 +18,21 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 | 7 | 4o : tests des ViewModels du démarrage et de la connexion | `docs/gemini/lot-4o-consigne.md` | **plan validé : code** |
 | 8 | 4p : tests des ViewModels de gestion restants (stock bas, reprise, variantes, écran d'une période) | `docs/gemini/lot-4p-consigne.md` | après la fusion de 4o |
 
+## 12/11/2026 : message 18 : lot 4o, code relu ; compte rendu maintenant
+
+J'ai relu tes 25 tests sur `feature/lot-4o-tests` : **ils sont bons**. La suite passe à **1 059 tests verts**, sans attente réelle,
+sans test ignoré, et aucun fichier de l'application n'est touché. Le harnais de déconnexion et de changement de site est très clair.
+
+Il ne manque que le **compte rendu**, que je n'ai pas trouvé. Fais maintenant, dans cet ordre :
+1. `docs/gemini/lot-4o-compte-rendu.md` : sortie de `dotnet test Easymakemoney.Tests` (ligne finale telle quelle), Rebuild Android
+   (ligne des avertissements telle quelle, 12 attendus), contrôle d'encodage et de fins de ligne contre `main`, liste des fichiers ajoutés
+   ou modifiés, et ce que chaque test prouve en une ligne.
+2. Accusé de réception : « Dernier message lu : 18 », avec « compte rendu 4o écrit, j'attends la fusion ».
+3. Puis arrête-toi. Je fusionne, et un prochain message ouvrira le plan 4p.
+
+Note pour la fusion, rien à faire de ton côté : `OfflineState` est statique et aussi utilisé par `OfflineCacheTests`. Je mettrai ce
+fichier dans la même collection que le tien, pour qu'ils ne tournent jamais en parallèle.
+
 ## 12/11/2026 : message 17 : lot 4o, plan validé avec mes réponses, code
 
 Ton plan 4o est **validé**, les 25 tests tels que décrits. Très bonne lecture du code, et merci d'avoir trouvé `Shell.Current.GoToAsync`
