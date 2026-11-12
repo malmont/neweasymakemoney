@@ -35,8 +35,8 @@ public class DaySummaryTests : IDisposable
     { "date": "2026-11-12", "timezone": "America/Toronto", "currency": "CAD", "generatedAt": "2026-11-12T15:02:00-05:00",
       "sales": { "total": 52770, "orders": 3,
         "byChannel": [ { "channel": "ecommerce", "total": 30000, "orders": 1 }, { "channel": "pos", "total": 22770, "orders": 2 }, { "channel": "mobile_app", "total": 0, "orders": 0 } ],
-        "vsSameWeekdayAverage": { "percent": 12.5, "average": 46907, "weeks": 4, "asOf": "15 h" } },
-      "receipts": { "total": 60400 },
+        "vsSameWeekdayAverage": { "percent": 12.5, "average": 46907, "weeks": 4, "asOf": "15:02" } },
+      "receipts": { "total": 60400, "byMethod": [ { "method": "cash", "total": 20400 }, { "method": "card", "total": 40000 } ] },
       "toShip": { "count": 2, "oldestAt": "2026-11-10T09:00:00-05:00" },
       "support": { "open": 3, "overdue": 1 },
       "cash": { "balance": 1000000, "balanceDate": "2026-11-11", "lowestIn14Days": { "amount": 850000, "date": "2026-11-20" }, "state": "warning" },
@@ -52,7 +52,7 @@ public class DaySummaryTests : IDisposable
         var day = Parse();
 
         Assert.EndsWith("3 commandes", day.SalesText);
-        Assert.Equal("+12,5 % par rapport à un jeudi habituel à 15 h", day.SalesTrendText);
+        Assert.Equal("+12,5 % par rapport à un jeudi habituel à 15 h 02", day.SalesTrendText);
         Assert.True(day.IsSalesUp);
         Assert.Equal("2 commandes à expédier", day.ToShipText);
         Assert.Equal("3 demandes en attente, dont 1 en retard", day.SupportText);
@@ -90,6 +90,18 @@ public class DaySummaryTests : IDisposable
 
         Assert.Equal("−8 % par rapport à un jeudi habituel", day.SalesTrendText);
         Assert.True(day.IsSalesDown);
+    }
+
+    [Theory]
+    [InlineData("15:02", "15 h 02")]
+    [InlineData("09:00", "9 h 00")]
+    [InlineData("9:5", "9 h 05")]
+    [InlineData("midi", "midi")]
+    [InlineData("", null)]
+    [InlineData(null, null)]
+    public void HourText_FrenchStyle(string? asOf, string? expected)
+    {
+        Assert.Equal(expected, DaySummary.HourText(asOf));
     }
 
     [Theory]

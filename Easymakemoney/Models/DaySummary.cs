@@ -40,9 +40,20 @@ namespace Easymakemoney.Models
                 var day = DateTimeOffset.TryParse(date, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed)
                     ? parsed.DateTime.ToString("dddd", CultureInfo.GetCultureInfo("fr-CA"))
                     : "jour";
-                var at = string.IsNullOrWhiteSpace(trend.asOf) ? string.Empty : $" à {trend.asOf}";
+                var at = HourText(trend.asOf) is { } hour ? $" à {hour}" : string.Empty;
                 return $"{sign}{Math.Abs(percent).ToString("0.#", CultureInfo.GetCultureInfo("fr-CA"))} % par rapport à un {day} habituel{at}";
             }
+        }
+
+        /// <summary>« 15:02 » (heure du magasin, contrat JOUR) → « 15 h 02 » ; un texte déjà rédigé est gardé tel quel.</summary>
+        public static string? HourText(string? asOf)
+        {
+            if (string.IsNullOrWhiteSpace(asOf))
+                return null;
+            var parts = asOf.Trim().Split(':');
+            return parts.Length >= 2 && int.TryParse(parts[0], out var h) && int.TryParse(parts[1], out var m) && h is >= 0 and < 24 && m is >= 0 and < 60
+                ? $"{h} h {m:00}"
+                : asOf.Trim();
         }
 
         public bool HasSalesTrend => SalesTrendText != null;
