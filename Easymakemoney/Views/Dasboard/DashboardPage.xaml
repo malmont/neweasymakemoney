@@ -17,6 +17,11 @@
             <VerticalStackLayout Padding="16,24" Spacing="12">
                 <Label Text="Accueil" Style="{StaticResource UiH1}" Margin="0,0,0,8" />
 
+                <!-- Sans réseau : la dernière copie de l'Accueil, datée -->
+                <Border IsVisible="{Binding IsOffline}" StrokeThickness="0" StrokeShape="RoundRectangle 12" BackgroundColor="#FEF3C7" Padding="12,8">
+                    <Label Text="{Binding OfflineText}" FontFamily="InterSemiBold" FontSize="13" TextColor="#92400E" />
+                </Border>
+
                 <!-- Lot JOUR : « Ma journée », chiffres du serveur ; cachée tant que la route n'existe pas -->
                 <components:UiCard Style="{StaticResource UiCard}" Padding="16" IsVisible="{Binding HasDay}">
                     <VerticalStackLayout Spacing="8">

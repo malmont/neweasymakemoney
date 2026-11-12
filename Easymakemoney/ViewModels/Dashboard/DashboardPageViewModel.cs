@@ -9,14 +9,37 @@ namespace Easymakemoney.ViewModels.Dashboard
     {
         private readonly IHomeTilesService _tilesService;
         private readonly IManagementModuleService? _moduleService;
+        private readonly Services.Offline.IHomeSnapshotStore? _snapshots;
+        private readonly Func<string?>? _scope;
         private bool _loadingTiles;
 
-        public DashboardPageViewModel(IHomeTilesService tilesService, IManagementModuleService? moduleService = null)
+        public DashboardPageViewModel(IHomeTilesService tilesService, IManagementModuleService? moduleService = null,
+            Services.Offline.IHomeSnapshotStore? snapshots = null, Services.Tenant.ITenantStore? tenants = null,
+            Services.Session.ISessionService? session = null)
+            : this(tilesService, moduleService, snapshots, () => SnapshotScope(tenants?.CurrentTenant?.Code, session?.CurrentUser?.Id))
+        {
+        }
+
+        public DashboardPageViewModel(IHomeTilesService tilesService, IManagementModuleService? moduleService,
+            Services.Offline.IHomeSnapshotStore? snapshots, Func<string?>? scope)
         {
             _tilesService = tilesService;
             _moduleService = moduleService;
+            _snapshots = snapshots;
+            _scope = scope;
             Title = "welcome";
         }
+
+        /// <summary>Copie locale par site et par compte ; sans site ni compte connus, pas de copie.</summary>
+        public static string? SnapshotScope(string? tenantCode, int? userId) =>
+            string.IsNullOrWhiteSpace(tenantCode) || userId is not > 0 ? null : $"{tenantCode.Trim().ToLowerInvariant()}:{userId}";
+
+        /// <summary>« Hors connexion : données de 14 h 05 », quand l'Accueil vient de la copie locale.</summary>
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsOffline))]
+        private string _offlineText = string.Empty;
+
+        public bool IsOffline => !string.IsNullOrEmpty(OfflineText);
 
         /// <summary>Lot CHE : carte « Préparer ma gestion » en tête de l'accueil, tant que la configuration n'est pas complète.</summary>
         [ObservableProperty]
@@ -112,6 +135,12 @@ namespace Easymakemoney.ViewModels.Dashboard
                 Tiles.Clear();
                 foreach (var tile in tiles.OrderByDescending(tile => tile.priority).Take(3))
                     Tiles.Add(tile);
+                OfflineText = string.Empty;
+                SaveSnapshot();
+            }
+            catch (Services.Api.ApiException ex) when (ex.ApiError.Code == "NO_CONNECTION" && LoadSnapshot())
+            {
+                Debug.WriteLine($"Accueil hors connexion, copie locale affichée : {ex.Message}");
             }
             catch (Exception ex)
             {
@@ -123,6 +152,36 @@ namespace Easymakemoney.ViewModels.Dashboard
                 HasTiles = Tiles.Count > 0;
                 _loadingTiles = false;
             }
+        }
+
+        private void SaveSnapshot()
+        {
+            if (_snapshots == null || _scope?.Invoke() is not { } scope)
+                return;
+            _snapshots.Save(scope, new Services.Offline.HomeSnapshot
+            {
+                SavedAt = DateTime.Now,
+                Tiles = Tiles.ToList(),
+                Day = Day,
+                ReadinessSteps = Readiness == null ? new() : Readiness.Blocking.Concat(Readiness.Improvements).Concat(Readiness.Done).ToList(),
+            });
+        }
+
+        /// <summary>Sans réseau : la dernière copie de l'Accueil, datée. Faux s'il n'y en a pas.</summary>
+        private bool LoadSnapshot()
+        {
+            if (_snapshots == null || _scope?.Invoke() is not { } scope || _snapshots.Load(scope) is not { } snapshot)
+                return false;
+            Tiles.Clear();
+            foreach (var tile in snapshot.Tiles)
+                Tiles.Add(tile);
+            Day = snapshot.Day;
+            Readiness = snapshot.ReadinessSteps.Count > 0 ? new ManagementReadinessSummary(snapshot.ReadinessSteps) : null;
+            var culture = CultureInfo.GetCultureInfo("fr-CA");
+            OfflineText = snapshot.SavedAt.Date == DateTime.Today
+                ? $"Hors connexion : données de {snapshot.SavedAt.ToString("H' h 'mm", culture)}"
+                : $"Hors connexion : données du {snapshot.SavedAt.ToString("d MMMM 'à' H' h 'mm", culture)}";
+            return true;
         }
 
         [RelayCommand]
