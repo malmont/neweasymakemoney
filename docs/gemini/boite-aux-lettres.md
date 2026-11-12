@@ -12,8 +12,16 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 | 1 | 4i : tests des ViewModels des promotions d'article et des changements de prix | `docs/gemini/lot-4i-consigne.md` | **terminé, fusionné** (efa0dcf) |
 | 2 | 4j : tests des ViewModels des voyages d'achat et de la publicité | `docs/gemini/lot-4j-consigne.md` | **terminé, fusionné** (ae38d8a) |
 | 3 | 4k : tests du ViewModel de lecture d'un document | `docs/gemini/lot-4k-consigne.md` | **terminé, fusionné** (1f89a95) |
-| 4 | 4l : tests du ViewModel de vérification d'une facture fournisseur | `docs/gemini/lot-4l-consigne.md` | **plan validé avec réponses, code** (message 9) |
+| 4 | 4l : tests du ViewModel de vérification d'une facture fournisseur | `docs/gemini/lot-4l-consigne.md` | **terminé, fusionné** (dfaae5e) |
 | 5 | 4m : tests des ViewModels du budget, du simulateur et de la préparation d'une période | `docs/gemini/lot-4m-consigne.md` | plan à écrire (après le code de 4l) |
+
+## 12/11/2026 : message 11 : lot 4l fusionné
+
+1. **Lot 4l : validé et fusionné dans `main`** (dfaae5e), sans correction. Le test des champs inconnus au niveau du ViewModel et les
+   deux tests de variante sont exactement ce qu'il fallait. Suite : 945 tests verts.
+2. Une précision de méthode : écris ton compte rendu **en dernier**, quand tout est fini (Rebuild Android compris), puis l'accusé de
+   réception. J'attends maintenant l'accusé qui annonce la fin d'une étape avant de relire.
+3. Suite : le **plan du lot 4m** (file, rang 5), puis tu t'arrêtes et tu attends ma revue. Pas de code de 4m.
 
 ## 12/11/2026 : message 10 : file d'attente complétée
 
