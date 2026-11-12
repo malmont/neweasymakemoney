@@ -1,3 +1,4 @@
+using Easymakemoney.Models.Api;
 using Easymakemoney.Models;
 using Easymakemoney.Services;
 using Easymakemoney.Services.Api;
@@ -38,6 +39,20 @@ public class FakeDocumentReaderService : IDocumentReaderService
         if (GetException != null)
             throw GetException;
         return Task.FromResult(DocumentResult);
+    }
+
+    /// <summary>Aperçu APERÇU-FACT : par défaut, la route n'existe pas encore (404), comme en production aujourd'hui.</summary>
+    public List<(int Id, object Body)> PreviewCalls { get; } = new();
+    public InvoicePreview? PreviewResult { get; set; }
+    public Exception? PreviewException { get; set; } = new ApiException(
+        ApiError.FromHttpResponse("{}", System.Net.HttpStatusCode.NotFound, null), System.Net.HttpStatusCode.NotFound);
+
+    public Task<InvoicePreview> PreviewAsync(int id, object body)
+    {
+        PreviewCalls.Add((id, body));
+        if (PreviewResult == null && PreviewException != null)
+            throw PreviewException;
+        return Task.FromResult(PreviewResult ?? new InvoicePreview());
     }
 
     public Task<JObject?> ConfirmAsync(int id, object body)

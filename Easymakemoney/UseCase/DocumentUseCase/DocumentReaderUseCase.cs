@@ -19,6 +19,7 @@ namespace Easymakemoney.UseCase.DocumentUseCase
         public Task SaveDraftAsync(int id, object draft) => _service.SaveDraftAsync(id, draft);
         public Task UploadLinePhotoAsync(int id, int n, UploadFile file) => _service.UploadLinePhotoAsync(id, n, file);
         public Task<JObject?> ConfirmAsync(int id, object body) => _service.ConfirmAsync(id, body);
+        public Task<InvoicePreview> PreviewAsync(int id, object body) => _service.PreviewAsync(id, body);
         public Task DeleteAsync(int id) => _service.DeleteAsync(id);
     }
 }

@@ -48,6 +48,52 @@ namespace Easymakemoney.ViewModels.Lists
         public Func<string, string[], Task<string?>> ChooseAsync { get; set; } = async (title, labels) =>
             Shell.Current is { } shell ? await shell.DisplayActionSheetAsync(title, "Plus tard", null, labels) : null;
 
+        /// <summary>Faux tant que la route d'aperçu répond 404 (pas encore en ligne) : l'estimation locale reste alors affichée.</summary>
+        private bool _previewAvailable = true;
+
+        /// <summary>
+        /// Lot APERÇU-FACT : prix de vente prévu, marge et total des lignes corrigées, calculés par le serveur. Sans réseau, sans route
+        /// (404) ou si la facture est incomplète, rien n'est demandé.
+        /// </summary>
+        public async Task RefreshPreviewAsync()
+        {
+            if (!_previewAvailable || _documentId == 0 || !IsLoaded)
+                return;
+
+            // L'aperçu sert pendant la vérification : les lignes comptent comme validées pour le calcul, rien n'est enregistré.
+            var draft = BuildDraft();
+            draft.Lines = draft.Lines.Select(line => { var copy = line.Clone(); copy.Validated = true; return copy; }).ToList();
+            var result = InvoiceConfirmationBuilder.Build(draft, Context());
+            if (!result.IsValid)
+            {
+                foreach (var line in Lines)
+                    line.ServerPriceText = line.IsExisting ? null : "Prix de vente : calculé quand la facture est complète";
+                LinesTotalText = "À compléter";
+                return;
+            }
+
+            try
+            {
+                var preview = await _documents.PreviewAsync(_documentId, result.Body!);
+                foreach (var line in Lines)
+                    line.ServerPriceText = preview.Line(line.N) is { } server ? preview.PriceText(server) : null;
+                if (preview.LinesTotalText is { } total)
+                    LinesTotalText = total;
+            }
+            catch (ApiException e) when (e.StatusCode == HttpStatusCode.NotFound && e.ApiError.Code is not ("DOCUMENT_NOT_FOUND"))
+            {
+                // Route pas encore en ligne : on garde l'estimation locale, sans redemander à chaque modification.
+                _previewAvailable = false;
+                foreach (var line in Lines)
+                    line.ServerPriceText = null;
+                RefreshState();
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine($"[InvoiceReview] Aperçu indisponible : {e.Message}");
+            }
+        }
+
         private Newtonsoft.Json.Linq.JObject DraftJson() => InvoiceReviewDraft.KeepUnknownFields(BuildDraft().ToJson(), _savedDraft);
 
         public InvoiceReviewViewModel(DocumentReaderUseCase documents, IListFourniseursServices suppliers,
@@ -196,6 +242,7 @@ namespace Easymakemoney.ViewModels.Lists
 
             ApplyDocument(document);
             IsLoaded = true;
+            await RefreshPreviewAsync();
         }
 
         private void BuildSupplierChoices(List<ListFournisseur> suppliers, InvoiceExtraction extraction)
@@ -338,6 +385,21 @@ namespace Easymakemoney.ViewModels.Lists
             return lines;
         }
 
+        /// <summary>Estimation locale du total des lignes, utilisée seulement tant que l'aperçu du serveur n'est pas en ligne.</summary>
+        private static string LocalLinesTotalText(InvoiceReviewDraft draft, string? currency)
+        {
+            long total = 0;
+            foreach (var line in draft.Lines)
+            {
+                var quantity = InvoiceReview.ParseQuantity(line.Quantity);
+                var cost = InvoiceReview.ParseCents(line.UnitCost);
+                if (quantity == null || cost == null)
+                    return "À compléter";
+                total += quantity.Value * cost.Value;
+            }
+            return Format(total, currency);
+        }
+
         private static string Format(long? cents, string? currency) =>
             cents.HasValue ? SiteCurrency.FormatCents(cents.Value, CultureInfo.CurrentCulture, currency) : "—";
 
@@ -415,19 +477,9 @@ namespace Easymakemoney.ViewModels.Lists
                     : null;
             }
 
-            // Total de vos lignes
-            long total = 0;
-            var complete = true;
-            foreach (var line in draft.Lines)
-            {
-                var quantity = InvoiceReview.ParseQuantity(line.Quantity);
-                var cost = InvoiceReview.ParseCents(line.UnitCost);
-                if (quantity == null || cost == null)
-                    complete = false;
-                else
-                    total += quantity.Value * cost.Value;
-            }
-            LinesTotalText = complete ? Format(total, document) : "À compléter";
+            // Total de vos lignes : celui du serveur (aperçu) ; l'estimation locale seulement tant que la route n'existe pas.
+            if (!_previewAvailable)
+                LinesTotalText = LocalLinesTotalText(draft, document);
 
             // Compteur et validation
             var validated = Lines.Count(l => l.IsValidated);
@@ -659,6 +711,7 @@ namespace Easymakemoney.ViewModels.Lists
                 return;
             }
             await SaveDraftNowAsync();
+            await RefreshPreviewAsync();
         }
 
         private async Task SaveDraftNowAsync()

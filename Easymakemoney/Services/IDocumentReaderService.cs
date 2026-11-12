@@ -12,6 +12,7 @@ namespace Easymakemoney.Services
         Task SaveDraftAsync(int id, object draft);
         Task UploadLinePhotoAsync(int id, int n, UploadFile file);
         Task<JObject?> ConfirmAsync(int id, object body);
+        Task<InvoicePreview> PreviewAsync(int id, object body);
         Task DeleteAsync(int id);
     }
 }

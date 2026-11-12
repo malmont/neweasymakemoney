@@ -37,6 +37,9 @@ namespace Easymakemoney.Services
         public Task<JObject?> ConfirmAsync(int id, object body) =>
             _httpService.PostAsyncWithAuth<JObject?>($"{BaseUrl}/{id}/confirmer", body);
 
+        public async Task<InvoicePreview> PreviewAsync(int id, object body) =>
+            await _httpService.PostAsyncWithAuth<InvoicePreview>($"{BaseUrl}/{id}/apercu", body) ?? new InvoicePreview();
+
         public async Task DeleteAsync(int id) =>
             await _httpService.DeleAsyncWithAuth<object>($"{BaseUrl}/{id}");
     }

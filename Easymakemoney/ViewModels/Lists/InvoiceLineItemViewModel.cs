@@ -122,10 +122,27 @@ namespace Easymakemoney.ViewModels.Lists
             }
         }
 
+        private string? _serverPriceText;
+
+        /// <summary>Prix de vente calculé par le serveur (aperçu APERÇU-FACT) ; null tant que la route n'existe pas (estimation locale).</summary>
+        public string? ServerPriceText
+        {
+            get => _serverPriceText;
+            set
+            {
+                if (_serverPriceText == value)
+                    return;
+                _serverPriceText = value;
+                OnPropertyChanged(nameof(SalePriceText));
+            }
+        }
+
         public string SalePriceText
         {
             get
             {
+                if (ServerPriceText != null)
+                    return ServerPriceText;
                 if (IsExisting)
                     return "Prix de vente : inchangé";
                 var cost = InvoiceReview.ParseCents(UnitCostText);
