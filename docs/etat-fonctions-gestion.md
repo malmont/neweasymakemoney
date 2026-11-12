@@ -126,6 +126,9 @@ Idées de fonctions retenues (à cadrer une par une, contrat backend d'abord) :
 | Journal d'activité | Qui a changé un prix, lancé une promotion, annulé une vente |
 | Rôle comptable | Lecture seule : statistiques, exports, dossier de fin d'exercice, documents |
 
+Publication sur les stores (Play Store, App Store) : **un lot commun à toutes les applis mobiles de la suite**, plus tard (décision du
+12/11/2026). Pas de travail de publication propre à l'appli de gestion d'ici là.
+
 À reparler avec le propriétaire (jugé pertinent, non décidé) : site de démonstration réinitialisé chaque nuit ; parcours d'accueil d'un
 nouveau client déroulé de bout en bout.
 
