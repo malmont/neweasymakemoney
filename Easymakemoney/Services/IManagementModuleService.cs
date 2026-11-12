@@ -4,6 +4,7 @@ namespace Easymakemoney.Services
     {
         Task<FeatureRequestResult> RequestAsync(string feature = ModuleInactiveInfo.ManagementFeature, string? message = null);
         Task<ManagementAi> GetAiAsync();
+        Task<SiteReadiness> GetReadinessAsync();
     }
 
     /// <summary>
@@ -28,5 +29,9 @@ namespace Easymakemoney.Services
 
         public async Task<ManagementAi> GetAiAsync() =>
             await _httpService.GetAsync<ManagementAi>("gestion/ia") ?? new ManagementAi();
+
+        /// <summary>Lot CHE : cheminement du site ; l'appli n'en garde que le groupe « app.management ».</summary>
+        public async Task<SiteReadiness> GetReadinessAsync() =>
+            await _httpService.GetAsync<SiteReadiness>("site/readiness") ?? new SiteReadiness();
     }
 }

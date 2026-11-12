@@ -49,6 +49,7 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute("VariantPromotionListPage", typeof(VariantPromotionListPage));
 		Routing.RegisterRoute(Easymakemoney.Services.Module.ModuleInactiveNotifier.Route, typeof(ModuleInactivePage));
 		Routing.RegisterRoute("FiscalYearPage", typeof(FiscalYearPage));
+		Routing.RegisterRoute("ManagementReadinessPage", typeof(ManagementReadinessPage));
 		Routing.RegisterRoute("LoginPage", typeof(LoginPage));
         Routing.RegisterRoute("AllListsPage", typeof(AllListsPage));
         Routing.RegisterRoute("ListNewCollectionPage", typeof(ListNewCollectionPage));

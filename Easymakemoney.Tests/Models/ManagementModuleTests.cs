@@ -379,7 +379,7 @@ public class ManagementModuleTests : IDisposable
         public void Reset() => Resets++;
     }
 
-    private sealed class FakeManagementModuleService : IManagementModuleService
+    internal sealed class FakeManagementModuleService : IManagementModuleService
     {
         public List<string> Requested { get; } = new();
         public FeatureRequestResult Result { get; set; } = new() { kind = "request" };
@@ -394,6 +394,11 @@ public class ManagementModuleTests : IDisposable
 
         public Task<ManagementAi> GetAiAsync() =>
             Error != null ? Task.FromException<ManagementAi>(Error) : Task.FromResult(Ai);
+
+        public SiteReadiness Readiness { get; set; } = new();
+
+        public Task<SiteReadiness> GetReadinessAsync() =>
+            Error != null ? Task.FromException<SiteReadiness>(Error) : Task.FromResult(Readiness);
     }
 
     private sealed class NoAdviceService : IAdviceService

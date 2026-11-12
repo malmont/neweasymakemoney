@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             x:DataType="list:ManagementReadinessViewModel"
+             x:Class="Easymakemoney.Views.Lists.ManagementReadinessPage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Préparer ma gestion">
+
+    <ContentPage.Resources>
+        <!-- Une étape : titre, explication, action ; la pastille dit si elle bloque (rouge), est conseillée (orange) ou faite (vert). -->
+        <DataTemplate x:Key="StepTemplate" x:DataType="models:ReadinessStep">
+            <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                <components:UiCard.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenCommand, Source={x:Reference Page}, x:DataType=ContentPage}" CommandParameter="{Binding .}" />
+                </components:UiCard.GestureRecognizers>
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <Ellipse WidthRequest="12" HeightRequest="12" VerticalOptions="Start" Margin="0,4,0,0" Fill="#D97706">
+                        <Ellipse.Triggers>
+                            <DataTrigger TargetType="Ellipse" Binding="{Binding IsBlockingTodo}" Value="True">
+                                <Setter Property="Fill" Value="#B91C1C" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Ellipse" Binding="{Binding IsDone}" Value="True">
+                                <Setter Property="Fill" Value="#15803D" />
+                            </DataTrigger>
+                        </Ellipse.Triggers>
+                    </Ellipse>
+                    <VerticalStackLayout Grid.Column="1" Spacing="4">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <Label Text="{Binding Title}" Style="{StaticResource UiTitle}" FontSize="15" />
+                            <Label Grid.Column="1" Text="{Binding StateText}" Style="{StaticResource UiBody}" FontSize="12" />
+                        </Grid>
+                        <Label Text="{Binding Text}" IsVisible="{Binding HasText}" Style="{StaticResource UiBody}" FontSize="13" />
+                        <Label Text="{Binding ActionText}" IsVisible="{Binding CanOpen}" FontFamily="InterSemiBold" FontSize="13" TextColor="{DynamicResource ThemePrimary}" Margin="0,2,0,0" />
+                        <Label Text="{Binding ActionText}" IsVisible="{Binding IsOnSite}" FontFamily="InterMedium" FontSize="12" TextColor="{StaticResource UiTextMuted}" Margin="0,2,0,0" />
+                    </VerticalStackLayout>
+                </Grid>
+            </components:UiCard>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Préparer ma gestion" />
+
+        <ScrollView Grid.Row="1">
+                <VerticalStackLayout Padding="16" Spacing="12">
+                    <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" HeightRequest="24" />
+
+                    <!-- Résumé -->
+                    <components:UiCard Style="{StaticResource UiCard}" Padding="16" IsVisible="{Binding IsLoaded}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="{Binding HeadlineText}" FontFamily="InterSemiBold" FontSize="15" TextColor="{StaticResource UiTextPrimary}" />
+                            <ProgressBar Progress="{Binding Percent}" ProgressColor="{DynamicResource ThemePrimary}" HeightRequest="6" />
+                            <Label Text="{Binding ProgressText}" Style="{StaticResource UiBody}" FontSize="12" />
+                        </VerticalStackLayout>
+                    </components:UiCard>
+
+                    <Label Text="À faire d'abord" Style="{StaticResource UiTitle}" FontSize="16" IsVisible="{Binding HasBlocking}" Margin="0,6,0,0" />
+                    <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Blocking}" BindableLayout.ItemTemplate="{StaticResource StepTemplate}" />
+
+                    <Label Text="Conseillé" Style="{StaticResource UiTitle}" FontSize="16" IsVisible="{Binding HasImprovements}" Margin="0,6,0,0" />
+                    <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Improvements}" BindableLayout.ItemTemplate="{StaticResource StepTemplate}" />
+
+                    <Label Text="Déjà fait" Style="{StaticResource UiTitle}" FontSize="16" IsVisible="{Binding HasDone}" Margin="0,6,0,0" />
+                    <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Done}" BindableLayout.ItemTemplate="{StaticResource StepTemplate}" />
+                </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

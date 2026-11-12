@@ -151,6 +151,13 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
         [RelayCommand]
+        private async Task NavigateToReadiness()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(ManagementReadinessPage));
+        }
+
+        [RelayCommand]
         private async Task NavigateToReprise()
         {
             if (Shell.Current is { } shell)

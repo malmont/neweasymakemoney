@@ -13,6 +13,7 @@
 
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Padding="16" Spacing="12">
+                <components:UiTile Command="{Binding NavigateToReadinessCommand}" Icon="M9 11l3 3 8-8M4 12a8 8 0 1016 0" Title="Préparer ma gestion" Text="Ce qui manque pour des chiffres justes, étape par étape" />
                 <components:UiTile Command="{Binding NavigateToPreparationCommand}" Icon="M4 19h16M4 15l4-4 4 3 6-7M18 7h-3M18 7v3" Title="Préparer une période" Text="Ventes, achats, voyage : le résultat et la trésorerie avant de s'engager" />
                 <components:UiTile Command="{Binding NewCommandCommand}" Icon="M12 5v14M5 12h14" Title="Nouvelle commande" Text="Classée automatiquement dans sa période" />
                 <components:UiTile Command="{Binding NavigateToSupplierInvoiceCommand}" Icon="M6 3h9l4 4v14H6zM9 9h3M9 13h7M9 17h7M14 3v4h5" Title="Lire une facture fournisseur" Text="Photo ou PDF, vérifiée ligne par ligne" />
