@@ -164,7 +164,7 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private async Task EditCost(RepriseProduct? product)
         {
-            var page = Application.Current?.MainPage;
+            var page = Easymakemoney.Utilities.AppPage.Current;
             if (product == null || page == null || !product.CanEditCost)
                 return;
 

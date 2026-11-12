@@ -4,7 +4,7 @@ Consigne de Claude du 11/11/2026. **Écris d'abord ton plan** dans `docs/gemini/
 
 - Branche : `feature/lot-4g-tests`, créée depuis `main` (`git switch -c feature/lot-4g-tests main`).
 - Pas de commit.
-- Référence : 580 tests sur `main`, **270 avertissements Android** (la référence a baissé depuis le lot 4f, avec la suppression des anciens écrans de statistiques).
+- Référence : 580 tests sur `main`, **216 avertissements Android** si ta branche part de `main` après le nettoyage des API obsolètes du 11/11 au soir, **270** sinon (vérifie avec `git log main --oneline | grep -i avertissements`).
 
 Les modèles et services sont déjà testés dans `RentalPromotionTests` et `RentalGridTests` : lis-les d'abord et **ne reteste pas ce qu'ils couvrent**. Ce lot porte sur le **comportement des ViewModels** : requêtes envoyées (URL exacte, corps JSON), requêtes qui ne partent pas, messages et confirmations montrés au gérant. Reprends les faux du lot 4f (`Easymakemoney.Tests/Fakes/`) et ajoute ceux qui manquent, **dans le projet de tests seulement** :
 - un faux de `IRentalPromotionService` ;
@@ -29,5 +29,5 @@ Mêmes règles que les lots 4 à 4f :
 
 Vérification, avec les sorties collées telles quelles dans `docs/gemini/lot-4g-compte-rendu.md` :
 1. `dotnet test Easymakemoney.Tests` ;
-2. Android : `dotnet build Easymakemoney/Easymakemoney.csproj -f net10.0-android -t:Rebuild -p:JavaSdkDirectory=/Library/Java/JavaVirtualMachines/microsoft-21.jdk/Contents/Home`. Colle la ligne des avertissements telle quelle (référence 270), sans lui chercher de cause ;
+2. Android : `dotnet build Easymakemoney/Easymakemoney.csproj -f net10.0-android -t:Rebuild -p:JavaSdkDirectory=/Library/Java/JavaVirtualMachines/microsoft-21.jdk/Contents/Home`. Colle la ligne des avertissements telle quelle (référence 216 ou 270, voir plus haut), sans lui chercher de cause ;
 3. en dernier, le contrôle d'encodage contre `main`.

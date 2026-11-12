@@ -6,7 +6,7 @@ Consigne de Claude du 11/11/2026. À faire **après le lot 4g**, une fois 4g val
 
 - Branche : `feature/lot-4h-tests`, créée depuis `main` à jour (`git switch -c feature/lot-4h-tests main`).
 - Pas de commit.
-- Référence : lis le nombre de tests sur `main` avec `dotnet test Easymakemoney.Tests` avant de commencer, et note-le dans le plan. Référence Android : **270 avertissements**.
+- Référence : lis le nombre de tests sur `main` avec `dotnet test Easymakemoney.Tests` avant de commencer, et note-le dans le plan. Référence Android : **216 avertissements** (270 avant le nettoyage du 11/11 au soir).
 
 ## Ce qui est déjà testé : ne le reteste pas
 
@@ -48,5 +48,5 @@ Ajoute un faux de `IVariantPromotionService` dans `Easymakemoney.Tests/Fakes/`, 
 
 Colle les sorties telles quelles dans `docs/gemini/lot-4h-compte-rendu.md`.
 1. `dotnet test Easymakemoney.Tests`.
-2. Android : `dotnet build Easymakemoney/Easymakemoney.csproj -f net10.0-android -t:Rebuild -p:JavaSdkDirectory=/Library/Java/JavaVirtualMachines/microsoft-21.jdk/Contents/Home`. Colle la ligne des avertissements telle quelle (référence 270), sans lui chercher de cause.
+2. Android : `dotnet build Easymakemoney/Easymakemoney.csproj -f net10.0-android -t:Rebuild -p:JavaSdkDirectory=/Library/Java/JavaVirtualMachines/microsoft-21.jdk/Contents/Home`. Colle la ligne des avertissements telle quelle (référence 216), sans lui chercher de cause.
 3. En dernier, le contrôle d'encodage contre `main`.

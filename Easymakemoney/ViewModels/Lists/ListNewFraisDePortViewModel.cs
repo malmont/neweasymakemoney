@@ -235,7 +235,7 @@ namespace Easymakemoney.ViewModels.Lists
                 dialogService: _dialogService);
 
             var popup = new BottomSheetPopup(viewModel);
-            var mainPage = Application.Current?.MainPage;
+            var mainPage = Easymakemoney.Utilities.AppPage.Current;
 
             if (mainPage != null)
             {
@@ -257,8 +257,8 @@ namespace Easymakemoney.ViewModels.Lists
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
-            if (Application.Current?.MainPage != null)
-                await Application.Current.MainPage.ShowPopupAsync(popup);
+            if (Easymakemoney.Utilities.AppPage.Current != null)
+                await Easymakemoney.Utilities.AppPage.Current!.ShowPopupAsync(popup);
         }
     }
 }

@@ -30,7 +30,7 @@ public partial class BottomSheetPopupListViewViewModel : ObservableObject
         catch (Exception ex)
         {
             Debug.WriteLine(ex);
-            await Shell.Current.DisplayAlert("Error", "Unable to get items", "OK");
+            await Shell.Current.DisplayAlertAsync("Error", "Unable to get items", "OK");
         }
     }
 

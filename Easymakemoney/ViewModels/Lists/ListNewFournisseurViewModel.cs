@@ -128,7 +128,7 @@ namespace Easymakemoney.ViewModels.Lists
                 dialogService: _dialogService);
 
             var popup = new BottomSheetPopup(viewModel);
-            var mainPage = Application.Current?.MainPage;
+            var mainPage = Easymakemoney.Utilities.AppPage.Current;
 
             if (mainPage != null)
             {

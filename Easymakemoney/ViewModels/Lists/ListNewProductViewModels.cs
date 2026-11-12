@@ -80,7 +80,7 @@ namespace Easymakemoney.ViewModels.Lists
             );
 
             var popup = new BottomSheetPopup(viewModel);
-            var mainPage = Application.Current?.MainPage;
+            var mainPage = Easymakemoney.Utilities.AppPage.Current;
 
             if (mainPage != null)
             {

@@ -176,7 +176,7 @@ namespace Easymakemoney.ViewModels.Dashboard
         [RelayCommand]
         private async Task EditBudget()
         {
-            var page = Application.Current?.MainPage;
+            var page = Easymakemoney.Utilities.AppPage.Current;
             if (page == null || IsBusy)
                 return;
 
@@ -305,8 +305,8 @@ namespace Easymakemoney.ViewModels.Dashboard
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
-            if (Application.Current?.MainPage != null)
-                await Application.Current.MainPage.ShowPopupAsync(popup);
+            if (Easymakemoney.Utilities.AppPage.Current != null)
+                await Easymakemoney.Utilities.AppPage.Current!.ShowPopupAsync(popup);
         }
 
          [RelayCommand]
@@ -323,7 +323,7 @@ namespace Easymakemoney.ViewModels.Dashboard
                     dialogService: _dialogService);
 
                 var popup = new BottomSheetPopup(viewModel);
-                var mainPage = Application.Current?.MainPage;
+                var mainPage = Easymakemoney.Utilities.AppPage.Current;
                 if (mainPage != null)
                 {
                     Console.WriteLine("AShowPopupAsync");

@@ -6,7 +6,7 @@ namespace Easymakemoney.Converters
 {
     public class CurrencyConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             culture ??= CultureInfo.CurrentCulture;
 
@@ -36,7 +36,7 @@ namespace Easymakemoney.Converters
             return SiteCurrency.FormatCents(cents, culture);
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

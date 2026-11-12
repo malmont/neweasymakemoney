@@ -179,11 +179,11 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private async Task EditCost(AvailableProduct? product)
         {
-            var page = Application.Current?.MainPage;
+            var page = Easymakemoney.Utilities.AppPage.Current;
             if (product == null || page == null)
                 return;
 
-            var choice = await page.DisplayActionSheet(product.name, "Annuler", null, "Coût d'achat", "Quantité achetée");
+            var choice = await page.DisplayActionSheetAsync(product.name, "Annuler", null, "Coût d'achat", "Quantité achetée");
             if (choice == "Quantité achetée")
             {
                 var quantityText = await page.DisplayPromptAsync("Quantité achetée", product.name, "Valider", "Annuler", keyboard: Keyboard.Numeric);
@@ -255,7 +255,7 @@ namespace Easymakemoney.ViewModels.Lists
 
         private static async Task ShowPickerAsync(Func<Task<IEnumerable<IListItem>>> getItems, Action<IListItem> onPicked)
         {
-            var mainPage = Application.Current?.MainPage;
+            var mainPage = Easymakemoney.Utilities.AppPage.Current;
             if (mainPage != null)
             {
                 var viewModel = new BottomSheetPopupListViewViewModel(getItemsFunc: getItems, onItemTappedAction: onPicked);
