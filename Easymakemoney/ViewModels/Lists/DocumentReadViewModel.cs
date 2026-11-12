@@ -109,6 +109,9 @@ namespace Easymakemoney.ViewModels.Lists
         /// <summary>Attente entre deux relectures du document (3 s) ; les tests la mettent à zéro.</summary>
         public TimeSpan PollDelay { get; set; } = TimeSpan.FromMilliseconds(PollDelayMs);
 
+        /// <summary>Ouverture d'une page choisie (photo ou PDF) ; les tests la remplacent, car la version de bureau de MAUI ne sait pas lire un FileResult.</summary>
+        public Func<FileResult, Task<Stream>> OpenFile { get; set; } = file => file.OpenReadAsync();
+
         public async Task InitAsync(string type, int commandeId, string? purpose = null)
         {
             DocType = type;
@@ -289,7 +292,7 @@ namespace Easymakemoney.ViewModels.Lists
                 var uploads = new List<UploadFile>();
                 foreach (var file in _files)
                 {
-                    var stream = await file.OpenReadAsync();
+                    var stream = await OpenFile(file);
                     streams.Add(stream);
                     uploads.Add(new UploadFile(stream, file.FileName, ContentTypeOf(file)));
                 }
