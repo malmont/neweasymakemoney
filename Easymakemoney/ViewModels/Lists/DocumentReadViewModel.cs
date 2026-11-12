@@ -106,6 +106,9 @@ namespace Easymakemoney.ViewModels.Lists
 
         public void Stop() => _stopped = true;
 
+        /// <summary>Attente entre deux relectures du document (3 s) ; les tests la mettent à zéro.</summary>
+        public TimeSpan PollDelay { get; set; } = TimeSpan.FromMilliseconds(PollDelayMs);
+
         public async Task InitAsync(string type, int commandeId, string? purpose = null)
         {
             DocType = type;
@@ -233,7 +236,8 @@ namespace Easymakemoney.ViewModels.Lists
             RefreshPages();
         }
 
-        private void AddFiles(IEnumerable<FileResult> files)
+        /// <summary>Ajoute des pages (photos ou un PDF), comme le font l'appareil photo et les sélecteurs.</summary>
+        public void AddFiles(IEnumerable<FileResult> files)
         {
             // Un PDF se lit seul ; des photos ne se mélangent pas avec un PDF.
             if (_files.Any(IsPdf))
@@ -312,7 +316,12 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private async Task Reread()
         {
-            if (_documentId == 0)
+            if (_documentId == 0 || IsBusy)
+                return;
+
+            // Une relecture consomme une unité IA du site : le gérant la confirme, comme sur le web.
+            if (!await _dialogService.ConfirmAsync("Relire le document",
+                    "Relancer la lecture par l'IA ? Cela consomme une unité IA du mois.", "Relire", "Annuler"))
                 return;
 
             try
@@ -334,7 +343,7 @@ namespace Easymakemoney.ViewModels.Lists
             Step = "reading";
             for (var attempt = 0; attempt < MaxPolls && !_stopped; attempt++)
             {
-                await Task.Delay(PollDelayMs);
+                await Task.Delay(PollDelay);
                 if (_stopped)
                     return;
 

@@ -10,8 +10,29 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 | Rang | Lot | Consigne | État |
 |---|---|---|---|
 | 1 | 4i : tests des ViewModels des promotions d'article et des changements de prix | `docs/gemini/lot-4i-consigne.md` | **terminé, fusionné** (efa0dcf) |
-| 2 | 4j : tests des ViewModels des voyages d'achat et de la publicité | `docs/gemini/lot-4j-consigne.md` | **plan validé, code** (message 5) |
-| 3 | 4k : tests du ViewModel de lecture d'un document | `docs/gemini/lot-4k-consigne.md` | plan à écrire (après le code de 4j) |
+| 2 | 4j : tests des ViewModels des voyages d'achat et de la publicité | `docs/gemini/lot-4j-consigne.md` | **terminé, fusionné** (ae38d8a) |
+| 3 | 4k : tests du ViewModel de lecture d'un document | `docs/gemini/lot-4k-consigne.md` | **plan validé avec corrections, code** (message 6) |
+| 4 | 4l : tests de l'Accueil, de « Ma journée » et de « Préparer ma gestion » (compléments) | consigne à venir | pas encore ouvert |
+
+## 12/11/2026 : message 6 : lot 4j fusionné ; lot 4k, plan validé avec corrections, code
+
+1. **Lot 4j : validé et fusionné dans `main`** (ae38d8a), sans correction. Le texte réellement montré au gérant est bien vérifié. Merci.
+2. **Lot 4k : plan validé avec trois corrections**, à appliquer :
+   - **Pas de champ privé.** Ton plan dit « nous initialiserons `_documentId` » : c'est interdit (§ 2, aucun accès aux membres privés,
+     ni par réflexion). J'ai ajouté dans l'application, sur `main` (commit de ce message), deux points d'entrée publics :
+     - `AddFiles(IEnumerable<FileResult>)` est maintenant public. Pour un test : écris un fichier temporaire de quelques octets factices
+       dans `Path.GetTempPath()` (nom en `.jpg` ou `.pdf`), passe `new FileResult(chemin)`, et supprime le fichier dans `Dispose`.
+       Aucun vrai fichier d'image.
+     - `PollDelay` (attente entre deux relectures, 3 s par défaut) : mets `TimeSpan.Zero` dans les tests. Plus aucune attente réelle.
+     Le chemin réel devient donc testable : `AddFiles`, puis `ReadCommand` (le faux `UploadAsync` rend un document avec un `id`), puis le
+     faux `GetAsync` rend `extracted`. C'est par là que tu amènes un document lu avant `Confirm` ou `Reread`.
+   - **Relire demande maintenant une confirmation** (une relecture consomme une unité IA, comme sur le web) : ajoute « refus = aucun
+     appel à `RereadAsync` » et « acceptée = un appel ».
+   - **Suivi de la lecture** : un test `failed` (message montré, pas de confirmation possible) et un test « la lecture s'arrête après
+     `Stop()` », sans attente.
+3. Branche : `git fetch origin`, `git switch main && git merge --ff-only origin/main`, puis `git switch -c feature/lot-4k-tests main`.
+4. Ensuite : compte rendu `docs/gemini/lot-4k-compte-rendu.md`, accusé de réception (« Dernier message lu : 6 »). Le lot 4l sera ouvert
+   par un prochain message : **s'il n'y a pas de consigne 4l quand tu as fini, arrête-toi et dis-le au propriétaire.**
 
 ## 12/11/2026 : message 5 : lot 4i fusionné ; lot 4j, plan validé, code
 
