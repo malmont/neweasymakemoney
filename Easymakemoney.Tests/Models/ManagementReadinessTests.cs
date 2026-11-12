@@ -163,6 +163,101 @@ public class ManagementReadinessTests
         Assert.Single(dialogs.ShownInfos);
     }
 
+    // ---------- Carte d'accueil ----------
+
+    [Fact]
+    public void HomeCard_Blocking_IsAlert()
+    {
+        var summary = new ManagementReadinessSummary(Parse().ManagementSteps);
+
+        Assert.True(summary.HasHomeCard);
+        Assert.True(summary.IsHomeCardAlert);
+        Assert.Equal("2 étapes à faire d'abord pour des chiffres justes.", summary.HomeCardText);
+    }
+
+    [Fact]
+    public void HomeCard_OnlyOpenableImprovementsCount()
+    {
+        var steps = new List<ReadinessStep>
+        {
+            new() { key = "a", status = "done", blocking = true },
+            new() { key = "b", status = "todo", appScreen = "frais-fixes" },
+            new() { key = "c", status = "todo", appScreen = "notifications" },
+            new() { key = "d", status = "todo", appScreen = null },
+        };
+
+        var summary = new ManagementReadinessSummary(steps);
+
+        Assert.True(summary.HasHomeCard);
+        Assert.False(summary.IsHomeCardAlert);
+        Assert.Equal("1 réglage conseillé pour des chiffres plus complets.", summary.HomeCardText);
+    }
+
+    [Fact]
+    public void HomeCard_NothingOpenable_Hidden()
+    {
+        // Notifications à venir et étapes « sur le site » ne relancent pas l'accueil.
+        var steps = new List<ReadinessStep>
+        {
+            new() { key = "a", status = "done", blocking = true },
+            new() { key = "c", status = "todo", appScreen = "notifications" },
+            new() { key = "d", status = "optional", appScreen = null },
+        };
+
+        Assert.False(new ManagementReadinessSummary(steps).HasHomeCard);
+    }
+
+    [Fact]
+    public async Task Dashboard_CardShown_HidesFirstBalanceTile()
+    {
+        var tiles = new FakeTiles();
+        var service = new ManagementModuleTests.FakeManagementModuleService { Readiness = Parse() };
+        var vm = new Easymakemoney.ViewModels.Dashboard.DashboardPageViewModel(tiles, service);
+
+        await vm.LoadTilesAsync();
+
+        Assert.True(vm.HasReadinessCard);
+        Assert.True(vm.IsReadinessAlert);
+        Assert.DoesNotContain(vm.Tiles, tile => tile.id == "cash-first-balance");
+        Assert.Contains(vm.Tiles, tile => tile.id == "first-invoice");
+    }
+
+    [Fact]
+    public async Task Dashboard_ReadinessUnavailable_KeepsTilesAndHidesCard()
+    {
+        var tiles = new FakeTiles();
+        var service = new ManagementModuleTests.FakeManagementModuleService { Error = new InvalidOperationException("x") };
+        var vm = new Easymakemoney.ViewModels.Dashboard.DashboardPageViewModel(tiles, service);
+
+        await vm.LoadTilesAsync();
+
+        Assert.False(vm.HasReadinessCard);
+        Assert.Contains(vm.Tiles, tile => tile.id == "cash-first-balance");
+    }
+
+    [Fact]
+    public async Task Dashboard_NoManagementGroup_HidesCard()
+    {
+        var service = new ManagementModuleTests.FakeManagementModuleService { Readiness = new SiteReadiness() };
+        var vm = new Easymakemoney.ViewModels.Dashboard.DashboardPageViewModel(new FakeTiles(), service);
+
+        await vm.LoadTilesAsync();
+
+        Assert.False(vm.HasReadinessCard);
+        Assert.Equal(2, vm.Tiles.Count);
+    }
+
+    private sealed class FakeTiles : IHomeTilesService
+    {
+        public Task<List<HomeTile>> GetTilesAsync(string locale) => Task.FromResult(new List<HomeTile>
+        {
+            new() { id = "cash-first-balance", kind = "first_steps", priority = 20 },
+            new() { id = "first-invoice", kind = "first_steps", priority = 10 },
+        });
+
+        public Task DismissAsync(string tileId) => Task.CompletedTask;
+    }
+
     [Fact]
     public async Task ViewModel_Error_ShowsErrorOnce()
     {

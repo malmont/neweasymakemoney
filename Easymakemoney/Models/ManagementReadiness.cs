@@ -99,5 +99,20 @@ namespace Easymakemoney.Models
                     : "Tout est prêt.";
 
         public string ProgressText => $"{Done.Count} sur {Total} · {Percent} %";
+
+        /// <summary>Réglages conseillés faisables dans l'appli (les étapes « sur le site » ou à venir ne relancent pas l'accueil).</summary>
+        public int OpenableImprovements => Improvements.Count(step => step.CanOpen);
+
+        /// <summary>Carte d'accueil : tant qu'une étape bloque, ou qu'un réglage conseillé se fait dans l'appli.</summary>
+        public bool HasHomeCard => Blocking.Count > 0 || OpenableImprovements > 0;
+
+        public bool IsHomeCardAlert => Blocking.Count > 0;
+
+        public string HomeCardText => Blocking.Count > 0
+            ? $"{Blocking.Count} étape{(Blocking.Count > 1 ? "s" : "")} à faire d'abord pour des chiffres justes."
+            : $"{OpenableImprovements} réglage{(OpenableImprovements > 1 ? "s" : "")} conseillé{(OpenableImprovements > 1 ? "s" : "")} pour des chiffres plus complets.";
+
+        /// <summary>Vignette « premier solde » du serveur : redite de l'étape Trésorerie quand la carte est affichée.</summary>
+        public const string CashFirstBalanceTile = "cash-first-balance";
     }
 }

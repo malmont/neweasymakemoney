@@ -74,7 +74,7 @@
                                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
                                     <components:UiThumb Grid.Column="0" Source="{Binding imageNdf}" Icon="M6 3h9l4 4v14H6zM9 12h7M9 16h7" />
                                     <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
-                                        <Label Text="{Binding name}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
+                                        <Label Text="{Binding DisplayTitle}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
                                         <Label Text="{Binding montant, StringFormat='Montant : {0}', Converter={StaticResource CurrencyConverter}}"
                                                FontFamily="InterSemiBold" FontSize="14" TextColor="{DynamicResource ThemePrimary}" LineBreakMode="TailTruncation" />
                                         <Label Text="Rattachée à un voyage d'achat" IsVisible="{Binding HasTrip}" Style="{StaticResource UiBody}" FontSize="12" />

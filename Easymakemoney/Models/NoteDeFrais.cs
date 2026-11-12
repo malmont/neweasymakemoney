@@ -21,6 +21,13 @@ namespace Easymakemoney.Models
         public bool HasTrip => tripId.HasValue;
 
         public bool ShouldSerializeHasTrip() => false;
+
+        /// <summary>
+        /// Titre affiché : le serveur ne renvoie pas « name » (seulement « description ») ; sans ce repli, la ligne était vide.
+        /// </summary>
+        public string DisplayTitle => !string.IsNullOrWhiteSpace(name) ? name : description ?? string.Empty;
+
+        public bool ShouldSerializeDisplayTitle() => false;
     }
 }
 

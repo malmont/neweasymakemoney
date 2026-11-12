@@ -17,6 +17,24 @@
             <VerticalStackLayout Padding="16,24" Spacing="12">
                 <Label Text="Accueil" Style="{StaticResource UiH1}" Margin="0,0,0,8" />
 
+                <!-- Lot CHE : « Préparer ma gestion » tant que la configuration n'est pas complète -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding HasReadinessCard}">
+                    <components:UiCard.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenReadinessCommand}" />
+                    </components:UiCard.GestureRecognizers>
+                    <VerticalStackLayout Spacing="3">
+                        <Label Text="Préparer ma gestion" FontFamily="InterSemiBold" FontSize="12" TextColor="{DynamicResource ThemePrimary}">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding IsReadinessAlert}" Value="True">
+                                    <Setter Property="TextColor" Value="#B91C1C" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                        <Label Text="{Binding ReadinessCardText}" Style="{StaticResource UiTitle}" FontSize="16" />
+                        <Label Text="Voir les étapes →" FontFamily="InterSemiBold" FontSize="13" TextColor="{DynamicResource ThemePrimary}" />
+                    </VerticalStackLayout>
+                </components:UiCard>
+
                 <!-- Vignettes d'accueil : premiers pas et alertes, les plus urgentes d'abord -->
                 <VerticalStackLayout Spacing="10" IsVisible="{Binding HasTiles}" Margin="0,0,0,8"
                                      BindableLayout.ItemsSource="{Binding Tiles}">

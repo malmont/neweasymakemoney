@@ -8,12 +8,40 @@ namespace Easymakemoney.ViewModels.Dashboard
     public partial class DashboardPageViewModel : BaseViewModel
     {
         private readonly IHomeTilesService _tilesService;
+        private readonly IManagementModuleService? _moduleService;
         private bool _loadingTiles;
 
-        public DashboardPageViewModel(IHomeTilesService tilesService)
+        public DashboardPageViewModel(IHomeTilesService tilesService, IManagementModuleService? moduleService = null)
         {
             _tilesService = tilesService;
+            _moduleService = moduleService;
             Title = "welcome";
+        }
+
+        /// <summary>Lot CHE : carte « Préparer ma gestion » en tête de l'accueil, tant que la configuration n'est pas complète.</summary>
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasReadinessCard), nameof(ReadinessCardText), nameof(IsReadinessAlert))]
+        private ManagementReadinessSummary? _readiness;
+
+        public bool HasReadinessCard => Readiness?.HasHomeCard == true;
+        public bool IsReadinessAlert => Readiness?.IsHomeCardAlert == true;
+        public string ReadinessCardText => Readiness?.HomeCardText ?? string.Empty;
+
+        /// <summary>Lecture silencieuse : sans cheminement (erreur, module absent), la carte reste cachée.</summary>
+        private async Task<ManagementReadinessSummary?> LoadReadinessAsync()
+        {
+            if (_moduleService == null)
+                return null;
+            try
+            {
+                var steps = (await _moduleService.GetReadinessAsync()).ManagementSteps;
+                return steps.Count > 0 ? new ManagementReadinessSummary(steps) : null;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Cheminement indisponible : {ex.Message}");
+                return null;
+            }
         }
 
         /// <summary>Vignettes d'accueil, les plus urgentes d'abord (3 au plus).</summary>
@@ -31,8 +59,13 @@ namespace Easymakemoney.ViewModels.Dashboard
             _loadingTiles = true;
             try
             {
+                var readinessTask = LoadReadinessAsync();
                 // L'application est en français : les textes du backend doivent l'être aussi, quelle que soit la langue du téléphone.
                 var tiles = await _tilesService.GetTilesAsync("fr");
+                Readiness = await readinessTask;
+                // La carte « Préparer ma gestion » dit déjà de saisir le premier solde : pas de redite.
+                if (HasReadinessCard)
+                    tiles = tiles.Where(tile => tile.id != ManagementReadinessSummary.CashFirstBalanceTile).ToList();
                 Tiles.Clear();
                 foreach (var tile in tiles.OrderByDescending(tile => tile.priority).Take(3))
                     Tiles.Add(tile);
@@ -57,6 +90,13 @@ namespace Easymakemoney.ViewModels.Dashboard
 
             // Un écran pas encore présent dans cette version ne fait rien : la vignette reste informative.
             await Utilities.ScreenNavigator.OpenAsync(tile.Screen, tile.action?.@params, tile.figures, tile.title, tile.text, tile: tile);
+        }
+
+        [RelayCommand]
+        private async Task OpenReadiness()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(ManagementReadinessPage));
         }
 
         [RelayCommand]
