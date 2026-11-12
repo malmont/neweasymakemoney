@@ -40,6 +40,9 @@
                    FontFamily="InterBold" FontSize="20" TextColor="{StaticResource UiTextPrimary}"
                    VerticalOptions="Center" LineBreakMode="TailTruncation" />
         </Grid>
+        <Grid IsVisible="{Binding IsOffline}" BackgroundColor="#FEF3C7" Padding="16,6">
+            <Label Text="{Binding OfflineText}" FontFamily="InterMedium" FontSize="13" TextColor="#92400E" />
+        </Grid>
         <BoxView HeightRequest="1" Color="{StaticResource UiBorder}" />
     </VerticalStackLayout>
 </ContentView>

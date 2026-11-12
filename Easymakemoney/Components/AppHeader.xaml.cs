@@ -1,3 +1,4 @@
+using Easymakemoney.Services.Offline;
 using Easymakemoney.Services.Theme;
 
 namespace Easymakemoney.Components;
@@ -26,12 +27,24 @@ public partial class AppHeader : ContentView
     public string NavigationDescription => IsRoot ? "Ouvrir le menu" : "Retour";
     public ISiteBrandingService? Branding { get; }
 
+    /// <summary>Lecture servie depuis la copie de l'appareil (OfflineCacheHandler) : bandeau « Hors connexion : données de 14 h 05 ».</summary>
+    public bool IsOffline => OfflineState.ServedAt != null;
+    public string OfflineText => OfflineState.Text(OfflineState.ServedAt);
+
     public AppHeader()
     {
         InitializeComponent();
         Branding = IPlatformApplication.Current?.Services.GetService<ISiteBrandingService>();
         HeaderRoot.BindingContext = this;
+        Loaded += (_, _) => { OfflineState.Changed += OnOfflineChanged; OnOfflineChanged(); };
+        Unloaded += (_, _) => OfflineState.Changed -= OnOfflineChanged;
     }
+
+    private void OnOfflineChanged() => MainThread.BeginInvokeOnMainThread(() =>
+    {
+        OnPropertyChanged(nameof(IsOffline));
+        OnPropertyChanged(nameof(OfflineText));
+    });
 
     private static void OnIsRootChanged(BindableObject bindable, object oldValue, object newValue)
     {

@@ -51,6 +51,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<TenantHandler>();
 		builder.Services.AddTransient<AuthHandler>();
 		builder.Services.AddTransient<Easymakemoney.Services.Module.ModuleGateHandler>();
+		builder.Services.AddSingleton<Easymakemoney.Services.Offline.IResponseCache, Easymakemoney.Services.Offline.FileResponseCache>();
+		builder.Services.AddTransient<Easymakemoney.Services.Offline.OfflineCacheHandler>();
 		builder.Services.AddSingleton<Easymakemoney.Services.Module.IModuleInactiveNotifier, Easymakemoney.Services.Module.ModuleInactiveNotifier>();
 
 		// Client nommé "auth" pour les routes publiques (M1, M2) : BaseAddress + TenantHandler seulement
@@ -61,7 +63,9 @@ public static class MauiProgram
 		builder.Services.AddHttpClient<IHttpService, HttpService>(ConfigureBackendHttpClient)
 			.AddHttpMessageHandler<TenantHandler>()
 			.AddHttpMessageHandler<AuthHandler>()
-			.AddHttpMessageHandler<Easymakemoney.Services.Module.ModuleGateHandler>();
+			.AddHttpMessageHandler<Easymakemoney.Services.Module.ModuleGateHandler>()
+			// En dernier : la requête porte déjà le site et le jeton ; sans réseau, sert la dernière copie (statistiques, trésorerie)
+			.AddHttpMessageHandler<Easymakemoney.Services.Offline.OfflineCacheHandler>();
 
 		builder.Services.AddHttpClient<ISiteService, SiteService>(ConfigureBackendHttpClient)
 			.AddHttpMessageHandler<TenantHandler>();

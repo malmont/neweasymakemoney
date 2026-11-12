@@ -30,6 +30,8 @@ public class SiteDataCleaner : ISiteDataCleaner
         }
 
         Preferences.Default.Clear();
+        new Easymakemoney.Services.Offline.FileResponseCache().Clear();
+        Easymakemoney.Services.Offline.OfflineState.Online();
         Preferences.Default.Set(TenantStore.FirstRunKey, true);
 
         await _sessionService.ClearSessionAsync();
