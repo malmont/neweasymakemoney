@@ -14,7 +14,13 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 | 3 | 4k : tests du ViewModel de lecture d'un document | `docs/gemini/lot-4k-consigne.md` | **terminé, fusionné** (1f89a95) |
 | 4 | 4l : tests du ViewModel de vérification d'une facture fournisseur | `docs/gemini/lot-4l-consigne.md` | **terminé, fusionné** (dfaae5e) |
 | 5 | 4m : tests des ViewModels du budget, du simulateur et de la préparation d'une période | `docs/gemini/lot-4m-consigne.md` | **terminé, fusionné** (53ae002) |
-| 6 | 4n : tests des ViewModels des listes de gestion | `docs/gemini/lot-4n-consigne.md` | **plan validé avec réponses, code** (message 14) |
+| 6 | 4n : tests des ViewModels des listes de gestion | `docs/gemini/lot-4n-consigne.md` | **terminé, fusionné** (1139ae9) |
+
+## 12/11/2026 : message 15 : lot 4n fusionné ; pause
+
+- **Lot 4n : validé et fusionné dans `main`** (1139ae9), sans correction. La suite passe le cap des **1 000 tests**. Merci pour toute
+  la série 4h à 4n.
+- **Aucun lot ouvert pour l'instant : attends.** Le prochain sera annoncé ici après un point avec le propriétaire.
 
 ## 12/11/2026 : message 14 : lot 4n, plan validé avec mes réponses, code
 
