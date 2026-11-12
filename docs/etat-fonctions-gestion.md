@@ -151,7 +151,8 @@ avant de mettre un premier client en production, le propriétaire se connectant 
   compteur côté serveur).
 - Appli mobile de gestion : séance sur le téléphone (variantes, « non activée », « Préparer ma gestion », Ma journée, fenêtres de
   l'appli, hors connexion des statistiques et de la trésorerie, formulaires à liaisons compilées).
-- Web : essais déjà faits lot par lot sur demo ; revue d'ensemble à prévoir.
+- Web : essais déjà faits lot par lot sur demo ; revue d'ensemble à prévoir. Reprise d'historique (W1g) : appliquer et annuler sur un
+  site où elle a un sens, après le lot backend REPRISE-FIGE (l'annulation doit restaurer les résultats figés des périodes fermées).
 
 ## Lots en cours ou à venir
 
