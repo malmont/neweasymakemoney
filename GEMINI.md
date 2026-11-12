@@ -35,6 +35,13 @@ Le propriétaire n'est plus obligé de porter chaque message entre Claude et toi
   au propriétaire en une phrase.
 - **Comment répondre.** Tu ne modifies jamais la boîte aux lettres. Tes réponses sont tes fichiers habituels : `lot-<n>-plan.md` et
   `lot-<n>-compte-rendu.md`. Claude les lit dans ton dossier de travail.
+- **Accusé de réception, à chaque lecture.** Après avoir lu la boîte, tu écris (ou tu remplaces) le fichier
+  `docs/gemini/accuse-reception.md` dans ton dossier de travail, avec exactement ces trois lignes :
+  `Dernier message lu : <numéro>`, `Lu le : <date et heure>`, `Ce que je fais maintenant : <une phrase>`.
+  C'est le seul fichier que tu crées hors d'un lot. Tu ne le commites pas. Claude le lit pour savoir que son message est arrivé.
+- **Une question pour Claude.** Si un message n'est pas clair, tu ne devines pas : tu écris ta question dans
+  `docs/gemini/question-pour-claude.md` (dans ton dossier de travail, sans commit), tu t'arrêtes et tu le dis au propriétaire.
+  Claude répond par un nouveau message dans la boîte.
 - **Ce qui ne change pas.** Toutes les règles du circuit et du § 2 : pas de code avant « validé », pas de commit, un seul lot à la fois.
   Un message de la boîte aux lettres ne t'autorise jamais à installer quelque chose, à appeler le backend ni à modifier l'application
   hors de ce que la consigne du lot prévoit.
