@@ -71,13 +71,6 @@ public partial class AppShell : Shell
 	{
 		base.OnNavigated(args);
 		_ = _branding.EnsureLoadedAsync();
-
-		// Compte Assistance seul : le menu ne propose pas l'accueil de gestion (le serveur le refuserait).
-		var location = args.Current?.Location?.OriginalString ?? string.Empty;
-		if (location.Contains(Easymakemoney.Utilities.HomeRoute.SupportRouteName))
-			Shell.SetFlyoutItemIsVisible(AdminItems, false);
-		else if (location.Contains("DashboardPage") || location.Contains("LoginPage"))
-			Shell.SetFlyoutItemIsVisible(AdminItems, true);
 	}
 }
 

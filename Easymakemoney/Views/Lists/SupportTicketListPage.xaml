@@ -31,7 +31,7 @@
     </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto,*,Auto">
-        <components:AppHeader x:Name="Header" Title="Assistance" />
+        <components:AppHeader Title="Assistance" />
 
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Padding="16" Spacing="12">

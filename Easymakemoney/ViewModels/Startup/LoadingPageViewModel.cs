@@ -132,7 +132,7 @@ namespace Easymakemoney.ViewModels.Startup
                         {
                             AppShell.Current.FlyoutHeader = new FlyoutHeaderControl(user);
                         }
-                        await NavigateAsync(Easymakemoney.Utilities.HomeRoute.For(user));
+                        await NavigateAsync("//DashboardPage");
                         return;
                     }
                 }
@@ -149,7 +149,7 @@ namespace Easymakemoney.ViewModels.Startup
                         {
                             AppShell.Current.FlyoutHeader = new FlyoutHeaderControl(user);
                         }
-                        await NavigateAsync(Easymakemoney.Utilities.HomeRoute.For(user));
+                        await NavigateAsync("//DashboardPage");
                         return;
                     }
 
@@ -166,7 +166,7 @@ namespace Easymakemoney.ViewModels.Startup
                     {
                         AppShell.Current.FlyoutHeader = new FlyoutHeaderControl(cachedUser);
                     }
-                    await NavigateAsync(Easymakemoney.Utilities.HomeRoute.For(cachedUser));
+                    await NavigateAsync("//DashboardPage");
                     return;
                 }
 
