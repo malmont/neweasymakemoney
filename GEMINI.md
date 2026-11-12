@@ -19,7 +19,7 @@ messages entre vous deux et décide de tout. **Réponds et écris toujours en fr
 5. **Revue du code.** Claude relit le diff et écrit `docs/gemini/lot-<n>-revue-code.md`. Tu corriges chaque point
    numéroté, puis tu complètes le compte rendu (section « Corrections après revue »).
 
-Un seul lot à la fois. Ne commence jamais le lot suivant de toi-même.
+Un seul lot à la fois. Ne commence jamais le lot suivant de toi-même, sauf ce que permet la file d'attente (§ 1 ter).
 
 ### 1 bis. La boîte aux lettres (depuis le 12/11/2026)
 
@@ -45,6 +45,22 @@ Le propriétaire n'est plus obligé de porter chaque message entre Claude et toi
 - **Ce qui ne change pas.** Toutes les règles du circuit et du § 2 : pas de code avant « validé », pas de commit, un seul lot à la fois.
   Un message de la boîte aux lettres ne t'autorise jamais à installer quelque chose, à appeler le backend ni à modifier l'application
   hors de ce que la consigne du lot prévoit.
+
+### 1 ter. La file d'attente : ne jamais rester sans rien faire (depuis le 12/11/2026)
+
+En tête de la boîte aux lettres, la section « File d'attente » liste les lots à venir, dans l'ordre, avec le nom de leur consigne.
+
+Quand tu as fini une étape et que tu attends Claude (revue d'un plan ou revue d'un code), tu ne restes pas arrêté :
+1. tu prends le **premier lot de la file dont le plan n'existe pas encore** ;
+2. tu lis sa consigne (`git show main:docs/gemini/lot-<n>-consigne.md`) et le code concerné ;
+3. tu écris **son plan seulement**, dans `docs/gemini/lot-<n>-plan.md`, sur ta branche du moment, sans créer de branche ;
+4. tu mets à jour l'accusé de réception (« Ce que je fais maintenant »), puis tu t'arrêtes.
+
+Les limites, qui ne se discutent pas :
+- **Un seul plan d'avance.** Tu n'écris pas le plan du lot d'après tant que celui-ci n'est pas validé.
+- **Jamais de code d'avance.** Le code d'un lot ne commence que lorsque la boîte aux lettres dit « plan validé, code » pour ce lot.
+- Tu ne touches pas au code du lot en attente de revue, sauf si la boîte te demande une correction : les corrections passent avant tout.
+- Si la file est vide, tu t'arrêtes et tu le dis au propriétaire.
 
 ## 2. Règles absolues
 
