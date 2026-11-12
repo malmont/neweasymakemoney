@@ -95,6 +95,10 @@ Le compte Assistance (ROLE_SUPPORT) ne sert que dans l'**appli web**, où il n'a
 L'**appli de gestion mobile reste réservée aux administrateurs** (et au super administrateur) : elle refuse un compte Assistance à la
 connexion (test `MobileRolesTests`).
 
+L'onglet Assistance de l'appli mobile (administrateurs : liste, fiche, réponse, note, état, priorité, création) est **gardé tel quel et
+gelé** : aucune nouvelle fonction d'assistance sur le mobile. La suite de l'Assistance (réponses types, ouverture depuis une commande,
+IA du répondeur, chat) se fait sur le **web**.
+
 ## Revue du 12/11/2026 : améliorations et idées retenues par le propriétaire
 
 Améliorations de l'existant :
@@ -114,8 +118,8 @@ Idées de fonctions retenues (à cadrer une par une, contrat backend d'abord) :
 |---|---|
 | Ma journée | Sur l'Accueil : ventes du jour, commandes à expédier, demandes d'assistance en retard, solde de trésorerie |
 | Résumé hebdomadaire | Courriel du lundi : ventes, marge, trésorerie, 3 actions conseillées |
-| Assistance depuis une commande | Bouton « Ouvrir une demande » sur une commande, client et commande préremplis |
-| Réponses types | Modèles de réponse dans l'Assistance, rédigés plus tard par l'IA (lot 3 du backend) |
+| Assistance depuis une commande (web seulement) | Bouton « Ouvrir une demande » sur une commande, client et commande préremplis |
+| Réponses types (web seulement) | Modèles de réponse dans l'Assistance, rédigés plus tard par l'IA (lot 3 du backend) |
 | Objectifs | Objectif de ventes ou de marge par période, avance ou retard, ce qu'il faut vendre par jour |
 | Réapprovisionnement conseillé | Quantité et date de commande par article, brouillon de commande fournisseur |
 | Fiche client | Achats, retours, demandes d'assistance, valeur totale |
