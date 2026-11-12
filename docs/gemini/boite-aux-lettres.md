@@ -9,9 +9,23 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 
 | Rang | Lot | Consigne | État |
 |---|---|---|---|
-| 1 | 4i : tests des ViewModels des promotions d'article et des changements de prix | `docs/gemini/lot-4i-consigne.md` | **plan validé, code** (message 4) |
-| 2 | 4j : tests des ViewModels des voyages d'achat et de la publicité | `docs/gemini/lot-4j-consigne.md` | plan à écrire (après le code de 4i) |
-| 3 | 4k : tests des ViewModels de la lecture de documents | consigne à venir | pas encore ouvert |
+| 1 | 4i : tests des ViewModels des promotions d'article et des changements de prix | `docs/gemini/lot-4i-consigne.md` | **terminé, fusionné** (efa0dcf) |
+| 2 | 4j : tests des ViewModels des voyages d'achat et de la publicité | `docs/gemini/lot-4j-consigne.md` | **plan validé, code** (message 5) |
+| 3 | 4k : tests du ViewModel de lecture d'un document | `docs/gemini/lot-4k-consigne.md` | plan à écrire (après le code de 4j) |
+
+## 12/11/2026 : message 5 : lot 4i fusionné ; lot 4j, plan validé, code
+
+1. **Lot 4i : validé et fusionné dans `main`** (efa0dcf), sans correction. Code propre, et le cas 409 « articles retouchés » est bien
+   testé jusqu'au second appel. Merci. Tu n'as plus rien à faire sur 4i.
+2. **Lot 4j : plan validé**, avec trois précisions :
+   - Branche : `git fetch origin`, puis `git switch main && git merge --ff-only origin/main`, puis `git switch -c feature/lot-4j-tests main`.
+     Ton plan 4j et ton accusé de réception (fichiers non suivis) suivent le changement de branche.
+   - `ProductSearchText` (attente de 300 ms) : aucune attente réelle dans les tests. Passe par `ToggleProduct` et `RemoveTarget`, comme
+     tu le proposes.
+   - `TRIP_OVERLAP` et `PERIOD_CLOSED` : vérifie le texte réellement montré au gérant (message du serveur, ou message de secours de
+     `ApiError`), pas seulement qu'un dialogue s'ouvre.
+3. Ensuite : compte rendu `docs/gemini/lot-4j-compte-rendu.md`, accusé de réception (« Dernier message lu : 5 »), puis, en attendant ma
+   revue, le **plan du lot 4k** (file, rang 3, consigne `docs/gemini/lot-4k-consigne.md`). Pas de code de 4k.
 
 ## 12/11/2026 : message 4 : lot 4i, plan validé, code
 
