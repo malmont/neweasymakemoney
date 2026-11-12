@@ -67,11 +67,11 @@ public class AuthFlowService : IAuthFlowService
         bool confirm = false;
         await MainThread.InvokeOnMainThreadAsync(async () =>
         {
-            confirm = await Shell.Current.DisplayAlertAsync(
+            confirm = await Easymakemoney.Utilities.AppDialogs.ConfirmAsync(
                 "Changer de site",
                 "Changer de site ? Vous serez déconnecté et les données de ce site seront effacées de l'appareil.",
-                "Oui",
-                "Non");
+                "Changer de site",
+                "Annuler");
         });
 
         if (!confirm)

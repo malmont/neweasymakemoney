@@ -45,8 +45,7 @@ namespace Easymakemoney.ViewModels.Lists
         private Newtonsoft.Json.Linq.JToken? _savedDraft;
 
         /// <summary>Choix dans une liste (variante reçue) ; remplaçable dans les tests.</summary>
-        public Func<string, string[], Task<string?>> ChooseAsync { get; set; } = async (title, labels) =>
-            Shell.Current is { } shell ? await shell.DisplayActionSheetAsync(title, "Plus tard", null, labels) : null;
+        public Func<string, string[], Task<string?>> ChooseAsync { get; set; }
 
         /// <summary>Faux tant que la route d'aperçu répond 404 (pas encore en ligne) : l'estimation locale reste alors affichée.</summary>
         private bool _previewAvailable = true;
@@ -103,6 +102,7 @@ namespace Easymakemoney.ViewModels.Lists
             _suppliers = suppliers;
             _reception = reception;
             _dialogService = dialogService;
+            ChooseAsync = (title, labels) => _dialogService.ChooseAsync(title, labels, "Plus tard");
         }
 
         // ----- état de l'écran -----
@@ -624,13 +624,13 @@ namespace Easymakemoney.ViewModels.Lists
 
         public async Task AddLinePhotoAsync(InvoiceLineItemViewModel line)
         {
-            if (line.IsUploadingPhoto || Shell.Current is not { } shell)
+            if (line.IsUploadingPhoto)
                 return;
 
             var choices = MediaPicker.Default.IsCaptureSupported
                 ? new[] { TakePhotoChoice, PickPhotoChoice }
                 : new[] { PickPhotoChoice };
-            var choice = await shell.DisplayActionSheetAsync("Photo de l'article (facultative)", "Annuler", null, choices);
+            var choice = await _dialogService.ChooseAsync("Photo de l'article (facultative)", choices);
 
             FileResult? file;
             try

@@ -176,11 +176,10 @@ namespace Easymakemoney.ViewModels.Dashboard
         [RelayCommand]
         private async Task EditBudget()
         {
-            var page = Easymakemoney.Utilities.AppPage.Current;
-            if (page == null || IsBusy)
+            if (IsBusy)
                 return;
 
-            var text = await page.DisplayPromptAsync("Budget de la période", CollectionName, "Valider", "Annuler", keyboard: Keyboard.Numeric);
+            var text = await _dialogService.PromptAsync("Budget de la période", CollectionName ?? string.Empty, keyboard: Keyboard.Numeric);
             if (string.IsNullOrWhiteSpace(text))
                 return;
 

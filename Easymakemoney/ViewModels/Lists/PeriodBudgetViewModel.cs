@@ -14,6 +14,7 @@ namespace Easymakemoney.ViewModels.Lists
         {
             _budgetService = budgetService;
             _dialogService = dialogService;
+            PromptAsync = (title, message, initial) => _dialogService.PromptAsync(title, message, initialValue: initial, keyboard: Keyboard.Numeric);
         }
 
         public int PeriodId { get; set; }
@@ -59,10 +60,7 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
         /// <summary>Saisie d'un montant (titre, message, valeur de départ) ; null si le gérant annule. Remplaçable dans les tests.</summary>
-        public Func<string, string, string, Task<string?>> PromptAsync { get; set; } = async (title, message, initial) =>
-            Application.Current?.Windows.FirstOrDefault()?.Page is { } page
-                ? await page.DisplayPromptAsync(title, message, "Valider", "Annuler", initialValue: initial, keyboard: Keyboard.Numeric)
-                : null;
+        public Func<string, string, string, Task<string?>> PromptAsync { get; set; }
 
         [RelayCommand]
         private async Task EditLine(PeriodBudgetLine? line)

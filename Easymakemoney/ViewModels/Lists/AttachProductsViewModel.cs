@@ -179,14 +179,13 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private async Task EditCost(AvailableProduct? product)
         {
-            var page = Easymakemoney.Utilities.AppPage.Current;
-            if (product == null || page == null)
+            if (product == null)
                 return;
 
-            var choice = await page.DisplayActionSheetAsync(product.name, "Annuler", null, "Coût d'achat", "Quantité achetée");
+            var choice = await _dialogService.ChooseAsync(product.name ?? "Article", new[] { "Coût d'achat", "Quantité achetée" });
             if (choice == "Quantité achetée")
             {
-                var quantityText = await page.DisplayPromptAsync("Quantité achetée", product.name, "Valider", "Annuler", keyboard: Keyboard.Numeric);
+                var quantityText = await _dialogService.PromptAsync("Quantité achetée", product.name ?? string.Empty, keyboard: Keyboard.Numeric);
                 if (string.IsNullOrWhiteSpace(quantityText))
                     return;
                 if (!int.TryParse(quantityText.Trim(), out var quantity) || quantity <= 0)
@@ -201,12 +200,7 @@ namespace Easymakemoney.ViewModels.Lists
             if (choice != "Coût d'achat")
                 return;
 
-            var text = await page.DisplayPromptAsync(
-                "Coût d'achat",
-                product.name,
-                "Valider",
-                "Annuler",
-                keyboard: Keyboard.Numeric);
+            var text = await _dialogService.PromptAsync("Coût d'achat", product.name ?? string.Empty, keyboard: Keyboard.Numeric);
 
             if (string.IsNullOrWhiteSpace(text))
                 return;

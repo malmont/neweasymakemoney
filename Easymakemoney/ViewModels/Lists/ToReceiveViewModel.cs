@@ -14,14 +14,14 @@ namespace Easymakemoney.ViewModels.Lists
         private readonly IDialogService _dialogService;
 
         /// <summary>Choix dans une liste (variante reçue) ; « Plus tard » ou rien = reportée. Remplaçable dans les tests.</summary>
-        public Func<string, string[], Task<string?>> ChooseAsync { get; set; } = async (title, labels) =>
-            Shell.Current is { } shell ? await shell.DisplayActionSheetAsync(title, "Plus tard", null, labels) : null;
+        public Func<string, string[], Task<string?>> ChooseAsync { get; set; }
 
         public ToReceiveViewModel(IToReceiveService toReceiveService, ICommandeReceptionService reception, IDialogService dialogService)
         {
             _toReceiveService = toReceiveService;
             _reception = reception;
             _dialogService = dialogService;
+            ChooseAsync = (title, labels) => _dialogService.ChooseAsync(title, labels, "Plus tard");
         }
 
         public ObservableCollection<ToReceiveGroup> Groups { get; } = new();

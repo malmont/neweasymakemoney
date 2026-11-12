@@ -190,8 +190,8 @@ namespace Easymakemoney.ViewModels.Lists
             if (reconciliation.status != "explained") choices.Add(explain);
             if (!reconciliation.IsOpen) choices.Add(reopen);
 
-            var title = $"{reconciliation.GapText}\n\n{reconciliation.CompositionText}\n\n{reconciliation.WindowText}";
-            var choice = await shell.DisplayActionSheetAsync(title, "Plus tard", null, choices.ToArray());
+            var details = $"{reconciliation.CompositionText}\n\n{reconciliation.WindowText}";
+            var choice = await _dialogService.ChooseAsync(reconciliation.GapText, choices, "Plus tard", details);
 
             switch (choice)
             {
@@ -205,8 +205,7 @@ namespace Easymakemoney.ViewModels.Lists
                     await DecideAsync(reconciliation, "unexplained", null);
                     break;
                 case explain:
-                    var page = Application.Current?.Windows.FirstOrDefault()?.Page;
-                    var note = page == null ? null : await page.DisplayPromptAsync("Expliquer l'écart", "Par exemple : dépôt d'espèces de la caisse le 08/11.", "Valider", "Annuler", maxLength: 500);
+                    var note = await _dialogService.PromptAsync("Expliquer l'écart", "Par exemple : dépôt d'espèces de la caisse le 08/11.");
                     if (!string.IsNullOrWhiteSpace(note))
                         await DecideAsync(reconciliation, "explained", note);
                     break;
@@ -248,12 +247,11 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private async Task EditBalance(TreasuryBalance? balance)
         {
-            var page = Application.Current?.Windows.FirstOrDefault()?.Page;
-            if (balance == null || page == null || IsBusy)
+            if (balance == null || IsBusy)
                 return;
 
             var initial = (balance.amount / 100.0).ToString("0.00", System.Globalization.CultureInfo.CurrentCulture);
-            var text = await page.DisplayPromptAsync(
+            var text = await _dialogService.PromptAsync(
                 $"Solde du {balance.DateText}",
                 "Le solde exact du compte ce jour-là. Mettez un « - » devant pour un découvert.",
                 "Suivant", "Annuler", initialValue: initial, keyboard: Keyboard.Text);
@@ -265,8 +263,8 @@ namespace Easymakemoney.ViewModels.Lists
                 return;
             }
 
-            var note = await page.DisplayPromptAsync("Note (facultatif)", "Par exemple : relevé du soir.", "Enregistrer", "Annuler",
-                initialValue: balance.note ?? string.Empty, maxLength: 255);
+            var note = await _dialogService.PromptAsync("Note (facultatif)", "Par exemple : relevé du soir.", "Enregistrer", "Annuler",
+                initialValue: balance.note ?? string.Empty);
             if (note == null)
                 return;
 
@@ -286,12 +284,11 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private async Task EditTolerance()
         {
-            var page = Application.Current?.Windows.FirstOrDefault()?.Page;
-            if (page == null || Overview == null || IsBusy)
+            if (Overview == null || IsBusy)
                 return;
 
             var initial = (Overview.Tolerance / 100.0).ToString("0.##", System.Globalization.CultureInfo.CurrentCulture);
-            var text = await page.DisplayPromptAsync(
+            var text = await _dialogService.PromptAsync(
                 "Écart toléré",
                 "Un écart plus petit que ce montant entre le solde saisi et l'attendu est considéré comme rapproché (arrondis, petits frais).",
                 "Valider", "Annuler", initialValue: initial, keyboard: Keyboard.Numeric);
@@ -331,12 +328,11 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private async Task EditThreshold()
         {
-            var page = Application.Current?.Windows.FirstOrDefault()?.Page;
-            if (page == null || Overview == null || IsBusy)
+            if (Overview == null || IsBusy)
                 return;
 
             var initial = (Overview.settings.threshold / 100.0).ToString("0.##");
-            var text = await page.DisplayPromptAsync(
+            var text = await _dialogService.PromptAsync(
                 "Seuil d'alerte",
                 "Vous êtes prévenu quand le solde prévu passe sous ce montant dans les 14 prochains jours. 0 : seulement sous zéro.",
                 "Valider", "Annuler", initialValue: initial, keyboard: Keyboard.Numeric);

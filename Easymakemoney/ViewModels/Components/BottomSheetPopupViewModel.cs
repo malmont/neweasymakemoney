@@ -226,9 +226,9 @@ namespace Easymakemoney.ViewModels.Components
                 {
                     await _dialogService.ShowErrorAsync(ex);
                 }
-                else if (Easymakemoney.Utilities.AppPage.Current != null)
+                else
                 {
-                    await Easymakemoney.Utilities.AppPage.Current!.DisplayAlertAsync("Error", ex.Message, "OK");
+                    await Easymakemoney.Utilities.AppDialogs.InfoAsync("Erreur", "Une erreur est survenue, réessayez.");
                 }
             }
         }

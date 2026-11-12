@@ -156,6 +156,7 @@ namespace Easymakemoney.ViewModels.Lists
             _service = service;
             _dialogService = dialogService;
             _session = session;
+            ChooseAsync = (title, choices) => _dialogService.ChooseAsync(title, choices);
             Modes = new ObservableCollection<StatsChoice>(new[]
             {
                 new StatsChoice(ModeReply, "Répondre au client") { IsSelected = true },
@@ -164,8 +165,7 @@ namespace Easymakemoney.ViewModels.Lists
             });
         }
 
-        public SupportChooser ChooseAsync { get; set; } = async (title, choices) =>
-            Shell.Current is { } shell ? await shell.DisplayActionSheetAsync(title, "Annuler", null, choices) : null;
+        public SupportChooser ChooseAsync { get; set; }
 
         public int TicketId { get; set; }
 

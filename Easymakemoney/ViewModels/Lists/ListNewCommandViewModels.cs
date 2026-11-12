@@ -125,7 +125,7 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private async Task ChooseTrip(ListCommand? command)
         {
-            if (command == null || !CanEdit || Shell.Current is not { } shell)
+            if (command == null || !CanEdit)
                 return;
 
             List<Trip> trips;
@@ -150,8 +150,8 @@ namespace Easymakemoney.ViewModels.Lists
                 return;
             }
 
-            var choice = await shell.DisplayActionSheetAsync("Voyage de cette commande", "Annuler", null, labels.ToArray());
-            if (choice == null || choice == "Annuler")
+            var choice = await _dialogService.ChooseAsync("Voyage de cette commande", labels);
+            if (choice == null)
                 return;
 
             int? tripId = choice == none ? null : trips[labels.IndexOf(choice)].id;

@@ -73,7 +73,21 @@ public class DialogService : IDialogService
     public Task<bool> ConfirmAsync(string title, string message, string accept = "Oui", string cancel = "Non") =>
         PresentAsync(UiDialogKind.Confirm, title, message, accept, cancel);
 
-    private async Task<bool> PresentAsync(UiDialogKind kind, string title, string message, string accept, string? cancel)
+    public async Task<string?> PromptAsync(string title, string message, string accept = "Valider", string cancel = "Annuler",
+        string? initialValue = null, Keyboard? keyboard = null, string? placeholder = null) =>
+        (await PresentCoreAsync(UiDialogKind.Prompt, title, message, accept, cancel,
+            new UiDialogInput(initialValue, keyboard, placeholder), null)).Answer;
+
+    public async Task<string?> ChooseAsync(string title, IReadOnlyList<string> choices, string cancel = "Annuler", string? message = null) =>
+        choices.Count == 0
+            ? null
+            : (await PresentCoreAsync(UiDialogKind.Choose, title, message ?? string.Empty, string.Empty, cancel, null, choices)).Answer;
+
+    private async Task<bool> PresentAsync(UiDialogKind kind, string title, string message, string accept, string? cancel) =>
+        (await PresentCoreAsync(kind, title, message, accept, cancel, null, null)).Accepted;
+
+    private async Task<(bool Accepted, string? Answer)> PresentCoreAsync(UiDialogKind kind, string title, string message, string accept,
+        string? cancel, UiDialogInput? input, IReadOnlyList<string>? choices)
     {
         await _queue.WaitAsync();
         try
@@ -85,10 +99,10 @@ public class DialogService : IDialogService
                 if (shell == null)
                 {
                     Debug.WriteLine($"[DialogService] Shell.Current est nul, impossible d'afficher : {title} - {message}");
-                    return false;
+                    return (false, (string?)null);
                 }
 
-                var view = new UiDialogView(kind, title, message, accept, cancel);
+                var view = new UiDialogView(kind, title, message, accept, cancel, input, choices);
                 Action? detach = null;
                 try
                 {
@@ -101,18 +115,33 @@ public class DialogService : IDialogService
 
                 if (detach == null)
                 {
+                    // Repli : la fenêtre native de la plateforme.
+                    if (kind == UiDialogKind.Prompt)
+                    {
+                        var text = await shell.DisplayPromptAsync(title, message, accept, cancel ?? "Annuler",
+                            placeholder: input?.Placeholder, initialValue: input?.InitialValue ?? string.Empty,
+                            keyboard: input?.Keyboard ?? Keyboard.Default);
+                        return (text != null, text);
+                    }
+                    if (kind == UiDialogKind.Choose)
+                    {
+                        var choice = await shell.DisplayActionSheetAsync(title, cancel ?? "Annuler", null, (choices ?? Array.Empty<string>()).ToArray());
+                        var chosen = choices?.Contains(choice) == true ? choice : null;
+                        return (chosen != null, chosen);
+                    }
                     if (cancel == null)
                     {
                         await shell.DisplayAlertAsync(title, message, accept);
-                        return true;
+                        return (true, (string?)null);
                     }
-                    return await shell.DisplayAlertAsync(title, message, accept, cancel);
+                    return (await shell.DisplayAlertAsync(title, message, accept, cancel), (string?)null);
                 }
 
                 try
                 {
                     await view.AppearAsync();
-                    return await view.Result;
+                    var accepted = await view.Result;
+                    return (accepted, await view.Answer);
                 }
                 finally
                 {
@@ -123,7 +152,7 @@ public class DialogService : IDialogService
         catch (Exception ex)
         {
             Debug.WriteLine($"[DialogService] Échec affichage dialogue : {ex.Message}");
-            return false;
+            return (false, null);
         }
         finally
         {

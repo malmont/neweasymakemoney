@@ -164,11 +164,10 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private async Task EditCost(RepriseProduct? product)
         {
-            var page = Easymakemoney.Utilities.AppPage.Current;
-            if (product == null || page == null || !product.CanEditCost)
+            if (product == null || !product.CanEditCost)
                 return;
 
-            var text = await page.DisplayPromptAsync("Coût d'achat", product.name, "Valider", "Annuler", keyboard: Keyboard.Numeric);
+            var text = await _dialogService.PromptAsync("Coût d'achat", product.name ?? string.Empty, keyboard: Keyboard.Numeric);
             if (string.IsNullOrWhiteSpace(text))
                 return;
 

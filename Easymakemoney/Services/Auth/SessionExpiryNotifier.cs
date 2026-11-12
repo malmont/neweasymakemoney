@@ -19,7 +19,7 @@ public class SessionExpiryNotifier : ISessionExpiryNotifier
                     {
                         if (Shell.Current != null)
                         {
-                            await Shell.Current.DisplayAlertAsync("Session expirée", "Votre session a expiré, reconnectez-vous.", "OK");
+                            await Easymakemoney.Utilities.AppDialogs.InfoAsync("Session expirée", "Votre session a expiré, reconnectez-vous.");
                             await Shell.Current.GoToAsync("//LoginPage");
                         }
                     }

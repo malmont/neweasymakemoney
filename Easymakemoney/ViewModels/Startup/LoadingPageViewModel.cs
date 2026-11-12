@@ -94,7 +94,7 @@ namespace Easymakemoney.ViewModels.Startup
 
                     await MainThread.InvokeOnMainThreadAsync(async () =>
                     {
-                        await Shell.Current.DisplayAlertAsync("Information", "Ce site n'est plus disponible.", "OK");
+                        await Easymakemoney.Utilities.AppDialogs.InfoAsync("Information", "Ce site n'est plus disponible.");
                         await Shell.Current.GoToAsync("//ActivationPage");
                     });
                 }

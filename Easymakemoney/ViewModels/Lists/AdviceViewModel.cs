@@ -142,11 +142,11 @@ namespace Easymakemoney.ViewModels.Lists
 
             // Hausse de prix ou promotion : le gérant précise le pourcentage réellement appliqué, pour que l'effet soit mesuré.
             Dictionary<string, object>? applied = null;
-            if (advice.AppliedPercentField is { } field && Application.Current?.Windows.FirstOrDefault()?.Page is { } page)
+            if (advice.AppliedPercentField is { } field)
             {
                 var question = field == "pricePercent" ? "Hausse de prix appliquée (en %)" : "Promotion appliquée (en %)";
                 var initial = advice.SuggestedPercent is { } suggested ? suggested.ToString("0.##") : string.Empty;
-                var text = await page.DisplayPromptAsync(
+                var text = await _dialogService.PromptAsync(
                     "Conseil appliqué",
                     $"{question}. Le guide mesurera l'effet sur 14 jours à partir d'aujourd'hui.",
                     "C'est fait", "Annuler", initialValue: initial, keyboard: Keyboard.Numeric);

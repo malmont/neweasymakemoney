@@ -117,10 +117,7 @@ public partial class OtpPageViewModel : BaseViewModel
                 ErrorMessage = null;
                 // Renouveler l'heure de stockage
                 _pendingLoginStore.Set(email, password);
-                if (Shell.Current != null)
-                {
-                    await Shell.Current.DisplayAlertAsync("Code envoyé", $"Un nouveau code a été envoyé à l'adresse {email}.", "OK");
-                }
+                await Easymakemoney.Utilities.AppDialogs.InfoAsync("Code envoyé", $"Un nouveau code a été envoyé à l'adresse {email}.");
             }
             else if (result.IsSuccess)
             {
