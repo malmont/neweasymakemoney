@@ -75,7 +75,7 @@ public partial class OtpPageViewModel : BaseViewModel
                     AppShell.Current.FlyoutHeader = new FlyoutHeaderControl(result.User);
                 }
 
-                if (Shell.Current != null) await Shell.Current.GoToAsync("//DashboardPage");
+                if (Shell.Current != null) await Shell.Current.GoToAsync(Easymakemoney.Utilities.HomeRoute.For(result.User));
             }
             else
             {
@@ -129,7 +129,7 @@ public partial class OtpPageViewModel : BaseViewModel
                 {
                     AppShell.Current.FlyoutHeader = new FlyoutHeaderControl(result.User);
                 }
-                if (Shell.Current != null) await Shell.Current.GoToAsync("//DashboardPage");
+                if (Shell.Current != null) await Shell.Current.GoToAsync(Easymakemoney.Utilities.HomeRoute.For(result.User));
             }
             else
             {

@@ -73,7 +73,8 @@ public class JwtService : IJwtService
             }
         }
 
-        if (!roles.Contains("ROLE_ADMIN"))
+        // Administrateur du site, ou compte Assistance (limité au module Assistance, voir UserInfo.IsSupportOnly)
+        if (!roles.Contains(UserInfo.RoleAdmin) && !roles.Contains(UserInfo.RoleSupport))
         {
             errorMessage = "Ce compte n'a pas accès à l'application de gestion.";
             return false;

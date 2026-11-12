@@ -7,6 +7,7 @@
     xmlns:DashboardPages="clr-namespace:Easymakemoney.Views.Dasboard"
     xmlns:Models="clr-namespace:Easymakemoney.Models"
     xmlns:views="clr-namespace:Easymakemoney.Views.Dasboard"
+    xmlns:lists="clr-namespace:Easymakemoney.Views.Lists"
     Shell.TabBarIsVisible="False"
     FlyoutBackgroundColor="{StaticResource UiSurface}"
     xmlns:local="clr-namespace:Easymakemoney">
@@ -28,7 +29,12 @@
         Route="OtpPage" />
    
 
-    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems" Route="DashboardPage">
+    <!-- Accueil d'un compte Assistance seul : la boîte des demandes, sans le reste de l'appli (HomeRoute) -->
+    <ShellContent FlyoutItemIsVisible="False"
+        ContentTemplate="{DataTemplate lists:SupportTicketListPage}"
+        Route="SupportHomePage" />
+
+    <FlyoutItem x:Name="AdminItems" FlyoutDisplayOptions="AsMultipleItems" Route="DashboardPage">
 
             <ShellContent
             Title="Accueil" Icon="{x:Static Models:Icons.Dashboard}"
