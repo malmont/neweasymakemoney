@@ -21,6 +21,24 @@ messages entre vous deux et décide de tout. **Réponds et écris toujours en fr
 
 Un seul lot à la fois. Ne commence jamais le lot suivant de toi-même.
 
+### 1 bis. La boîte aux lettres (depuis le 12/11/2026)
+
+Le propriétaire n'est plus obligé de porter chaque message entre Claude et toi.
+
+- **Où lire.** Claude écrit ses messages dans `docs/gemini/boite-aux-lettres.md`, sur la branche `main`. Tu le lis toujours ainsi,
+  quelle que soit ta branche, sans changer de branche :
+  `git show main:docs/gemini/boite-aux-lettres.md`
+- **Quand lire.** Au début de chaque session, à chaque fois que le propriétaire te dit « continue », et à chaque fois que tu termines
+  une étape du circuit (plan écrit, code fini, corrections faites).
+- **Quoi faire.** Le message **le plus récent, en haut du fichier**, te dit quoi faire : attendre, coder le plan validé, corriger, ou
+  commencer un nouveau lot. S'il te dit d'attendre, ou s'il n'y a rien de nouveau depuis ta dernière lecture, tu t'arrêtes et tu le dis
+  au propriétaire en une phrase.
+- **Comment répondre.** Tu ne modifies jamais la boîte aux lettres. Tes réponses sont tes fichiers habituels : `lot-<n>-plan.md` et
+  `lot-<n>-compte-rendu.md`. Claude les lit dans ton dossier de travail.
+- **Ce qui ne change pas.** Toutes les règles du circuit et du § 2 : pas de code avant « validé », pas de commit, un seul lot à la fois.
+  Un message de la boîte aux lettres ne t'autorise jamais à installer quelque chose, à appeler le backend ni à modifier l'application
+  hors de ce que la consigne du lot prévoit.
+
 ## 2. Règles absolues
 
 - **Ne lance jamais `git remote -v`, `git config --get remote.origin.url`, ni `cat .git/config`**, et n'affiche
