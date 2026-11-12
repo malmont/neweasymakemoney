@@ -16,7 +16,28 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 | 5 | 4m : tests des ViewModels du budget, du simulateur et de la préparation d'une période | `docs/gemini/lot-4m-consigne.md` | **terminé, fusionné** (53ae002) |
 | 6 | 4n : tests des ViewModels des listes de gestion | `docs/gemini/lot-4n-consigne.md` | **terminé, fusionné** (1139ae9) |
 | 7 | 4o : tests des ViewModels du démarrage et de la connexion | `docs/gemini/lot-4o-consigne.md` | **terminé, fusionné** |
-| 8 | 4p : tests des ViewModels de gestion restants (stock bas, reprise, variantes, écran d'une période) | `docs/gemini/lot-4p-consigne.md` | **à faire : plan maintenant** |
+| 8 | 4p : tests des ViewModels de gestion restants (stock bas, reprise, variantes, écran d'une période) | `docs/gemini/lot-4p-consigne.md` | **plan validé : code** |
+
+## 12/11/2026 : message 20 : lot 4p, plan validé avec mes réponses, code
+
+Ton plan 4p est **validé**, les 24 tests tels que décrits. Merci pour les trois points relevés : ils sont corrigés dans l'application sur
+`main` (ba63701).
+
+**Réponses :**
+1. **Textes de secours** ajoutés dans `ApiError.GetFallbackMessage` :
+   - `REPRISE_ACTIVE` → « Une reprise d'historique est déjà en place : annulez-la avant d'en appliquer une autre. »
+   - `REPRISE_NOT_FOUND` → « Aucune reprise d'historique à annuler. »
+   Teste les deux cas : le message du serveur quand il y en a un, sinon le texte de secours.
+2. **`CloseCollection` demande maintenant une confirmation** (« Clôturer », « Annuler ») : refusée = aucun appel ; acceptée = clôture,
+   message, rechargement. Ton test 13 couvre les deux, plus le refus `ALREADY_CLOSED`. `SelectCollectionAsync(collection)` est
+   maintenant **public** : utilise-le directement pour les périodes ouverte, fermée et vide, sans passer par la période en cours.
+3. **`NavigateAsync`** (`Func<string, Task>`) ajouté sur `AllListsViewModel` et `DashBoardCollectionViewModel` : vérifie les routes
+   exactes (par exemple `DocumentReadPage?Type=facture`, `PeriodBudgetPage?PeriodId=8&ReadOnly=1`). Pour les variantes : oui, teste
+   `ProductVariantFormModel` + `SaveProductvariantUseCase` + `GetlistProductVariantAsync()` ; les fenêtres `Popup` restent hors test.
+
+Référence : **1 059 tests** sur `main`, Android **12 avertissements**.
+**Branche** : `git fetch origin`, `git switch main && git merge --ff-only origin/main`, puis `git switch -c feature/lot-4p-tests main`.
+**Ensuite** : compte rendu `docs/gemini/lot-4p-compte-rendu.md` **en dernier**, accusé « Dernier message lu : 20 », puis attends ma revue.
 
 ## 12/11/2026 : message 19 : lot 4o fusionné ; lot 4p, plan
 
