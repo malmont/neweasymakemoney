@@ -132,6 +132,9 @@ namespace Easymakemoney.ViewModels.Lists
         private long AdvertisingDeltaCents() =>
             DecimalInputConverter.Parse(AdvertisingText) is { } amount && amount > 0 ? MoneyHelper.ToCents(amount) : 0;
 
+        /// <summary>Relance le calcul tout de suite, sans attendre la fin du mouvement d'un curseur (utilisé par les tests).</summary>
+        public Task RunSimulationAsync() => RunAsync();
+
         private async Task RunAsync()
         {
             if (PeriodId <= 0)

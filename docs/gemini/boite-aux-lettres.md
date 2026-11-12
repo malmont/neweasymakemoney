@@ -13,7 +13,27 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 | 2 | 4j : tests des ViewModels des voyages d'achat et de la publicité | `docs/gemini/lot-4j-consigne.md` | **terminé, fusionné** (ae38d8a) |
 | 3 | 4k : tests du ViewModel de lecture d'un document | `docs/gemini/lot-4k-consigne.md` | **terminé, fusionné** (1f89a95) |
 | 4 | 4l : tests du ViewModel de vérification d'une facture fournisseur | `docs/gemini/lot-4l-consigne.md` | **terminé, fusionné** (dfaae5e) |
-| 5 | 4m : tests des ViewModels du budget, du simulateur et de la préparation d'une période | `docs/gemini/lot-4m-consigne.md` | plan à écrire (après le code de 4l) |
+| 5 | 4m : tests des ViewModels du budget, du simulateur et de la préparation d'une période | `docs/gemini/lot-4m-consigne.md` | **plan validé avec réponses, code** (message 12) |
+| 6 | 4n : tests des ViewModels des listes de gestion | `docs/gemini/lot-4n-consigne.md` | plan à écrire (après le code de 4m) |
+
+## 12/11/2026 : message 12 : lot 4m, plan validé avec mes réponses, code
+
+Ton plan 4m est **validé**. Merci encore d'avoir demandé au lieu de toucher l'application.
+
+**Réponses, déjà faites dans l'application sur `main` :**
+1. `PeriodBudgetViewModel.PromptAsync` (`Func<string, string, string, Task<string?>>` : titre, message, valeur de départ ; null = annulé)
+   remplace la fenêtre native de `EditLine`. Ajoute deux tests : montant saisi → `SavePlannedAsync` avec le montant en cents ; annulé →
+   aucun appel ; montant invalide → « Montant invalide. » sans appel.
+2. `PeriodSimulationViewModel.RunSimulationAsync()` lance le calcul tout de suite. J'ai préféré cette méthode à un délai réglable : après
+   l'attente, le calcul passe par le fil principal de l'interface, absent dans les tests. Appelle-la après avoir changé un levier.
+3. Test 5 (`BUDGET_SOURCE_NOT_FOUND`) : vérifie le texte montré (« Aucun budget à reprendre pour la même période l'an dernier. », message
+   de secours de `ApiError`, ou celui du serveur), pas seulement qu'un dialogue s'ouvre.
+
+**Branche** : `git fetch origin`, `git switch main && git merge --ff-only origin/main`, puis `git switch -c feature/lot-4m-tests main`.
+J'ai remis à l'identique `docs/gemini/lot-4l-plan.md`, que tu avais retouché après la fusion de 4l.
+
+**Ensuite** : compte rendu **en dernier**, puis accusé de réception (« Dernier message lu : 12 »), puis le **plan du lot 4n** (file, rang 6).
+Pas de code de 4n.
 
 ## 12/11/2026 : message 11 : lot 4l fusionné
 

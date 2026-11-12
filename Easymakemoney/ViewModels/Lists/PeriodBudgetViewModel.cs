@@ -58,18 +58,23 @@ namespace Easymakemoney.ViewModels.Lists
             }
         }
 
+        /// <summary>Saisie d'un montant (titre, message, valeur de départ) ; null si le gérant annule. Remplaçable dans les tests.</summary>
+        public Func<string, string, string, Task<string?>> PromptAsync { get; set; } = async (title, message, initial) =>
+            Application.Current?.Windows.FirstOrDefault()?.Page is { } page
+                ? await page.DisplayPromptAsync(title, message, "Valider", "Annuler", initialValue: initial, keyboard: Keyboard.Numeric)
+                : null;
+
         [RelayCommand]
         private async Task EditLine(PeriodBudgetLine? line)
         {
-            var page = Application.Current?.Windows.FirstOrDefault()?.Page;
-            if (line?.category == null || page == null || !CanEdit || IsBusy)
+            if (line?.category == null || !CanEdit || IsBusy)
                 return;
 
             var initial = line.HasPlanned ? (line.planned / 100.0).ToString("0.##") : string.Empty;
-            var text = await page.DisplayPromptAsync(
+            var text = await PromptAsync(
                 $"Prévu : {line.label}",
                 "Montant prévu pour ce poste. Laissez 0 pour l'effacer.",
-                "Valider", "Annuler", initialValue: initial, keyboard: Keyboard.Numeric);
+                initial);
             if (text == null)
                 return;
 
