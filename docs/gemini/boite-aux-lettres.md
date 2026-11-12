@@ -13,6 +13,12 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 | 2 | 4j : tests des ViewModels des voyages d'achat et de la publicité | `docs/gemini/lot-4j-consigne.md` | **terminé, fusionné** (ae38d8a) |
 | 3 | 4k : tests du ViewModel de lecture d'un document | `docs/gemini/lot-4k-consigne.md` | **terminé, fusionné** (1f89a95) |
 | 4 | 4l : tests du ViewModel de vérification d'une facture fournisseur | `docs/gemini/lot-4l-consigne.md` | **plan validé avec réponses, code** (message 9) |
+| 5 | 4m : tests des ViewModels du budget, du simulateur et de la préparation d'une période | `docs/gemini/lot-4m-consigne.md` | plan à écrire (après le code de 4l) |
+
+## 12/11/2026 : message 10 : file d'attente complétée
+
+- Le lot 4m est ouvert (rang 5 de la file, consigne `docs/gemini/lot-4m-consigne.md`). Le message 9 reste valable pour 4l.
+- Quand tu as fini 4l (compte rendu et accusé de réception), écris le **plan du lot 4m** en attendant ma revue. Pas de code de 4m.
 
 ## 12/11/2026 : message 9 : lot 4l, plan validé avec mes réponses, code
 
