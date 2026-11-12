@@ -136,7 +136,11 @@ nouveau client déroulé de bout en bout.
 pièce jointe enregistrée, commande remplie à partir d'une facture, et le maximum de cette façon) ; un **guide des séquences** montre
 l'avancement global (plusieurs séquences, sur le modèle de « Préparer ma gestion » / readiness : activer un module, préparer une période,
 clôturer l'exercice…) ; l'IA fait avancer ces séquences étape par étape. Règle gardée : l'IA prépare, le serveur calcule, chaque écriture
-passe par un aperçu, la confirmation du gérant, le journal et l'annulation. Constat demandé au backend avant l'extension du contrat d'IA1.
+passe par un aperçu, la confirmation du gérant, le journal et l'annulation. Constat du backend reçu ; découpage validé par le propriétaire :
+**IA-SEQ** (guide des séquences, sans IA : séquences uniques depuis readiness, séquences récurrentes avec instances), **IA-FACT** (facture par
+conversation : questions, aperçu avec empreinte, annulation d'un bloc ; au choix nouvelle commande ou ajout à une commande ouverte du même
+fournisseur), **IA-ACT** (autres actions préparables), **IA-AVANCE** (l'IA fait avancer les séquences). Unités : 1 par réponse de l'IA ;
+lecture d'un document 1 ; questions calculées gratuites. ERREURS-3 : chaque module dans sa propre session.
 
 À reparler aussi (idée du propriétaire du 12/11/2026, non décidée) : **démarque et vols**. Avis de Claude, par ordre :
 1. sans matériel : rapport d'anomalies de caisse calculé par le serveur (remboursements sans ticket, annulations, remises et prix
