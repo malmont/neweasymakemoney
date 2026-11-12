@@ -5,6 +5,7 @@ namespace Easymakemoney.Services
         Task<FeatureRequestResult> RequestAsync(string feature = ModuleInactiveInfo.ManagementFeature, string? message = null);
         Task<ManagementAi> GetAiAsync();
         Task<SiteReadiness> GetReadinessAsync();
+        Task<DaySummary> GetDayAsync();
     }
 
     /// <summary>
@@ -33,5 +34,9 @@ namespace Easymakemoney.Services
         /// <summary>Lot CHE : cheminement du site ; l'appli n'en garde que le groupe « app.management ».</summary>
         public async Task<SiteReadiness> GetReadinessAsync() =>
             await _httpService.GetAsync<SiteReadiness>("site/readiness") ?? new SiteReadiness();
+
+        /// <summary>Lot JOUR : « Ma journée » (ventes du jour, à expédier, assistance, trésorerie, stock bas).</summary>
+        public async Task<DaySummary> GetDayAsync() =>
+            await _httpService.GetAsync<DaySummary>("gestion/journee?locale=fr") ?? new DaySummary();
     }
 }

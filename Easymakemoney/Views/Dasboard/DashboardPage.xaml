@@ -17,6 +17,61 @@
             <VerticalStackLayout Padding="16,24" Spacing="12">
                 <Label Text="Accueil" Style="{StaticResource UiH1}" Margin="0,0,0,8" />
 
+                <!-- Lot JOUR : « Ma journée », chiffres du serveur ; cachée tant que la route n'existe pas -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="16" IsVisible="{Binding HasDay}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Ma journée" FontFamily="InterSemiBold" FontSize="12" TextColor="{DynamicResource ThemePrimary}" />
+                        <VerticalStackLayout Spacing="2">
+                            <VerticalStackLayout.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenDayCommand}" CommandParameter="sales" />
+                            </VerticalStackLayout.GestureRecognizers>
+                            <Label Text="{Binding Day.SalesText}" Style="{StaticResource UiTitle}" FontSize="18" />
+                            <Label Text="{Binding Day.SalesTrendText}" IsVisible="{Binding Day.HasSalesTrend}" FontFamily="InterMedium" FontSize="12" TextColor="{StaticResource UiTextSecondary}">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Day.IsSalesUp}" Value="True">
+                                        <Setter Property="TextColor" Value="#15803D" />
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Day.IsSalesDown}" Value="True">
+                                        <Setter Property="TextColor" Value="#B45309" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </VerticalStackLayout>
+                        <BoxView HeightRequest="1" Color="{StaticResource UiBorder}" />
+                        <Label Text="{Binding Day.ToShipText}" Style="{StaticResource UiBody}" FontSize="14" />
+                        <Label Text="{Binding Day.SupportText}" IsVisible="{Binding Day.HasSupport}" Style="{StaticResource UiBody}" FontSize="14">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenDayCommand}" CommandParameter="support" />
+                            </Label.GestureRecognizers>
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding Day.IsSupportLate}" Value="True">
+                                    <Setter Property="TextColor" Value="#B91C1C" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                        <VerticalStackLayout Spacing="0" IsVisible="{Binding Day.HasCash}">
+                            <VerticalStackLayout.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding OpenDayCommand}" CommandParameter="cash" />
+                            </VerticalStackLayout.GestureRecognizers>
+                            <Label Text="{Binding Day.CashText}" Style="{StaticResource UiBody}" FontSize="14" />
+                            <Label Text="{Binding Day.CashLowText}" FontFamily="Inter" FontSize="12" TextColor="{StaticResource UiTextSecondary}">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Day.IsCashWarning}" Value="True">
+                                        <Setter Property="TextColor" Value="#B91C1C" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+                        </VerticalStackLayout>
+                        <Label Text="{Binding Day.StockText}" Style="{StaticResource UiBody}" FontSize="14">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding Day.HasLowStock}" Value="True">
+                                    <Setter Property="TextColor" Value="#B45309" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+                    </VerticalStackLayout>
+                </components:UiCard>
+
                 <!-- Lot CHE : « Préparer ma gestion » tant que la configuration n'est pas complète -->
                 <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding HasReadinessCard}">
                     <components:UiCard.GestureRecognizers>

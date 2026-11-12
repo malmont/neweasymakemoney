@@ -23,6 +23,47 @@ namespace Easymakemoney.ViewModels.Dashboard
         [NotifyPropertyChangedFor(nameof(HasReadinessCard), nameof(ReadinessCardText), nameof(IsReadinessAlert))]
         private ManagementReadinessSummary? _readiness;
 
+        /// <summary>Lot JOUR : « Ma journée », cachée tant que la route n'existe pas ou en cas d'erreur.</summary>
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasDay))]
+        private DaySummary? _day;
+
+        public bool HasDay => Day?.sales != null;
+
+        public Func<string, Task> NavigateAsync { get; set; } = route => Shell.Current?.GoToAsync(route) ?? Task.CompletedTask;
+
+        private async Task<DaySummary?> LoadDayAsync()
+        {
+            if (_moduleService == null)
+                return null;
+            try
+            {
+                return await _moduleService.GetDayAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Ma journée indisponible : {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>Une rubrique de « Ma journée » ouvre son écran ; sans écran dans l'appli, rien ne se passe.</summary>
+        [RelayCommand]
+        private async Task OpenDay(string part)
+        {
+            var route = DayRoute(Day?.Screen(part) ?? part);
+            if (route != null)
+                await NavigateAsync(route);
+        }
+
+        public static string? DayRoute(string? screen) => screen switch
+        {
+            "statistiques" => "StatistiquesPage?Range=today",
+            "tresorerie" => "TreasuryPage",
+            "assistance" => "SupportTicketListPage",
+            _ => null,
+        };
+
         public bool HasReadinessCard => Readiness?.HasHomeCard == true;
         public bool IsReadinessAlert => Readiness?.IsHomeCardAlert == true;
         public string ReadinessCardText => Readiness?.HomeCardText ?? string.Empty;
@@ -60,9 +101,11 @@ namespace Easymakemoney.ViewModels.Dashboard
             try
             {
                 var readinessTask = LoadReadinessAsync();
+                var dayTask = LoadDayAsync();
                 // L'application est en français : les textes du backend doivent l'être aussi, quelle que soit la langue du téléphone.
                 var tiles = await _tilesService.GetTilesAsync("fr");
                 Readiness = await readinessTask;
+                Day = await dayTask;
                 // La carte « Préparer ma gestion » dit déjà de saisir le premier solde : pas de redite.
                 if (HasReadinessCard)
                     tiles = tiles.Where(tile => tile.id != ManagementReadinessSummary.CashFirstBalanceTile).ToList();

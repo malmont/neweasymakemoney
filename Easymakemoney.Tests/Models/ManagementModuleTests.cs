@@ -408,6 +408,12 @@ public class ManagementModuleTests : IDisposable
 
         public SiteReadiness Readiness { get; set; } = new();
 
+        public DaySummary? Day { get; set; }
+        public Exception? DayError { get; set; }
+
+        public Task<DaySummary> GetDayAsync() =>
+            DayError != null ? Task.FromException<DaySummary>(DayError) : Task.FromResult(Day ?? new DaySummary());
+
         public Task<SiteReadiness> GetReadinessAsync() =>
             Error != null ? Task.FromException<SiteReadiness>(Error) : Task.FromResult(Readiness);
     }

@@ -102,6 +102,16 @@ namespace Easymakemoney.ViewModels.Statistiques
 
         public Task InitializeAsync() => _loader.RunOnceAsync(LoadAsync);
 
+        /// <summary>Plage demandée à l'ouverture (« Ma journée » ouvre sur « today ») ; sans effet après le premier chargement.</summary>
+        public void UseInitialRange(string? code)
+        {
+            if (code is not ("today" or "7d" or "month" or "year"))
+                return;
+            _range = code;
+            RangeCode = code;
+            StatsChoice.Select(Ranges, code);
+        }
+
         [RelayCommand]
         private async Task SelectRange(string code)
         {
