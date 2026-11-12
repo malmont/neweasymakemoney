@@ -89,6 +89,12 @@ propriétaire qui en fixent les règles. Les contrats détaillés sont dans les 
   (pistes : Plaid pour le Canada et les États-Unis, Flinks pour le Canada, MX ou Finicity pour les États-Unis ; à choisir sur coût,
   couverture des banques des clients, sécurité et consentement). Elle remplacera seulement le fichier importé : même calcul derrière.
 
+## Décision du propriétaire (12/11/2026) : compte Assistance sur le web seulement
+
+Le compte Assistance (ROLE_SUPPORT) ne sert que dans l'**appli web**, où il n'accède qu'à la partie Assistance, jamais à la gestion.
+L'**appli de gestion mobile reste réservée aux administrateurs** (et au super administrateur) : elle refuse un compte Assistance à la
+connexion (test `MobileRolesTests`).
+
 ## Revue du 12/11/2026 : améliorations et idées retenues par le propriétaire
 
 Améliorations de l'existant :
