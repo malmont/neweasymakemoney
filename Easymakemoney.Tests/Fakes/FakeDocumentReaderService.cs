@@ -13,6 +13,8 @@ public class FakeDocumentReaderService : IDocumentReaderService
     public List<(string Type, string Status)> ListCalls { get; } = new();
     public List<int> RereadCalls { get; } = new();
     public List<int> DeleteCalls { get; } = new();
+    public List<(int Id, object Draft)> SaveDraftCalls { get; } = new();
+    public List<(int Id, int N, UploadFile File)> UploadLinePhotoCalls { get; } = new();
 
     public GestionDocument DocumentResult { get; set; } = new();
     public GestionDocument UploadResult { get; set; } = new();
@@ -27,6 +29,8 @@ public class FakeDocumentReaderService : IDocumentReaderService
     public Exception? ListException { get; set; }
     public Exception? RereadException { get; set; }
     public Exception? DeleteException { get; set; }
+    public Exception? SaveDraftException { get; set; }
+    public Exception? UploadLinePhotoException { get; set; }
 
     public Task<GestionDocument> GetAsync(int id)
     {
@@ -76,6 +80,19 @@ public class FakeDocumentReaderService : IDocumentReaderService
         return Task.CompletedTask;
     }
 
-    public Task SaveDraftAsync(int id, object draft) => throw new NotImplementedException();
-    public Task UploadLinePhotoAsync(int id, int n, UploadFile file) => throw new NotImplementedException();
+    public Task SaveDraftAsync(int id, object draft)
+    {
+        SaveDraftCalls.Add((id, draft));
+        if (SaveDraftException != null)
+            throw SaveDraftException;
+        return Task.CompletedTask;
+    }
+
+    public Task UploadLinePhotoAsync(int id, int n, UploadFile file)
+    {
+        UploadLinePhotoCalls.Add((id, n, file));
+        if (UploadLinePhotoException != null)
+            throw UploadLinePhotoException;
+        return Task.CompletedTask;
+    }
 }
