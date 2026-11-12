@@ -1,3 +1,5 @@
+// Code antérieur aux annotations de nullité : avertissements coupés ici, sans effet sur l'exécution.
+#nullable disable warnings
 
 using Easymakemoney.Services.Dialog;
 using Easymakemoney.UseCase.FraisClientTotalUseCase;
@@ -91,15 +93,15 @@ namespace Easymakemoney.ViewModels.Statistiques
             {
                 case 1:
                     TitreFraisMonth = "Taxes par mois";
-                    FraisTotal = monhthlyTaxesForCurrentYear;
+                    FraisTotal = MonhthlyTaxesForCurrentYear;
                     MonhthlyTaxesChart = ChartGenerator.GenerateChart(MonhthlyTaxesForCurrentYear); 
                     IsmonhthlyTaxesChartVisible = true;
                     break;
 
                 case 2:
                     TitreFraisMonth = "Transporteurs par mois";
-                    FraisTotal = monthlyCarrierForCurrentYear;
-                    MonthlyCarrierChart = ChartGenerator.GenerateChart(fraisTotal); 
+                    FraisTotal = MonthlyCarrierForCurrentYear;
+                    MonthlyCarrierChart = ChartGenerator.GenerateChart(FraisTotal); 
                     IsmonthlyCarrierChartVisible = true;
                     break;
 
@@ -122,8 +124,8 @@ namespace Easymakemoney.ViewModels.Statistiques
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
-            if (Application.Current?.MainPage != null)
-                await Application.Current.MainPage.ShowPopupAsync(popup);
+            if (Application.Current?.Windows.FirstOrDefault()?.Page is { } page)
+                await page.ShowPopupAsync(popup);
         }
 
         private void ApplyAlternateRowColors<T>(List<T> dataList) where T : class

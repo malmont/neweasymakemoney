@@ -28,7 +28,8 @@ public class MainActivity : MauiAppCompatActivity
         if (Window is not { } window)
             return;
 
-        var controller = AndroidX.Core.View.WindowCompat.GetInsetsController(window, window.DecorView);
+        if (AndroidX.Core.View.WindowCompat.GetInsetsController(window, window.DecorView) is not { } controller)
+            return;
         controller.AppearanceLightStatusBars = true;
         controller.AppearanceLightNavigationBars = true;
     }

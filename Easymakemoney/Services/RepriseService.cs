@@ -30,7 +30,7 @@ namespace Easymakemoney.Services
         }
 
         public async Task CancelAsync() =>
-            await _httpService.PostAsyncWithAuth<object>("gestion/reprise/annuler", null);
+            await _httpService.PostAsyncWithAuth<object>("gestion/reprise/annuler", null!);
 
         private static Dictionary<string, object> BaseBody(int months, double? coefficient)
         {

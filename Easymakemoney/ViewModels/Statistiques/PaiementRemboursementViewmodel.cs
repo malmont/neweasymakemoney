@@ -1,3 +1,5 @@
+// Code antérieur aux annotations de nullité : avertissements coupés ici, sans effet sur l'exécution.
+#nullable disable warnings
 
 using Easymakemoney.Services.Dialog;
 using Easymakemoney.UseCase.PaiementRemboursementUseCase;
@@ -114,15 +116,15 @@ namespace Easymakemoney.ViewModels.Statistiques
             {
                 case 1:
                     TransactionLabel = "Paiements";
-                    Transaction = paiementQuotidienSemaine;
-                    PaymentChart = ChartGenerator.GenerateChart(transaction); 
+                    Transaction = PaiementQuotidienSemaine;
+                    PaymentChart = ChartGenerator.GenerateChart(Transaction); 
                     IsPaiementChartVisible = true;
                     break;
 
                 case 2:
                     TransactionLabel = "Remboursement";
                     Transaction = RemboursementQuotidienSemaine;
-                    RefundChart = ChartGenerator.GenerateChart(transaction); 
+                    RefundChart = ChartGenerator.GenerateChart(Transaction); 
                     IsRemboursementChartVisible = true;
                     break;
 
@@ -145,8 +147,8 @@ namespace Easymakemoney.ViewModels.Statistiques
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
-            if (Application.Current?.MainPage != null)
-                await Application.Current.MainPage.ShowPopupAsync(popup);
+            if (Application.Current?.Windows.FirstOrDefault()?.Page is { } page)
+                await page.ShowPopupAsync(popup);
         }
 
         private void ApplyAlternateRowColors<T>(List<T> dataList) where T : class

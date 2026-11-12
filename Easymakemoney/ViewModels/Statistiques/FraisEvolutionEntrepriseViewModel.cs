@@ -1,3 +1,5 @@
+// Code antérieur aux annotations de nullité : avertissements coupés ici, sans effet sur l'exécution.
+#nullable disable warnings
 
 using static Easymakemoney.Models.FraisEvolution;
 using Easymakemoney.Services.Dialog;
@@ -78,10 +80,10 @@ namespace Easymakemoney.ViewModels.Statistiques
             FraisParJour = data.FraisParJour;
             PeriodeFrais = "Frais de l'année, mois par mois";
 
-            if (fraisParMois != null)
-                ApplyAlternateRowColors(fraisParMois);
-            if (fraisParJour != null)
-                ApplyAlternateRowColors(fraisParJour);
+            if (FraisParMois != null)
+                ApplyAlternateRowColors(FraisParMois);
+            if (FraisParJour != null)
+                ApplyAlternateRowColors(FraisParJour);
         }
 
         public void UpdateFraisData(int periodeTypeId)
@@ -93,13 +95,13 @@ namespace Easymakemoney.ViewModels.Statistiques
             {
                 case 1:
                     PeriodeFrais = "Frais de l'année, mois par mois";
-                    AllFraisValue = (fraisParMois ?? new()).Cast<IFraisData>().ToList();
+                    AllFraisValue = (FraisParMois ?? new()).Cast<IFraisData>().ToList();
                     LabelFrais = "frais par mois";
                     IsMonthChartVisible = true;
                     break;
                 case 2:
                     PeriodeFrais = "Frais de la semaine, jour par jour";
-                    AllFraisValue = (fraisParJour ?? new()).Cast<IFraisData>().ToList();
+                    AllFraisValue = (FraisParJour ?? new()).Cast<IFraisData>().ToList();
                     LabelFrais = "frais par Jours";
                     IsYearChartVisible = true;
                     break;
@@ -122,8 +124,8 @@ namespace Easymakemoney.ViewModels.Statistiques
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
-            if (Application.Current?.MainPage != null)
-                await Application.Current.MainPage.ShowPopupAsync(popup);
+            if (Application.Current?.Windows.FirstOrDefault()?.Page is { } page)
+                await page.ShowPopupAsync(popup);
         }
 
         private void ApplyAlternateRowColors<T>(List<T> dataList) where T : class

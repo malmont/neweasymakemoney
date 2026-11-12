@@ -1,3 +1,5 @@
+// Code antérieur aux annotations de nullité : avertissements coupés ici, sans effet sur l'exécution.
+#nullable disable warnings
 public partial class BottomSheetPopupListViewViewModel : ObservableObject
 {
     private Popup _popup;
@@ -34,8 +36,10 @@ public partial class BottomSheetPopupListViewViewModel : ObservableObject
         }
     }
 
-    private async Task OnItemTapped(IListItem item)
+    private async Task OnItemTapped(IListItem? item)
     {
+        if (item is null)
+            return;
         _onItemTappedAction(item);
         await CancelAsync();
     }

@@ -8,6 +8,8 @@ namespace Easymakemoney
 {
     public partial class App : Application
     {
+        private readonly AppShell _shell;
+
         public App(IServiceProvider services)
         {
             InitializeComponent();
@@ -52,7 +54,9 @@ namespace Easymakemoney
             });
 
             // Le Shell est créé ici, après InitializeComponent : son XAML utilise les ressources de l'application.
-            MainPage = services.GetRequiredService<AppShell>();
+            _shell = services.GetRequiredService<AppShell>();
         }
+
+        protected override Window CreateWindow(IActivationState? activationState) => new(_shell);
     }
 }

@@ -27,6 +27,6 @@ namespace Easymakemoney.Models
          // Implémentation de l'interface IListItem
         public int Id => id;
         public string Name => name;
-        public string Photo => image;
+        public string Photo => image!;
     }
 }

@@ -1,3 +1,5 @@
+// Code antérieur aux annotations de nullité : avertissements coupés ici, sans effet sur l'exécution.
+#nullable disable warnings
 namespace Easymakemoney.ViewModels.FormModels
 {
     public class NoteDeFraisForModel : ObservableObject
@@ -44,7 +46,7 @@ namespace Easymakemoney.ViewModels.FormModels
         {
             Date = DateTime.Today; 
             _getListTypeNoteDeFraisUseCase = getListTypeNoteDeFraisUseCase;
-            LoadTypeNoteDeFraisAsync();
+            _ = LoadTypeNoteDeFraisAsync();
         }
         public async Task LoadTypeNoteDeFraisAsync()
         {

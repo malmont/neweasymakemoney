@@ -1,3 +1,5 @@
+// Code antérieur aux annotations de nullité : avertissements coupés ici, sans effet sur l'exécution.
+#nullable disable warnings
 using System.Windows.Input;
 using Easymakemoney.Services.Dialog;
 

@@ -12,14 +12,14 @@ namespace Easymakemoney.Services
         public async Task<bool> CloseCollectionAsync(int collectionId)
         {
             var url = $"dashboard/collection/{collectionId}/close";
-            await _httpService.PostAsyncWithAuth<object>(url, null);
+            await _httpService.PostAsyncWithAuth<object>(url, null!);
             return true;
         }
 
         public async Task<bool> ReopenCollectionAsync(int collectionId)
         {
             var url = $"dashboard/collection/{collectionId}/reopen";
-            await _httpService.PostAsyncWithAuth<object>(url, null);
+            await _httpService.PostAsyncWithAuth<object>(url, null!);
             return true;
         }
     }

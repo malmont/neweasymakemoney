@@ -2,7 +2,7 @@ namespace Easymakemoney.Utilities
 {
     /// <summary>
     /// Page racine de la fenêtre (application à une seule fenêtre) : remplace `Application.Current.MainPage`, obsolète
-    /// depuis .NET 9. Même page : MainPage est posée sur la première fenêtre au démarrage (App.xaml.cs).
+    /// depuis .NET 9. Même page : le Shell est la page de la première fenêtre (App.CreateWindow).
     /// </summary>
     public static class AppPage
     {

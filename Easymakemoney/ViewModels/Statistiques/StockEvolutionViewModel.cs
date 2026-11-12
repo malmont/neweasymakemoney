@@ -1,3 +1,5 @@
+// Code antérieur aux annotations de nullité : avertissements coupés ici, sans effet sur l'exécution.
+#nullable disable warnings
 
 using Easymakemoney.Services.Dialog;
 using Easymakemoney.UseCase.StockEvolutionUseCase;
@@ -105,21 +107,21 @@ namespace Easymakemoney.ViewModels.Statistiques
             switch (periodeTypeId)
             {
                 case 1: // Semaine
-                    AllDataValue = stockMouvementDataValueWeek;
+                    AllDataValue = StockMouvementDataValueWeek;
                     StockCurrentPeriode = "stock semaine";
                     WeekChart = ChartGenerator.GenerateChart(AllDataValue, isMoney: false); 
                     IsWeekChartVisible = true;
                     break;
 
                 case 2: // Mois
-                    AllDataValue = stockMouvementDataValueMonth;
+                    AllDataValue = StockMouvementDataValueMonth;
                     StockCurrentPeriode = "Stock du mois";
                     MonthChart = ChartGenerator.GenerateChart(AllDataValue, isMoney: false); 
                     IsMonthChartVisible = true;
                     break;
 
                 case 3: // Année
-                    AllDataValue = stockMouvementDataValueYear;
+                    AllDataValue = StockMouvementDataValueYear;
                     StockCurrentPeriode = "Stock année";
                     YearChart = ChartGenerator.GenerateChart(AllDataValue, isMoney: false); 
                     IsYearChartVisible = true;
@@ -142,8 +144,8 @@ namespace Easymakemoney.ViewModels.Statistiques
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
-            if (Application.Current?.MainPage != null)
-                await Application.Current.MainPage.ShowPopupAsync(popup);
+            if (Application.Current?.Windows.FirstOrDefault()?.Page is { } page)
+                await page.ShowPopupAsync(popup);
         }
 
         private void ApplyAlternateRowColors(List<IStatistiqueData> dataList)

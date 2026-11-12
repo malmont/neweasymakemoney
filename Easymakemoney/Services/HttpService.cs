@@ -199,7 +199,7 @@ namespace Easymakemoney.Services
             var content = new MultipartFormDataContent();
 
             content.Add(new StringContent(data.name), "name");
-            content.Add(new StringContent(data.description), "description");
+            content.Add(new StringContent(data.description ?? string.Empty), "description");
 
             // Règle 4 bis : prix d'achat envoyé en entier centimes avec CultureInfo.InvariantCulture
             var purchasePriceCents = (long)Math.Round((data.purchasePrice ?? 0) * 100);
