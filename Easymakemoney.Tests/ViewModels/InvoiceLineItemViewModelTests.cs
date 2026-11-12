@@ -193,11 +193,8 @@ public class InvoiceLineItemViewModelTests : IDisposable
         Assert.DoesNotContain("€", vm.QuantityCostText);
         Assert.Contains("10", vm.QuantityCostText);
 
-        // SalePriceText indique « avant taux de change » en USD
-        Assert.Contains("avant taux de change", vm.SalePriceText);
-        Assert.Contains("$", vm.SalePriceText);
-        Assert.DoesNotContain("€", vm.SalePriceText);
-        Assert.Contains("20", vm.SalePriceText); // 10 × 2
+        // Le prix de vente n'est plus calculé par l'appli (aperçu du serveur, lot APERÇU-FACT)
+        Assert.Equal("Prix de vente : calculé par le serveur", vm.SalePriceText);
     }
 
     [Fact]
@@ -213,10 +210,9 @@ public class InvoiceLineItemViewModelTests : IDisposable
         // Taux 0.90 USD -> EUR : 1000 * 2 * 0.90 = 1800 centimes (18 €)
         vm.SetCurrency("USD", "EUR", exchangeRate: 0.90);
 
-        Assert.Contains("€", vm.SalePriceText);
-        Assert.DoesNotContain("$", vm.SalePriceText);
-        Assert.DoesNotContain("avant taux de change", vm.SalePriceText);
-        Assert.Contains("18", vm.SalePriceText);
-        Assert.Contains("coût ×", vm.SalePriceText);
+        // Le prix vient du serveur ; sans aperçu reçu, l'appli n'en calcule aucun
+        Assert.Equal("Prix de vente : calculé par le serveur", vm.SalePriceText);
+        vm.ServerPriceText = "Prix de vente : 18,00 €";
+        Assert.Equal("Prix de vente : 18,00 €", vm.SalePriceText);
     }
 }

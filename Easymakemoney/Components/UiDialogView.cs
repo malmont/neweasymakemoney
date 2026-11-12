@@ -150,7 +150,8 @@ public sealed class UiDialogView : Grid
 
         if (kind == UiDialogKind.Prompt)
         {
-            _entry = new Entry
+            // Champ sans bordure native : la bordure arrondie est celle de la carte (comme les formulaires de l'appli).
+            _entry = new Easymakemoney.Handlers.BorderlessEntry
             {
                 Text = input?.InitialValue,
                 Placeholder = input?.Placeholder,

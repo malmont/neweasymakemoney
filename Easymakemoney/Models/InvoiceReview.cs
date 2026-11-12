@@ -52,13 +52,6 @@ namespace Easymakemoney.Models
         public static string FormatNumber(double value, CultureInfo? culture = null) =>
             value.ToString("0.######", culture ?? CultureInfo.CurrentCulture);
 
-        /// <summary>Prix de vente d'un article créé : coût × coefficient, puis × taux s'il est donné.</summary>
-        public static long SalePriceCents(long unitCostCents, double coefficient, double? exchangeRate = null)
-        {
-            var price = unitCostCents * (decimal)coefficient * (decimal)(exchangeRate ?? 1.0);
-            return (long)Math.Round(price, MidpointRounding.AwayFromZero);
-        }
-
         public static bool SameCurrency(string? a, string? b) =>
             string.IsNullOrWhiteSpace(a) || string.IsNullOrWhiteSpace(b)
             || string.Equals(a.Trim(), b.Trim(), StringComparison.OrdinalIgnoreCase);

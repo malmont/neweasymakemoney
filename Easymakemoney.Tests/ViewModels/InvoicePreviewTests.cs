@@ -111,7 +111,7 @@ public class InvoicePreviewTests : IDisposable
     }
 
     [Fact]
-    public async Task RouteMissing_KeepsLocalEstimate_AndStopsAsking()
+    public async Task RouteMissing_NoLocalCalculation_AndStopsAsking()
     {
         var (vm, docs) = Create(); // le faux répond 404 par défaut
 
@@ -120,6 +120,6 @@ public class InvoicePreviewTests : IDisposable
 
         Assert.Single(docs.PreviewCalls);
         Assert.Equal("Prix de vente : inchangé", vm.Lines.Single().SalePriceText);
-        Assert.NotEqual("À compléter", vm.LinesTotalText);
+        Assert.Equal("Calculé par le serveur", vm.LinesTotalText);
     }
 }

@@ -47,7 +47,7 @@ namespace Easymakemoney.ViewModels.Lists
         /// <summary>Choix dans une liste (variante reçue) ; remplaçable dans les tests.</summary>
         public Func<string, string[], Task<string?>> ChooseAsync { get; set; }
 
-        /// <summary>Faux tant que la route d'aperçu répond 404 (pas encore en ligne) : l'estimation locale reste alors affichée.</summary>
+        /// <summary>Faux si la route d'aperçu répond 404 (serveur trop ancien) : les prix et le total restent alors « calculés par le serveur ».</summary>
         private bool _previewAvailable = true;
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace Easymakemoney.ViewModels.Lists
             }
             catch (ApiException e) when (e.StatusCode == HttpStatusCode.NotFound && e.ApiError.Code is not ("DOCUMENT_NOT_FOUND"))
             {
-                // Route pas encore en ligne : on garde l'estimation locale, sans redemander à chaque modification.
+                // Serveur sans aperçu : on ne redemande pas à chaque modification.
                 _previewAvailable = false;
                 foreach (var line in Lines)
                     line.ServerPriceText = null;
@@ -385,21 +385,6 @@ namespace Easymakemoney.ViewModels.Lists
             return lines;
         }
 
-        /// <summary>Estimation locale du total des lignes, utilisée seulement tant que l'aperçu du serveur n'est pas en ligne.</summary>
-        private static string LocalLinesTotalText(InvoiceReviewDraft draft, string? currency)
-        {
-            long total = 0;
-            foreach (var line in draft.Lines)
-            {
-                var quantity = InvoiceReview.ParseQuantity(line.Quantity);
-                var cost = InvoiceReview.ParseCents(line.UnitCost);
-                if (quantity == null || cost == null)
-                    return "À compléter";
-                total += quantity.Value * cost.Value;
-            }
-            return Format(total, currency);
-        }
-
         private static string Format(long? cents, string? currency) =>
             cents.HasValue ? SiteCurrency.FormatCents(cents.Value, CultureInfo.CurrentCulture, currency) : "—";
 
@@ -477,9 +462,9 @@ namespace Easymakemoney.ViewModels.Lists
                     : null;
             }
 
-            // Total de vos lignes : celui du serveur (aperçu) ; l'estimation locale seulement tant que la route n'existe pas.
+            // Total de vos lignes : celui du serveur (aperçu), jamais recalculé par l'appli.
             if (!_previewAvailable)
-                LinesTotalText = LocalLinesTotalText(draft, document);
+                LinesTotalText = "Calculé par le serveur";
 
             // Compteur et validation
             var validated = Lines.Count(l => l.IsValidated);

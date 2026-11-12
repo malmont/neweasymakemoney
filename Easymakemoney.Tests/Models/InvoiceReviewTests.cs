@@ -211,12 +211,6 @@ public class InvoiceReviewTests
     public void ParseQuantity_WholeNumberFromOne(string text, int? expected) =>
         Assert.Equal(expected, InvoiceReview.ParseQuantity(text));
 
-    [Fact]
-    public void SalePrice_CostTimesCoefficientThenRate()
-    {
-        Assert.Equal(2500, InvoiceReview.SalePriceCents(1250, 2));
-        Assert.Equal(3375, InvoiceReview.SalePriceCents(1250, 2, 1.35));
-    }
 
     // ----- corps de « confirmer » -----
 

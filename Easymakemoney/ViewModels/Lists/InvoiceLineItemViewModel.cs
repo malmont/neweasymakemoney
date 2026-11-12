@@ -143,20 +143,8 @@ namespace Easymakemoney.ViewModels.Lists
             {
                 if (ServerPriceText != null)
                     return ServerPriceText;
-                if (IsExisting)
-                    return "Prix de vente : inchangé";
-                var cost = InvoiceReview.ParseCents(UnitCostText);
-                if (cost == null)
-                    return "Prix de vente : à calculer";
-                var coefficient = InvoiceReview.ParsePositive(CoefficientText) ?? InvoiceReview.DefaultCoefficient;
-                var foreign = !InvoiceReview.SameCurrency(_documentCurrency, _siteCurrency);
-                if (foreign && _exchangeRate == null)
-                {
-                    var inDocument = InvoiceReview.SalePriceCents(cost.Value, coefficient);
-                    return $"Prix de vente : {SiteCurrency.FormatCents(inDocument, CultureInfo.CurrentCulture, _documentCurrency)} (avant taux de change)";
-                }
-                var price = InvoiceReview.SalePriceCents(cost.Value, coefficient, foreign ? _exchangeRate : null);
-                return $"Prix de vente : {SiteCurrency.FormatCents(price, CultureInfo.CurrentCulture, foreign ? _siteCurrency : _documentCurrency)} (coût × {InvoiceReview.FormatNumber(coefficient)})";
+                // Le prix de vente d'un article créé est calculé par le serveur (aperçu APERÇU-FACT), jamais par l'appli.
+                return IsExisting ? "Prix de vente : inchangé" : "Prix de vente : calculé par le serveur";
             }
         }
 
