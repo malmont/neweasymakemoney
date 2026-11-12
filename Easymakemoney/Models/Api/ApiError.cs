@@ -205,6 +205,7 @@ public class ApiError
             "TRIP_NOT_FOUND" => "Ce voyage n'existe plus.",
             "BUDGET_SOURCE_NOT_FOUND" => "Aucun budget à reprendre pour la même période l'an dernier.",
             "BALANCE_DATE_TAKEN" => "Un solde est déjà saisi à cette date.",
+            "PRODUCT_IN_USE" => "Cet article a des ventes, des achats ou des mouvements de stock : retirez-le de la vente au lieu de le supprimer.",
             _ => (int)statusCode switch
             {
                 429 => $"Trop de tentatives. Veuillez patienter {retryAfterSeconds ?? 60} secondes.",

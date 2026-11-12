@@ -24,6 +24,15 @@ public class NoteDeFraisTitleTests
     }
 
     [Fact]
+    public void ProductInUse_HasFrenchFallback()
+    {
+        // Lot backend ART-SUPPR : refus de supprimer un article qui a une histoire, au lieu d'une perte silencieuse des achats.
+        var message = Easymakemoney.Models.Api.ApiError.GetFallbackMessage("PRODUCT_IN_USE", System.Net.HttpStatusCode.Conflict, null);
+
+        Assert.StartsWith("Cet article a des ventes", message);
+    }
+
+    [Fact]
     public void DisplayTitle_IsNeverSent()
     {
         var json = JsonConvert.SerializeObject(new NoteDeFrais { name = "a", description = "b", date = "2026-11-10" });

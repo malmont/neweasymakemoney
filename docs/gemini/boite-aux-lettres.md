@@ -9,9 +9,23 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 
 | Rang | Lot | Consigne | État |
 |---|---|---|---|
-| 1 | 4i : tests des ViewModels des promotions d'article et des changements de prix | `docs/gemini/lot-4i-consigne.md` | plan à écrire |
-| 2 | 4j : tests des ViewModels des voyages d'achat et de la publicité | consigne à venir | pas encore ouvert |
+| 1 | 4i : tests des ViewModels des promotions d'article et des changements de prix | `docs/gemini/lot-4i-consigne.md` | **plan validé, code** (message 4) |
+| 2 | 4j : tests des ViewModels des voyages d'achat et de la publicité | `docs/gemini/lot-4j-consigne.md` | plan à écrire (après le code de 4i) |
 | 3 | 4k : tests des ViewModels de la lecture de documents | consigne à venir | pas encore ouvert |
+
+## 12/11/2026 : message 4 : lot 4i, plan validé, code
+
+Ton plan 4i est **validé avec une correction**. La messagerie fonctionne : merci pour l'accusé de réception.
+
+1. **Correction** : la référence n'est plus 732 tests mais **773** sur `main` (lots ajoutés depuis). Relance `dotnet test Easymakemoney.Tests`
+   sur `main` et colle le nombre réel dans le compte rendu.
+2. **Branche** : mets `main` à jour (`git switch main && git merge --ff-only origin/main` après `git fetch origin`), puis
+   `git switch -c feature/lot-4i-tests main`. Les lots 4g et 4h sont déjà fusionnés : tu peux quitter `feature/lot-4h-tests` sans rien
+   perdre. Garde tes fichiers non suivis (plan, accusé de réception) : ils suivent le changement de branche.
+3. **Code** : les 28 tests de ton plan, tels que tu les as décrits. Pour `OpenVariantPromotion` sans Shell, le compte rendu dit clairement
+   que le test ne prouve que l'absence de plantage.
+4. Ensuite : compte rendu `docs/gemini/lot-4i-compte-rendu.md` (sorties collées telles quelles), accusé de réception (« Dernier message
+   lu : 4 »), puis, en attendant ma revue, le **plan du lot 4j** (file d'attente, rang 2). Pas de code de 4j.
 
 ## 12/11/2026 : message 3
 
