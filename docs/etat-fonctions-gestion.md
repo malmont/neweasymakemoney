@@ -141,6 +141,18 @@ nouveau client déroulé de bout en bout.
 Toujours « anomalie à vérifier », jamais une accusation. Questions ouvertes : portiques antivol déjà en place ? nombre d'articles par
 boutique ?
 
+## Campagne d'essais avant le premier client
+
+Décision du propriétaire (12/11/2026) : tout lot validé part en production sans attendre ; les essais réels se font en une campagne
+avant de mettre un premier client en production, le propriétaire se connectant lui-même. Liste à tenir à jour :
+- Caisse (posflutter, main 92ca9db), en lecture seule : LOC3 et VAR (catalogue, panier, récapitulatif, ticket avec promotions de
+  location et par variante) ; PAYS-1 et PAYS-1c (ancien reçu avec taux depuis ratePpm, pack v4,v5 → pos-offline-v5) ; PAYS-1b
+  (vente annulée « ANNULÉE le … — avoir n° … ») ; REIMP (affichage purpose=display, aucun POST /reprint, 5 reçus au plus, contrôle du
+  compteur côté serveur).
+- Appli mobile de gestion : séance sur le téléphone (variantes, « non activée », « Préparer ma gestion », Ma journée, fenêtres de
+  l'appli, hors connexion des statistiques et de la trésorerie, formulaires à liaisons compilées).
+- Web : essais déjà faits lot par lot sur demo ; revue d'ensemble à prévoir.
+
 ## Lots en cours ou à venir
 
 | Lot | Contenu | État |
