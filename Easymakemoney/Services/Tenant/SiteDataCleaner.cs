@@ -9,18 +9,24 @@ public class SiteDataCleaner : ISiteDataCleaner
 {
     private readonly ITenantStore _tenantStore;
     private readonly ISessionService _sessionService;
+    private readonly Easymakemoney.Services.Offline.IResponseCache _responseCache;
 
-    public SiteDataCleaner(ITenantStore tenantStore, ISessionService sessionService)
+    public SiteDataCleaner(ITenantStore tenantStore, ISessionService sessionService,
+        Easymakemoney.Services.Offline.IResponseCache? responseCache = null)
     {
         _tenantStore = tenantStore;
         _sessionService = sessionService;
+        _responseCache = responseCache ?? new Easymakemoney.Services.Offline.FileResponseCache();
     }
 
-    public async Task ClearAllAsync()
+    /// <summary>
+    /// Stockage de l'appareil : SecureStorage (courriel mémorisé compris, règle N6) et préférences (copie de l'Accueil comprise), puis la
+    /// marque de premier lancement remise. Point d'entrée des tests : ces API de l'appareil n'existent pas hors de l'application.
+    /// </summary>
+    public Action ClearDeviceStorage { get; set; } = () =>
     {
         try
         {
-            // Règle N6 : ClearAllAsync (changement de site) efface aussi le courriel mémorisé
             SecureStorage.Default.Remove(SessionKeys.LastLoginEmailKey);
             SecureStorage.Default.RemoveAll();
         }
@@ -30,9 +36,14 @@ public class SiteDataCleaner : ISiteDataCleaner
         }
 
         Preferences.Default.Clear();
-        new Easymakemoney.Services.Offline.FileResponseCache().Clear();
-        Easymakemoney.Services.Offline.OfflineState.Online();
         Preferences.Default.Set(TenantStore.FirstRunKey, true);
+    };
+
+    public async Task ClearAllAsync()
+    {
+        ClearDeviceStorage();
+        _responseCache.Clear();
+        Easymakemoney.Services.Offline.OfflineState.Online();
 
         await _sessionService.ClearSessionAsync();
         _tenantStore.ClearMemory();

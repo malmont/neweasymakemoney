@@ -23,7 +23,8 @@ namespace Easymakemoney.ViewModels.Startup
             ISiteDataCleaner siteDataCleaner,
             ISessionService sessionService,
             IJwtService jwtService,
-            ITokenRefresher tokenRefresher)
+            ITokenRefresher tokenRefresher,
+            bool autoStart = true)
         {
             _tenantStore = tenantStore;
             _siteService = siteService;
@@ -32,10 +33,26 @@ namespace Easymakemoney.ViewModels.Startup
             _jwtService = jwtService;
             _tokenRefresher = tokenRefresher;
 
-            InitStartup();
+            // Les tests passent autoStart: false, règlent les délégués ci-dessous, puis attendent RunStartupAsync().
+            StartupTask = autoStart ? RunStartupAsync() : Task.CompletedTask;
         }
 
-        private async void InitStartup()
+        /// <summary>Démarrage lancé par le constructeur (null-safe : jamais d'exception non attrapée).</summary>
+        public Task StartupTask { get; }
+
+        /// <summary>Navigation (point d'entrée des tests).</summary>
+        public Func<string, Task> NavigateAsync { get; set; } = route => Shell.Current?.GoToAsync(route) ?? Task.CompletedTask;
+
+        /// <summary>Message d'information (point d'entrée des tests).</summary>
+        public Func<string, string, Task> ShowInfoAsync { get; set; } = (title, message) => Easymakemoney.Utilities.AppDialogs.InfoAsync(title, message);
+
+        /// <summary>Passage sur le fil principal (point d'entrée des tests : exécution directe).</summary>
+        public Func<Func<Task>, Task> RunOnMainThreadAsync { get; set; } = action => MainThread.InvokeOnMainThreadAsync(action);
+
+        /// <summary>Lancement de la revérification du site en arrière-plan (point d'entrée des tests : rien, ou exécution attendue).</summary>
+        public Action<Func<Task>> StartInBackground { get; set; } = work => _ = Task.Run(work);
+
+        public async Task RunStartupAsync()
         {
             try
             {
@@ -51,7 +68,7 @@ namespace Easymakemoney.ViewModels.Startup
                 }
 
                 // Règle 6.3 & L9 : revérification en arrière-plan sans retarder l'affichage
-                _ = Task.Run(async () => await RecheckTenantInBackgroundAsync(tenant));
+                StartInBackground(() => RecheckTenantInBackgroundAsync(tenant));
             }
             catch (Exception ex)
             {
@@ -64,7 +81,7 @@ namespace Easymakemoney.ViewModels.Startup
             await CheckSessionAndNavigateAsync();
         }
 
-        private async Task RecheckTenantInBackgroundAsync(TenantContext tenant)
+        public async Task RecheckTenantInBackgroundAsync(TenantContext tenant)
         {
             try
             {
@@ -92,10 +109,10 @@ namespace Easymakemoney.ViewModels.Startup
                     // 404 : effacement complet et retour à l'activation sur le fil principal (L7 & L9)
                     await _siteDataCleaner.ClearAllAsync();
 
-                    await MainThread.InvokeOnMainThreadAsync(async () =>
+                    await RunOnMainThreadAsync(async () =>
                     {
-                        await Easymakemoney.Utilities.AppDialogs.InfoAsync("Information", "Ce site n'est plus disponible.");
-                        await Shell.Current.GoToAsync("//ActivationPage");
+                        await ShowInfoAsync("Information", "Ce site n'est plus disponible.");
+                        await NavigateAsync("//ActivationPage");
                     });
                 }
                 // Réseau, 429 ou 5xx : on garde le site sans message
@@ -179,12 +196,5 @@ namespace Easymakemoney.ViewModels.Startup
             }
         }
 
-        private static async Task NavigateAsync(string route)
-        {
-            if (Shell.Current is { } shell)
-            {
-                await shell.GoToAsync(route);
-            }
-        }
     }
 }

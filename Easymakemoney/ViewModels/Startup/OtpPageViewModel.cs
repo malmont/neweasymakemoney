@@ -8,6 +8,11 @@ namespace Easymakemoney.ViewModels.Startup;
 
 public partial class OtpPageViewModel : BaseViewModel
 {
+        /// <summary>Navigation (point d'entrée des tests).</summary>
+        public Func<string, Task> NavigateAsync { get; set; } = route => Shell.Current?.GoToAsync(route) ?? Task.CompletedTask;
+        /// <summary>Message d'information (point d'entrée des tests).</summary>
+        public Func<string, string, Task> ShowInfoAsync { get; set; } = (title, message) => Easymakemoney.Utilities.AppDialogs.InfoAsync(title, message);
+
     private readonly LoginUseCase _loginUseCase;
     private readonly IPendingLoginStore _pendingLoginStore;
 
@@ -43,7 +48,7 @@ public partial class OtpPageViewModel : BaseViewModel
         else
         {
             // Aucun identifiant en attente ou expiré depuis plus de 10 minutes
-            if (Shell.Current != null) await Shell.Current.GoToAsync("//LoginPage");
+            await NavigateAsync("//LoginPage");
         }
     }
 
@@ -59,7 +64,7 @@ public partial class OtpPageViewModel : BaseViewModel
         {
             if (!_pendingLoginStore.TryGet(out var email, out _))
             {
-                if (Shell.Current != null) await Shell.Current.GoToAsync("//LoginPage");
+                await NavigateAsync("//LoginPage");
                 return;
             }
 
@@ -75,7 +80,7 @@ public partial class OtpPageViewModel : BaseViewModel
                     AppShell.Current.FlyoutHeader = new FlyoutHeaderControl(result.User);
                 }
 
-                if (Shell.Current != null) await Shell.Current.GoToAsync("//DashboardPage");
+                await NavigateAsync("//DashboardPage");
             }
             else
             {
@@ -105,7 +110,7 @@ public partial class OtpPageViewModel : BaseViewModel
         {
             if (!_pendingLoginStore.TryGet(out var email, out var password))
             {
-                if (Shell.Current != null) await Shell.Current.GoToAsync("//LoginPage");
+                await NavigateAsync("//LoginPage");
                 return;
             }
 
@@ -117,7 +122,7 @@ public partial class OtpPageViewModel : BaseViewModel
                 ErrorMessage = null;
                 // Renouveler l'heure de stockage
                 _pendingLoginStore.Set(email, password);
-                await Easymakemoney.Utilities.AppDialogs.InfoAsync("Code envoyé", $"Un nouveau code a été envoyé à l'adresse {email}.");
+                await ShowInfoAsync("Code envoyé", $"Un nouveau code a été envoyé à l'adresse {email}.");
             }
             else if (result.IsSuccess)
             {
@@ -126,7 +131,7 @@ public partial class OtpPageViewModel : BaseViewModel
                 {
                     AppShell.Current.FlyoutHeader = new FlyoutHeaderControl(result.User);
                 }
-                if (Shell.Current != null) await Shell.Current.GoToAsync("//DashboardPage");
+                await NavigateAsync("//DashboardPage");
             }
             else
             {
@@ -153,7 +158,7 @@ public partial class OtpPageViewModel : BaseViewModel
         OtpCode = string.Empty;
         ErrorMessage = null;
 
-        if (Shell.Current != null) await Shell.Current.GoToAsync("//LoginPage");
+        await NavigateAsync("//LoginPage");
     }
 }
 

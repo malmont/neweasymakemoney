@@ -9,13 +9,16 @@ public class PendingLoginStore : IPendingLoginStore
     private string? _password;
     private DateTime? _storedAt;
 
+    /// <summary>Horloge (point d'entrée des tests : expiration des 10 minutes sans attente réelle).</summary>
+    public Func<DateTime> UtcNow { get; set; } = () => DateTime.UtcNow;
+
     public void Set(string email, string password)
     {
         lock (_lock)
         {
             _email = email;
             _password = password;
-            _storedAt = DateTime.UtcNow;
+            _storedAt = UtcNow();
         }
     }
 
@@ -25,7 +28,7 @@ public class PendingLoginStore : IPendingLoginStore
         {
             if (_email != null && _password != null && _storedAt.HasValue)
             {
-                if (DateTime.UtcNow - _storedAt.Value < ExpirationTime)
+                if (UtcNow() - _storedAt.Value < ExpirationTime)
                 {
                     email = _email;
                     password = _password;

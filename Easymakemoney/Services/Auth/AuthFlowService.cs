@@ -26,6 +26,16 @@ public class AuthFlowService : IAuthFlowService
         _pendingLoginStore = pendingLoginStore;
     }
 
+    /// <summary>Passage sur le fil principal (point d'entrée des tests : exécution directe).</summary>
+    public Func<Func<Task>, Task> RunOnMainThreadAsync { get; set; } = action => MainThread.InvokeOnMainThreadAsync(action);
+
+    /// <summary>Confirmation : titre, message, accepter, annuler (point d'entrée des tests).</summary>
+    public Func<string, string, string, string, Task<bool>> ConfirmAsync { get; set; } =
+        (title, message, accept, cancel) => Easymakemoney.Utilities.AppDialogs.ConfirmAsync(title, message, accept, cancel);
+
+    /// <summary>Navigation (point d'entrée des tests).</summary>
+    public Func<string, Task> NavigateAsync { get; set; } = route => Shell.Current?.GoToAsync(route) ?? Task.CompletedTask;
+
     public async Task LogoutAsync()
     {
         try
@@ -45,7 +55,7 @@ public class AuthFlowService : IAuthFlowService
         await _sessionService.ClearSessionAsync();
         _pendingLoginStore.Clear();
 
-        await MainThread.InvokeOnMainThreadAsync(async () =>
+        await RunOnMainThreadAsync(async () =>
         {
             try
             {
@@ -53,7 +63,7 @@ public class AuthFlowService : IAuthFlowService
                 {
                     AppShell.Current.FlyoutHeader = null;
                 }
-                if (Shell.Current != null) await Shell.Current.GoToAsync("//LoginPage");
+                await NavigateAsync("//LoginPage");
             }
             catch (Exception ex)
             {
@@ -65,9 +75,9 @@ public class AuthFlowService : IAuthFlowService
     public async Task<bool> PromptAndChangeSiteAsync()
     {
         bool confirm = false;
-        await MainThread.InvokeOnMainThreadAsync(async () =>
+        await RunOnMainThreadAsync(async () =>
         {
-            confirm = await Easymakemoney.Utilities.AppDialogs.ConfirmAsync(
+            confirm = await ConfirmAsync(
                 "Changer de site",
                 "Changer de site ? Vous serez déconnecté et les données de ce site seront effacées de l'appareil.",
                 "Changer de site",
@@ -96,7 +106,7 @@ public class AuthFlowService : IAuthFlowService
         await _siteDataCleaner.ClearAllAsync();
         _pendingLoginStore.Clear();
 
-        await MainThread.InvokeOnMainThreadAsync(async () =>
+        await RunOnMainThreadAsync(async () =>
         {
             try
             {
@@ -104,7 +114,7 @@ public class AuthFlowService : IAuthFlowService
                 {
                     AppShell.Current.FlyoutHeader = null;
                 }
-                if (Shell.Current != null) await Shell.Current.GoToAsync("//ActivationPage");
+                await NavigateAsync("//ActivationPage");
             }
             catch (Exception ex)
             {

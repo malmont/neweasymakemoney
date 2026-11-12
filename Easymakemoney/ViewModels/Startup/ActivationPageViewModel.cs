@@ -10,6 +10,9 @@ namespace Easymakemoney.ViewModels.Startup;
 
 public partial class ActivationPageViewModel : BaseViewModel
 {
+        /// <summary>Navigation (point d'entrée des tests).</summary>
+        public Func<string, Task> NavigateAsync { get; set; } = route => Shell.Current?.GoToAsync(route) ?? Task.CompletedTask;
+
     private readonly ISiteService _siteService;
     private readonly ITenantStore _tenantStore;
     private readonly ISiteDataCleaner _siteDataCleaner;
@@ -120,7 +123,7 @@ public partial class ActivationPageViewModel : BaseViewModel
             await _tenantStore.SaveTenantAsync(CandidateTenant);
             IsConfirming = false;
 
-            await Shell.Current.GoToAsync("//LoginPage");
+            await NavigateAsync("//LoginPage");
         }
         catch (Exception ex)
         {

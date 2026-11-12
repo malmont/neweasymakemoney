@@ -8,6 +8,9 @@ namespace Easymakemoney.ViewModels.Startup
 {
     public partial class LoginPageViewModel : BaseViewModel
     {
+        /// <summary>Navigation (point d'entrée des tests).</summary>
+        public Func<string, Task> NavigateAsync { get; set; } = route => Shell.Current?.GoToAsync(route) ?? Task.CompletedTask;
+
         [ObservableProperty]
         private string _email = string.Empty;
 
@@ -68,7 +71,7 @@ namespace Easymakemoney.ViewModels.Startup
                 {
                     _pendingLoginStore.Set(Email, Password);
                     Password = string.Empty;
-                    if (Shell.Current != null) await Shell.Current.GoToAsync("//OtpPage");
+                    await NavigateAsync("//OtpPage");
                 }
                 else if (result.IsSuccess)
                 {
@@ -78,7 +81,7 @@ namespace Easymakemoney.ViewModels.Startup
                     {
                         AppShell.Current.FlyoutHeader = new FlyoutHeaderControl(result.User);
                     }
-                    if (Shell.Current != null) await Shell.Current.GoToAsync("//DashboardPage");
+                    await NavigateAsync("//DashboardPage");
                 }
                 else
                 {
