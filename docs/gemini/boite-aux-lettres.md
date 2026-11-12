@@ -15,8 +15,37 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 | 4 | 4l : tests du ViewModel de vérification d'une facture fournisseur | `docs/gemini/lot-4l-consigne.md` | **terminé, fusionné** (dfaae5e) |
 | 5 | 4m : tests des ViewModels du budget, du simulateur et de la préparation d'une période | `docs/gemini/lot-4m-consigne.md` | **terminé, fusionné** (53ae002) |
 | 6 | 4n : tests des ViewModels des listes de gestion | `docs/gemini/lot-4n-consigne.md` | **terminé, fusionné** (1139ae9) |
-| 7 | 4o : tests des ViewModels du démarrage et de la connexion | `docs/gemini/lot-4o-consigne.md` | **à faire : plan maintenant** |
+| 7 | 4o : tests des ViewModels du démarrage et de la connexion | `docs/gemini/lot-4o-consigne.md` | **plan validé : code** |
 | 8 | 4p : tests des ViewModels de gestion restants (stock bas, reprise, variantes, écran d'une période) | `docs/gemini/lot-4p-consigne.md` | après la fusion de 4o |
+
+## 12/11/2026 : message 17 : lot 4o, plan validé avec mes réponses, code
+
+Ton plan 4o est **validé**, les 25 tests tels que décrits. Très bonne lecture du code, et merci d'avoir trouvé `Shell.Current.GoToAsync`
+sans garde dans l'activation.
+
+**Réponses : tous les points d'entrée sont ajoutés dans l'application sur `main`** (5033836) :
+1. `LoadingPageViewModel` : paramètre `autoStart` (dernier du constructeur, `true` par défaut). Dans les tests : `autoStart: false`,
+   règle les délégués, puis `await RunStartupAsync()`. Délégués : `NavigateAsync`, `ShowInfoAsync`, `RunOnMainThreadAsync` (exécute
+   l'action directement dans les tests), `StartInBackground` (mets `work => { }` pour ne pas lancer la revérification, ou exécute-la et
+   attends-la). `RecheckTenantInBackgroundAsync(tenant)` est public : tu peux tester le 404 `TENANT_NOT_FOUND` à part.
+2. `ActivationPageViewModel`, `LoginPageViewModel`, `OtpPageViewModel` : `NavigateAsync` (le cas sans Shell ne lève plus d'erreur).
+   `OtpPageViewModel.ShowInfoAsync` pour « Code envoyé ».
+3. `PendingLoginStore.UtcNow` (`Func<DateTime>`) : avance l'horloge de 11 minutes pour l'expiration, sans attente.
+4. `AuthFlowService` : `RunOnMainThreadAsync`, `ConfirmAsync` (titre, message, accepter, annuler), `NavigateAsync`.
+5. `SiteDataCleaner` : 3e paramètre `IResponseCache? responseCache` (passe ton faux), et `ClearDeviceStorage` (`Action`) remplace
+   SecureStorage et Preferences : mets un faux qui note l'appel. `FlyoutHeader` reste lié à `AppShell.Current`, nul dans les tests :
+   rien à faire.
+
+**Précisions :**
+- Le test 25 (`SiteDataCleaner` réel) : vérifie que le faux `IResponseCache` est vidé, que `ClearDeviceStorage` est appelé une fois et
+  que `OfflineState.ServedAt` revient à null. `OfflineState` est statique : regroupe ses tests dans une même classe et remets-le à
+  `Online()` à la fin.
+- Référence : **1 034 tests** sur `main` (M-EDIT est arrivé entre-temps), Android **12 avertissements**.
+- Aucun vrai jeton : construis les JWT de test comme le font déjà `AuthHandlerTests` ou `MobileRolesTests`.
+
+**Branche** : `git fetch origin`, `git switch main && git merge --ff-only origin/main`, puis `git switch -c feature/lot-4o-tests main`.
+**Ensuite** : compte rendu `docs/gemini/lot-4o-compte-rendu.md` **en dernier**, accusé de réception (« Dernier message lu : 17 »), puis
+attends ma revue. Pas de plan 4p avant un message qui l'ouvre.
 
 ## 12/11/2026 : message 16 : reprise en mode semi-autonome ; lot 4o, plan
 
