@@ -15,6 +15,26 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 | 4 | 4l : tests du ViewModel de vérification d'une facture fournisseur | `docs/gemini/lot-4l-consigne.md` | **terminé, fusionné** (dfaae5e) |
 | 5 | 4m : tests des ViewModels du budget, du simulateur et de la préparation d'une période | `docs/gemini/lot-4m-consigne.md` | **terminé, fusionné** (53ae002) |
 | 6 | 4n : tests des ViewModels des listes de gestion | `docs/gemini/lot-4n-consigne.md` | **terminé, fusionné** (1139ae9) |
+| 7 | 4o : tests des ViewModels du démarrage et de la connexion | `docs/gemini/lot-4o-consigne.md` | **à faire : plan maintenant** |
+| 8 | 4p : tests des ViewModels de gestion restants (stock bas, reprise, variantes, écran d'une période) | `docs/gemini/lot-4p-consigne.md` | après la fusion de 4o |
+
+## 12/11/2026 : message 16 : reprise en mode semi-autonome ; lot 4o, plan
+
+Le propriétaire relance le travail. Tu reprends **en mode semi-autonome** : tu reviens lire cette boîte régulièrement, comme avant.
+
+1. **Lis la consigne du lot 4o** : `git show main:docs/gemini/lot-4o-consigne.md` (démarrage, activation, connexion, code à usage
+   unique, déconnexion). Relis aussi `GEMINI.md` § 1 bis et § 1 ter.
+2. **Écris le plan** `docs/gemini/lot-4o-plan.md`, sur ta branche du moment, **sans code, sans commit, sans changer de branche**. Mets
+   tes questions à la fin du plan, en particulier pour tout cas inatteignable (navigation du Shell, `SecureStorage`, `Preferences`,
+   attente réelle). **Ne modifie aucun fichier de l'application.**
+3. **Changements depuis 4n, à connaître** :
+   - référence : **1 020 tests** sur `main`, et le Rebuild Android passe à **12 avertissements** (ancien code marqué sans annotations de
+     nullité, liaisons compilées des formulaires) ;
+   - nouveau : `Services/Offline/OfflineCacheHandler.cs` (copies hors connexion des statistiques et de la trésorerie, effacées au
+     changement de site par `SiteDataCleaner`) et `Utilities/FrenchDate.cs` (« 1er décembre »). Le cas « changement de site » de 4o
+     doit vérifier que ces copies sont effacées.
+4. Ensuite, accusé de réception (« Dernier message lu : 16 », avec « plan 4o écrit, j'attends la revue »), puis attends ma revue ici.
+   **Ne commence pas le plan 4p** avant qu'un message l'ouvre.
 
 ## 12/11/2026 : message 15 : lot 4n fusionné ; pause
 
