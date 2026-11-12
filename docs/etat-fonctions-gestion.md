@@ -148,7 +148,8 @@ avant de mettre un premier client en production, le propriétaire se connectant 
 - Caisse (posflutter, main 92ca9db), en lecture seule : LOC3 et VAR (catalogue, panier, récapitulatif, ticket avec promotions de
   location et par variante) ; PAYS-1 et PAYS-1c (ancien reçu avec taux depuis ratePpm, pack v4,v5 → pos-offline-v5) ; PAYS-1b
   (vente annulée « ANNULÉE le … — avoir n° … ») ; REIMP (affichage purpose=display, aucun POST /reprint, 5 reçus au plus, contrôle du
-  compteur côté serveur).
+  compteur côté serveur) ; menu latéral en paysage : libellés entiers à l'œil avec la vraie police (« Statistiques des caissiers »,
+  « Mon code PIN », « Tiroir-caisse »).
 - Appli mobile de gestion : séance sur le téléphone (variantes, « non activée », « Préparer ma gestion », Ma journée, fenêtres de
   l'appli, hors connexion des statistiques et de la trésorerie, formulaires à liaisons compilées).
 - Web : essais déjà faits lot par lot sur demo ; revue d'ensemble à prévoir. Reprise d'historique (W1g) : appliquer et annuler sur un
