@@ -41,6 +41,15 @@ namespace Easymakemoney.ViewModels.Lists
         private bool _draftPending;
         private string? _lastDraftJson;
 
+        /// <summary>Brouillon tel qu'il est arrivé du serveur, pour garder à la réécriture les champs que cette version ne connaît pas.</summary>
+        private Newtonsoft.Json.Linq.JToken? _savedDraft;
+
+        /// <summary>Choix dans une liste (variante reçue) ; remplaçable dans les tests.</summary>
+        public Func<string, string[], Task<string?>> ChooseAsync { get; set; } = async (title, labels) =>
+            Shell.Current is { } shell ? await shell.DisplayActionSheetAsync(title, "Plus tard", null, labels) : null;
+
+        private Newtonsoft.Json.Linq.JObject DraftJson() => InvoiceReviewDraft.KeepUnknownFields(BuildDraft().ToJson(), _savedDraft);
+
         public InvoiceReviewViewModel(DocumentReaderUseCase documents, IListFourniseursServices suppliers,
             ICommandeReceptionService reception, IDialogService dialogService)
         {
@@ -226,6 +235,7 @@ namespace Easymakemoney.ViewModels.Lists
                 _extraction = InvoiceExtraction.Read(document.extraction);
                 var initial = InvoiceReview.InitialDraft(_extraction);
                 var saved = InvoiceReviewDraft.FromJson(document.draft);
+                _savedDraft = document.draft;
                 var draft = InvoiceReview.Merge(initial, saved);
 
                 ApplyRemarks();
@@ -279,7 +289,7 @@ namespace Easymakemoney.ViewModels.Lists
                 }
 
                 // Un brouillon repris n'est pas renvoyé tant que rien ne change.
-                _lastDraftJson = saved != null ? BuildDraft().ToJson().ToString(Formatting.None) : null;
+                _lastDraftJson = saved != null ? DraftJson().ToString(Formatting.None) : null;
                 DraftStatusText = saved != null ? "Vérification reprise là où vous l'aviez laissée." : null;
             }
             finally
@@ -656,7 +666,7 @@ namespace Easymakemoney.ViewModels.Lists
             await _draftLock.WaitAsync();
             try
             {
-                var json = BuildDraft().ToJson();
+                var json = DraftJson();
                 var text = json.ToString(Formatting.None);
                 _draftPending = false;
                 if (text == _lastDraftJson)
@@ -804,9 +814,7 @@ namespace Easymakemoney.ViewModels.Lists
 
                 var labels = need.ChoiceLabels();
                 var title = $"Quelle variante de « {need.ProductName ?? "cet article"} » avez-vous reçue ?";
-                var choice = Shell.Current is { } shell
-                    ? await shell.DisplayActionSheetAsync(title, "Plus tard", null, labels)
-                    : null;
+                var choice = await ChooseAsync(title, labels);
                 var index = Array.IndexOf(labels, choice);
                 if (index < 0)
                     postponed++;

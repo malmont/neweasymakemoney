@@ -19,6 +19,40 @@ namespace Easymakemoney.Models
 
         public JObject ToJson() => JObject.FromObject(this);
 
+        /// <summary>
+        /// Garde les champs que cette version ne connaît pas (écrits par le web ou par une version plus récente) : à la racine, dans
+        /// supplier, invoice et shipping, et dans chaque ligne (retrouvée par son numéro n). Les champs connus viennent de <paramref name="built"/>.
+        /// </summary>
+        public static JObject KeepUnknownFields(JObject built, JToken? original)
+        {
+            if (original is not JObject source)
+                return built;
+
+            static void Copy(JObject target, JObject from)
+            {
+                foreach (var property in from.Properties())
+                    if (target.Property(property.Name) == null)
+                        target[property.Name] = property.Value.DeepClone();
+            }
+
+            Copy(built, source);
+            foreach (var part in new[] { "supplier", "invoice", "shipping" })
+                if (built[part] is JObject builtPart && source[part] is JObject sourcePart)
+                    Copy(builtPart, sourcePart);
+
+            if (built["lines"] is JArray builtLines && source["lines"] is JArray sourceLines)
+            {
+                var byNumber = sourceLines.OfType<JObject>()
+                    .Where(line => line["n"]?.Type == JTokenType.Integer)
+                    .GroupBy(line => line.Value<int>("n"))
+                    .ToDictionary(group => group.Key, group => group.First());
+                foreach (var line in builtLines.OfType<JObject>())
+                    if (line["n"]?.Type == JTokenType.Integer && byNumber.TryGetValue(line.Value<int>("n"), out var sourceLine))
+                        Copy(line, sourceLine);
+            }
+            return built;
+        }
+
         /// <summary>Brouillon enregistré, ou null s'il est absent ou d'une autre forme (on repart alors de l'extraction).</summary>
         public static InvoiceReviewDraft? FromJson(JToken? token)
         {

@@ -12,7 +12,28 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 | 1 | 4i : tests des ViewModels des promotions d'article et des changements de prix | `docs/gemini/lot-4i-consigne.md` | **terminé, fusionné** (efa0dcf) |
 | 2 | 4j : tests des ViewModels des voyages d'achat et de la publicité | `docs/gemini/lot-4j-consigne.md` | **terminé, fusionné** (ae38d8a) |
 | 3 | 4k : tests du ViewModel de lecture d'un document | `docs/gemini/lot-4k-consigne.md` | **terminé, fusionné** (1f89a95) |
-| 4 | 4l : tests du ViewModel de vérification d'une facture fournisseur | `docs/gemini/lot-4l-consigne.md` | plan à écrire (après le code de 4k) |
+| 4 | 4l : tests du ViewModel de vérification d'une facture fournisseur | `docs/gemini/lot-4l-consigne.md` | **plan validé avec réponses, code** (message 9) |
+
+## 12/11/2026 : message 9 : lot 4l, plan validé avec mes réponses, code
+
+Ton plan 4l est **validé**. Merci d'avoir posé tes deux questions au lieu de toucher l'application : c'est exactement la bonne conduite.
+
+**Réponses, déjà faites dans l'application sur `main` :**
+1. **Choix de la variante à la réception** : `InvoiceReviewViewModel` a maintenant une propriété publique
+   `ChooseAsync` (`Func<string, string[], Task<string?>>`), utilisée à la place de la feuille d'actions du Shell. Dans tes tests, remplace-la
+   pour simuler un choix. Ton test 22 devient donc deux tests : variante choisie → second `ReceiveAsync` avec le corps des variantes ;
+   « Plus tard » → reportée, et le résumé le dit.
+2. **Champs inconnus du brouillon : c'était un vrai défaut, il est corrigé.** Le brouillon réécrit garde maintenant les champs inconnus
+   (racine, `supplier`, `invoice`, `shipping`, et chaque ligne retrouvée par `n`) : `InvoiceReviewDraft.KeepUnknownFields`, déjà testé
+   par `InvoiceDraftUnknownFieldsTests`. Ton test 18 n'est donc **plus en `Skip`** : écris-le comme un test normal **au niveau du
+   ViewModel** (un brouillon avec un champ inconnu est ouvert, une modification, `FlushDraftAsync`, et le corps envoyé contient toujours
+   le champ).
+
+**Branche** : `git fetch origin`, `git switch main && git merge --ff-only origin/main`, puis `git switch -c feature/lot-4l-tests main`.
+J'ai remis à l'identique trois fichiers que tu avais touchés après la fusion de 4k (lignes vides en fin de fichier) : rien n'est perdu.
+
+**Ensuite** : compte rendu `docs/gemini/lot-4l-compte-rendu.md`, accusé de réception (« Dernier message lu : 9 »). La file sera complétée
+par un prochain message : **s'il n'y a pas de consigne suivante quand tu as fini, arrête-toi et dis-le au propriétaire.**
 
 ## 12/11/2026 : message 8 : lot 4k fusionné, avec un rappel de règle
 
