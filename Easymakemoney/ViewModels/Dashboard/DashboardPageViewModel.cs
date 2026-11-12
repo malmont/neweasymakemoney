@@ -180,7 +180,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             var culture = CultureInfo.GetCultureInfo("fr-CA");
             OfflineText = snapshot.SavedAt.Date == DateTime.Today
                 ? $"Hors connexion : données de {snapshot.SavedAt.ToString("H' h 'mm", culture)}"
-                : $"Hors connexion : données du {snapshot.SavedAt.ToString("d MMMM 'à' H' h 'mm", culture)}";
+                : $"Hors connexion : données du {Utilities.FrenchDate.Format(snapshot.SavedAt, "d MMMM 'à' H' h 'mm")}";
             return true;
         }
 

@@ -103,7 +103,7 @@ public static class OfflineState
         var culture = CultureInfo.GetCultureInfo("fr-CA");
         return at.Date == (now ?? DateTime.Now).Date
             ? $"Hors connexion : données de {at.ToString("H' h 'mm", culture)}"
-            : $"Hors connexion : données du {at.ToString("d MMMM 'à' H' h 'mm", culture)}";
+            : $"Hors connexion : données du {Utilities.FrenchDate.Format(at, "d MMMM 'à' H' h 'mm")}";
     }
 }
 

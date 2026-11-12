@@ -287,7 +287,7 @@ public class ManagementModuleTests : IDisposable
         CultureInfo.CurrentCulture = new CultureInfo("en-US");
         try
         {
-            Assert.Contains("renouvelées le 1 décembre", ai.CreditsText);
+            Assert.Contains("renouvelées le 1er décembre", ai.CreditsText);
         }
         finally
         {
