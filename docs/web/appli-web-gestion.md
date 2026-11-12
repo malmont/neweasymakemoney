@@ -22,6 +22,9 @@ routes. Rédigé par Claude (session « new easymakemoney », application mobile
    reprenant ce que les applications web actuelles font déjà bien : connexion, multi-sites, modules, navigation.
 4. Français et anglais ; pas d'espagnol pour l'instant (un site en espagnol affiche l'anglais).
 5. **L'IA est au cœur de l'appli web** : console IA, assistant comptable, apprentissage du chef d'entreprise (§ 2 à 4).
+6. **Onglet « Documents » à la demande** (décision du 12/11/2026) : une page blanche avec une demande libre produit n'importe quel
+   document d'entreprise, rapport ou statistique, enregistrable et téléchargeable en PDF ou en tableur (§ 4 bis). Il est séparé de la
+   console, qui garde les questions, les réglages, les conseils et les actions.
 
 ## 2. La console IA : un copilote sur tous les écrans
 
@@ -77,6 +80,47 @@ La plupart des entrepreneurs n'ont pas de formation en gestion : l'appli doit le
 
 L'application mobile reprendra ce qui s'y prête : liens illustrés, « d'où vient ce chiffre », mini-leçons.
 
+## 4 bis. Documents à la demande (lot DOC, décision du 12/11/2026)
+
+**Le principe.**
+- Un onglet « Documents » : une page blanche et une zone de demande, comme le chat d'une IA. Par exemple :
+  - « rapport des ventes du trimestre par catégorie » ;
+  - « bilan de l'année pour mon comptable » ;
+  - « état des stocks dormants avec leur valeur ».
+- Le document s'affiche en aperçu. On peut l'affiner en conversation (« ajoute un graphique », « en anglais », « compare avec l'an
+  dernier »).
+- Ensuite, on l'enregistre et on le télécharge en PDF ou en tableur (CSV ou Excel). La page redevient blanche pour le document suivant.
+
+**L'IA n'invente aucun chiffre** (règle « l'IA formule, l'application calcule ») :
+1. L'IA écrit le **plan du document en JSON** : titre, sections, textes, tableaux, graphiques.
+2. Chaque tableau ou graphique du plan est une **demande de données nommée**, par exemple « ventes par mois et par catégorie sur telle
+   période », avec ses paramètres. Le backend la **calcule à partir des données du site**, avec la même route de chiffres vérifiés que
+   la console IA (W2).
+   - Une demande inconnue est refusée.
+   - Un texte de l'IA ne peut citer que des nombres fournis par ces données, comme pour le guide.
+3. Le **backend rend le PDF** (et le tableur) à partir du JSON validé. La mise en page est toujours la même, au logo et aux couleurs du
+   site. Le document enregistré garde son JSON, ses données figées à la date du rendu et son fichier.
+
+**Historique et modèles.**
+- Liste des documents enregistrés : date, titre, auteur.
+- Un document peut devenir un **modèle** (« refaire ce rapport chaque mois »). Le modèle rejoue le même plan sur une nouvelle
+  période, sans repasser par l'IA.
+
+**Coût.**
+- En **unités IA mensuelles** du site, affiché avant de lancer : unités pour la création, pour chaque retouche, et zéro pour un modèle
+  rejoué. Le barème est à fixer par le propriétaire (proposition : 2 ou 3 unités par document).
+- Unités épuisées : on ne peut plus créer de document, mais les modèles se rejouent toujours.
+
+**Documents officiels.**
+- L'outil peut préparer un **brouillon** de bilan ou d'état adapté au pays (France, Canada, États-Unis), en s'appuyant sur le lot PAYS
+  et sur le dossier de fin d'exercice (`dossier-fin-exercice.md`).
+- Chaque page porte la mention « Brouillon, à valider par un comptable ». Seul le comptable certifie.
+
+**Sécurité.**
+- Uniquement les données du site, avec les droits de l'utilisateur : un compte Assistance n'a pas accès à l'onglet.
+- Les données personnelles des clients ne figurent dans un document que si la demande l'exige. Elles sont alors signalées dans
+  l'aperçu.
+
 ## 5. Lots
 
 | Lot | Contenu | Côté |
@@ -87,6 +131,7 @@ L'application mobile reprendra ce qui s'y prête : liens illustrés, « d'où vi
 | W1 | Reproduction des écrans de l'application mobile, avec ce que le bureau fait mieux (tableaux larges, saisie en masse, glisser-déposer, exports) | web |
 | W2 | Console IA : questions et explications, chiffres sourcés, unités affichées | backend (route de la console à chiffres vérifiés) et web |
 | W3 | Console IA : actions proposées, avec aperçu, validation et annulation | backend et web |
+| DOC | Documents à la demande (§ 4 bis) : plan JSON écrit par l'IA, données calculées par le backend, rendu PDF et tableur, historique, modèles rejoués sans IA | backend (catalogue de données nommées, validation du plan, rendu, stockage) puis web ; après W2 |
 | W4 | Assistant comptable : routine du mois, rappels, rendez-vous comptable | backend et web |
 | W5 | Apprentissage : définitions illustrées, « d'où vient ce chiffre », mini-leçons, parcours de compétences (suivi par utilisateur côté backend), deux niveaux d'affichage, bilan du mois | backend et web, puis mobile |
 | ensuite | Dossier de fin d'exercice, import des relevés (IA3), connexion bancaire (IA4) | voir `dossier-fin-exercice.md` |
