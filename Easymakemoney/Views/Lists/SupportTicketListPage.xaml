@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:stats="clr-namespace:Easymakemoney.ViewModels.Statistiques"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             x:DataType="list:SupportTicketListViewModel"
+             x:Class="Easymakemoney.Views.Lists.SupportTicketListPage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Assistance">
+
+    <ContentPage.Resources>
+        <Style x:Key="Chip" TargetType="Border">
+            <Setter Property="StrokeShape" Value="RoundRectangle 18" />
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+        </Style>
+        <Style x:Key="FormField" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="MinimumHeightRequest" Value="44" />
+            <Setter Property="Padding" Value="12,0" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <components:AppHeader Title="Assistance" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <Label Text="Les demandes de vos clients : répondez, notez, suivez le délai de réponse." Style="{StaticResource UiBody}" FontSize="13" />
+
+                <!-- Filtre par état -->
+                <FlexLayout Wrap="Wrap" Direction="Row" Margin="0,0,0,-8" BindableLayout.ItemsSource="{Binding Filters}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="stats:StatsChoice">
+                            <Border Style="{StaticResource Chip}">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimary}" />
+                                        <Setter Property="Stroke" Value="{DynamicResource ThemePrimary}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.SelectFilterCommand, Source={x:Reference Page}, x:DataType=ContentPage}" CommandParameter="{Binding Code}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding Label}" FontFamily="InterSemiBold" FontSize="13" TextColor="{StaticResource UiTextPrimary}">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="TextColor" Value="{DynamicResource ThemeOnPrimary}" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                    <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessEntry Placeholder="Chercher : référence, client, objet" Text="{Binding SearchText}" ReturnCommand="{Binding SearchCommand}"
+                                                  FontFamily="Inter" FontSize="14" TextColor="{StaticResource UiTextPrimary}" PlaceholderColor="{StaticResource UiTextMuted}" VerticalOptions="Fill" />
+                    </Border>
+                    <HorizontalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                        <Label Text="Les miennes" FontFamily="InterMedium" FontSize="13" TextColor="{StaticResource UiTextSecondary}" VerticalOptions="Center" />
+                        <Switch IsToggled="{Binding OnlyMine}" OnColor="{DynamicResource ThemePrimary}" />
+                    </HorizontalStackLayout>
+                </Grid>
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" HeightRequest="24" />
+                <Label Text="{Binding TotalText}" Style="{StaticResource UiBody}" FontSize="12" />
+                <Label Text="Aucune demande pour ce filtre." IsVisible="{Binding IsEmpty}" Style="{StaticResource UiBody}" FontSize="14" />
+
+                <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding IsModuleInactive}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Module Assistance non activé" Style="{StaticResource UiTitle}" FontSize="15" />
+                        <Label Text="Ce site n'a pas le module Assistance. Il se demande ou s'active sur le site, dans « Mon site »." Style="{StaticResource UiBody}" FontSize="13" />
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Tickets}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:SupportTicket">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                <components:UiCard.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenCommand, Source={x:Reference Page}, x:DataType=ContentPage}" CommandParameter="{Binding .}" />
+                                </components:UiCard.GestureRecognizers>
+                                <VerticalStackLayout Spacing="3">
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                        <Label Text="{Binding subject}" Style="{StaticResource UiTitle}" FontSize="15" LineBreakMode="TailTruncation" />
+                                        <Label Grid.Column="1" Text="{Binding PriorityText}" FontFamily="InterSemiBold" FontSize="12" TextColor="{StaticResource UiTextSecondary}">
+                                            <Label.Triggers>
+                                                <DataTrigger TargetType="Label" Binding="{Binding IsUrgent}" Value="True">
+                                                    <Setter Property="TextColor" Value="#B91C1C" />
+                                                </DataTrigger>
+                                            </Label.Triggers>
+                                        </Label>
+                                    </Grid>
+                                    <Label Text="{Binding HeaderText}" FontFamily="InterSemiBold" FontSize="12" TextColor="{DynamicResource ThemePrimary}" />
+                                    <Label Text="{Binding CustomerText}" Style="{StaticResource UiBody}" FontSize="13" LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding DueText}" IsVisible="{Binding HasDue}" FontFamily="InterMedium" FontSize="12" TextColor="{StaticResource UiTextSecondary}">
+                                        <Label.Triggers>
+                                            <DataTrigger TargetType="Label" Binding="{Binding overdue}" Value="True">
+                                                <Setter Property="TextColor" Value="#B91C1C" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                    <Label Text="{Binding AssignedText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                </VerticalStackLayout>
+                            </components:UiCard>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Button Text="Voir plus" Command="{Binding LoadMoreCommand}" IsVisible="{Binding HasMore}" HeightRequest="44" CornerRadius="12"
+                        FontFamily="InterSemiBold" FontSize="14" BackgroundColor="{StaticResource UiSurface}" TextColor="{DynamicResource ThemePrimary}"
+                        BorderColor="{DynamicResource ThemePrimary}" BorderWidth="1" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Button Grid.Row="2" Text="Nouvelle demande (appel, comptoir)" Command="{Binding CreateCommand}" Margin="16,8,16,16" HeightRequest="50" CornerRadius="14"
+                FontFamily="InterSemiBold" FontSize="15" BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" />
+    </Grid>
+</ContentPage>

@@ -151,6 +151,13 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
         [RelayCommand]
+        private async Task NavigateToSupport()
+        {
+            if (Shell.Current is { } shell)
+                await shell.GoToAsync(nameof(SupportTicketListPage));
+        }
+
+        [RelayCommand]
         private async Task NavigateToReadiness()
         {
             if (Shell.Current is { } shell)

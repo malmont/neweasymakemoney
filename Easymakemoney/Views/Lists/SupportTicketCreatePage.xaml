@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:stats="clr-namespace:Easymakemoney.ViewModels.Statistiques"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             x:DataType="list:SupportTicketCreateViewModel"
+             x:Class="Easymakemoney.Views.Lists.SupportTicketCreatePage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Nouvelle demande">
+
+    <ContentPage.Resources>
+        <Style x:Key="FormLabel" TargetType="Label">
+            <Setter Property="FontFamily" Value="InterMedium" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextSecondary}" />
+        </Style>
+        <Style x:Key="FormField" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="MinimumHeightRequest" Value="48" />
+            <Setter Property="Padding" Value="12,0" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+        </Style>
+        <Style x:Key="FormEntry" TargetType="handlers:BorderlessEntry">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="PlaceholderColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="Chip" TargetType="Border">
+            <Setter Property="StrokeShape" Value="RoundRectangle 18" />
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <components:AppHeader Title="Nouvelle demande" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="10">
+                <Label Text="Pour une demande reçue par téléphone, au comptoir ou par courriel. Rien n'est envoyé au client à la création." Style="{StaticResource UiBody}" FontSize="13" />
+
+                <Label Text="Reçue par" Style="{StaticResource FormLabel}" />
+                <FlexLayout Wrap="Wrap" Direction="Row" Margin="0,0,0,-8" BindableLayout.ItemsSource="{Binding Channels}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="stats:StatsChoice">
+                            <Border Style="{StaticResource Chip}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.SelectChannelCommand, Source={x:Reference Page}, x:DataType=ContentPage}" CommandParameter="{Binding Code}" />
+                                </Border.GestureRecognizers>
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimary}" />
+                                        <Setter Property="Stroke" Value="{DynamicResource ThemePrimary}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Label Text="{Binding Label}" FontFamily="InterSemiBold" FontSize="13" TextColor="{StaticResource UiTextPrimary}">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="TextColor" Value="{DynamicResource ThemeOnPrimary}" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+
+                <Label Text="Objet" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Ex. : colis abîmé, taille à échanger" Text="{Binding Subject}" />
+                </Border>
+
+                <Label Text="Demande du client" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" Padding="10,4">
+                    <Editor Text="{Binding Body}" Placeholder="Ce que le client a demandé" AutoSize="TextChanges" MinimumHeightRequest="96"
+                            FontFamily="Inter" FontSize="15" TextColor="{StaticResource UiTextPrimary}" PlaceholderColor="{StaticResource UiTextMuted}" BackgroundColor="Transparent" />
+                </Border>
+
+                <Label Text="Client : nom" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Text="{Binding CustomerName}" />
+                </Border>
+                <Label Text="Client : courriel (pour lui répondre)" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Keyboard="Email" Text="{Binding CustomerEmail}" />
+                </Border>
+                <Label Text="Numéro de commande ou de vente (facultatif)" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Keyboard="Numeric" Placeholder="Ex. : 1234" Text="{Binding OrderIdText}" />
+                </Border>
+
+                <Label Text="Priorité" Style="{StaticResource FormLabel}" />
+                <FlexLayout Wrap="Wrap" Direction="Row" Margin="0,0,0,-8" BindableLayout.ItemsSource="{Binding Priorities}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="stats:StatsChoice">
+                            <Border Style="{StaticResource Chip}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.SelectPriorityCommand, Source={x:Reference Page}, x:DataType=ContentPage}" CommandParameter="{Binding Code}" />
+                                </Border.GestureRecognizers>
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimary}" />
+                                        <Setter Property="Stroke" Value="{DynamicResource ThemePrimary}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Label Text="{Binding Label}" FontFamily="InterSemiBold" FontSize="13" TextColor="{StaticResource UiTextPrimary}">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="TextColor" Value="{DynamicResource ThemeOnPrimary}" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Button Grid.Row="2" Text="Créer la demande" Command="{Binding SaveCommand}" Margin="16,8,16,16" HeightRequest="50" CornerRadius="14"
+                FontFamily="InterSemiBold" FontSize="15" BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" />
+    </Grid>
+</ContentPage>
