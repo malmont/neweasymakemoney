@@ -38,7 +38,16 @@ Nombre de tests après le lot 4l : **939 passants** (+26 tests passants, 0 faile
 
 ### 2. Compilation Android (Rebuild)
 
-En cours d'exécution.
+```
+$ dotnet build Easymakemoney/Easymakemoney.csproj -f net10.0-android -t:Rebuild -p:JavaSdkDirectory=/Library/Java/JavaVirtualMachines/microsoft-21.jdk/Contents/Home
+...
+    216 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:02:40.90
+```
+
+Référence respectée : exactement **216 avertissements**, 0 erreur.
 
 ### 3. Contrôle d'encodage et fins de ligne
 
