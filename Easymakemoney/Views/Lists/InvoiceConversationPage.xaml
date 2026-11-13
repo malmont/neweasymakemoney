@@ -177,6 +177,8 @@
 
                 <Button Text="Vérifier en détail" IsVisible="{Binding CanReviewInDetail}" Command="{Binding ReviewInDetailCommand}"
                         Style="{StaticResource OptionButton}" BackgroundColor="Transparent" />
+                <Button Text="Abandonner cette facture" IsVisible="{Binding CanWrite}" Command="{Binding AbandonCommand}"
+                        Style="{StaticResource OptionButton}" BackgroundColor="Transparent" TextColor="#991B1B" />
             </VerticalStackLayout>
         </ScrollView>
 

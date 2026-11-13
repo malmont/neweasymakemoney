@@ -592,6 +592,37 @@ public class InvoiceConversationTests
         Assert.Empty(_service.MessageCalls);
     }
 
+    // ---- Abandon (IA-ACT-1) -----------------------------------------------------------
+
+    [Fact]
+    public async Task Abandon_AfterConfirmation_ClosesTheThread()
+    {
+        _service.OpenResult = Thread("questions", null, SupplierQuestion());
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+
+        await vm.AbandonCommand.ExecuteAsync(null);
+
+        Assert.Equal(new[] { 7 }, _service.AbandonCalls);
+        Assert.True(vm.IsAbandoned);
+        Assert.False(vm.CanWrite);
+        Assert.StartsWith("Facture abandonnée", vm.StatusText);
+    }
+
+    [Fact]
+    public async Task Abandon_Refused_DoesNotCall()
+    {
+        _service.OpenResult = Thread("ready", "h");
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+        _dialog.ConfirmResult = false;
+
+        await vm.AbandonCommand.ExecuteAsync(null);
+
+        Assert.Empty(_service.AbandonCalls);
+        Assert.True(vm.IsReady);
+    }
+
     // ---- Service ---------------------------------------------------------------
 
     [Fact]
@@ -661,6 +692,17 @@ public class InvoiceConversationTests
         {
             MessageCalls.Add((id, text));
             return MessageException != null ? Task.FromException<JObject?>(MessageException) : Task.FromResult(MessageResult);
+        }
+
+        public List<int> AbandonCalls { get; } = new();
+        public Exception? AbandonException { get; set; }
+
+        public Task<InvoiceConversation> AbandonAsync(int id)
+        {
+            AbandonCalls.Add(id);
+            return AbandonException != null
+                ? Task.FromException<InvoiceConversation>(AbandonException)
+                : Task.FromResult(new InvoiceConversation { id = id, state = "abandoned" });
         }
 
         public Task<JObject?> UndoAsync(int id)

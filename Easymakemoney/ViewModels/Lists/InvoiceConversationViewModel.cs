@@ -356,6 +356,37 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
         [RelayCommand]
+        private async Task Abandon()
+        {
+            if (IsBusy || Conversation is not { } thread || !CanWrite)
+                return;
+            if (!await _dialogService.ConfirmAsync("Abandonner cette facture",
+                    "Fermer cette conversation sans rien créer ? La facture lue reste dans vos documents et pourra être reprise.",
+                    "Abandonner", "Garder"))
+                return;
+
+            IsBusy = true;
+            try
+            {
+                Apply(await _conversations.AbandonAsync(thread.id));
+            }
+            catch (ApiException e) when (e.ApiError.Code == "CONVERSATION_NOT_OPEN")
+            {
+                await ReloadAsync();
+                await _dialogService.ShowInfoAsync("Cette facture a changé d'état entre-temps : l'écran est à jour.");
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                await _dialogService.ShowErrorAsync(e);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
         private async Task SendMessage()
         {
             if (IsBusy || Conversation is not { } thread || !CanWrite)
