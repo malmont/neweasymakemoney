@@ -208,6 +208,7 @@ l'ancien cache lisible quelques instants après l'échange ; à vérifier avant 
     - « Lire un document » et la console toujours en haut ;
     - chiffres des cartes servis par les routes existantes.
   - Plus tard, le mobile reprendra les mêmes 6 thèmes sur sa page « Gestion ».
+  - Fait le 13/11, avant W2, à la demande du propriétaire : menu par thèmes en ligne (web 38a2c65, 1b57887) et choix clair / sombre (f214f75). Chiffres des cartes : seulement des totaux ou des champs rendus par les routes existantes. Après W2, une route de résumé des thèmes pourra donner les chiffres manquants (commandes, fournisseurs, locations, notes de frais…).
 - **Partage des rôles :**
   - les vignettes du guide font les ajustements précis, un article ou un poste à la fois. Elles ne changent pas : ce qu'elles font est déjà bon, et les anciens articles continuent d'être traités par les promotions proposées ;
   - le coefficient ne concerne que les nouveaux articles. Les ventes des anciens articles semblables (saison terminée) ne servent que de référence pour le choisir, sans toucher à leur prix ;
