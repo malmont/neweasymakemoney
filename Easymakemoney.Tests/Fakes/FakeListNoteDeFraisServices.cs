@@ -15,6 +15,7 @@ public class FakeListNoteDeFraisServices : IListNoteDeFraisServices
     public Exception? GetException { get; set; }
     public Exception? PostException { get; set; }
     public Exception? DeleteException { get; set; }
+    public bool PostResult { get; set; } = true;
     public bool DeleteResult { get; set; } = true;
 
     public Task<ObservableCollection<TypeNoteDeFrais>> GetTypeNoteDeFrais()
@@ -37,7 +38,7 @@ public class FakeListNoteDeFraisServices : IListNoteDeFraisServices
         PostCalls.Add((newNoteDeFrais, id));
         if (PostException != null)
             throw PostException;
-        return Task.FromResult(true);
+        return Task.FromResult(PostResult);
     }
 
     public Task<bool> DeleteNoteDeFrais(int id)
