@@ -183,6 +183,21 @@ public class ManagementModuleTests : IDisposable
     }
 
     [Fact]
+    public void RequestResult_Trial_EndsAtIsoPrioritaire_EtEndsAtSansDecalageLuEnUtc()
+    {
+        var withIso = Newtonsoft.Json.JsonConvert.DeserializeObject<FeatureRequestResult>("""
+        { "kind": "trial", "entitlement": { "endsAt": "2026-12-11 05:00:00", "endsAtIso": "2026-12-11T05:00:00+00:00" } }
+        """)!;
+        var legacy = Newtonsoft.Json.JsonConvert.DeserializeObject<FeatureRequestResult>("""
+        { "kind": "trial", "entitlement": { "endsAt": "2026-12-11 05:00:00" } }
+        """)!;
+        var expected = new DateTime(2026, 12, 11, 5, 0, 0, DateTimeKind.Utc).ToLocalTime();
+
+        Assert.Equal(expected, withIso.TrialEndsAt);
+        Assert.Equal(expected, legacy.TrialEndsAt);
+    }
+
+    [Fact]
     public void RequestResult_Request_SaysSent()
     {
         var result = Newtonsoft.Json.JsonConvert.DeserializeObject<FeatureRequestResult>("""{ "kind": "request", "request": { "id": 3 } }""")!;

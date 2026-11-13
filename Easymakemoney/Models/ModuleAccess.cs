@@ -116,15 +116,29 @@ namespace Easymakemoney.Models
 
         public bool IsTrial => kind == "trial";
 
-        /// <summary>Fin de l'essai ouvert, si le serveur la donne.</summary>
+        /// <summary>
+        /// Fin de l'essai ouvert, si le serveur la donne : endsAtIso (ISO 8601 avec décalage, lot DROITS-ISO) en priorité ; sinon endsAt,
+        /// qui est de l'UTC sans décalage (établi par le backend).
+        /// </summary>
         public DateTime? TrialEndsAt
         {
-            get
+            get => ReadInstant(entitlement?["endsAtIso"]) ?? ReadInstant(entitlement?["endsAt"] ?? entitlement?["ends_at"]);
+        }
+
+        /// <summary>Instant en heure locale : une date déjà lue par Newtonsoft, ou un texte (sans décalage = UTC).</summary>
+        private static DateTime? ReadInstant(JToken? token)
+        {
+            switch (token?.Type)
             {
-                var text = entitlement?["endsAt"]?.ToString() ?? entitlement?["ends_at"]?.ToString();
-                return DateTimeOffset.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date)
-                    ? date.LocalDateTime
-                    : null;
+                case JTokenType.Date:
+                    var date = token.Value<DateTime>();
+                    return date.Kind == DateTimeKind.Unspecified ? DateTime.SpecifyKind(date, DateTimeKind.Utc).ToLocalTime() : date.ToLocalTime();
+                case JTokenType.String:
+                    return DateTimeOffset.TryParse(token.Value<string>(), CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var parsed)
+                        ? parsed.LocalDateTime
+                        : null;
+                default:
+                    return null;
             }
         }
 
