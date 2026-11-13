@@ -184,6 +184,9 @@ essais** sera créé pour cette campagne, avec sa documentation des essais (la d
   bloc et relevé avant et après ; ajout de deux factures à une même commande, puis annulation dans l'ordre inverse (LATER_DOCUMENT) ;
   phrase libre (IA-FACT-2-B) avec une réponse refusée par le serveur.
 
+- Clés de connexion (JWT) suivies par le dépôt du backend (`jwt/private.pem`, `jwt/public.pem`), relevé du 13/11 : à retirer du suivi et à remplacer par de nouvelles clés pendant la campagne d'essais globaux (décision du propriétaire). Effet : tout le monde est déconnecté une fois.
+- Console IA (W2, en ligne le 13/11) : premières questions réelles faites sur demo le 13/11 ; à refaire sur le site d'essai, avec la mesure des réponses de repli.
+
 **Avant l'ouverture, côté serveur.** Bascule du 13/11 (IA-FACT-2-A) : une requête encore en traitement au moment de l'échange du cache
 a cherché un fichier de l'ancien cache (aucune réponse en erreur, c'était la requête de contrôle). Correction demandée au backend : garder
 l'ancien cache lisible quelques instants après l'échange ; à vérifier avant le premier client.
