@@ -236,7 +236,7 @@ l'ancien cache lisible quelques instants après l'échange ; à vérifier avant 
 
 **Argument déjà en place :** l'IA crée de zéro une landing page et une boutique à partir de photos ou de PDF ; chaque composant (boutons, etc.) reste modifiable finement ; modèles de site, historique et retour en arrière. Inclus aussi : la caisse, la gestion et la console « prof IA ».
 
-**Ce qui manque, à faire après W2-APPRENDRE et la campagne d'essais (contrats à écrire) :**
+**Ce qui manque, à faire après W2-APPRENDRE et la campagne d'essais.** Le propriétaire veut en discuter avant de lancer ces modules ; aucun contrat n'est demandé d'ici là. Le lot AGENCE est l'« espace partenaire » déjà prévu côté backend : rôle partenaire (`reporter_kind: partner` dans `docs/incidents-et-signalements.md`, vue filtrée sur ses sites) et préparation commencée au lot G5 (`docs/gestion-mise-a-niveau.md`). Le chantier les réunira.
 
 | Lot | Contenu | Côté |
 |---|---|---|
