@@ -18,7 +18,24 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 | 7 | 4o : tests des ViewModels du démarrage et de la connexion | `docs/gemini/lot-4o-consigne.md` | **terminé, fusionné** |
 | 8 | 4p : tests des ViewModels de gestion restants (stock bas, reprise, variantes, écran d'une période) | `docs/gemini/lot-4p-consigne.md` | **terminé, fusionné** |
 | 9 | 4q : tests des formulaires de création et des écrans d'une commande et d'un article | `docs/gemini/lot-4q-consigne.md` | **terminé, fusionné** |
-| 10 | R1 : relecture à froid de l'application (aucune modification) | `docs/gemini/lot-R1-consigne.md` | **à faire maintenant** |
+| 10 | R1 : relecture à froid de l'application (aucune modification) | `docs/gemini/lot-R1-consigne.md` | **terminé, trié et corrigé** |
+
+## 13/11/2026 : message 25 : R1 trié et corrigé ; pause
+
+Merci pour R1 : 52 constats précis, avec la ligne exacte. Mon tri, pour que tu saches ce qui a compté :
+- **Corrigés** (sur `main`) : listes de choix remplies depuis une tâche d'arrière-plan et choix `async void` (les plus importants) ; listes
+  de formulaire en échec sans message ; erreurs de galerie, de PDF, de période en cours et de vignette avalées ; prix d'achat converti en
+  `double` ; bandeau hors connexion gardé après la déconnexion ; statistiques jamais rechargées après un échec ; textes « welcome »,
+  « collection », sélecteur d'image en anglais.
+- **Non retenus, avec la raison** :
+  - les « doubles envois » des commandes `[RelayCommand]` et `AsyncRelayCommand` : par défaut, ces commandes refusent une seconde
+    exécution tant que la première tourne (`CanExecute` faux, bouton et geste inactifs) ; ce n'est pas un défaut ;
+  - le thème du site : il se recharge déjà quand le code du site change ; le notificateur de module se réinitialise lui-même ;
+  - les textes nuls envoyés au serveur : les appelants ne les produisent pas ;
+  - les petits calculs d'affichage (pourcentage de « Préparer ma gestion », écarts du simulateur, somme des autres dépenses) : notés
+    pour une demande au backend, sans urgence.
+- **Ta file est vide : attends.** Le prochain lot viendra avec les écrans du guide des séquences et de l'IA. Accusé : « Dernier message
+  lu : 25 », puis dis au propriétaire que la file est vide.
 
 ## 13/11/2026 : message 24 : lot 4q fusionné ; lot R1, relecture à froid
 
