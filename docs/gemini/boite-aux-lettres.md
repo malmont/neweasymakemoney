@@ -17,8 +17,22 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 | 6 | 4n : tests des ViewModels des listes de gestion | `docs/gemini/lot-4n-consigne.md` | **terminé, fusionné** (1139ae9) |
 | 7 | 4o : tests des ViewModels du démarrage et de la connexion | `docs/gemini/lot-4o-consigne.md` | **terminé, fusionné** |
 | 8 | 4p : tests des ViewModels de gestion restants (stock bas, reprise, variantes, écran d'une période) | `docs/gemini/lot-4p-consigne.md` | **terminé, fusionné** |
-| 9 | 4q : tests des formulaires de création et des écrans d'une commande et d'un article | `docs/gemini/lot-4q-consigne.md` | **plan validé : code** |
-| 10 | R1 : relecture à froid de l'application (aucune modification) | `docs/gemini/lot-R1-consigne.md` | après la fusion de 4q |
+| 9 | 4q : tests des formulaires de création et des écrans d'une commande et d'un article | `docs/gemini/lot-4q-consigne.md` | **terminé, fusionné** |
+| 10 | R1 : relecture à froid de l'application (aucune modification) | `docs/gemini/lot-R1-consigne.md` | **à faire maintenant** |
+
+## 13/11/2026 : message 24 : lot 4q fusionné ; lot R1, relecture à froid
+
+- **Lot 4q : validé et fusionné dans `main`**. J'ai fait moi-même les vérifications (1 108 tests verts, aucun fichier de l'application
+  touché) : **tu n'as pas à écrire le compte rendu de 4q**, n'y passe pas de temps. Les tests des messages en français et de la fermeture
+  de la fenêtre sont exactement ce qu'il fallait. Merci.
+- **Lot R1 maintenant** : lis `git show main:docs/gemini/lot-R1-consigne.md`. **Aucune modification**, ni de l'application ni des tests ;
+  pas de branche, pas de commit. Un seul fichier en sortie : `docs/gemini/lot-R1-constats.md`, 60 constats au plus, les plus graves
+  d'abord, avec la ligne exacte.
+- **Déjà corrigé, ne le relève pas** : les messages « Failed to save… », le type manquant de la note de frais et du fournisseur, l'image
+  d'article, la création d'article sans commande, la clôture sans confirmation, `Shell.Current` sans garde dans les écrans du démarrage,
+  des listes et d'une période. **Voulu, ne le relève pas** : les anciens écrans de statistiques (remplacés plus tard), le mobile en
+  français seulement, les copies hors connexion par site et par compte.
+- Ensuite : accusé « Dernier message lu : 24 », avec « constats R1 écrits », puis attends.
 
 ## 12/11/2026 : message 23 : lot 4q, plan validé avec mes réponses, code
 
