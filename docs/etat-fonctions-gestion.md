@@ -226,6 +226,26 @@ l'ancien cache lisible quelques instants après l'échange ; à vérifier avant 
   - le coefficient ne concerne que les nouveaux articles. Les ventes des anciens articles semblables (saison terminée) ne servent que de référence pour le choisir, sans toucher à leur prix ;
   - la console fait les ajustements globaux, sur un ensemble (une période, une collection, une catégorie, un fournisseur, les nouveaux articles), par les actions en masse (price.set, puis les promotions de groupe), toujours avec aperçu, confirmation et annulation.
 
+## Vente par les agences (décision du propriétaire du 13/11/2026)
+
+**Stratégie :**
+- **Cible de départ :** les agences de média. Elles ont déjà des clients avec pignon sur rue et leur installent pages d'accueil et boutiques, aujourd'hui sur Shopify, WooCommerce ou PrestaShop.
+- **Offre :** une gratuité limitée, puis un très bon prix pour tester.
+- **Ensuite :** les retours, les corrections, puis les chaînes de magasins en devenir.
+- **Aucun démarchage direct des commerçants** (modèle de la première version d'Izipro, vendue par v2v).
+
+**Argument déjà en place :** l'IA crée de zéro une landing page et une boutique à partir de photos ou de PDF ; chaque composant (boutons, etc.) reste modifiable finement ; modèles de site, historique et retour en arrière. Inclus aussi : la caisse, la gestion et la console « prof IA ».
+
+**Ce qui manque, à faire après W2-APPRENDRE et la campagne d'essais (contrats à écrire) :**
+
+| Lot | Contenu | Côté |
+|---|---|---|
+| AGENCE | Espace agence. L'agence crée elle-même le site d'un client (nom, domaine, modules, langue, devise, fuseau ; aujourd'hui `/setup/new-store` est réservé au super admin et ne règle aucun module). Elle voit la liste de ses clients et leur état. Elle choisit l'offre (essai gratuit limité, prix d'essai, abonnement) et suit sa commission récurrente. Elle peut passer d'un site client à l'autre et règle la marque blanche (son logo, son nom). S'appuie sur la console de pilotage (`docs/console-pilotage.md` du backend : essais, gratuité, suspension à l'impayé). | backend puis web |
+| IMPORT | Import depuis Shopify, WooCommerce et PrestaShop : articles, variantes, images, catégories, clients (avec le consentement de la Loi 25), commandes passées (pour l'historique et la reprise). Fichiers d'export d'abord (CSV), connexion directe ensuite. Aperçu, puis application et annulation, comme partout. | backend puis web |
+| Exploitation | Préproduction, clés hors du dépôt, sauvegardes testées, supervision : la condition pour qu'une agence engage sa réputation (voir la campagne d'essais). | backend |
+| Kit de vente | Site demo propre, vidéo courte (de la facture photographiée au prix de vente ; du brief au site complet par l'IA), fiche de prix partenaire, guide d'installation pour l'agence. | propriétaire, avec l'aide de Claude |
+| Plus tard | Chaînes de magasins : stock entre boutiques, transferts, achats centralisés, droits par magasin. | après les retours des agences |
+
 ## Lots en cours ou à venir
 
 | Lot | Contenu | État |
