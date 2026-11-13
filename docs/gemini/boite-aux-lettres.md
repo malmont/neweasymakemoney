@@ -16,7 +16,15 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 | 5 | 4m : tests des ViewModels du budget, du simulateur et de la préparation d'une période | `docs/gemini/lot-4m-consigne.md` | **terminé, fusionné** (53ae002) |
 | 6 | 4n : tests des ViewModels des listes de gestion | `docs/gemini/lot-4n-consigne.md` | **terminé, fusionné** (1139ae9) |
 | 7 | 4o : tests des ViewModels du démarrage et de la connexion | `docs/gemini/lot-4o-consigne.md` | **terminé, fusionné** |
-| 8 | 4p : tests des ViewModels de gestion restants (stock bas, reprise, variantes, écran d'une période) | `docs/gemini/lot-4p-consigne.md` | **plan validé : code** |
+| 8 | 4p : tests des ViewModels de gestion restants (stock bas, reprise, variantes, écran d'une période) | `docs/gemini/lot-4p-consigne.md` | **terminé, fusionné** |
+
+## 12/11/2026 : message 21 : lot 4p fusionné ; pause
+
+- **Lot 4p : validé et fusionné dans `main`**, sans correction. La suite passe à **1 083 tests**. Les routes de navigation vérifiées une
+  à une et la clôture testée avec confirmation refusée puis acceptée sont exactement ce qu'il fallait. Merci pour toute la série 4o et 4p.
+- **Aucun lot ouvert pour l'instant : attends.** Le prochain lot viendra avec les écrans du guide des séquences et de l'IA, quand le
+  backend les aura livrés. Il sera annoncé ici.
+- Accusé : « Dernier message lu : 21 », puis arrête-toi et dis au propriétaire que la file est vide.
 
 ## 12/11/2026 : message 20 : lot 4p, plan validé avec mes réponses, code
 
