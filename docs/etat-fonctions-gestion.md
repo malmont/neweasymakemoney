@@ -199,6 +199,9 @@ l'ancien cache lisible quelques instants après l'échange ; à vérifier avant 
      - Arrondi psychologique réglable par site.
      - Coefficient proposé d'après les articles semblables de la même saison.
   3. Console IA générale (W2, DOC) : questions libres, analyses d'ensemble et rapports PDF « comme un spécialiste », sur les mêmes analyses nommées calculées par le serveur. Premier cas d'usage : le bilan des nouveaux articles (garder, monter ou baisser le coefficient, avec un pourquoi chiffré), puis price.set sur la sélection. Contrat demandé au backend le 13/11.
+- **Après W2, web (souhait du propriétaire du 13/11) : menu par thèmes.** Les 26 onglets à plat deviennent des sections au nom explicite, avec des groupes repliables, une page d'accueil en cartes par thème, et des adresses inchangées.
+  - Proposition du web, à valider à l'ouverture du lot : Tableau de bord, Achats et stock, Prix et ventes, Argent, Périodes et résultats, Réglages.
+  - Mon avis : « Locations » (et plus tard « Abonnements ») vont dans Prix et ventes, pas dans Périodes et résultats. « Lire un document » sert aussi aux notes de frais : il vaut mieux en faire une action toujours visible (bouton « Lire un document » en haut, comme la console) que de le ranger dans Achats.
 - **Partage des rôles :**
   - les vignettes du guide font les ajustements précis, un article ou un poste à la fois. Elles ne changent pas : ce qu'elles font est déjà bon, et les anciens articles continuent d'être traités par les promotions proposées ;
   - le coefficient ne concerne que les nouveaux articles. Les ventes des anciens articles semblables (saison terminée) ne servent que de référence pour le choisir, sans toucher à leur prix ;
