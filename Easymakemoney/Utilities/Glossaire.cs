@@ -79,8 +79,37 @@ namespace Easymakemoney.Utilities
             ["taux-depart"] = new("Taux de départ", "La part des abonnés qui arrêtent leur abonnement chaque mois."),
         };
 
+        /// <summary>
+        /// W2-APPRENDRE : le lexique servi par le serveur (mêmes clés), qui passe avant les définitions locales. Les définitions locales
+        /// restent le secours hors connexion ou avant le premier chargement.
+        /// </summary>
+        private static Dictionary<string, Entry> _server = new(StringComparer.OrdinalIgnoreCase);
+
+        /// <summary>Version du lexique du serveur actuellement appliqué ; null tant qu'aucun n'est chargé.</summary>
+        public static string? ServerVersion { get; private set; }
+
+        /// <summary>Remplace d'un bloc le lexique du serveur ; une entrée sans terme ni définition est ignorée.</summary>
+        public static void ApplyServer(string? version, IEnumerable<(string Key, string? Term, string? Definition)> entries)
+        {
+            var next = new Dictionary<string, Entry>(StringComparer.OrdinalIgnoreCase);
+            foreach (var (key, term, definition) in entries)
+                if (!string.IsNullOrWhiteSpace(key) && !string.IsNullOrWhiteSpace(term) && !string.IsNullOrWhiteSpace(definition))
+                    next[key] = new Entry(term!.Trim(), definition!.Trim());
+            _server = next;
+            ServerVersion = version;
+        }
+
+        /// <summary>Retire le lexique du serveur (tests, changement de site).</summary>
+        public static void ClearServer()
+        {
+            _server = new Dictionary<string, Entry>(StringComparer.OrdinalIgnoreCase);
+            ServerVersion = null;
+        }
+
         public static Entry? Find(string? key) =>
-            key != null && Entries.TryGetValue(key, out var entry) ? entry : null;
+            key == null ? null
+            : _server.TryGetValue(key, out var server) ? server
+            : Entries.TryGetValue(key, out var entry) ? entry : null;
 
         public static IReadOnlyCollection<string> Keys => Entries.Keys;
     }

@@ -34,12 +34,5 @@ public class UiTerm : Label
             Text = entry.Title;
     }
 
-    private async Task ShowAsync()
-    {
-        if (Glossaire.Find(Term) is not { } entry)
-            return;
-        var dialog = IPlatformApplication.Current?.Services.GetService<IDialogService>();
-        if (dialog != null)
-            await dialog.ShowInfoAsync(entry.Definition, entry.Title);
-    }
+    private Task ShowAsync() => TermDefinition.ShowAsync(Term);
 }

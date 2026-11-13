@@ -31,13 +31,7 @@ public partial class UiAmountRow : ContentView
         SemanticProperties.SetHint(TitleLabel, "Afficher la définition");
         TitleLabel.GestureRecognizers.Add(new TapGestureRecognizer
         {
-            Command = new Command(async () =>
-            {
-                if (Utilities.Glossaire.Find(Term) is not { } entry)
-                    return;
-                if (IPlatformApplication.Current?.Services.GetService<Services.Dialog.IDialogService>() is { } dialog)
-                    await dialog.ShowInfoAsync(entry.Definition, entry.Title);
-            }),
+            Command = new Command(async () => await TermDefinition.ShowAsync(Term)),
         });
     }
 

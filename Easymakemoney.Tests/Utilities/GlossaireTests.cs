@@ -5,6 +5,7 @@ using Xunit;
 
 namespace Easymakemoney.Tests.Utilities;
 
+[Collection("Glossaire")]
 public class GlossaireTests
 {
     private static string AppDirectory([CallerFilePath] string path = "") =>

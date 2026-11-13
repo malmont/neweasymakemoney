@@ -120,6 +120,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<IRentalGridService, RentalGridService>();
 		builder.Services.AddTransient<IVariantPromotionService, VariantPromotionService>();
 		builder.Services.AddTransient<IManagementModuleService, ManagementModuleService>();
+		builder.Services.AddSingleton<ILexiconService, LexiconService>();
 		builder.Services.AddTransient<ISupportService, SupportService>();
 		builder.Services.AddTransient<IManagementEditService, ManagementEditService>();
 		builder.Services.AddSingleton<Easymakemoney.Services.Offline.IHomeSnapshotStore, Easymakemoney.Services.Offline.HomeSnapshotStore>();
