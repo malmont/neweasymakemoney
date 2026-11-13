@@ -188,6 +188,19 @@ essais** sera créé pour cette campagne, avec sa documentation des essais (la d
 a cherché un fichier de l'ancien cache (aucune réponse en erreur, c'était la requête de contrôle). Correction demandée au backend : garder
 l'ancien cache lisible quelques instants après l'échange ; à vérifier avant le premier client.
 
+**Lot IA, suite (décisions du propriétaire du 13/11/2026)**
+- **Périmètre :** l'IA de la console (fil, actions, analyses) sert uniquement la gestion ; EasyAdmin couvre les autres modules. Le prix de vente et la mise en ligne d'un article font partie de la gestion. Restent dehors la description, les photos, les comptes, les rôles, les réservations, les livres et les biographes.
+- **En ligne le 13/11 :** IA-FACT-1, 2-A et 2-B (facture par conversation, ajout à une commande ouverte, phrase libre) ; IA-ACT-1 à 3 (note de frais, fournisseur, frais de port, budget, solde et mouvement de trésorerie, voyage, exercice, découpage des périodes, coût d'achat). Écrans : mobile (facture) et web (IA-CONV-WEB : fil, liste « En cours », points d'entrée).
+- **Ordre suivant :**
+  1. IA-ACT-4 : clôture d'une période avec annulation exacte.
+  2. IA-ACT-5 : prix de vente et mise en ligne.
+     - Dans la facture : coefficient de la facture ou par ligne, prix d'un article déjà en vente gardé par défaut, mise en ligne « En caisse » et « Sur la boutique en ligne » (non, tout de suite, ou à la réception du stock).
+     - L'action price.set : prix en masse par période, collection, catégorie ou liste, par coefficient, pourcentage ou prix saisi.
+     - Arrondi psychologique réglable par site.
+     - Coefficient proposé d'après les articles semblables de la même saison.
+  3. Bilan des nouveaux articles dans le guide quotidien : garder, monter ou baisser le coefficient, avec un pourquoi chiffré.
+  4. Console IA générale (W2, DOC) : questions libres, analyses d'ensemble et rapports PDF « comme un spécialiste », sur les mêmes analyses nommées calculées par le serveur.
+
 ## Lots en cours ou à venir
 
 | Lot | Contenu | État |
