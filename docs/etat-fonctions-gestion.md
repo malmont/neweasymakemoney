@@ -198,10 +198,10 @@ l'ancien cache lisible quelques instants après l'échange ; à vérifier avant 
      - L'action price.set : prix en masse par période, collection, catégorie ou liste, par coefficient, pourcentage ou prix saisi.
      - Arrondi psychologique réglable par site.
      - Coefficient proposé d'après les articles semblables de la même saison.
-  3. Bilan des nouveaux articles dans le guide quotidien : garder, monter ou baisser le coefficient, avec un pourquoi chiffré.
-  4. Console IA générale (W2, DOC) : questions libres, analyses d'ensemble et rapports PDF « comme un spécialiste », sur les mêmes analyses nommées calculées par le serveur.
+  3. Console IA générale (W2, DOC) : questions libres, analyses d'ensemble et rapports PDF « comme un spécialiste », sur les mêmes analyses nommées calculées par le serveur. Premier cas d'usage : le bilan des nouveaux articles (garder, monter ou baisser le coefficient, avec un pourquoi chiffré), puis price.set sur la sélection. Contrat demandé au backend le 13/11.
 - **Partage des rôles :**
-  - les vignettes du guide font les ajustements précis, un article ou un poste à la fois ;
+  - les vignettes du guide font les ajustements précis, un article ou un poste à la fois. Elles ne changent pas : ce qu'elles font est déjà bon, et les anciens articles continuent d'être traités par les promotions proposées ;
+  - le coefficient ne concerne que les nouveaux articles. Les ventes des anciens articles semblables (saison terminée) ne servent que de référence pour le choisir, sans toucher à leur prix ;
   - la console fait les ajustements globaux, sur un ensemble (une période, une collection, une catégorie, un fournisseur, les nouveaux articles), par les actions en masse (price.set, puis les promotions de groupe), toujours avec aperçu, confirmation et annulation.
 
 ## Lots en cours ou à venir
