@@ -17,8 +17,35 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 | 6 | 4n : tests des ViewModels des listes de gestion | `docs/gemini/lot-4n-consigne.md` | **terminé, fusionné** (1139ae9) |
 | 7 | 4o : tests des ViewModels du démarrage et de la connexion | `docs/gemini/lot-4o-consigne.md` | **terminé, fusionné** |
 | 8 | 4p : tests des ViewModels de gestion restants (stock bas, reprise, variantes, écran d'une période) | `docs/gemini/lot-4p-consigne.md` | **terminé, fusionné** |
-| 9 | 4q : tests des formulaires de création et des écrans d'une commande et d'un article | `docs/gemini/lot-4q-consigne.md` | **à faire : plan maintenant** |
+| 9 | 4q : tests des formulaires de création et des écrans d'une commande et d'un article | `docs/gemini/lot-4q-consigne.md` | **plan validé : code** |
 | 10 | R1 : relecture à froid de l'application (aucune modification) | `docs/gemini/lot-R1-consigne.md` | après la fusion de 4q |
+
+## 12/11/2026 : message 23 : lot 4q, plan validé avec mes réponses, code
+
+Ton plan 4q est **validé**. Tes constats étaient justes : **j'ai corrigé les défauts dans l'application** sur `main` (6c900ac), donc tes
+tests vérifient le comportement corrigé, **sans `Skip`**.
+
+**Réponses :**
+1. `BottomSheetPopupViewModel.ClosePopupAsync` (`Func<Task>`) : remplace-le par un faux qui compte les appels. Succès → fermée ; échec
+   → **pas** fermée ; `CancelCommand` → fermée.
+2. `DashBoardCommandViewModel` : `LoadCommandsAsync()` (liste vide et message en cas d'erreur), `SelectCommandAsync(command)`,
+   `NavigateAsync` pour `ItemTappedCommand` (route `DashBoardProductPage?CommandId=…`).
+3. `DashBoardProductViewModel` : `LoadProductsAsync()` et `SelectProduct(product)`. `ShowBottomSheetCreateProduct` refuse maintenant
+   sans commande (`CommandId == 0` → « Vous devez choisir obligatoirement une commande », aucune fenêtre) et règle `CommandId` sur la liste
+   des articles : teste le refus.
+4. `ListNewFraisDePortViewModel.CommandId` est maintenant réglable (`public set`).
+5. **Constats corrigés**, à tester tels qu'ils sont maintenant :
+   - un enregistrement refusé (`false`) lève `UserMessageException` avec « L'enregistrement de la période a échoué : réessayez. » (et ainsi
+     pour chaque formulaire) ; `DialogService` montre ce message tel quel ;
+   - article sans image : `UserMessageException` « Choisissez une image pour l'article. » ;
+   - note de frais sans type : « Choisissez le type de la note de frais. » ; fournisseur sans type : « Choisissez le type du
+     fournisseur. » — aucun appel au service, plus de plantage ;
+   - **photo du fournisseur : pas un défaut**, le formulaire n'a aucun champ photo. Ne la teste pas.
+   Avec `FakeDialogService`, vérifie que `ShownErrors` reçoit bien une `UserMessageException` portant ce texte.
+
+Référence : **1 083 tests** sur `main`, Android **12 avertissements**.
+**Branche** : `git fetch origin`, `git switch main && git merge --ff-only origin/main`, puis `git switch -c feature/lot-4q-tests main`.
+**Ensuite** : compte rendu `docs/gemini/lot-4q-compte-rendu.md` **en dernier**, accusé « Dernier message lu : 23 », puis attends ma revue.
 
 ## 12/11/2026 : message 22 : deux lots de plus ; lot 4q, plan
 
