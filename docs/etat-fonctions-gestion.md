@@ -200,6 +200,9 @@ l'ancien cache lisible quelques instants après l'échange ; à vérifier avant 
      - Coefficient proposé d'après les articles semblables de la même saison.
   3. Bilan des nouveaux articles dans le guide quotidien : garder, monter ou baisser le coefficient, avec un pourquoi chiffré.
   4. Console IA générale (W2, DOC) : questions libres, analyses d'ensemble et rapports PDF « comme un spécialiste », sur les mêmes analyses nommées calculées par le serveur.
+- **Partage des rôles :**
+  - les vignettes du guide font les ajustements précis, un article ou un poste à la fois ;
+  - la console fait les ajustements globaux, sur un ensemble (une période, une collection, une catégorie, un fournisseur, les nouveaux articles), par les actions en masse (price.set, puis les promotions de groupe), toujours avec aperçu, confirmation et annulation.
 
 ## Lots en cours ou à venir
 
