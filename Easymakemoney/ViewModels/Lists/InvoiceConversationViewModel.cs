@@ -159,6 +159,12 @@ namespace Easymakemoney.ViewModels.Lists
             {
                 item.ErrorText = e.ApiError.Errors.FirstOrDefault()?.Message ?? e.Message;
             }
+            catch (ApiException e) when (e.ApiError.Code == "CONVERSATION_NOT_OPEN")
+            {
+                // Lecture relancée, facture confirmée ou fil abandonné ailleurs : on montre l'état réel du fil.
+                await ReloadAsync();
+                await _dialogService.ShowInfoAsync("Cette facture a changé d'état entre-temps : l'écran est à jour.");
+            }
             catch (Exception e)
             {
                 Debug.WriteLine(e);
@@ -339,7 +345,10 @@ namespace Easymakemoney.ViewModels.Lists
         public bool HasText => !string.IsNullOrWhiteSpace(Text);
         public bool IsRequired => Question.required;
         public bool IsAnswered => Question.IsAnswered;
-        public string? AnswerText => Question.AnswerText;
+        public bool IsToAnswer => IsRequired && !IsAnswered;
+        public string? AnswerText => Question.AnswerText is { } text
+            ? (Question.proposed ? $"Lu sur la facture : {text}" : $"Réponse : {text}")
+            : null;
         public string InputType => Question.InputType;
         public bool IsChoice => InputType == "choice";
         public bool IsDate => InputType == "date";

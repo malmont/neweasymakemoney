@@ -82,6 +82,9 @@ namespace Easymakemoney.Models
         public JToken? answer { get; set; }
         public long? difference { get; set; }
 
+        /// <summary>IA-FACT-2-A : réponse proposée par le serveur d'après la lecture (fournisseur reconnu), modifiable par le gérant.</summary>
+        public bool proposed { get; set; }
+
         public bool IsAnswered => answer != null && answer.Type != JTokenType.Null;
         public string InputType => input?.type ?? "choice";
 

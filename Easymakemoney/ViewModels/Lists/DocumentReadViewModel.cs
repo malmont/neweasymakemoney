@@ -55,7 +55,7 @@ namespace Easymakemoney.ViewModels.Lists
         };
 
         public string IntroText => IsInvoice
-            ? "Photographiez la facture du fournisseur ou choisissez des photos (6 pages au plus), ou un PDF. Vous vérifierez ensuite chaque ligne : rien n'est enregistré avant votre validation."
+            ? "Photographiez la facture du fournisseur ou choisissez des photos (6 pages au plus), ou un PDF. L'application vous pose ensuite ses questions et vous montre la commande : rien n'est créé avant votre confirmation."
             : IsCampaign
                 ? "Photographiez la facture de la régie (Facebook, Google, journal, imprimeur…) ou choisissez des photos (6 pages au plus), ou un PDF. Vous vérifierez ensuite la campagne : rien n'est enregistré avant votre validation."
                 : "Photographiez le document ou choisissez des photos (6 pages au plus), ou un PDF. Rien n'est enregistré avant votre validation.";

@@ -80,6 +80,24 @@ public class InvoiceConversationTests
     }
 
     [Fact]
+    public void ProposedSupplier_ReadsAsLuSurLaFacture_AndIsNotToAnswer()
+    {
+        var question = SupplierQuestion();
+        question.answer = new JObject { ["id"] = 3 };
+        question.proposed = true;
+        var item = new ConversationQuestionItem(question);
+        Assert.Equal("Lu sur la facture : Grossiste Caraïbes", item.AnswerText);
+        Assert.False(item.IsToAnswer);
+        Assert.True(item.Options[0].IsSelected);
+
+        question.proposed = false;
+        question.answer = null;
+        item = new ConversationQuestionItem(question);
+        Assert.True(item.IsToAnswer);
+        Assert.Null(item.AnswerText);
+    }
+
+    [Fact]
     public void OptionIsCreate_OnlyForCreateObject()
     {
         var question = SupplierQuestion();
@@ -254,6 +272,22 @@ public class InvoiceConversationTests
 
         Assert.Equal("Ce fournisseur n'existe plus.", vm.Questions[0].ErrorText);
         Assert.True(vm.Questions[0].HasError);
+        Assert.Empty(_dialog.ShownErrors);
+    }
+
+    [Fact]
+    public async Task Answer_ConversationNotOpen_ReloadsThread()
+    {
+        _service.OpenResult = Thread("questions", null, SupplierQuestion());
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+        _service.AnswerException = Error(HttpStatusCode.Conflict, "{\"code\":\"CONVERSATION_NOT_OPEN\",\"message\":\"x\",\"state\":\"confirmed\"}");
+        _service.GetResults.Enqueue(Thread("confirmed"));
+
+        await vm.ChooseOptionCommand.ExecuteAsync(vm.Questions[0].Options[0]);
+
+        Assert.True(vm.IsConfirmed);
+        Assert.Single(_dialog.ShownInfos);
         Assert.Empty(_dialog.ShownErrors);
     }
 
