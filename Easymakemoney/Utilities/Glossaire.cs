@@ -24,7 +24,7 @@ namespace Easymakemoney.Utilities
             ["autres-revenus"] = new("Locations et abonnements", "Revenus des locations et des abonnements, comptés à part du résultat de la période d'articles."),
 
             // Budget et périodes
-            ["periode"] = new("Période", "Un trimestre de vente (4 par an), créé automatiquement. Chaque dépense compte dans la période de sa date. Une période fermée est en lecture seule."),
+            ["periode"] = new("Période", "Une période de vente, créée automatiquement : un trimestre par défaut (4 par an), ou un semestre ou un mois selon le réglage du site. Chaque dépense compte dans la période de sa date. Une période fermée est en lecture seule."),
             ["budget-global"] = new("Budget global", "Le montant total que vous vous autorisez à dépenser sur la période, tous postes confondus."),
             ["prevu"] = new("Prévu", "Le montant que vous prévoyez de dépenser sur un poste (stock, voyage, port, publicité, autres) pendant la période."),
             ["reel"] = new("Dépensé (réel)", "Ce qui est déjà dépensé sur le poste, d'après vos commandes, notes de frais, frais de port et campagnes."),
@@ -64,7 +64,7 @@ namespace Easymakemoney.Utilities
             ["mesure"] = new("Mesure", "Après un conseil appliqué, le guide compare les 14 jours suivants aux 14 jours précédents pour voir ce qu'il a vraiment rapporté."),
 
             // Statistiques et publicité
-            ["panier-moyen"] = new("Panier moyen", "Le montant moyen d'une vente, hors taxes : ventes ÷ nombre de ventes. Un retour ne fait pas baisser le panier du jour où il arrive."),
+            ["panier-moyen"] = new("Panier moyen", "Le montant moyen d'une commande, hors taxes : ventes avant retours ÷ nombre de commandes. Un retour ne fait pas baisser le panier du jour où il arrive."),
             ["valeur-stock"] = new("Valeur du stock", "Le stock en magasin valorisé au prix de vente affiché : quantité × prix de chaque variante. La comparaison dans le temps vient d'une photo du stock prise chaque jour à 10 h."),
             ["commandes"] = new("Commandes", "Le nombre de ventes contenant au moins un article, en boutique en ligne, en caisse et dans l'application. Les commandes annulées ou incomplètes ne comptent pas."),
             ["taux-retour"] = new("Taux de retour", "Le montant des articles retournés ÷ les ventes avant retours. À 5 %, sur 100 $ vendus, 5 $ ont été rendus."),
