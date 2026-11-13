@@ -154,7 +154,8 @@ boutique ?
 ## Campagne d'essais avant le premier client
 
 Décision du propriétaire (12/11/2026) : tout lot validé part en production sans attendre ; les essais réels se font en une campagne
-avant de mettre un premier client en production, le propriétaire se connectant lui-même. Liste à tenir à jour :
+avant de mettre un premier client en production, le propriétaire se connectant lui-même. Le 13/11/2026 : un **nouveau site dédié aux
+essais** sera créé pour cette campagne, avec sa documentation des essais (la démo n'est pas modifiée pour cela). Liste à tenir à jour :
 - Caisse (posflutter, main 92ca9db), en lecture seule : LOC3 et VAR (catalogue, panier, récapitulatif, ticket avec promotions de
   location et par variante) ; PAYS-1 et PAYS-1c (ancien reçu avec taux depuis ratePpm, pack v4,v5 → pos-offline-v5) ; PAYS-1b
   (vente annulée « ANNULÉE le … — avoir n° … ») ; REIMP (affichage purpose=display, aucun POST /reprint, 5 reçus au plus, contrôle du
@@ -162,6 +163,7 @@ avant de mettre un premier client en production, le propriétaire se connectant 
   « Mon code PIN », « Tiroir-caisse »).
 - Appli mobile de gestion : séance sur le téléphone (variantes, « non activée », « Préparer ma gestion », Ma journée, fenêtres de
   l'appli, hors connexion des statistiques et de la trésorerie, formulaires à liaisons compilées).
+- Boussole ESG web : passage d'un compte à l'autre et deux onglets, avec deux comptes d'essai, sur le site d'essai (module activé).
 - Web : essais déjà faits lot par lot sur demo ; revue d'ensemble à prévoir. W1i (modifier fournisseur, transporteur, frais de port),
   poussé sans essai : téléphone d'un fournisseur, contact de Nationex, numéro de suivi d'un frais de port, chacun aller-retour ;
   transporteur « ESSAI W1i » créé, modifié puis supprimé ; relevé avant et après. Reprise d'historique (W1g) : appliquer et annuler sur un
