@@ -97,6 +97,31 @@ namespace Easymakemoney.ViewModels.Dashboard
                 await mainPage.ShowPopupAsync(popup);
             }
         }
+        /// <summary>Commandes de la période ; liste vide et message en cas d'erreur.</summary>
+        public async Task<ObservableCollection<ListCommand>> LoadCommandsAsync()
+        {
+            try
+            {
+                return await _getListCommandUseCase.ExecuteAsync(CollectionId);
+            }
+            catch (Exception ex)
+            {
+                await _dialogService.ShowErrorAsync(ex);
+                return new ObservableCollection<ListCommand>();
+            }
+        }
+
+        public async Task SelectCommandAsync(ListCommand command)
+        {
+            CommandId = command.id;
+            CommandImage = command.Photo;
+            CommandName = command.Name;
+            await GetDashboardCommandAsync(command.id);
+        }
+
+        /// <summary>Navigation (point d'entrée des tests).</summary>
+        public Func<string, Task> NavigateAsync { get; set; } = route => Shell.Current?.GoToAsync(route) ?? Task.CompletedTask;
+
 
         [RelayCommand]
         public async Task ShowBottomSheetPopupListCommandView()
@@ -107,17 +132,11 @@ namespace Easymakemoney.ViewModels.Dashboard
                 return;
             }
             var viewModel = new BottomSheetPopupListViewViewModel(
-                getItemsFunc: async () => await _getListCommandUseCase.ExecuteAsync(CollectionId),
-                onItemTappedAction: async (item) =>
+                getItemsFunc: async () => await LoadCommandsAsync(),
+                onItemTappedAction: async item =>
                 {
-                    var command = item as ListCommand;
-                    if (command != null)
-                    {
-                        this.CommandId = command.id;
-                        this.CommandImage = command.Photo;
-                        this.CommandName = command.Name;
-                        await this.GetDashboardCommandAsync(command.id);
-                    }
+                    if (item is ListCommand command)
+                        await SelectCommandAsync(command);
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);
@@ -132,8 +151,7 @@ namespace Easymakemoney.ViewModels.Dashboard
                 return;
 
             // Navigate to the ListNewCommandPage and pass the collection ID
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync($"{nameof(DashBoardProductPage)}?CommandId={CommandId}", true);
+            await NavigateAsync($"{nameof(DashBoardProductPage)}?CommandId={CommandId}");
         }
 
     }

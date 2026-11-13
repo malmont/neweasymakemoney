@@ -53,6 +53,10 @@ public class DialogService : IDialogService
                     message = $"{message}\n{details}";
                 }
             }
+            else if (exception is UserMessageException)
+            {
+                message = exception.Message;
+            }
             else
             {
                 Debug.WriteLine($"[DialogService] Exception imprévue : {exception.GetType().Name} - {exception.Message}");

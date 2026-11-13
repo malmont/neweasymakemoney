@@ -14,6 +14,9 @@ namespace Easymakemoney.UseCase.ListNoteDeFraisUseCase
 
         public async Task<bool> ExecuteAsync(NoteDeFraisForModel NoteDeFraisForm,int CollectionId)
     {
+        if (NoteDeFraisForm.SelectedTypeNoteDeFrais == null)
+            throw new Easymakemoney.Services.Dialog.UserMessageException("Choisissez le type de la note de frais.");
+
         var newNoteDeFrais = new NoteDeFrais
         {
             name = NoteDeFraisForm.Name,

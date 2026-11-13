@@ -43,7 +43,7 @@ namespace Easymakemoney.ViewModels.Lists
         public int CollectionId { get; set; }
 
         /// <summary>Commande visée par le formulaire d'ajout en cours.</summary>
-        public int CommandId { get; private set; }
+        public int CommandId { get; set; }
 
         [ObservableProperty]
         private string? collectionImage;

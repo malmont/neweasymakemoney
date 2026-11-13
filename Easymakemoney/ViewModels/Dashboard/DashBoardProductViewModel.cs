@@ -53,6 +53,13 @@ namespace Easymakemoney.ViewModels.Dashboard
         [RelayCommand]
         public async Task ShowBottomSheetCreateProduct()
         {
+            if (CommandId == 0)
+            {
+                await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une commande");
+                return;
+            }
+            // L'article créé appartient à la commande affichée : la liste rechargée après l'enregistrement est la sienne.
+            _listNewProductViewModel.CommandId = CommandId;
             var viewModel = new BottomSheetPopupViewModel(
                 popup: new Popup(),
                 isProductForm: true,
@@ -70,6 +77,28 @@ namespace Easymakemoney.ViewModels.Dashboard
                 await mainPage.ShowPopupAsync(popup);
             }
         }
+        /// <summary>Articles de la commande ; liste vide et message en cas d'erreur.</summary>
+        public async Task<ObservableCollection<ListProduct>> LoadProductsAsync()
+        {
+            try
+            {
+                return await _getListProductUseCase.ExecuteAsync(CommandId);
+            }
+            catch (Exception ex)
+            {
+                await _dialogService.ShowErrorAsync(ex);
+                return new ObservableCollection<ListProduct>();
+            }
+        }
+
+        public void SelectProduct(ListProduct product)
+        {
+            DashBoardProduct = product;
+            ProductImage = product.image;
+            ProductName = product.Name;
+            DisplayedQuantity = product.freezeQuantity ?? product.quantity ?? 0;
+        }
+
 
         [RelayCommand]
         public async Task ShowBottomSheetPopupListProductView()
@@ -80,29 +109,11 @@ namespace Easymakemoney.ViewModels.Dashboard
                 return;
             }
             var viewModel = new BottomSheetPopupListViewViewModel(
-                getItemsFunc: async () =>
+                getItemsFunc: async () => await LoadProductsAsync(),
+                onItemTappedAction: item =>
                 {
-                    try
-                    {
-                        return await _getListProductUseCase.ExecuteAsync(CommandId);
-                    }
-                    catch (Exception ex)
-                    {
-                        await _dialogService.ShowErrorAsync(ex);
-                        return new ObservableCollection<ListProduct>();
-                    }
-                },
-                onItemTappedAction: (item) =>
-                {
-                    var Product = item as ListProduct;
-                    if (Product != null)
-                    {
-                        this.DashBoardProduct = Product;
-                        this.ProductImage = Product.image;
-                        this.ProductName = Product.Name;
-                        DisplayedQuantity = Product.freezeQuantity ?? Product.quantity ?? 0;
-
-                    }
+                    if (item is ListProduct product)
+                        SelectProduct(product);
                 });
 
             var popup = new BottomSheetPopupListView(viewModel);

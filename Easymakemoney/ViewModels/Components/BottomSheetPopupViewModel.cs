@@ -98,6 +98,7 @@ namespace Easymakemoney.ViewModels.Components
             CommandForm = commandFormModel;
             IsProductForm = isProductForm;
             ProductForm = productFormModel;
+            ClosePopupAsync = () => _popup?.CloseAsync() ?? Task.CompletedTask;
             SaveCommand = new AsyncRelayCommand(SaveAsync);
             CancelCommand = new AsyncRelayCommand(CancelAsync);
             _saveFournisseurUseCase = saveFournisseurUseCase;
@@ -183,43 +184,43 @@ namespace Easymakemoney.ViewModels.Components
                 {
                     var result = await _saveCollectionUseCase.ExecuteAsync(CollectionForm);
                     if (result) await _collectionViewModel.GetListCollectionAsync();
-                    if (!result) throw new Exception("Failed to save collection.");
+                    if (!result) throw new Easymakemoney.Services.Dialog.UserMessageException("L'enregistrement de la période a échoué : réessayez.");
                 }
                 else if (IsCommandForm)
                 {
                     var result = await _saveCommandUseCase.ExecuteAsync(CommandForm, _commandViewModel.CollectionId);
                     if (result) await _commandViewModel.GetListCommandAsync();
-                    if (!result) throw new Exception("Failed to save command.");
+                    if (!result) throw new Easymakemoney.Services.Dialog.UserMessageException("L'enregistrement de la commande a échoué : réessayez.");
                 }
                 else if (IsProductForm)
                 {
                     var result = await _saveProductUseCase.ExecuteAsync(ProductForm, _productViewModel.CommandId);
                     if (result) await _productViewModel.GetListProductAsync();
-                    if (!result) throw new Exception("Failed to save product.");
+                    if (!result) throw new Easymakemoney.Services.Dialog.UserMessageException("L'enregistrement de l'article a échoué : réessayez.");
                 }
                 else if (IsProductVariantForm)
                 {
                     var result = await _saveProductvariantUseCase.ExecuteAsync(ProductVariantForm, _productVariantViewModel.ProductId);
                     if (result) await _productVariantViewModel.GetlistProductVariantAsync();
-                    if (!result) throw new Exception("Failed to save product variant.");
+                    if (!result) throw new Easymakemoney.Services.Dialog.UserMessageException("L'enregistrement de la variante a échoué : réessayez.");
                 }else if (IsNoteDeFraisForm)
                 {
                     var result = await _saveNoteDeFraisUseCase.ExecuteAsync(NoteDeFraisForm, _noteDeFraisViewModel.CollectionId);
                     if (result) await _noteDeFraisViewModel.GetListNoteDeFraisAsync();
-                    if (!result) throw new Exception("Failed to save note de frais.");
+                    if (!result) throw new Easymakemoney.Services.Dialog.UserMessageException("L'enregistrement de la note de frais a échoué : réessayez.");
                 }else if (IsFournisseurForm)
                 {
                     var result = await _saveFournisseurUseCase.ExecuteAsync(FournisseurForm);
                     if (result) await _fournisseurViewModel.GetListFournisseursAsync();
-                    if (!result) throw new Exception("Failed to save fournisseur.");
+                    if (!result) throw new Easymakemoney.Services.Dialog.UserMessageException("L'enregistrement du fournisseur a échoué : réessayez.");
                 }else if (IsFraisDePortForm)
                 {
                     var result = await _saveFraisDePortUseCase.ExecuteAsync(FraisDePortForm, _fraisDePortViewModel.CommandId);
                     if (result) await _fraisDePortViewModel.GetListFraisDePort();
-                    if (!result) throw new Exception("Failed to save frais de port.");
+                    if (!result) throw new Easymakemoney.Services.Dialog.UserMessageException("L'enregistrement du frais de port a échoué : réessayez.");
                 }
 
-                await _popup.CloseAsync();
+                await ClosePopupAsync();
             }
             catch (Exception ex)
             {
@@ -234,6 +235,9 @@ namespace Easymakemoney.ViewModels.Components
                 }
             }
         }
-        private Task CancelAsync() => _popup.CloseAsync();
+        private Task CancelAsync() => ClosePopupAsync();
+
+        /// <summary>Fermeture de la fenêtre (point d'entrée des tests) : après un succès ou une annulation, jamais après un échec.</summary>
+        public Func<Task> ClosePopupAsync { get; set; }
     }
 }

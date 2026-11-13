@@ -11,9 +11,11 @@ namespace Easymakemoney.UseCase.ListFournisseurUseCase
 
         public async Task<bool> ExecuteAsync(FournisseurFormModel FourniseursForm)
         {
+            if (FourniseursForm.SelectedTypeFournisseur == null)
+                throw new Easymakemoney.Services.Dialog.UserMessageException("Choisissez le type du fournisseur.");
+
             var newFournisseur = new ListFournisseur
             {
-            
                 name = FourniseursForm.Name,
                 adresse = FourniseursForm.Adresse,
                 ville = FourniseursForm.Ville,

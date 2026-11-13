@@ -14,7 +14,7 @@ namespace Easymakemoney.UseCase.ListProductUseCase
         {
             if (productForm.ImageStream == null || string.IsNullOrEmpty(productForm.ImageFileName))
             {
-                throw new InvalidOperationException("Image is required.");
+                throw new Easymakemoney.Services.Dialog.UserMessageException("Choisissez une image pour l'article.");
             }
 
             var result = await _createProductsUseCase.ExecuteAsync(productForm.ToListProduct(), productForm.ImageStream, productForm.ImageFileName,CommandId);
