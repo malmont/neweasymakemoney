@@ -17,6 +17,17 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 | 6 | 4n : tests des ViewModels des listes de gestion | `docs/gemini/lot-4n-consigne.md` | **terminé, fusionné** (1139ae9) |
 | 7 | 4o : tests des ViewModels du démarrage et de la connexion | `docs/gemini/lot-4o-consigne.md` | **terminé, fusionné** |
 | 8 | 4p : tests des ViewModels de gestion restants (stock bas, reprise, variantes, écran d'une période) | `docs/gemini/lot-4p-consigne.md` | **terminé, fusionné** |
+| 9 | 4q : tests des formulaires de création et des écrans d'une commande et d'un article | `docs/gemini/lot-4q-consigne.md` | **à faire : plan maintenant** |
+| 10 | R1 : relecture à froid de l'application (aucune modification) | `docs/gemini/lot-R1-consigne.md` | après la fusion de 4q |
+
+## 12/11/2026 : message 22 : deux lots de plus ; lot 4q, plan
+
+Le propriétaire veut que tu continues. La file a deux lots de plus (tableau ci-dessus) :
+1. **Lot 4q maintenant** : lis `git show main:docs/gemini/lot-4q-consigne.md` et écris le plan `docs/gemini/lot-4q-plan.md`, sans code,
+   sans commit, sans changer de branche, questions à la fin. **Ne modifie aucun fichier de l'application.**
+2. **Lot R1 ensuite**, ouvert par un message après la fusion de 4q : relecture à froid, sans aucune modification
+   (`docs/gemini/lot-R1-consigne.md`). Ne le commence pas avant.
+Accusé : « Dernier message lu : 22 », avec « plan 4q écrit, j'attends la revue ».
 
 ## 12/11/2026 : message 21 : lot 4p fusionné ; pause
 
