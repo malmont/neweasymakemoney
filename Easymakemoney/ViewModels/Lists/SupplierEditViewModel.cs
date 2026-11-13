@@ -103,6 +103,7 @@ namespace Easymakemoney.ViewModels.Lists
             catch (Exception ex)
             {
                 Debug.WriteLine($"[SupplierEdit] Types illisibles : {ex.Message}");
+                ErrorText = "La liste des types n'a pas pu être chargée : le type actuel est gardé.";
             }
         }
 

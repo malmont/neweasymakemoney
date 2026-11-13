@@ -50,11 +50,18 @@ namespace Easymakemoney.ViewModels.FormModels
         }
         public async Task LoadTypeNoteDeFraisAsync()
         {
-            var typeNoteDeFrais = await _getListTypeNoteDeFraisUseCase.ExecuteAsync();
-            TypeNoteDeFraisSelected.Clear();
-            foreach (var type in typeNoteDeFrais)
+            try
             {
-                TypeNoteDeFraisSelected.Add(type);
+                var typeNoteDeFrais = await _getListTypeNoteDeFraisUseCase.ExecuteAsync();
+                TypeNoteDeFraisSelected.Clear();
+                foreach (var type in typeNoteDeFrais)
+                {
+                    TypeNoteDeFraisSelected.Add(type);
+                }
+            }
+            catch (Exception ex)
+            {
+                await Easymakemoney.Utilities.FormLoadNotice.ReportAsync("LoadTypeNoteDeFrais", ex);
             }
         }
 

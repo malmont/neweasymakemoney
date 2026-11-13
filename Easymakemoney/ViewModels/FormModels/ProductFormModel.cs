@@ -103,7 +103,7 @@ namespace Easymakemoney.ViewModels.FormModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Categories loading failed: {ex.Message}");
+                _ = Easymakemoney.Utilities.FormLoadNotice.ReportAsync("Categories", ex);
             }
         }
 
@@ -120,7 +120,7 @@ namespace Easymakemoney.ViewModels.FormModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Styles loading failed: {ex.Message}");
+                _ = Easymakemoney.Utilities.FormLoadNotice.ReportAsync("Styles", ex);
             }
         }
 
@@ -131,7 +131,7 @@ namespace Easymakemoney.ViewModels.FormModels
                 var result = await FilePicker.PickAsync(new PickOptions
                 {
                     FileTypes = FilePickerFileType.Images,
-                    PickerTitle = "Please select an image"
+                    PickerTitle = "Choisissez une image"
                 });
 
                 if (result != null)

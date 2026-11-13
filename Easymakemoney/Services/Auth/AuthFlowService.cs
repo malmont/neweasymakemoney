@@ -51,8 +51,9 @@ public class AuthFlowService : IAuthFlowService
             Debug.WriteLine($"[AuthFlowService] Erreur lors de l'appel logout : {ex.Message}");
         }
 
-        // Effacement de la session sans toucher au site
+        // Effacement de la session sans toucher au site ; le compte suivant ne doit pas hériter du bandeau « hors connexion ».
         await _sessionService.ClearSessionAsync();
+        Easymakemoney.Services.Offline.OfflineState.Online();
         _pendingLoginStore.Clear();
 
         await RunOnMainThreadAsync(async () =>

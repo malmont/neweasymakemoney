@@ -27,7 +27,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             _moduleService = moduleService;
             _snapshots = snapshots;
             _scope = scope;
-            Title = "welcome";
+            Title = "Accueil";
         }
 
         /// <summary>Copie locale par site et par compte ; sans site ni compte connus, pas de copie.</summary>
@@ -223,6 +223,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             catch (Exception ex)
             {
                 Debug.WriteLine($"Vignette non écartée : {ex.Message}");
+                await Easymakemoney.Utilities.AppDialogs.InfoAsync("Information", "La vignette n'a pas pu être masquée. Réessayez plus tard.");
             }
         }
 

@@ -93,6 +93,7 @@ namespace Easymakemoney.ViewModels.Lists
             catch (Exception ex)
             {
                 Debug.WriteLine($"[ShippingEdit] Transporteurs illisibles : {ex.Message}");
+                ErrorText = "La liste des transporteurs n'a pas pu être chargée : le transporteur actuel est gardé.";
             }
         }
 

@@ -58,7 +58,7 @@ namespace Easymakemoney.ViewModels.FormModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"LoadColors failed: {ex.Message}");
+                _ = Easymakemoney.Utilities.FormLoadNotice.ReportAsync("LoadColors", ex);
             }
         }
 
@@ -76,7 +76,7 @@ namespace Easymakemoney.ViewModels.FormModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"LoadSizes failed: {ex.Message}");
+                _ = Easymakemoney.Utilities.FormLoadNotice.ReportAsync("LoadSizes", ex);
             }
         }
     }

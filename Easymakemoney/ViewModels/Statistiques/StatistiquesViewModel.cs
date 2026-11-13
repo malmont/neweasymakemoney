@@ -100,7 +100,7 @@ namespace Easymakemoney.ViewModels.Statistiques
 
         private readonly StatistiquesPageLoaderState _loader = new();
 
-        public Task InitializeAsync() => _loader.RunOnceAsync(LoadAsync);
+        public Task InitializeAsync() => _loader.RunOnceAsync(LoadAsync, () => HasData);
 
         /// <summary>Plage demandée à l'ouverture (« Ma journée » ouvre sur « today ») ; sans effet après le premier chargement.</summary>
         public void UseInitialRange(string? code)
@@ -333,13 +333,23 @@ namespace Easymakemoney.ViewModels.Statistiques
     internal sealed class StatistiquesPageLoaderState
     {
         private bool _loaded;
+        private bool _running;
 
-        public async Task RunOnceAsync(Func<Task> load)
+        /// <summary>Un chargement raté (hors connexion…) sera retenté au prochain affichage de l'écran.</summary>
+        public async Task RunOnceAsync(Func<Task> load, Func<bool>? succeeded = null)
         {
-            if (_loaded)
+            if (_loaded || _running)
                 return;
-            _loaded = true;
-            await load();
+            _running = true;
+            try
+            {
+                await load();
+                _loaded = succeeded?.Invoke() ?? true;
+            }
+            finally
+            {
+                _running = false;
+            }
         }
     }
 }

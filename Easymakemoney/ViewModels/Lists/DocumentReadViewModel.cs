@@ -210,7 +210,8 @@ namespace Easymakemoney.ViewModels.Lists
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Debug.WriteLine(e);
+                await _dialogService.ShowInfoAsync("Impossible d'ouvrir la galerie. Vérifiez l'autorisation d'accès aux photos dans les réglages.");
             }
         }
 
@@ -228,7 +229,8 @@ namespace Easymakemoney.ViewModels.Lists
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Debug.WriteLine(e);
+                await _dialogService.ShowInfoAsync("Impossible d'ouvrir ce PDF. Choisissez un autre fichier.");
             }
         }
 

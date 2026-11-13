@@ -91,7 +91,7 @@ namespace Easymakemoney.ViewModels.FormModels
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"LoadTypeFournisseur failed: {ex.Message}");
+                    _ = Easymakemoney.Utilities.FormLoadNotice.ReportAsync("LoadTypeFournisseur", ex);
                 }
             }
     }

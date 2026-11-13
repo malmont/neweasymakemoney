@@ -102,7 +102,7 @@ namespace Easymakemoney.ViewModels.Lists
 
             bool confirmed = await _dialogService.ConfirmAsync(
                 "Confirmation",
-                "Êtes-vous sûr de vouloir supprimer cette collection ?",
+                "Êtes-vous sûr de vouloir supprimer cette période ?",
                 "Supprimer",
                 "Annuler");
             if (!confirmed)
@@ -114,11 +114,11 @@ namespace Easymakemoney.ViewModels.Lists
                 if (result)
                 {
                     await GetListCollectionAsync();
-                    await _dialogService.ShowInfoAsync("Collection supprimée avec succès.");
+                    await _dialogService.ShowInfoAsync("Période supprimée.");
                 }
                 else
                 {
-                    await _dialogService.ShowInfoAsync("Échec de la suppression de la collection.");
+                    await _dialogService.ShowInfoAsync("La période n'a pas pu être supprimée.");
                 }
             }
             catch (Exception ex)

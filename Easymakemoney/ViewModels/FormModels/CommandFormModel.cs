@@ -89,7 +89,7 @@ namespace Easymakemoney.ViewModels.FormModels
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"LoadTransporteurs failed: {ex.Message}");
+                _ = Easymakemoney.Utilities.FormLoadNotice.ReportAsync("LoadTransporteurs", ex);
             }
         }
     }

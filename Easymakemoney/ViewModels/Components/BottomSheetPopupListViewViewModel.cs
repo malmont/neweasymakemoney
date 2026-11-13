@@ -4,14 +4,24 @@ public partial class BottomSheetPopupListViewViewModel : ObservableObject
 {
     private Popup _popup;
     private readonly Func<Task<IEnumerable<IListItem>>> _getItemsFunc;
-    private readonly Action<IListItem> _onItemTappedAction;
+    private readonly Func<IListItem, Task> _onItemTapped;
 
     public ObservableCollection<IListItem> Items { get; set; } = new ObservableCollection<IListItem>();
 
     public BottomSheetPopupListViewViewModel(Func<Task<IEnumerable<IListItem>>> getItemsFunc, Action<IListItem> onItemTappedAction)
+        : this(getItemsFunc, item =>
+        {
+            onItemTappedAction(item);
+            return Task.CompletedTask;
+        })
+    {
+    }
+
+    /// <summary>Choix asynchrone (chargement de la période, de la commande…) : attendu, ses erreurs sont montrées au gérant.</summary>
+    public BottomSheetPopupListViewViewModel(Func<Task<IEnumerable<IListItem>>> getItemsFunc, Func<IListItem, Task> onItemTappedAction)
     {
         _getItemsFunc = getItemsFunc;
-        _onItemTappedAction = onItemTappedAction;
+        _onItemTapped = onItemTappedAction;
         ItemTappedCommand = new AsyncRelayCommand<IListItem>(OnItemTapped);
     }
 
@@ -40,8 +50,17 @@ public partial class BottomSheetPopupListViewViewModel : ObservableObject
     {
         if (item is null)
             return;
-        _onItemTappedAction(item);
+        // La fenêtre se ferme d'abord : le chargement qui suit le choix se fait sur l'écran appelant.
         await CancelAsync();
+        try
+        {
+            await _onItemTapped(item);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            await Easymakemoney.Utilities.AppDialogs.InfoAsync("Erreur", "Ce choix n'a pas pu être chargé. Réessayez.");
+        }
     }
 
     public void SetPopupInstance(Popup popup)
@@ -49,5 +68,5 @@ public partial class BottomSheetPopupListViewViewModel : ObservableObject
         _popup = popup;
     }
 
-    private Task CancelAsync() => _popup.CloseAsync();
+    private Task CancelAsync() => _popup?.CloseAsync() ?? Task.CompletedTask;
 }

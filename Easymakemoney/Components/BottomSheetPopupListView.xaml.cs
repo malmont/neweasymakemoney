@@ -10,7 +10,8 @@ namespace Easymakemoney.Components
             InitializeComponent();
             BindingContext = viewModel;
             viewModel.SetPopupInstance(this);
-            Task.Run(async () => await viewModel.GetItemsAsync()).ConfigureAwait(false);
+            // La liste liée à l'écran se remplit sur le fil de l'interface, jamais depuis une tâche d'arrière-plan.
+            Dispatcher.Dispatch(async () => await viewModel.GetItemsAsync());
 
         }
     }

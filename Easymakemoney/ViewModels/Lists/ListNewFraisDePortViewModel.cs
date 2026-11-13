@@ -79,7 +79,8 @@ namespace Easymakemoney.ViewModels.Lists
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Debug.WriteLine(e);
+                await _dialogService.ShowErrorAsync(e);
             }
         }
 

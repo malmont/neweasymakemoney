@@ -202,7 +202,7 @@ namespace Easymakemoney.Services
             content.Add(new StringContent(data.description ?? string.Empty), "description");
 
             // Règle 4 bis : prix d'achat envoyé en entier centimes avec CultureInfo.InvariantCulture
-            var purchasePriceCents = (long)Math.Round((data.purchasePrice ?? 0) * 100);
+            var purchasePriceCents = MoneyHelper.ToCents(data.purchasePrice ?? 0);
             content.Add(new StringContent(purchasePriceCents.ToString(CultureInfo.InvariantCulture)), "purchasePrice");
             content.Add(new StringContent((data.coefficientMultiplier ?? 0).ToString(CultureInfo.InvariantCulture)), "coefficientMultiplier");
 
