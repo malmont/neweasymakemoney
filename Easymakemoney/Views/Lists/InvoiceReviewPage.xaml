@@ -280,7 +280,7 @@
                                                 </Border>
                                                 <Label Text="Coefficient (prix de vente = coût × coefficient)" Style="{StaticResource FormLabel}" />
                                                 <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
-                                                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="2" Keyboard="Numeric" Text="{Binding CoefficientText}" />
+                                                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Vide : coefficient proposé" Keyboard="Numeric" Text="{Binding CoefficientText}" />
                                                 </Border>
                                             </VerticalStackLayout>
 

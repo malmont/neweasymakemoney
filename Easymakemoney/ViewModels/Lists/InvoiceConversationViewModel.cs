@@ -254,6 +254,32 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
         [RelayCommand]
+        private async Task SubmitNumber(ConversationQuestionItem? item)
+        {
+            if (item == null)
+                return;
+            if (item.BuildNumberValue() is not { } value)
+            {
+                item.ErrorText = $"Coefficient invalide : {item.NumberPlaceholder.ToLowerInvariant()}.";
+                return;
+            }
+            await SendAnswerAsync(item, value);
+        }
+
+        [RelayCommand]
+        private async Task SubmitMoney(ConversationQuestionItem? item)
+        {
+            if (item == null)
+                return;
+            if (item.BuildMoneyValue() is not { } value)
+            {
+                item.ErrorText = "Prix invalide : saisissez par exemple 29,99.";
+                return;
+            }
+            await SendAnswerAsync(item, value);
+        }
+
+        [RelayCommand]
         private async Task Confirm()
         {
             if (IsBusy || Conversation is not { IsReady: true, previewHash: { } hash } thread)
@@ -274,9 +300,11 @@ namespace Easymakemoney.ViewModels.Lists
                     Apply(updated);
                 else
                     Apply(await _conversations.GetAsync(thread.id));
-                await _dialogService.ShowInfoAsync(adds
+                var changedPrices = (result?["prices"] as JArray)?.Count ?? 0;
+                await _dialogService.ShowInfoAsync((adds
                     ? "Facture ajoutée à la commande. L'ajout reste annulable pendant 24 heures."
-                    : "Commande créée. Elle reste annulable pendant 24 heures.");
+                    : "Commande créée. Elle reste annulable pendant 24 heures.")
+                    + (changedPrices switch { 0 => string.Empty, 1 => " 1 prix de vente modifié.", _ => $" {changedPrices} prix de vente modifiés." }));
             }
             catch (ApiException e) when (e.ApiError.Code is "PREVIEW_CHANGED" or "CONVERSATION_NOT_READY")
             {
@@ -516,8 +544,58 @@ namespace Easymakemoney.ViewModels.Lists
         public bool IsAnswered => Question.IsAnswered;
         public bool IsToAnswer => IsRequired && !IsAnswered;
         public string? AnswerText => Question.AnswerText is { } text
-            ? (Question.proposed ? $"Lu sur la facture : {text}" : $"Réponse : {text}")
+            ? (Question.proposed
+                ? (Question.kind == "supplier" ? $"Lu sur la facture : {text}" : $"Proposé : {text}")
+                : $"Réponse : {text}")
             : null;
+
+        /// <summary>IA-ACT-5 : une question de choix qui accepte aussi un coefficient saisi.</summary>
+        public bool HasNumberEntry => IsChoice && Question.input?.number != null;
+
+        /// <summary>IA-ACT-5 : une question de choix qui accepte aussi un prix saisi.</summary>
+        public bool HasMoneyEntry => IsChoice && Question.input?.money != null;
+
+        public string NumberPlaceholder => Question.input?.number is { min: { } min, max: { } max }
+            ? $"Coefficient de {min.ToString("0.##", CultureInfo.CurrentCulture)} à {max.ToString("0.##", CultureInfo.CurrentCulture)}"
+            : "Coefficient";
+
+        public string MoneyPlaceholder => Question.input?.money?.currency is { } currency ? $"Prix de vente ({currency})" : "Prix de vente";
+
+        [ObservableProperty]
+        private string? numberText;
+
+        [ObservableProperty]
+        private string? moneyText;
+
+        /// <summary>Le détail par article calculé par le serveur (questions coefficient et price.mode), une ligne par article.</summary>
+        public string? ArticlesText => Question.articles.Count == 0
+            ? null
+            : string.Join("\n", Question.articles.Select(a =>
+                $"• {a.name}" + (a.label is { Length: > 0 } label ? $" : {label}" : string.Empty)
+                + (a.price is { } price ? $" → {SiteCurrency.FormatCents(price, CultureInfo.CurrentCulture, null)}" : string.Empty)));
+
+        public bool HasArticles => ArticlesText != null;
+
+        /// <summary>Coefficient saisi : le nombre pour la question coefficient, { mode: coefficient } pour le prix d'un article ; null s'il est hors bornes.</summary>
+        public JToken? BuildNumberValue()
+        {
+            var number = DecimalInputConverter.Parse(NumberText);
+            if (number is null or <= 0)
+                return null;
+            var value = (double)number.Value;
+            if (Question.input?.number is { } bounds && ((bounds.min is { } min && value < min) || (bounds.max is { } max && value > max)))
+                return null;
+            return Question.kind == "line.price"
+                ? new JObject { ["mode"] = "coefficient", ["coefficient"] = number.Value }
+                : new JValue(number.Value);
+        }
+
+        /// <summary>Prix saisi, en cents : { mode: fixed, price } ; null s'il est illisible.</summary>
+        public JToken? BuildMoneyValue()
+        {
+            var amount = DecimalInputConverter.Parse(MoneyText);
+            return amount is null or <= 0 ? null : new JObject { ["mode"] = "fixed", ["price"] = MoneyHelper.ToCents(amount) };
+        }
         public string InputType => Question.InputType;
         public bool IsChoice => InputType == "choice";
         public bool IsDate => InputType == "date";
@@ -624,7 +702,15 @@ namespace Easymakemoney.ViewModels.Lists
                 + (orderLine.unitCost is { } unit ? SiteCurrency.FormatCents(unit, CultureInfo.CurrentCulture, preview.target?.currency ?? preview.currency) : "?");
             if (line.lineBefore is { } before && line.lineAfter is { } after)
                 OrderLineText = $"Déjà dans la commande : {Line(before)} → {Line(after)}";
+            PublishText = line.PublishText;
+            MentionsText = line.MentionsText;
         }
+
+        /// <summary>IA-ACT-5 : mise en ligne d'un article créé et ses mentions, en clair.</summary>
+        public string? PublishText { get; }
+        public bool HasPublish => PublishText != null;
+        public string? MentionsText { get; }
+        public bool HasMentions => MentionsText != null;
 
         /// <summary>IA-FACT-2-A : la ligne existante de la commande, avant et après l'ajout (coût moyen pondéré calculé par le serveur).</summary>
         public string? OrderLineText { get; }

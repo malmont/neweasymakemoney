@@ -88,6 +88,14 @@ public class InvoiceReviewTests
     }
 
     [Fact]
+    public void InitialLine_LeavesCoefficientEmpty_SoTheServerProposesIt()
+    {
+        var line = InvoiceReview.InitialLine(new InvoiceExtractedLine { N = 1, Label = "Écharpe", Quantity = 2, UnitCost = 1100 });
+
+        Assert.Null(line.Coefficient);
+    }
+
+    [Fact]
     public void Read_FlagsDuplicate()
     {
         var json = JObject.Parse("""{ "duplicate": { "documentId": 9, "commandeId": 12, "status": "confirmed" }, "lines": [] }""");
@@ -233,7 +241,8 @@ public class InvoiceReviewTests
         Assert.Equal(1250, created["unitCost"]!.Value<long>());
         Assert.Null(created["productId"]);
         Assert.Equal("Robe lin", created["create"]!["name"]!.Value<string>());
-        Assert.Equal(2.0, created["create"]!["coefficient"]!.Value<double>());
+        // IA-ACT-5 : coefficient non saisi → non envoyé, le serveur applique le coefficient proposé ou celui du site.
+        Assert.Null(created["create"]!["coefficient"]);
         Assert.Equal("M", created["size"]!.Value<string>());
         Assert.Equal("Rouge", created["color"]!.Value<string>());
 

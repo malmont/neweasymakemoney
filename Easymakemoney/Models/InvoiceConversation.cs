@@ -82,8 +82,15 @@ namespace Easymakemoney.Models
         public JToken? answer { get; set; }
         public long? difference { get; set; }
 
-        /// <summary>IA-FACT-2-A : réponse proposée par le serveur d'après la lecture (fournisseur reconnu), modifiable par le gérant.</summary>
+        /// <summary>IA-FACT-2-A : réponse proposée par le serveur (fournisseur reconnu, coefficient, mise en ligne, prix), modifiable par le gérant.</summary>
         public bool proposed { get; set; }
+
+        /// <summary>IA-ACT-5 : détail par article des questions coefficient et price.mode, tel que le serveur l'a calculé.</summary>
+        public List<ConversationArticle> articles { get; set; } = new();
+
+        /// <summary>IA-ACT-5 : l'article d'une question price:&lt;productId&gt;.</summary>
+        public ConversationProduct? product { get; set; }
+        public long? currentPrice { get; set; }
 
         public bool IsAnswered => answer != null && answer.Type != JTokenType.Null;
         public string InputType => input?.type ?? "choice";
@@ -102,6 +109,19 @@ namespace Easymakemoney.Models
                     return option.label;
                 if (value is JObject obj && obj["create"] is JObject create)
                     return $"Créer « {create.Value<string>("name")} »";
+                if (value is JObject priceDecision && priceDecision["mode"] is { Type: JTokenType.String } mode)
+                    return mode.Value<string>() switch
+                    {
+                        "keep" => "Garder le prix actuel",
+                        "coefficient" when priceDecision["coefficient"] is { Type: JTokenType.Integer or JTokenType.Float } c =>
+                            $"Coefficient {c.Value<double>().ToString("0.##", CultureInfo.CurrentCulture)}",
+                        "coefficient" => "Coefficient proposé",
+                        "fixed" when priceDecision["price"] is { Type: JTokenType.Integer } price =>
+                            $"Prix saisi : {SiteCurrency.FormatCents(price.Value<long>(), CultureInfo.CurrentCulture, input?.money?.currency)}",
+                        _ => value.ToString(),
+                    };
+                if (value.Type is JTokenType.Integer or JTokenType.Float && input?.number != null)
+                    return $"Coefficient {value.Value<double>().ToString("0.##", CultureInfo.CurrentCulture)}";
                 return InputType switch
                 {
                     "money" when value.Type is JTokenType.Integer => SiteCurrency.FormatCents(value.Value<long>(), CultureInfo.CurrentCulture, input?.currency),
@@ -119,6 +139,39 @@ namespace Easymakemoney.Models
         public string? type { get; set; }
         public string? currency { get; set; }
         public double? min { get; set; }
+
+        /// <summary>IA-ACT-5 : une question de choix qui accepte aussi un nombre saisi (coefficient).</summary>
+        public ConversationNumberInput? number { get; set; }
+
+        /// <summary>IA-ACT-5 : une question de choix qui accepte aussi un montant saisi (prix), en cents.</summary>
+        public ConversationMoneyInput? money { get; set; }
+    }
+
+    public class ConversationNumberInput
+    {
+        public double? min { get; set; }
+        public double? max { get; set; }
+    }
+
+    public class ConversationMoneyInput
+    {
+        public string? currency { get; set; }
+    }
+
+    /// <summary>IA-ACT-5 : un article d'une question coefficient ou price.mode, avec la proposition chiffrée du serveur.</summary>
+    public class ConversationArticle
+    {
+        public int? productId { get; set; }
+        public string? name { get; set; }
+        public string? label { get; set; }
+        public long? currentPrice { get; set; }
+        public long? price { get; set; }
+    }
+
+    public class ConversationProduct
+    {
+        public int id { get; set; }
+        public string? name { get; set; }
     }
 
     public class ConversationOption

@@ -97,7 +97,8 @@ namespace Easymakemoney.Models
                 GroupKey = line.GroupKey,
                 Quantity = (line.Quantity is > 0 ? line.Quantity.Value : 1).ToString(CultureInfo.InvariantCulture),
                 UnitCost = line.UnitCost.HasValue ? FormatAmount(line.UnitCost.Value, culture) : null,
-                Coefficient = FormatNumber(DefaultCoefficient, culture),
+                // IA-ACT-5 : vide = le serveur applique le coefficient proposé ou celui du site ; un nombre saisi passe avant.
+                Coefficient = null,
                 Size = line.Size,
                 Color = line.Color,
             };

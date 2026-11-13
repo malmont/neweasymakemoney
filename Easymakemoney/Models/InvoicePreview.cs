@@ -33,6 +33,12 @@ namespace Easymakemoney.Models
             var taxes = pricesIncludeTax ? " taxes comprises" : string.Empty;
             return line.kind switch
             {
+                "existing" when line.price is { changed: true, currentPrice: { } before, newPrice: { } after } =>
+                    $"Prix de vente : {Money(before)} → {Money(after)}{taxes}"
+                    + (line.plannedMargin is { } newMargin && line.plannedMarginRate is { } newRate
+                        ? $" · marge {Money(newMargin)} ({newRate.ToString("0.#", culture)} %)"
+                        : string.Empty)
+                    + (line.price.belowCost ? " · sous le coût d'achat" : string.Empty),
                 "existing" => line.currentPrice is { } current ? $"Prix de vente : inchangé ({Money(current)}{taxes})" : "Prix de vente : inchangé",
                 "create" when line.plannedPrice is { } price =>
                     $"Prix de vente : {Money(price)}{taxes}"
@@ -66,6 +72,46 @@ namespace Easymakemoney.Models
         /// <summary>IA-FACT-2-A : la ligne d'achat de la commande cible avant et après l'ajout (article déjà commandé).</summary>
         public InvoicePreviewOrderLine? lineBefore { get; set; }
         public InvoicePreviewOrderLine? lineAfter { get; set; }
+
+        /// <summary>IA-ACT-5 : mise en ligne d'un article créé (no, now, reception) et ses mentions (STOCK_ZERO, NO_PHOTO).</summary>
+        public string? publishPos { get; set; }
+        public string? publishWeb { get; set; }
+        public List<string> mentions { get; set; } = new();
+
+        /// <summary>IA-ACT-5 : prix d'un article déjà au catalogue, avant et après.</summary>
+        public InvoicePreviewLinePrice? price { get; set; }
+
+        /// <summary>La mise en ligne d'un article créé, en clair ; null si le serveur ne la rend pas.</summary>
+        public string? PublishText => publishPos == null && publishWeb == null
+            ? null
+            : $"En caisse : {PublishWord(publishPos)} · Boutique en ligne : {PublishWord(publishWeb)}";
+
+        public string? MentionsText => mentions.Count == 0
+            ? null
+            : string.Join(" · ", mentions.Select(m => m switch
+            {
+                "STOCK_ZERO" => "stock 0 : affiché en rupture jusqu'à la réception",
+                "NO_PHOTO" => "sans photo sur la boutique",
+                _ => m,
+            }));
+
+        private static string PublishWord(string? value) => value switch
+        {
+            "now" => "tout de suite",
+            "reception" => "à la réception du stock",
+            "no" => "non",
+            _ => "—",
+        };
+    }
+
+    public class InvoicePreviewLinePrice
+    {
+        public string? mode { get; set; }
+        public double? coefficient { get; set; }
+        public long? newPrice { get; set; }
+        public long? currentPrice { get; set; }
+        public bool changed { get; set; }
+        public bool belowCost { get; set; }
     }
 
     public class InvoicePreviewOrderLine

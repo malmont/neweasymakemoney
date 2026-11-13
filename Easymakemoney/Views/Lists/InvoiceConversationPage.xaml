@@ -80,7 +80,7 @@
                                                         <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Nom" Text="{Binding CreateName}" />
                                                     </Border>
                                                     <Border Style="{StaticResource FormField}" IsVisible="{Binding IsProductCreate}">
-                                                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Coefficient (par exemple 2)" Keyboard="Numeric" Text="{Binding CreateCoefficientText}" />
+                                                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Coefficient (vide : proposé)" Keyboard="Numeric" Text="{Binding CreateCoefficientText}" />
                                                     </Border>
                                                     <Button Text="{Binding Label}" Style="{StaticResource OptionButton}"
                                                             Command="{Binding Path=BindingContext.ChooseOptionCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
@@ -96,6 +96,25 @@
                                             </DataTemplate>
                                         </BindableLayout.ItemTemplate>
                                     </VerticalStackLayout>
+
+                                    <!-- IA-ACT-5 : détail par article, coefficient ou prix saisi en plus des boutons -->
+                                    <Label Text="{Binding ArticlesText}" IsVisible="{Binding HasArticles}" Style="{StaticResource UiBody}" FontSize="13" />
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" IsVisible="{Binding HasNumberEntry}">
+                                        <Border Style="{StaticResource FormField}">
+                                            <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Keyboard="Numeric" Placeholder="{Binding NumberPlaceholder}" Text="{Binding NumberText}" />
+                                        </Border>
+                                        <Button Grid.Column="1" Text="Valider" Style="{StaticResource OptionButton}"
+                                                Command="{Binding Path=BindingContext.SubmitNumberCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                CommandParameter="{Binding .}" />
+                                    </Grid>
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" IsVisible="{Binding HasMoneyEntry}">
+                                        <Border Style="{StaticResource FormField}">
+                                            <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Keyboard="Numeric" Placeholder="{Binding MoneyPlaceholder}" Text="{Binding MoneyText}" />
+                                        </Border>
+                                        <Button Grid.Column="1" Text="Valider" Style="{StaticResource OptionButton}"
+                                                Command="{Binding Path=BindingContext.SubmitMoneyCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                CommandParameter="{Binding .}" />
+                                    </Grid>
 
                                     <!-- Saisie : montant, nombre ou date -->
                                     <VerticalStackLayout Spacing="6" IsVisible="{Binding HasInput}">
@@ -150,6 +169,8 @@
                                         <Label Text="{Binding CostText}" Style="{StaticResource UiBody}" FontSize="13" />
                                         <Label Text="{Binding PriceText}" Style="{StaticResource UiBody}" FontSize="13" />
                                         <Label Text="{Binding OrderLineText}" IsVisible="{Binding HasOrderLine}" Style="{StaticResource UiBody}" FontSize="13" />
+                                        <Label Text="{Binding PublishText}" IsVisible="{Binding HasPublish}" Style="{StaticResource UiBody}" FontSize="13" />
+                                        <Label Text="{Binding MentionsText}" IsVisible="{Binding HasMentions}" FontSize="13" TextColor="#B45309" />
                                     </VerticalStackLayout>
                                 </DataTemplate>
                             </BindableLayout.ItemTemplate>

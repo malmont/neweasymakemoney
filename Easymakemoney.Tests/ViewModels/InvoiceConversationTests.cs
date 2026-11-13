@@ -623,6 +623,127 @@ public class InvoiceConversationTests
         Assert.True(vm.IsReady);
     }
 
+    // ---- IA-ACT-5 : coefficient, prix, mise en ligne -------------------------------------
+
+    private static ConversationQuestion CoefficientQuestion() => new()
+    {
+        id = "coefficient",
+        kind = "coefficient",
+        title = "Coefficient des nouveaux articles",
+        required = true,
+        proposed = true,
+        answer = "suggested",
+        input = new ConversationInput { type = "choice", number = new ConversationNumberInput { min = 1, max = 20 } },
+        options =
+        {
+            new ConversationOption { value = "suggested", label = "2,7 : 5 semblables de ce fournisseur" },
+            new ConversationOption { value = 2.5, label = "2,5 : constaté chez ce fournisseur" },
+        },
+        articles = { new ConversationArticle { name = "Écharpe neuve", label = "2,7 : 5 semblables", price = 2999 } },
+    };
+
+    [Fact]
+    public void CoefficientQuestion_ProposedAnswer_NumberEntryAndArticles()
+    {
+        var item = new ConversationQuestionItem(CoefficientQuestion());
+
+        Assert.Equal("Proposé : 2,7 : 5 semblables de ce fournisseur", item.AnswerText);
+        Assert.False(item.IsToAnswer);
+        Assert.True(item.HasNumberEntry);
+        Assert.False(item.HasMoneyEntry);
+        Assert.False(item.HasInput);
+        Assert.StartsWith("• Écharpe neuve : 2,7 : 5 semblables → ", item.ArticlesText);
+
+        item.NumberText = "2,4";
+        Assert.Equal(2.4m, item.BuildNumberValue()!.Value<decimal>());
+        item.NumberText = "25";
+        Assert.Null(item.BuildNumberValue());
+        item.NumberText = "abc";
+        Assert.Null(item.BuildNumberValue());
+    }
+
+    [Fact]
+    public void LinePrice_NumberAndMoneyBuildPriceDecisions_AndAnswerReads()
+    {
+        var question = new ConversationQuestion
+        {
+            id = "price:812",
+            kind = "line.price",
+            proposed = true,
+            answer = JObject.Parse("{\"mode\":\"keep\"}"),
+            input = new ConversationInput { type = "choice", money = new ConversationMoneyInput { currency = "CAD" }, number = new ConversationNumberInput { min = 0.5, max = 20 } },
+            options = { new ConversationOption { value = JObject.Parse("{\"mode\":\"keep\"}"), label = "Garder 25,00 CAD (coefficient actuel 2,5)" } },
+        };
+        var item = new ConversationQuestionItem(question);
+        Assert.True(item.HasNumberEntry);
+        Assert.True(item.HasMoneyEntry);
+        Assert.Equal("Proposé : Garder 25,00 CAD (coefficient actuel 2,5)", item.AnswerText);
+
+        item.NumberText = "2,4";
+        var byCoefficient = item.BuildNumberValue()!;
+        Assert.Equal("coefficient", byCoefficient["mode"]!.Value<string>());
+        Assert.Equal(2.4m, byCoefficient["coefficient"]!.Value<decimal>());
+
+        item.MoneyText = "31,50";
+        var fixedPrice = item.BuildMoneyValue()!;
+        Assert.Equal("fixed", fixedPrice["mode"]!.Value<string>());
+        Assert.Equal(3150L, fixedPrice["price"]!.Value<long>());
+
+        question.proposed = false;
+        question.answer = JObject.Parse("{\"mode\":\"coefficient\",\"coefficient\":2.4}");
+        Assert.Equal("Coefficient 2,4", question.AnswerText);
+        question.answer = JObject.Parse("{\"mode\":\"fixed\",\"price\":3150}");
+        Assert.StartsWith("Prix saisi : ", question.AnswerText);
+        Assert.Contains("31,50", question.AnswerText);
+    }
+
+    [Fact]
+    public async Task SubmitNumber_SendsTheNumber_AndRefusesOutOfRange()
+    {
+        _service.OpenResult = Thread("ready", "h", CoefficientQuestion());
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+        _service.AnswerResult = Thread("ready", "h2", CoefficientQuestion());
+
+        vm.Questions[0].NumberText = "30";
+        await vm.SubmitNumberCommand.ExecuteAsync(vm.Questions[0]);
+        Assert.Empty(_service.AnswerCalls);
+        Assert.StartsWith("Coefficient invalide", vm.Questions[0].ErrorText);
+
+        vm.Questions[0].NumberText = "2,4";
+        await vm.SubmitNumberCommand.ExecuteAsync(vm.Questions[0]);
+        var call = Assert.Single(_service.AnswerCalls);
+        Assert.Equal("coefficient", call.QuestionId);
+        Assert.Equal(2.4m, call.Value!.Value<decimal>());
+    }
+
+    [Fact]
+    public void PreviewLine_ShowsPublishingMentionsAndPriceChange()
+    {
+        var preview = new InvoicePreview
+        {
+            currency = "CAD",
+            lines =
+            {
+                new InvoicePreviewLine { n = 1, quantity = 3, unitCost = 1100, kind = "create", plannedPrice = 2999, publishPos = "now", publishWeb = "reception", mentions = { "STOCK_ZERO", "NO_PHOTO" } },
+                new InvoicePreviewLine { n = 2, quantity = 1, unitCost = 1000, kind = "existing", currentPrice = 2500,
+                    price = new InvoicePreviewLinePrice { mode = "coefficient", coefficient = 2.7, currentPrice = 2500, newPrice = 2799, changed = true } },
+                new InvoicePreviewLine { n = 3, quantity = 1, unitCost = 1000, kind = "existing", currentPrice = 2500,
+                    price = new InvoicePreviewLinePrice { mode = "keep", currentPrice = 2500, newPrice = 2500, changed = false } },
+            },
+        };
+        var created = new ConversationPreviewLine(preview.lines[0], preview);
+        Assert.Equal("En caisse : tout de suite · Boutique en ligne : à la réception du stock", created.PublishText);
+        Assert.Equal("stock 0 : affiché en rupture jusqu'à la réception · sans photo sur la boutique", created.MentionsText);
+
+        var changed = new ConversationPreviewLine(preview.lines[1], preview);
+        Assert.Contains("→", changed.PriceText);
+        Assert.False(changed.HasPublish);
+
+        var kept = new ConversationPreviewLine(preview.lines[2], preview);
+        Assert.StartsWith("Prix de vente : inchangé", kept.PriceText);
+    }
+
     // ---- Service ---------------------------------------------------------------
 
     [Fact]
