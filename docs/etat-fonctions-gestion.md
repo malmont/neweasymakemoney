@@ -170,6 +170,11 @@ essais** sera créé pour cette campagne, avec sa documentation des essais (la d
 - Appli mobile de gestion : séance sur le téléphone (variantes, « non activée », « Préparer ma gestion », Ma journée, fenêtres de
   l'appli, hors connexion des statistiques et de la trésorerie, formulaires à liaisons compilées).
 - Boussole ESG web : passage d'un compte à l'autre et deux onglets, avec deux comptes d'essai, sur le site d'essai (module activé).
+- Mémoires Vivantes web : restauration d'un brouillon après reconnexion ; menu « Biographe » de la fiche du livre ; bouton de rôle de la
+  console Équipe ; parcours complet avec un compte **biographe pur** (sans ROLE_ADMIN), à créer sur le site d'essai.
+- Site web commun : deux onglets (connexion du même compte sans rechargement ; bandeau de l'éditeur avec brouillon), avec une session admin ;
+  hydratation de la langue sur un site réglé en anglais.
+- Caisse : POS-CLIENT-WEB (compte web trouvé par courriel exact → fiche créée et rattachée), écritures sur un compte de test.
 - Web : essais déjà faits lot par lot sur demo ; revue d'ensemble à prévoir. W1i (modifier fournisseur, transporteur, frais de port),
   poussé sans essai : téléphone d'un fournisseur, contact de Nationex, numéro de suivi d'un frais de port, chacun aller-retour ;
   transporteur « ESSAI W1i » créé, modifié puis supprimé ; relevé avant et après. Reprise d'historique (W1g) : appliquer et annuler sur un
