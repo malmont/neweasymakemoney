@@ -142,6 +142,12 @@ conversation : questions, aperçu avec empreinte, annulation d'un bloc ; au choi
 fournisseur), **IA-ACT** (autres actions préparables), **IA-AVANCE** (l'IA fait avancer les séquences). Unités : 1 par réponse de l'IA ;
 lecture d'un document 1 ; questions calculées gratuites. ERREURS-3 : chaque module dans sa propre session.
 
+**Comptes et applications (décision du propriétaire du 13/11/2026)** : une seule base de comptes, des **rôles d'équipe par application**
+(biographe Mémoires Vivantes, conseiller Boussole ; administrateur, caisse et assistance inchangés) et une **appartenance des clients aux
+applications** (liste par compte : application, date, source, conditions acceptées). Première connexion d'un compte existant à une autre
+application : étape « Rejoindre » avec ses conditions (Loi 25), jamais d'ajout silencieux ; reprise de l'existant d'après l'historique.
+Lots backend : MV-BIOGRAPHE (memoiremobile backend), BOUSSOLE-CONSEILLER puis APPS-MEMBRES (appli degestion backend).
+
 À reparler aussi (idée du propriétaire du 12/11/2026, non décidée) : **démarque et vols**. Avis de Claude, par ordre :
 1. sans matériel : rapport d'anomalies de caisse calculé par le serveur (remboursements sans ticket, annulations, remises et prix
    manuels, ventes sous le coût, réimpressions, écarts au Z, tiroir ouvert sans vente), résumé rédigé par l'IA, et comptage du stock au
