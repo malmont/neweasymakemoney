@@ -137,7 +137,7 @@ pièce jointe enregistrée, commande remplie à partir d'une facture, et le maxi
 l'avancement global (plusieurs séquences, sur le modèle de « Préparer ma gestion » / readiness : activer un module, préparer une période,
 clôturer l'exercice…) ; l'IA fait avancer ces séquences étape par étape. Règle gardée : l'IA prépare, le serveur calcule, chaque écriture
 passe par un aperçu, la confirmation du gérant, le journal et l'annulation. Constat du backend reçu ; découpage validé par le propriétaire :
-**IA-SEQ** (guide des séquences, sans IA : séquences uniques depuis readiness, séquences récurrentes avec instances), **IA-FACT** (facture par
+**IA-SEQ** (guide des séquences, sans IA : séquences uniques depuis readiness, séquences récurrentes avec instances, résumé global avec la prochaine chose à faire ; affiché sur le web seulement, le mobile garde « Ma journée », « Préparer ma gestion » et le guide de la période), **IA-FACT** (facture par
 conversation : questions, aperçu avec empreinte, annulation d'un bloc ; au choix nouvelle commande ou ajout à une commande ouverte du même
 fournisseur), **IA-ACT** (autres actions préparables), **IA-AVANCE** (l'IA fait avancer les séquences). Unités : 1 par réponse de l'IA ;
 lecture d'un document 1 ; questions calculées gratuites. ERREURS-3 : chaque module dans sa propre session.

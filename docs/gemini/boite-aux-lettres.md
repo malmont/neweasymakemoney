@@ -19,7 +19,7 @@ Dans l'ordre. Un seul plan d'avance, jamais de code avant « plan validé, code 
 | 8 | 4p : tests des ViewModels de gestion restants (stock bas, reprise, variantes, écran d'une période) | `docs/gemini/lot-4p-consigne.md` | **terminé, fusionné** |
 | 9 | 4q : tests des formulaires de création et des écrans d'une commande et d'un article | `docs/gemini/lot-4q-consigne.md` | **terminé, fusionné** |
 | 10 | R1 : relecture à froid de l'application (aucune modification) | `docs/gemini/lot-R1-consigne.md` | **terminé, trié et corrigé** |
-| 11 | 4r : tests du guide des séquences (IA-SEQ) | `docs/gemini/lot-4r-consigne.md` | en attente du backend : ne pas commencer |
+| 11 | 4r : tests du guide des séquences (IA-SEQ) | `docs/gemini/lot-4r-consigne.md` | **annulé** (le guide des séquences reste sur le web, décision du propriétaire du 13/11) |
 
 ## 13/11/2026 : message 25 : R1 trié et corrigé ; pause
 
