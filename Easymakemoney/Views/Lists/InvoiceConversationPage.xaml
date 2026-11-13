@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             x:DataType="list:InvoiceConversationViewModel"
+             x:Class="Easymakemoney.Views.Lists.InvoiceConversationPage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Facture fournisseur">
+
+    <ContentPage.Resources>
+        <Style x:Key="FormField" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="MinimumHeightRequest" Value="44" />
+            <Setter Property="Padding" Value="12,0" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+        </Style>
+        <Style x:Key="FormEntry" TargetType="handlers:BorderlessEntry">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="PlaceholderColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="OptionButton" TargetType="Button">
+            <Setter Property="FontFamily" Value="InterSemiBold" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="CornerRadius" Value="12" />
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="MinimumHeightRequest" Value="44" />
+            <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimaryTint}" />
+            <Setter Property="TextColor" Value="{DynamicResource ThemePrimary}" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <components:AppHeader Title="Facture fournisseur" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+
+                <!-- État -->
+                <Label Text="{Binding StatusText}" Style="{StaticResource UiTitle}" FontSize="16" />
+                <ActivityIndicator IsRunning="{Binding IsReading}" IsVisible="{Binding IsReading}" Color="{DynamicResource ThemePrimary}" />
+                <Label Text="{Binding CreditsText}" Style="{StaticResource UiBody}" FontSize="12" IsVisible="{Binding HasCredits}" />
+
+                <!-- Résumé écrit par le serveur -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding HasSummary}">
+                    <Label Text="{Binding SummaryText}" Style="{StaticResource UiBody}" FontSize="15" />
+                </components:UiCard>
+
+                <!-- Lecture en échec -->
+                <Button Text="Relire la facture (1 unité IA)" IsVisible="{Binding IsFailed}" Command="{Binding RereadCommand}"
+                        Style="{StaticResource OptionButton}" />
+
+                <!-- Questions du serveur -->
+                <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Questions}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="list:ConversationQuestionItem">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                <VerticalStackLayout Spacing="8">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding Title}" Style="{StaticResource UiTitle}" FontSize="15" />
+                                        <Label Grid.Column="1" Text="À répondre" IsVisible="{Binding IsRequired}" FontFamily="InterSemiBold" FontSize="12" TextColor="#B45309" />
+                                    </Grid>
+                                    <Label Text="{Binding Text}" Style="{StaticResource UiBody}" FontSize="13" IsVisible="{Binding HasText}" />
+                                    <Label Text="{Binding AnswerText, StringFormat='Réponse : {0}'}" IsVisible="{Binding IsAnswered}"
+                                           FontFamily="InterSemiBold" FontSize="14" TextColor="#047857" />
+
+                                    <!-- Choix -->
+                                    <VerticalStackLayout Spacing="6" IsVisible="{Binding IsChoice}" BindableLayout.ItemsSource="{Binding Options}">
+                                        <BindableLayout.ItemTemplate>
+                                            <DataTemplate x:DataType="list:ConversationOptionItem">
+                                                <VerticalStackLayout Spacing="6">
+                                                    <Border Style="{StaticResource FormField}" IsVisible="{Binding IsCreate}">
+                                                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Nom" Text="{Binding CreateName}" />
+                                                    </Border>
+                                                    <Border Style="{StaticResource FormField}" IsVisible="{Binding IsProductCreate}">
+                                                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Coefficient (par exemple 2)" Keyboard="Numeric" Text="{Binding CreateCoefficientText}" />
+                                                    </Border>
+                                                    <Button Text="{Binding Label}" Style="{StaticResource OptionButton}"
+                                                            Command="{Binding Path=BindingContext.ChooseOptionCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                            CommandParameter="{Binding .}" />
+                                                </VerticalStackLayout>
+                                            </DataTemplate>
+                                        </BindableLayout.ItemTemplate>
+                                    </VerticalStackLayout>
+
+                                    <!-- Saisie : montant, nombre ou date -->
+                                    <VerticalStackLayout Spacing="6" IsVisible="{Binding HasInput}">
+                                        <Label Text="{Binding InputLabel}" Style="{StaticResource UiBody}" FontSize="13" />
+                                        <Border Style="{StaticResource FormField}" IsVisible="{Binding IsMoney}">
+                                            <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Keyboard="Numeric" Placeholder="Ex. : 24,90" Text="{Binding InputText}" />
+                                        </Border>
+                                        <Border Style="{StaticResource FormField}" IsVisible="{Binding IsNumber}">
+                                            <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Keyboard="Numeric" Placeholder="Ex. : 1,36" Text="{Binding InputText}" />
+                                        </Border>
+                                        <DatePicker IsVisible="{Binding IsDate}" Date="{Binding DateValue}" Format="d MMMM yyyy" />
+                                        <Button Text="Valider" Style="{StaticResource OptionButton}"
+                                                Command="{Binding Path=BindingContext.SubmitInputCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                CommandParameter="{Binding .}" />
+                                    </VerticalStackLayout>
+
+                                    <Label Text="{Binding ErrorText}" IsVisible="{Binding HasError}" FontSize="13" TextColor="#B91C1C" />
+                                </VerticalStackLayout>
+                            </components:UiCard>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <!-- Aperçu calculé par le serveur -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding HasPreview}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Aperçu de la commande" Style="{StaticResource UiTitle}" FontSize="16" />
+                        <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding PreviewLines}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="list:ConversationPreviewLine">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="{Binding Title}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                        <Label Text="{Binding CostText}" Style="{StaticResource UiBody}" FontSize="13" />
+                                        <Label Text="{Binding PriceText}" Style="{StaticResource UiBody}" FontSize="13" />
+                                    </VerticalStackLayout>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                        <Label Text="{Binding LinesTotalText, StringFormat='Total des lignes : {0}'}" FontFamily="InterBold" FontSize="15"
+                               TextColor="{DynamicResource ThemePrimary}" IsVisible="{Binding HasLinesTotal}" />
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <!-- Après la confirmation : annulation d'un bloc -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding IsConfirmed}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="{Binding UndoText}" Style="{StaticResource UiBody}" FontSize="13" IsVisible="{Binding HasUndoText}" />
+                        <VerticalStackLayout Spacing="4" IsVisible="{Binding HasBlockers}" BindableLayout.ItemsSource="{Binding Blockers}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="x:String">
+                                    <Label Text="{Binding ., StringFormat='• {0}'}" FontSize="13" TextColor="#B45309" />
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                        <Button Text="Annuler cette facture" IsVisible="{Binding CanUndo}" Command="{Binding UndoCommand}"
+                                Style="{StaticResource OptionButton}" BackgroundColor="#FEE2E2" TextColor="#991B1B" />
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <Button Text="Vérifier en détail" IsVisible="{Binding CanReviewInDetail}" Command="{Binding ReviewInDetailCommand}"
+                        Style="{StaticResource OptionButton}" BackgroundColor="Transparent" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Button Grid.Row="2" Text="Créer la commande" IsVisible="{Binding IsReady}" Command="{Binding ConfirmCommand}"
+                Margin="16,8,16,16" HeightRequest="50" CornerRadius="14" FontFamily="InterSemiBold" FontSize="15"
+                BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" />
+    </Grid>
+</ContentPage>

@@ -127,6 +127,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<Easymakemoney.UseCase.PeriodResultUseCase.PeriodUseCase>();
 		builder.Services.AddTransient<IRepriseService, RepriseService>();
 		builder.Services.AddTransient<IDocumentReaderService, DocumentReaderService>();
+		builder.Services.AddTransient<IInvoiceConversationService, InvoiceConversationService>();
 		builder.Services.AddTransient<ICommandeReceptionService, CommandeReceptionService>();
 		builder.Services.AddTransient<ICampaignService, CampaignService>();
 		builder.Services.AddTransient<IHomeTilesService, HomeTilesService>();
@@ -207,6 +208,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<ReprisePage>();
 		builder.Services.AddTransient<DocumentReadPage>();
 		builder.Services.AddTransient<InvoiceReviewPage>();
+		builder.Services.AddTransient<InvoiceConversationPage>();
 		builder.Services.AddTransient<CampaignListPage>();
 		builder.Services.AddTransient<CampaignFormPage>();
 		builder.Services.AddTransient<CampaignProfitabilityPage>();
@@ -271,6 +273,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<RepriseViewModel>();
 		builder.Services.AddTransient<DocumentReadViewModel>();
 		builder.Services.AddTransient<InvoiceReviewViewModel>();
+		builder.Services.AddTransient<InvoiceConversationViewModel>();
 		builder.Services.AddTransient<CampaignListViewModel>();
 		builder.Services.AddTransient<CampaignFormViewModel>();
 		builder.Services.AddTransient<CampaignProfitabilityViewModel>();

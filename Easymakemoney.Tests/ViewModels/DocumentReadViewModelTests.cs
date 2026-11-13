@@ -356,6 +356,36 @@ public class DocumentReadViewModelTests : IDisposable
         Assert.Null(exCampaign);
     }
 
+    [Fact]
+    public async Task Read_Invoice_OpensConversationWithoutPolling()
+    {
+        var routes = new List<string>();
+        var vm = CreateViewModel();
+        vm.NavigateAsync = route => { routes.Add(route); return Task.CompletedTask; };
+        await vm.InitAsync("facture", 0);
+        vm.AddFiles(new[] { CreateTempFile("facture.jpg") });
+        _documentReaderService.UploadResult = new GestionDocument { id = 25, status = "reading" };
+
+        await vm.ReadCommand.ExecuteAsync(null);
+
+        Assert.Equal("../InvoiceConversationPage?DocumentId=25", Assert.Single(routes));
+        Assert.Empty(_documentReaderService.GetCalls);
+    }
+
+    [Fact]
+    public async Task ResumeInvoice_OpensConversation()
+    {
+        var routes = new List<string>();
+        var vm = CreateViewModel();
+        vm.NavigateAsync = route => { routes.Add(route); return Task.CompletedTask; };
+        _documentReaderService.ListResult = new List<GestionDocument> { new() { id = 5, status = "extracted", createdAt = "2026-11-10T14:30:00Z" } };
+        await vm.InitAsync("facture", 0);
+
+        await vm.ResumeInvoiceCommand.ExecuteAsync(vm.PendingInvoices[0]);
+
+        Assert.Equal("../InvoiceConversationPage?DocumentId=5", Assert.Single(routes));
+    }
+
     // =========================================================================
     // 5. Relecture (Reread) avec confirmation
     // =========================================================================

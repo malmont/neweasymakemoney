@@ -1,0 +1,477 @@
+using System.Net;
+using Easymakemoney.Models;
+using Easymakemoney.Models.Api;
+using Easymakemoney.Services;
+using Easymakemoney.Services.Api;
+using Easymakemoney.Tests.Fakes;
+using Easymakemoney.ViewModels.Lists;
+using Newtonsoft.Json.Linq;
+using Xunit;
+
+namespace Easymakemoney.Tests.ViewModels;
+
+/// <summary>Lot IA-FACT-1 : conversation d'une facture fournisseur (modèle, réponses, confirmation, annulation, navigation).</summary>
+public class InvoiceConversationTests
+{
+    private readonly FakeConversationService _service = new();
+    private readonly FakeDocumentReaderService _documents = new();
+    private readonly FakeDialogService _dialog = new();
+
+    private InvoiceConversationViewModel CreateViewModel(List<string>? routes = null) =>
+        new(_service, _documents, _dialog)
+        {
+            PollDelay = TimeSpan.Zero,
+            NavigateAsync = route => { routes?.Add(route); return Task.CompletedTask; },
+        };
+
+    private static InvoiceConversation Thread(string state, string? hash = null, params ConversationQuestion[] questions) => new()
+    {
+        id = 7,
+        state = state,
+        previewHash = hash,
+        document = new ConversationDocument { id = 42 },
+        questions = questions.ToList(),
+        openQuestions = questions.Count(q => !q.IsAnswered),
+    };
+
+    private static ConversationQuestion SupplierQuestion() => new()
+    {
+        id = "supplier",
+        kind = "supplier",
+        title = "Quel fournisseur ?",
+        required = true,
+        input = new ConversationInput { type = "choice" },
+        options =
+        {
+            new ConversationOption { value = new JObject { ["id"] = 3 }, label = "Grossiste Caraïbes" },
+            new ConversationOption { value = JObject.Parse("{\"create\":{\"name\":\"Nouveau grossiste\"}}"), label = "Créer « Nouveau grossiste »" },
+        },
+    };
+
+    private static ApiException Error(HttpStatusCode status, string json) =>
+        new(ApiError.FromHttpResponse(json, status, null), status);
+
+    // ---- Modèle -------------------------------------------------------------
+
+    [Fact]
+    public void IsReady_RequiresPreviewHash()
+    {
+        Assert.False(Thread("ready").IsReady);
+        Assert.True(Thread("ready", "abc").IsReady);
+        Assert.False(Thread("questions", "abc").IsReady);
+    }
+
+    [Fact]
+    public void AnswerText_ReadsOptionCreateMoneyAndDate()
+    {
+        var supplier = SupplierQuestion();
+        supplier.answer = new JObject { ["id"] = 3 };
+        Assert.Equal("Grossiste Caraïbes", supplier.AnswerText);
+
+        supplier.answer = JObject.Parse("{\"create\":{\"name\":\"Autre\"}}");
+        Assert.Equal("Créer « Autre »", supplier.AnswerText);
+
+        var date = new ConversationQuestion { id = "invoice.date", input = new ConversationInput { type = "date" }, answer = "2026-11-05" };
+        Assert.Contains("novembre 2026", date.AnswerText);
+
+        var unanswered = new ConversationQuestion { id = "x", answer = JValue.CreateNull() };
+        Assert.False(unanswered.IsAnswered);
+        Assert.Null(unanswered.AnswerText);
+    }
+
+    [Fact]
+    public void OptionIsCreate_OnlyForCreateObject()
+    {
+        var question = SupplierQuestion();
+        Assert.False(question.options[0].IsCreate);
+        Assert.True(question.options[1].IsCreate);
+    }
+
+    // ---- Options et saisies ----------------------------------------------------
+
+    [Fact]
+    public void OptionBuildValue_ClonesServerValue()
+    {
+        var question = SupplierQuestion();
+        var item = new ConversationOptionItem(question.options[0], question);
+        var value = item.BuildValue();
+        Assert.True(JToken.DeepEquals(new JObject { ["id"] = 3 }, value));
+        Assert.NotSame(question.options[0].value, value);
+    }
+
+    [Fact]
+    public void ScalarOptions_AmountsModeAndPeriod_DoNotCrash()
+    {
+        var question = new ConversationQuestion
+        {
+            id = "amountsMode",
+            kind = "amountsMode",
+            options = { new ConversationOption { value = "ht", label = "Hors taxes" }, new ConversationOption { value = "ttc", label = "Taxes comprises" } },
+            answer = "ttc",
+        };
+        var item = new ConversationOptionItem(question.options[0], question);
+        Assert.False(item.IsCreate);
+        Assert.Null(item.CreateName);
+        Assert.Equal("ht", item.BuildValue()!.Value<string>());
+        Assert.Equal("Taxes comprises", question.AnswerText);
+        Assert.True(new ConversationOptionItem(question.options[1], question).IsSelected);
+    }
+
+    [Fact]
+    public void OptionBuildValue_CreateUsesEditedName_AndRefusesEmptyName()
+    {
+        var question = SupplierQuestion();
+        var item = new ConversationOptionItem(question.options[1], question);
+        Assert.Equal("Nouveau grossiste", item.CreateName);
+        Assert.False(item.IsProductCreate);
+
+        item.CreateName = "  Grossiste du Sud ";
+        Assert.Equal("Grossiste du Sud", item.BuildValue()!["create"]!["name"]!.Value<string>());
+
+        item.CreateName = "   ";
+        Assert.Null(item.BuildValue());
+    }
+
+    [Fact]
+    public void OptionBuildValue_ProductCreateCarriesCoefficient()
+    {
+        var question = new ConversationQuestion
+        {
+            id = "line:2",
+            kind = "line.product",
+            options = { new ConversationOption { value = JObject.Parse("{\"create\":{\"name\":\"Savon\",\"coefficient\":2}}"), label = "Créer « Savon »" } },
+        };
+        var item = new ConversationOptionItem(question.options[0], question);
+        Assert.True(item.IsProductCreate);
+        Assert.Equal("2", item.CreateCoefficientText);
+
+        item.CreateCoefficientText = "2,5";
+        var value = item.BuildValue()!;
+        Assert.Equal(2.5m, value["create"]!["coefficient"]!.Value<decimal>());
+        Assert.Equal("Savon", value["create"]!["name"]!.Value<string>());
+    }
+
+    [Fact]
+    public void InputValue_MoneyInCents_NumberPositive_DateIso()
+    {
+        var money = new ConversationQuestionItem(new ConversationQuestion { id = "unitCost:1", input = new ConversationInput { type = "money", currency = "EUR" } })
+        {
+            InputText = "24,90",
+        };
+        Assert.Equal(2490L, money.BuildInputValue()!.Value<long>());
+        Assert.Equal("Montant (EUR)", money.InputLabel);
+
+        money.InputText = "abc";
+        Assert.Null(money.BuildInputValue());
+
+        var rate = new ConversationQuestionItem(new ConversationQuestion { id = "exchangeRate", input = new ConversationInput { type = "number" } })
+        {
+            InputText = "1,36",
+        };
+        Assert.Equal(1.36m, rate.BuildInputValue()!.Value<decimal>());
+        rate.InputText = "0";
+        Assert.Null(rate.BuildInputValue());
+
+        var date = new ConversationQuestionItem(new ConversationQuestion { id = "invoice.date", input = new ConversationInput { type = "date" }, answer = "2026-11-05" });
+        Assert.Equal(new DateTime(2026, 11, 5), date.DateValue);
+        Assert.Equal("2026-11-05", date.BuildInputValue()!.Value<string>());
+    }
+
+    // ---- Lecture et réponses -----------------------------------------------------
+
+    [Fact]
+    public async Task InitAsync_FollowsReadingUntilQuestions()
+    {
+        _service.OpenResult = Thread("reading");
+        _service.GetResults.Enqueue(Thread("reading"));
+        _service.GetResults.Enqueue(Thread("questions", null, SupplierQuestion()));
+        var vm = CreateViewModel();
+
+        await vm.InitAsync(42);
+
+        Assert.Equal(new[] { 42 }, _service.OpenCalls);
+        Assert.Equal(2, _service.GetCalls.Count);
+        Assert.True(vm.IsAsking);
+        Assert.Single(vm.Questions);
+        Assert.Equal(2, vm.Questions[0].Options.Count);
+        Assert.Equal("1 question à régler avant la commande.", vm.StatusText);
+    }
+
+    [Fact]
+    public async Task InitAsync_OpenFails_ShowsError()
+    {
+        _service.OpenException = new HttpRequestException("réseau");
+        var vm = CreateViewModel();
+
+        await vm.InitAsync(42);
+
+        Assert.Single(_dialog.ShownErrors);
+        Assert.Null(vm.Conversation);
+    }
+
+    [Fact]
+    public async Task ChooseOption_SendsAnswerAndAppliesThread()
+    {
+        _service.OpenResult = Thread("questions", null, SupplierQuestion());
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+        _service.AnswerResult = Thread("ready", "hash-1");
+
+        await vm.ChooseOptionCommand.ExecuteAsync(vm.Questions[0].Options[0]);
+
+        var call = Assert.Single(_service.AnswerCalls);
+        Assert.Equal(7, call.Id);
+        Assert.Equal("supplier", call.QuestionId);
+        Assert.True(JToken.DeepEquals(new JObject { ["id"] = 3 }, call.Value));
+        Assert.True(vm.IsReady);
+        Assert.Empty(vm.Questions);
+    }
+
+    [Fact]
+    public async Task ChooseOption_CreateWithoutName_ShowsErrorWithoutCall()
+    {
+        _service.OpenResult = Thread("questions", null, SupplierQuestion());
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+        vm.Questions[0].Options[1].CreateName = "";
+
+        await vm.ChooseOptionCommand.ExecuteAsync(vm.Questions[0].Options[1]);
+
+        Assert.Empty(_service.AnswerCalls);
+        Assert.Equal("Indiquez un nom.", vm.Questions[0].ErrorText);
+    }
+
+    [Fact]
+    public async Task Answer_Validation422_ShowsServerMessageOnQuestion()
+    {
+        _service.OpenResult = Thread("questions", null, SupplierQuestion());
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+        _service.AnswerException = Error(HttpStatusCode.UnprocessableEntity,
+            "{\"code\":\"VALIDATION_FAILED\",\"message\":\"Données invalides\",\"errors\":[{\"path\":\"answers[0]\",\"message\":\"Ce fournisseur n'existe plus.\"}]}");
+
+        await vm.ChooseOptionCommand.ExecuteAsync(vm.Questions[0].Options[0]);
+
+        Assert.Equal("Ce fournisseur n'existe plus.", vm.Questions[0].ErrorText);
+        Assert.True(vm.Questions[0].HasError);
+        Assert.Empty(_dialog.ShownErrors);
+    }
+
+    [Fact]
+    public async Task SubmitInput_InvalidMoney_ShowsErrorWithoutCall()
+    {
+        var question = new ConversationQuestion { id = "unitCost:1", kind = "line.unitCost", input = new ConversationInput { type = "money" } };
+        _service.OpenResult = Thread("questions", null, question);
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+        vm.Questions[0].InputText = "vingt";
+
+        await vm.SubmitInputCommand.ExecuteAsync(vm.Questions[0]);
+
+        Assert.Empty(_service.AnswerCalls);
+        Assert.StartsWith("Montant invalide", vm.Questions[0].ErrorText);
+    }
+
+    // ---- Confirmation et annulation ----------------------------------------------
+
+    [Fact]
+    public async Task Confirm_SendsPreviewHash_AndAppliesConfirmedThread()
+    {
+        _service.OpenResult = Thread("ready", "hash-1");
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+        var confirmed = Thread("confirmed");
+        confirmed.undo = new ConversationUndo { available = true, until = "2026-11-13T10:00:00Z" };
+        _service.ConfirmResult = new JObject { ["thread"] = JObject.FromObject(confirmed) };
+
+        await vm.ConfirmCommand.ExecuteAsync(null);
+
+        Assert.Equal((7, "hash-1"), Assert.Single(_service.ConfirmCalls));
+        Assert.True(vm.IsConfirmed);
+        Assert.True(vm.CanUndo);
+        Assert.True(vm.HasUndoText);
+        Assert.False(vm.HasPreview);
+        Assert.Single(_dialog.ShownInfos);
+    }
+
+    [Fact]
+    public async Task Confirm_Refused_DoesNotCallService()
+    {
+        _service.OpenResult = Thread("ready", "hash-1");
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+        _dialog.ConfirmResult = false;
+
+        await vm.ConfirmCommand.ExecuteAsync(null);
+
+        Assert.Empty(_service.ConfirmCalls);
+    }
+
+    [Fact]
+    public async Task Confirm_NotReady_DoesNothing()
+    {
+        _service.OpenResult = Thread("questions", "hash-1", SupplierQuestion());
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+
+        await vm.ConfirmCommand.ExecuteAsync(null);
+
+        Assert.Empty(_dialog.ConfirmCalls);
+        Assert.Empty(_service.ConfirmCalls);
+    }
+
+    [Fact]
+    public async Task Confirm_PreviewChanged_ReloadsAndInforms()
+    {
+        _service.OpenResult = Thread("ready", "hash-1");
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+        _service.ConfirmException = Error(HttpStatusCode.Conflict, "{\"code\":\"PREVIEW_CHANGED\",\"message\":\"x\"}");
+        _service.GetResults.Enqueue(Thread("ready", "hash-2"));
+
+        await vm.ConfirmCommand.ExecuteAsync(null);
+
+        Assert.Single(_service.GetCalls);
+        Assert.Equal("hash-2", vm.Conversation!.previewHash);
+        Assert.StartsWith("L'aperçu a changé", Assert.Single(_dialog.ShownInfos));
+        Assert.Empty(_dialog.ShownErrors);
+    }
+
+    [Fact]
+    public async Task Undo_Blocked_ReloadsAndShowsError()
+    {
+        var confirmed = Thread("confirmed");
+        confirmed.undo = new ConversationUndo { available = true };
+        _service.OpenResult = confirmed;
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+        _service.UndoException = Error(HttpStatusCode.Conflict, "{\"code\":\"UNDO_BLOCKED\",\"message\":\"Un article a déjà été vendu.\"}");
+        var blocked = Thread("confirmed");
+        blocked.undo = new ConversationUndo { available = false, blockers = { new ConversationBlocker { code = "SOLD", message = "Un article a déjà été vendu." } } };
+        _service.GetResults.Enqueue(blocked);
+
+        await vm.UndoCommand.ExecuteAsync(null);
+
+        Assert.Single(_service.UndoCalls);
+        Assert.Single(_dialog.ShownErrors);
+        Assert.False(vm.CanUndo);
+        Assert.True(vm.HasBlockers);
+        Assert.Equal("Un article a déjà été vendu.", Assert.Single(vm.Blockers));
+    }
+
+    [Fact]
+    public async Task Undo_Done_AppliesThread()
+    {
+        var confirmed = Thread("confirmed");
+        confirmed.undo = new ConversationUndo { available = true };
+        _service.OpenResult = confirmed;
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+        _service.UndoResult = new JObject { ["undone"] = true, ["thread"] = JObject.FromObject(Thread("questions", null, SupplierQuestion())) };
+
+        await vm.UndoCommand.ExecuteAsync(null);
+
+        Assert.True(vm.IsAsking);
+        Assert.StartsWith("Facture annulée", Assert.Single(_dialog.ShownInfos));
+    }
+
+    [Fact]
+    public async Task ReviewInDetail_NavigatesToReviewPage()
+    {
+        _service.OpenResult = Thread("questions", null, SupplierQuestion());
+        var routes = new List<string>();
+        var vm = CreateViewModel(routes);
+        await vm.InitAsync(42);
+
+        await vm.ReviewInDetailCommand.ExecuteAsync(null);
+
+        Assert.Equal("InvoiceReviewPage?DocumentId=42", Assert.Single(routes));
+    }
+
+    [Fact]
+    public async Task Failed_ShowsFailureText_AndRereadReopens()
+    {
+        var failed = Thread("failed");
+        failed.document!.error = "DOCUMENT_UNREADABLE";
+        _service.OpenResult = failed;
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+        Assert.True(vm.IsFailed);
+        Assert.StartsWith("La facture est illisible", vm.StatusText);
+
+        _service.OpenResult = Thread("questions", null, SupplierQuestion());
+        await vm.RereadCommand.ExecuteAsync(null);
+
+        Assert.Equal(new[] { 42 }, _documents.RereadCalls);
+        Assert.Equal(2, _service.OpenCalls.Count);
+        Assert.True(vm.IsAsking);
+    }
+
+    // ---- Service ---------------------------------------------------------------
+
+    [Fact]
+    public async Task Service_UsesConversationRoutes()
+    {
+        var http = new FakeHttpService { ResultToReturn = new InvoiceConversation() };
+        var service = new InvoiceConversationService(http);
+
+        await service.OpenAsync(42);
+        await service.AnswerAsync(7, "supplier", new JObject { ["id"] = 3 });
+
+        Assert.Equal("gestion/conversations?locale=fr", http.PostedAuthData[0].Url);
+        Assert.Equal(42, ((JObject)http.PostedAuthData[0].Data)["documentId"]!.Value<int>());
+        Assert.Equal("gestion/conversations/7/answers?locale=fr", http.PostedAuthData[1].Url);
+        var answer = ((JObject)http.PostedAuthData[1].Data)["answers"]![0]!;
+        Assert.Equal("supplier", answer["questionId"]!.Value<string>());
+        Assert.Equal(3, answer["value"]!["id"]!.Value<int>());
+    }
+
+    private sealed class FakeConversationService : IInvoiceConversationService
+    {
+        public List<int> OpenCalls { get; } = new();
+        public List<int> GetCalls { get; } = new();
+        public List<(int Id, string QuestionId, JToken? Value)> AnswerCalls { get; } = new();
+        public List<(int Id, string Hash)> ConfirmCalls { get; } = new();
+        public List<int> UndoCalls { get; } = new();
+
+        public InvoiceConversation OpenResult { get; set; } = new();
+        public Queue<InvoiceConversation> GetResults { get; } = new();
+        public InvoiceConversation AnswerResult { get; set; } = new();
+        public JObject? ConfirmResult { get; set; }
+        public JObject? UndoResult { get; set; }
+        public Exception? OpenException { get; set; }
+        public Exception? AnswerException { get; set; }
+        public Exception? ConfirmException { get; set; }
+        public Exception? UndoException { get; set; }
+
+        public Task<InvoiceConversation> OpenAsync(int documentId)
+        {
+            OpenCalls.Add(documentId);
+            return OpenException != null ? Task.FromException<InvoiceConversation>(OpenException) : Task.FromResult(OpenResult);
+        }
+
+        public Task<InvoiceConversation> GetAsync(int id)
+        {
+            GetCalls.Add(id);
+            return Task.FromResult(GetResults.Count > 0 ? GetResults.Dequeue() : OpenResult);
+        }
+
+        public Task<InvoiceConversation> AnswerAsync(int id, string questionId, JToken? value)
+        {
+            AnswerCalls.Add((id, questionId, value));
+            return AnswerException != null ? Task.FromException<InvoiceConversation>(AnswerException) : Task.FromResult(AnswerResult);
+        }
+
+        public Task<JObject?> ConfirmAsync(int id, string previewHash)
+        {
+            ConfirmCalls.Add((id, previewHash));
+            return ConfirmException != null ? Task.FromException<JObject?>(ConfirmException) : Task.FromResult(ConfirmResult);
+        }
+
+        public Task<JObject?> UndoAsync(int id)
+        {
+            UndoCalls.Add(id);
+            return UndoException != null ? Task.FromException<JObject?>(UndoException) : Task.FromResult(UndoResult);
+        }
+    }
+}

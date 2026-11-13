@@ -109,6 +109,12 @@ namespace Easymakemoney.ViewModels.Lists
         /// <summary>Attente entre deux relectures du document (3 s) ; les tests la mettent à zéro.</summary>
         public TimeSpan PollDelay { get; set; } = TimeSpan.FromMilliseconds(PollDelayMs);
 
+        /// <summary>Navigation (point d'entrée des tests).</summary>
+        public Func<string, Task> NavigateAsync { get; set; } = route => Shell.Current?.GoToAsync(route, true) ?? Task.CompletedTask;
+
+        /// <summary>Lot IA-FACT-1 : une facture fournisseur se mène en conversation, ouverte dès l'envoi des photos.</summary>
+        private static string ConversationRoute(int documentId) => $"../{nameof(InvoiceConversationPage)}?DocumentId={documentId}";
+
         /// <summary>Ouverture d'une page choisie (photo ou PDF) ; les tests la remplacent, car la version de bureau de MAUI ne sait pas lire un FileResult.</summary>
         public Func<FileResult, Task<Stream>> OpenFile { get; set; } = file => file.OpenReadAsync();
 
@@ -172,8 +178,7 @@ namespace Easymakemoney.ViewModels.Lists
         {
             if (invoice == null)
                 return;
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync($"../{nameof(InvoiceReviewPage)}?DocumentId={invoice.Id}", true);
+            await NavigateAsync(ConversationRoute(invoice.Id));
         }
 
         [RelayCommand]
@@ -315,6 +320,12 @@ namespace Easymakemoney.ViewModels.Lists
                 IsBusy = false;
             }
 
+            // La conversation suit elle-même la lecture, pose les questions et crée la commande.
+            if (IsInvoice)
+            {
+                await NavigateAsync(ConversationRoute(_documentId));
+                return;
+            }
             await WaitForReadingAsync();
         }
 
