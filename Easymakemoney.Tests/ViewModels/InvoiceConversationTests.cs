@@ -441,6 +441,78 @@ public class InvoiceConversationTests
         Assert.True(vm.IsAsking);
     }
 
+    // ---- IA-FACT-2-A : ajout à une commande ouverte -----------------------------------
+
+    private static InvoiceConversation ReadyToAdd()
+    {
+        var thread = Thread("ready", "hash-a");
+        thread.preview = new InvoicePreview
+        {
+            currency = "EUR",
+            invoiceCurrency = "EUR",
+            lines =
+            {
+                new InvoicePreviewLine
+                {
+                    n = 1, quantity = 2, unitCost = 1200, kind = "existing",
+                    lineBefore = new InvoicePreviewOrderLine { quantity = 3, unitCost = 1000 },
+                    lineAfter = new InvoicePreviewOrderLine { quantity = 5, unitCost = 1080 },
+                },
+            },
+            target = new InvoicePreviewTarget
+            {
+                commandeId = 9, name = "Commande textile", currency = "EUR", budgetBefore = 3000, budgetAfter = 5400,
+                shipping = new InvoicePreviewShipping { current = 800, added = 1200, total = 2000 },
+            },
+        };
+        return thread;
+    }
+
+    [Fact]
+    public async Task Target_ShowsAddButtonBudgetShippingAndOrderLine()
+    {
+        _service.OpenResult = ReadyToAdd();
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+
+        Assert.True(vm.AddsToOrder);
+        Assert.Equal("Ajouter à la commande", vm.ConfirmButtonText);
+        Assert.StartsWith("Ajout à la commande « Commande textile »", vm.TargetText);
+        Assert.Contains("Budget :", vm.TargetText);
+        Assert.Contains("Frais de port :", vm.TargetText);
+        Assert.StartsWith("Déjà dans la commande : 3 × ", vm.PreviewLines[0].OrderLineText);
+        Assert.Contains("→ 5 × ", vm.PreviewLines[0].OrderLineText);
+    }
+
+    [Fact]
+    public async Task RefusedTarget_IsNotAnAdd()
+    {
+        var thread = ReadyToAdd();
+        thread.preview!.target!.refused = "COMMANDE_CLOSED";
+        _service.OpenResult = thread;
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+
+        Assert.False(vm.AddsToOrder);
+        Assert.Null(vm.TargetText);
+        Assert.Equal("Créer la commande", vm.ConfirmButtonText);
+    }
+
+    [Fact]
+    public async Task ConfirmAdd_UsesAddWording()
+    {
+        _service.OpenResult = ReadyToAdd();
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+        _service.ConfirmResult = new JObject { ["thread"] = JObject.FromObject(Thread("confirmed")) };
+
+        await vm.ConfirmCommand.ExecuteAsync(null);
+
+        Assert.Equal("Ajouter à la commande", _dialog.ConfirmCalls[0].Accept);
+        Assert.StartsWith("Facture ajoutée à la commande", Assert.Single(_dialog.ShownInfos));
+        Assert.False(vm.AddsToOrder);
+    }
+
     // ---- Service ---------------------------------------------------------------
 
     [Fact]

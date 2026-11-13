@@ -179,6 +179,14 @@ essais** sera créé pour cette campagne, avec sa documentation des essais (la d
   poussé sans essai : téléphone d'un fournisseur, contact de Nationex, numéro de suivi d'un frais de port, chacun aller-retour ;
   transporteur « ESSAI W1i » créé, modifié puis supprimé ; relevé avant et après. Reprise d'historique (W1g) : appliquer et annuler sur un
   site où elle a un sens, après le lot backend REPRISE-FIGE (l'annulation doit restaurer les résultats figés des périodes fermées).
+- Facture par conversation (IA-FACT-1 et 2, mobile main 41dd411, puis web) : envoi d'une vraie facture (1 unité d'IA), réponses
+  (fournisseur proposé, cible « nouvelle commande » ou commande ouverte, frais de port ajouté ou non), confirmation, puis annulation d'un
+  bloc et relevé avant et après ; ajout de deux factures à une même commande, puis annulation dans l'ordre inverse (LATER_DOCUMENT) ;
+  phrase libre (IA-FACT-2-B) avec une réponse refusée par le serveur.
+
+**Avant l'ouverture, côté serveur.** Bascule du 13/11 (IA-FACT-2-A) : une requête encore en traitement au moment de l'échange du cache
+a cherché un fichier de l'ancien cache (aucune réponse en erreur, c'était la requête de contrôle). Correction demandée au backend : garder
+l'ancien cache lisible quelques instants après l'échange ; à vérifier avant le premier client.
 
 ## Lots en cours ou à venir
 

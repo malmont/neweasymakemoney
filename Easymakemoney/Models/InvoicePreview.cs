@@ -17,6 +17,12 @@ namespace Easymakemoney.Models
         public InvoicePreviewTotals? totals { get; set; }
         public List<InvoicePreviewIssue> issues { get; set; } = new();
 
+        /// <summary>IA-FACT-2-A : la commande ouverte à laquelle la facture s'ajoute ; null pour une nouvelle commande.</summary>
+        public InvoicePreviewTarget? target { get; set; }
+
+        /// <summary>Ajout à une commande admise (une cible refusée porte refused et un refus dans issues).</summary>
+        public bool AddsToOrder => target is { refused: null };
+
         public InvoicePreviewLine? Line(int n) => lines.FirstOrDefault(line => line.n == n);
 
         /// <summary>Texte du prix de vente d'une ligne, tel que l'appli l'affiche.</summary>
@@ -56,6 +62,36 @@ namespace Easymakemoney.Models
         public long? plannedMargin { get; set; }
         public double? plannedMarginRate { get; set; }
         public string? groupKey { get; set; }
+
+        /// <summary>IA-FACT-2-A : la ligne d'achat de la commande cible avant et après l'ajout (article déjà commandé).</summary>
+        public InvoicePreviewOrderLine? lineBefore { get; set; }
+        public InvoicePreviewOrderLine? lineAfter { get; set; }
+    }
+
+    public class InvoicePreviewOrderLine
+    {
+        public double quantity { get; set; }
+        public long? unitCost { get; set; }
+    }
+
+    public class InvoicePreviewTarget
+    {
+        public int commandeId { get; set; }
+        public string? name { get; set; }
+        public string? date { get; set; }
+        public string? currency { get; set; }
+        public double? exchangeRate { get; set; }
+        public long? budgetBefore { get; set; }
+        public long? budgetAfter { get; set; }
+        public InvoicePreviewShipping? shipping { get; set; }
+        public string? refused { get; set; }
+    }
+
+    public class InvoicePreviewShipping
+    {
+        public long? current { get; set; }
+        public long? added { get; set; }
+        public long? total { get; set; }
     }
 
     public class InvoicePreviewTotals

@@ -38,7 +38,8 @@ namespace Easymakemoney.ViewModels.Lists
         [NotifyPropertyChangedFor(nameof(IsReading), nameof(IsFailed), nameof(IsAsking), nameof(IsReady), nameof(IsConfirmed),
             nameof(IsAbandoned), nameof(SummaryText), nameof(HasPreview), nameof(LinesTotalText), nameof(CanUndo), nameof(UndoText),
             nameof(HasBlockers), nameof(CreditsText), nameof(StatusText), nameof(CanReviewInDetail), nameof(HasSummary),
-            nameof(HasLinesTotal), nameof(HasUndoText), nameof(HasCredits))]
+            nameof(HasLinesTotal), nameof(HasUndoText), nameof(HasCredits), nameof(AddsToOrder), nameof(TargetText),
+            nameof(ConfirmButtonText))]
         private InvoiceConversation? conversation;
 
         public ObservableCollection<ConversationQuestionItem> Questions { get; } = new();
@@ -57,6 +58,28 @@ namespace Easymakemoney.ViewModels.Lists
         public bool HasPreview => Conversation?.preview != null && !IsConfirmed;
         public string? LinesTotalText => Conversation?.preview?.LinesTotalText;
         public bool HasSummary => !string.IsNullOrWhiteSpace(SummaryText);
+
+        /// <summary>IA-FACT-2-A : la facture s'ajoute à une commande ouverte au lieu d'en créer une.</summary>
+        public bool AddsToOrder => Conversation?.preview?.AddsToOrder == true && !IsConfirmed;
+
+        public string ConfirmButtonText => AddsToOrder ? "Ajouter à la commande" : "Créer la commande";
+
+        /// <summary>La commande cible et son budget avant et après, montants du serveur.</summary>
+        public string? TargetText
+        {
+            get
+            {
+                if (!AddsToOrder || Conversation?.preview?.target is not { } target)
+                    return null;
+                string Money(long cents) => SiteCurrency.FormatCents(cents, CultureInfo.CurrentCulture, target.currency);
+                var text = $"Ajout à la commande « {target.name ?? $"n° {target.commandeId}"} »";
+                if (target.budgetBefore is { } before && target.budgetAfter is { } after)
+                    text += $"\nBudget : {Money(before)} → {Money(after)}";
+                if (target.shipping is { added: > 0 } shipping && shipping.current is { } current && shipping.total is { } total)
+                    text += $"\nFrais de port : {Money(current)} → {Money(total)}";
+                return text;
+            }
+        }
         public bool HasLinesTotal => LinesTotalText != null;
         public bool HasUndoText => UndoText != null;
         public bool HasCredits => CreditsText != null;
@@ -68,8 +91,10 @@ namespace Easymakemoney.ViewModels.Lists
             "questions" => Conversation.openQuestions is > 0 and var n
                 ? $"{n} question{(n > 1 ? "s" : string.Empty)} à régler avant la commande."
                 : "Réglez les points de l'aperçu avant la commande.",
-            "ready" => "Tout est prêt : vérifiez l'aperçu, puis créez la commande.",
-            "confirmed" => "Commande créée.",
+            "ready" => AddsToOrder
+                ? "Tout est prêt : vérifiez l'aperçu, puis ajoutez la facture à la commande."
+                : "Tout est prêt : vérifiez l'aperçu, puis créez la commande.",
+            "confirmed" => "Facture enregistrée dans la commande.",
             "abandoned" => "Facture abandonnée : rien n'a été créé.",
             _ => string.Empty,
         };
@@ -214,9 +239,12 @@ namespace Easymakemoney.ViewModels.Lists
         {
             if (IsBusy || Conversation is not { IsReady: true, previewHash: { } hash } thread)
                 return;
-            if (!await _dialogService.ConfirmAsync("Créer la commande",
-                    "Créer la commande, ses lignes d'achat et les articles nouveaux d'après cet aperçu ? Vous pourrez l'annuler pendant 24 heures.",
-                    "Créer la commande", "Annuler"))
+            var adds = AddsToOrder;
+            if (!await _dialogService.ConfirmAsync(ConfirmButtonText,
+                    adds
+                        ? "Ajouter les lignes de cette facture à la commande d'après cet aperçu ? Vous pourrez annuler l'ajout pendant 24 heures."
+                        : "Créer la commande, ses lignes d'achat et les articles nouveaux d'après cet aperçu ? Vous pourrez l'annuler pendant 24 heures.",
+                    ConfirmButtonText, "Annuler"))
                 return;
 
             IsBusy = true;
@@ -227,7 +255,9 @@ namespace Easymakemoney.ViewModels.Lists
                     Apply(updated);
                 else
                     Apply(await _conversations.GetAsync(thread.id));
-                await _dialogService.ShowInfoAsync("Commande créée. Elle reste annulable pendant 24 heures.");
+                await _dialogService.ShowInfoAsync(adds
+                    ? "Facture ajoutée à la commande. L'ajout reste annulable pendant 24 heures."
+                    : "Commande créée. Elle reste annulable pendant 24 heures.");
             }
             catch (ApiException e) when (e.ApiError.Code is "PREVIEW_CHANGED" or "CONVERSATION_NOT_READY")
             {
@@ -254,7 +284,7 @@ namespace Easymakemoney.ViewModels.Lists
             if (IsBusy || Conversation is not { IsConfirmed: true } thread)
                 return;
             if (!await _dialogService.ConfirmAsync("Annuler cette facture",
-                    "Retirer d'un bloc tout ce que cette facture a créé (commande, lignes, articles nouveaux, frais de port) ? La facture redevient à vérifier.",
+                    "Retirer d'un bloc tout ce que cette facture a créé ou ajouté (commande ou lignes ajoutées, articles nouveaux, frais de port) ? La facture redevient à vérifier.",
                     "Tout retirer", "Garder"))
                 return;
 
@@ -266,7 +296,7 @@ namespace Easymakemoney.ViewModels.Lists
                     Apply(updated);
                 else
                     await ReloadAsync();
-                await _dialogService.ShowInfoAsync("Facture annulée : tout ce qu'elle avait créé est retiré.");
+                await _dialogService.ShowInfoAsync("Facture annulée : tout ce qu'elle avait créé ou ajouté est retiré.");
             }
             catch (ApiException e) when (e.ApiError.Code is "UNDO_BLOCKED" or "UNDO_EXPIRED" or "ALREADY_UNDONE" or "UNDO_UNAVAILABLE")
             {
@@ -450,7 +480,16 @@ namespace Easymakemoney.ViewModels.Lists
                 : $"{quantity} × coût à compléter";
             PriceText = preview.PriceText(line);
             IsUnresolved = line.kind == "unresolved";
+            string Line(InvoicePreviewOrderLine orderLine) =>
+                $"{orderLine.quantity.ToString("0.##", CultureInfo.CurrentCulture)} × "
+                + (orderLine.unitCost is { } unit ? SiteCurrency.FormatCents(unit, CultureInfo.CurrentCulture, preview.target?.currency ?? preview.currency) : "?");
+            if (line.lineBefore is { } before && line.lineAfter is { } after)
+                OrderLineText = $"Déjà dans la commande : {Line(before)} → {Line(after)}";
         }
+
+        /// <summary>IA-FACT-2-A : la ligne existante de la commande, avant et après l'ajout (coût moyen pondéré calculé par le serveur).</summary>
+        public string? OrderLineText { get; }
+        public bool HasOrderLine => OrderLineText != null;
 
         public string Title { get; }
         public string CostText { get; }

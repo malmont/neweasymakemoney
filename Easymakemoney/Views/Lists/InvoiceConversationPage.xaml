@@ -123,6 +123,8 @@
                 <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding HasPreview}">
                     <VerticalStackLayout Spacing="8">
                         <Label Text="Aperçu de la commande" Style="{StaticResource UiTitle}" FontSize="16" />
+                        <Label Text="{Binding TargetText}" IsVisible="{Binding AddsToOrder}" FontFamily="InterSemiBold" FontSize="14"
+                               TextColor="{DynamicResource ThemePrimary}" />
                         <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding PreviewLines}">
                             <BindableLayout.ItemTemplate>
                                 <DataTemplate x:DataType="list:ConversationPreviewLine">
@@ -130,6 +132,7 @@
                                         <Label Text="{Binding Title}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
                                         <Label Text="{Binding CostText}" Style="{StaticResource UiBody}" FontSize="13" />
                                         <Label Text="{Binding PriceText}" Style="{StaticResource UiBody}" FontSize="13" />
+                                        <Label Text="{Binding OrderLineText}" IsVisible="{Binding HasOrderLine}" Style="{StaticResource UiBody}" FontSize="13" />
                                     </VerticalStackLayout>
                                 </DataTemplate>
                             </BindableLayout.ItemTemplate>
@@ -160,7 +163,7 @@
             </VerticalStackLayout>
         </ScrollView>
 
-        <Button Grid.Row="2" Text="Créer la commande" IsVisible="{Binding IsReady}" Command="{Binding ConfirmCommand}"
+        <Button Grid.Row="2" Text="{Binding ConfirmButtonText}" IsVisible="{Binding IsReady}" Command="{Binding ConfirmCommand}"
                 Margin="16,8,16,16" HeightRequest="50" CornerRadius="14" FontFamily="InterSemiBold" FontSize="15"
                 BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" />
     </Grid>
