@@ -513,6 +513,85 @@ public class InvoiceConversationTests
         Assert.False(vm.AddsToOrder);
     }
 
+    // ---- IA-FACT-2-B : phrase libre -------------------------------------------------
+
+    [Fact]
+    public async Task SendMessage_AppliesThread_ShowsReplyAndIgnored()
+    {
+        _service.OpenResult = Thread("questions", null, SupplierQuestion(), new ConversationQuestion { id = "unitCost:1", title = "Coût de la ligne 1", input = new ConversationInput { type = "money" } });
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+        Assert.True(vm.CanWrite);
+        vm.MessageText = "  c'est Grossiste Caraïbes, la ligne 1 coûte à peu près rien ";
+        var after = Thread("questions", null, new ConversationQuestion { id = "unitCost:1", title = "Coût de la ligne 1", input = new ConversationInput { type = "money" } });
+        _service.MessageResult = new JObject
+        {
+            ["reply"] = "J'ai retenu le fournisseur.",
+            ["applied"] = new JArray(new JObject { ["questionId"] = "supplier", ["value"] = new JObject { ["id"] = 3 } }),
+            ["ignored"] = new JArray(new JObject { ["questionId"] = "unitCost:1", ["reason"] = "VALUE_NOT_IN_SENTENCE" }),
+            ["thread"] = JObject.FromObject(after),
+        };
+
+        await vm.SendMessageCommand.ExecuteAsync(null);
+
+        Assert.Equal((7, "c'est Grossiste Caraïbes, la ligne 1 coûte à peu près rien"), Assert.Single(_service.MessageCalls));
+        Assert.Single(vm.Questions);
+        Assert.Null(vm.MessageText);
+        Assert.StartsWith("J'ai retenu le fournisseur.", vm.ReplyText);
+        Assert.Contains("• Coût de la ligne 1 : la valeur n'est pas écrite dans votre phrase", vm.ReplyText);
+    }
+
+    [Fact]
+    public async Task SendMessage_EmptyOrTooLong_NoCall()
+    {
+        _service.OpenResult = Thread("questions", null, SupplierQuestion());
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+
+        vm.MessageText = "   ";
+        await vm.SendMessageCommand.ExecuteAsync(null);
+        Assert.True(vm.HasMessageError);
+
+        vm.MessageText = new string('a', InvoiceConversationViewModel.MaxMessageLength + 1);
+        await vm.SendMessageCommand.ExecuteAsync(null);
+        Assert.Equal("1000 caractères au plus.", vm.MessageError);
+        Assert.Empty(_service.MessageCalls);
+    }
+
+    [Theory]
+    [InlineData("AI_DAILY_LIMIT", 429, "La limite de réponses")]
+    [InlineData("AI_CREDITS_EXHAUSTED", 402, "Plus d'unités IA")]
+    [InlineData("AI_NOT_INCLUDED", 403, "La phrase libre n'est pas comprise")]
+    [InlineData("AI_UNAVAILABLE", 503, "L'IA est indisponible")]
+    public async Task SendMessage_AiRefusal_ShownUnderTheBox(string code, int status, string start)
+    {
+        _service.OpenResult = Thread("ready", "h", SupplierQuestion());
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+        vm.MessageText = "prix hors taxes";
+        _service.MessageException = Error((HttpStatusCode)status, $"{{\"code\":\"{code}\",\"message\":\"x\"}}");
+
+        await vm.SendMessageCommand.ExecuteAsync(null);
+
+        Assert.StartsWith(start, vm.MessageError);
+        Assert.Equal("prix hors taxes", vm.MessageText);
+        Assert.Empty(_dialog.ShownErrors);
+    }
+
+    [Fact]
+    public async Task CanWrite_OnlyWhileTheThreadWaitsForAnswers()
+    {
+        _service.OpenResult = Thread("confirmed");
+        var vm = CreateViewModel();
+        await vm.InitAsync(42);
+        Assert.False(vm.CanWrite);
+        vm.MessageText = "bonjour";
+
+        await vm.SendMessageCommand.ExecuteAsync(null);
+
+        Assert.Empty(_service.MessageCalls);
+    }
+
     // ---- Service ---------------------------------------------------------------
 
     [Fact]
@@ -572,6 +651,16 @@ public class InvoiceConversationTests
         {
             ConfirmCalls.Add((id, previewHash));
             return ConfirmException != null ? Task.FromException<JObject?>(ConfirmException) : Task.FromResult(ConfirmResult);
+        }
+
+        public List<(int Id, string Text)> MessageCalls { get; } = new();
+        public JObject? MessageResult { get; set; }
+        public Exception? MessageException { get; set; }
+
+        public Task<JObject?> SendMessageAsync(int id, string text)
+        {
+            MessageCalls.Add((id, text));
+            return MessageException != null ? Task.FromException<JObject?>(MessageException) : Task.FromResult(MessageResult);
         }
 
         public Task<JObject?> UndoAsync(int id)

@@ -14,6 +14,7 @@ namespace Easymakemoney.ViewModels.Lists
     public partial class InvoiceConversationViewModel : BaseViewModel
     {
         private const int MaxPolls = 60;
+        public const int MaxMessageLength = 1000;
 
         private readonly IInvoiceConversationService _conversations;
         private readonly IDocumentReaderService _documents;
@@ -39,7 +40,7 @@ namespace Easymakemoney.ViewModels.Lists
             nameof(IsAbandoned), nameof(SummaryText), nameof(HasPreview), nameof(LinesTotalText), nameof(CanUndo), nameof(UndoText),
             nameof(HasBlockers), nameof(CreditsText), nameof(StatusText), nameof(CanReviewInDetail), nameof(HasSummary),
             nameof(HasLinesTotal), nameof(HasUndoText), nameof(HasCredits), nameof(AddsToOrder), nameof(TargetText),
-            nameof(ConfirmButtonText))]
+            nameof(ConfirmButtonText), nameof(CanWrite))]
         private InvoiceConversation? conversation;
 
         public ObservableCollection<ConversationQuestionItem> Questions { get; } = new();
@@ -58,6 +59,24 @@ namespace Easymakemoney.ViewModels.Lists
         public bool HasPreview => Conversation?.preview != null && !IsConfirmed;
         public string? LinesTotalText => Conversation?.preview?.LinesTotalText;
         public bool HasSummary => !string.IsNullOrWhiteSpace(SummaryText);
+
+        /// <summary>IA-FACT-2-B : le fil attend une réponse, par bouton (gratuit) ou par une phrase (1 unité d'IA).</summary>
+        public bool CanWrite => IsAsking || IsReady;
+
+        [ObservableProperty]
+        private string? messageText;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasMessageError))]
+        private string? messageError;
+
+        public bool HasMessageError => !string.IsNullOrWhiteSpace(MessageError);
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasReply))]
+        private string? replyText;
+
+        public bool HasReply => !string.IsNullOrWhiteSpace(ReplyText);
 
         /// <summary>IA-FACT-2-A : la facture s'ajoute à une commande ouverte au lieu d'en créer une.</summary>
         public bool AddsToOrder => Conversation?.preview?.AddsToOrder == true && !IsConfirmed;
@@ -335,6 +354,95 @@ namespace Easymakemoney.ViewModels.Lists
             }
             await FollowReadingAsync();
         }
+
+        [RelayCommand]
+        private async Task SendMessage()
+        {
+            if (IsBusy || Conversation is not { } thread || !CanWrite)
+                return;
+            var text = MessageText?.Trim();
+            MessageError = null;
+            if (string.IsNullOrEmpty(text))
+            {
+                MessageError = "Écrivez votre réponse, par exemple : « le fournisseur est Grossiste Caraïbes, prix hors taxes ».";
+                return;
+            }
+            if (text.Length > MaxMessageLength)
+            {
+                MessageError = $"{MaxMessageLength} caractères au plus.";
+                return;
+            }
+
+            IsBusy = true;
+            try
+            {
+                var result = await _conversations.SendMessageAsync(thread.id, text);
+                var updated = result?["thread"]?.ToObject<InvoiceConversation>();
+                Apply(updated ?? await _conversations.GetAsync(thread.id));
+                ReplyText = BuildReply(result, Conversation);
+                MessageText = null;
+            }
+            catch (ApiException e) when (e.ApiError.Code == "CONVERSATION_NOT_OPEN")
+            {
+                await ReloadAsync();
+                MessageError = "Cette facture a changé d'état entre-temps : l'écran est à jour.";
+            }
+            catch (ApiException e) when (AiRefusalText(e) is { } refusal)
+            {
+                MessageError = refusal;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+                await _dialogService.ShowErrorAsync(e);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        /// <summary>Refus de la phrase libre, en clair ; les boutons restent gratuits.</summary>
+        private static string? AiRefusalText(ApiException e) => e.ApiError.Code switch
+        {
+            "AI_DAILY_LIMIT" => "La limite de réponses de l'IA pour aujourd'hui est atteinte. Répondez avec les boutons : c'est gratuit.",
+            "AI_CREDITS_EXHAUSTED" => "Plus d'unités IA ce mois-ci. Répondez avec les boutons : c'est gratuit.",
+            "AI_NOT_INCLUDED" => "La phrase libre n'est pas comprise dans votre forfait. Répondez avec les boutons.",
+            "AI_UNAVAILABLE" => "L'IA est indisponible pour le moment ; aucune unité n'a été utilisée. Réessayez plus tard ou répondez avec les boutons.",
+            "VALIDATION_FAILED" => e.ApiError.Errors.FirstOrDefault()?.Message ?? e.Message,
+            _ => null,
+        };
+
+        /// <summary>La phrase de l'IA, puis ce que le serveur a écarté, question par question.</summary>
+        public static string? BuildReply(JObject? result, InvoiceConversation? thread)
+        {
+            if (result == null)
+                return null;
+            var lines = new List<string>();
+            if (result.Value<string>("reply") is { Length: > 0 } reply)
+                lines.Add(reply);
+            if (result["ignored"] is JArray ignored)
+                foreach (var item in ignored.OfType<JObject>())
+                {
+                    var questionId = item.Value<string>("questionId");
+                    var title = thread?.questions.FirstOrDefault(q => q.id == questionId)?.title ?? questionId ?? "Réponse";
+                    lines.Add($"• {title} : {IgnoredReasonText(item.Value<string>("reason"))}");
+                }
+            return lines.Count > 0 ? string.Join("\n", lines) : null;
+        }
+
+        public static string IgnoredReasonText(string? reason) => reason switch
+        {
+            "NOT_AN_OPTION" => "ce choix n'est pas proposé, choisissez avec un bouton",
+            "NAME_NOT_IN_SENTENCE" => "le nom n'est pas écrit dans votre phrase",
+            "VALUE_NOT_IN_SENTENCE" => "la valeur n'est pas écrite dans votre phrase, donnez-la en chiffres",
+            "ABANDON_BY_BUTTON_ONLY" => "pour abandonner, utilisez le bouton",
+            "UNKNOWN_QUESTION" => "cette question n'existe pas",
+            "AMBIGUOUS_OPTION" => "plusieurs choix correspondent, choisissez avec un bouton",
+            "OPTION_NOT_IN_SENTENCE" => "le choix n'est pas nommé dans votre phrase",
+            null or "" => "réponse non retenue",
+            _ => "réponse refusée par le contrôle, répondez avec les boutons",
+        };
 
         [RelayCommand]
         private Task ReviewInDetail() =>

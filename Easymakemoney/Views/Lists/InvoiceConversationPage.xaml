@@ -119,6 +119,23 @@
                     </BindableLayout.ItemTemplate>
                 </VerticalStackLayout>
 
+                <!-- Phrase libre (IA-FACT-2-B) : 1 unité d'IA par réponse, les boutons restent gratuits -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding CanWrite}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="Ou répondez par une phrase" Style="{StaticResource UiTitle}" FontSize="15" />
+                        <Label Text="L'IA remplit les réponses d'après votre phrase ; le serveur contrôle chacune. 1 unité IA par phrase, les boutons sont gratuits."
+                               Style="{StaticResource UiBody}" FontSize="12" />
+                        <Border Style="{StaticResource FormField}" Padding="12,4">
+                            <Editor Text="{Binding MessageText}" MaxLength="1000" AutoSize="TextChanges" MinimumHeightRequest="80"
+                                    Placeholder="Ex. : c'est Grossiste Caraïbes, les prix sont hors taxes" FontFamily="Inter" FontSize="15"
+                                    TextColor="{StaticResource UiTextPrimary}" PlaceholderColor="{StaticResource UiTextMuted}" BackgroundColor="Transparent" />
+                        </Border>
+                        <Label Text="{Binding MessageError}" IsVisible="{Binding HasMessageError}" FontSize="13" TextColor="#B91C1C" />
+                        <Button Text="Envoyer (1 unité IA)" Command="{Binding SendMessageCommand}" Style="{StaticResource OptionButton}" />
+                        <Label Text="{Binding ReplyText}" IsVisible="{Binding HasReply}" Style="{StaticResource UiBody}" FontSize="14" />
+                    </VerticalStackLayout>
+                </components:UiCard>
+
                 <!-- Aperçu calculé par le serveur -->
                 <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding HasPreview}">
                     <VerticalStackLayout Spacing="8">

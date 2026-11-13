@@ -18,6 +18,9 @@ namespace Easymakemoney.Services
 
         /// <summary>POST …/undo : rend {undone, thread}.</summary>
         Task<JObject?> UndoAsync(int id);
+
+        /// <summary>IA-FACT-2-B, POST …/messages {text} : 1 unité d'IA par réponse ; rend {reply, applied, ignored, thread}.</summary>
+        Task<JObject?> SendMessageAsync(int id, string text);
     }
 
     public class InvoiceConversationService : IInvoiceConversationService
@@ -47,5 +50,8 @@ namespace Easymakemoney.Services
 
         public Task<JObject?> UndoAsync(int id) =>
             _httpService.PostAsyncWithAuth<JObject?>($"{BaseUrl}/{id}/undo?locale=fr", new JObject());
+
+        public Task<JObject?> SendMessageAsync(int id, string text) =>
+            _httpService.PostAsyncWithAuth<JObject?>($"{BaseUrl}/{id}/messages?locale=fr", new JObject { ["text"] = text });
     }
 }
