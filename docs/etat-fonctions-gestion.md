@@ -187,6 +187,10 @@ essais** sera créé pour cette campagne, avec sa documentation des essais (la d
 - Clés de connexion (JWT) suivies par le dépôt du backend (`jwt/private.pem`, `jwt/public.pem`), relevé du 13/11 : à retirer du suivi et à remplacer par de nouvelles clés pendant la campagne d'essais globaux (décision du propriétaire). Effet : tout le monde est déconnecté une fois.
 - Console IA (W2, en ligne le 13/11) : premières questions réelles faites sur demo le 13/11 ; à refaire sur le site d'essai, avec la mesure des réponses de repli.
 
+- Comptes et applications (APPS-MEMBRES, M1 en ligne le 14/11) :
+  - caisse : retrait du rattachement d'une fiche à un compte web (avertissement, puis fiche sans compte, appartenance pos retirée), avec un compte de test ;
+  - applications mobiles : connexion et rafraîchissement avec le code de l'application, puis lignes « observer » au journal du backend.
+
 **Avant l'ouverture, côté serveur.** Bascule du 13/11 (IA-FACT-2-A) : une requête encore en traitement au moment de l'échange du cache
 a cherché un fichier de l'ancien cache (aucune réponse en erreur, c'était la requête de contrôle). Correction demandée au backend : garder
 l'ancien cache lisible quelques instants après l'échange ; à vérifier avant le premier client.
