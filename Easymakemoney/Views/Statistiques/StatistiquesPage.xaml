@@ -170,39 +170,121 @@
 
                 <Label Text="{Binding CaveatsText}" IsVisible="{Binding HasCaveats}" Style="{StaticResource UiBody}" FontSize="12" />
 
+                <!-- Volet « Paiements et caisse » (lot S2-a) -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding HasPayments}">
+                    <components:UiTerm Term="encaisse" Text="Paiements et caisse" FontSize="17" Margin="0,8,0,0" />
+                    <Label Text="L'argent reçu et rendu, par moyen de paiement, et les clôtures de la caisse." Style="{StaticResource UiBody}" FontSize="12" />
+                    <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Payments.CardRows}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:StatsCardRow">
+                                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                    <components:StatsCardView BindingContext="{Binding Left}" />
+                                    <ContentView Grid.Column="1" IsVisible="{Binding HasRight}">
+                                        <components:StatsCardView BindingContext="{Binding Right}" />
+                                    </ContentView>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                    <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding Payments.HasRows}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="{Binding Payments.RowsTitle}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                            <VerticalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding Payments.Rows}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:StatsSectionRow">
+                                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                            <Label Text="{Binding Title}" Style="{StaticResource UiBody}" FontSize="14" />
+                                            <Label Grid.Column="1" Text="{Binding ValueText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                            <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Detail}" IsVisible="{Binding HasDetail}" Style="{StaticResource UiBody}" FontSize="11" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </components:UiCard>
+                    <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding Payments.HasExtra}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="{Binding Payments.ExtraTitle}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                            <VerticalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding Payments.ExtraRows}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:StatsSectionRow">
+                                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                            <Label Text="{Binding Title}" Style="{StaticResource UiBody}" FontSize="14" />
+                                            <Label Grid.Column="1" Text="{Binding ValueText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                            <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Detail}" IsVisible="{Binding HasDetail}" Style="{StaticResource UiBody}" FontSize="11" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </components:UiCard>
+                    <Label Text="{Binding Payments.CaveatsText}" IsVisible="{Binding Payments.HasCaveats}" Style="{StaticResource UiBody}" FontSize="12" />
+                </VerticalStackLayout>
+
+                <!-- Volet « Frais » (lot S2-a) -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding HasExpenses}">
+                    <components:UiTerm Term="frais" Text="Frais" FontSize="17" Margin="0,8,0,0" />
+                    <Label Text="Notes de frais, port payé aux fournisseurs et publicité : le même total que dans le résultat de période." Style="{StaticResource UiBody}" FontSize="12" />
+                    <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Expenses.CardRows}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:StatsCardRow">
+                                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                    <components:StatsCardView BindingContext="{Binding Left}" />
+                                    <ContentView Grid.Column="1" IsVisible="{Binding HasRight}">
+                                        <components:StatsCardView BindingContext="{Binding Right}" />
+                                    </ContentView>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                    <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding Expenses.HasRows}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="{Binding Expenses.RowsTitle}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                            <VerticalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding Expenses.Rows}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:StatsSectionRow">
+                                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                            <Label Text="{Binding Title}" Style="{StaticResource UiBody}" FontSize="14" />
+                                            <Label Grid.Column="1" Text="{Binding ValueText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                            <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Detail}" IsVisible="{Binding HasDetail}" Style="{StaticResource UiBody}" FontSize="11" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </components:UiCard>
+                    <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding Expenses.HasExtra}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="{Binding Expenses.ExtraTitle}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                            <VerticalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding Expenses.ExtraRows}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:StatsSectionRow">
+                                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                            <Label Text="{Binding Title}" Style="{StaticResource UiBody}" FontSize="14" />
+                                            <Label Grid.Column="1" Text="{Binding ValueText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                            <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Detail}" IsVisible="{Binding HasDetail}" Style="{StaticResource UiBody}" FontSize="11" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </components:UiCard>
+                    <Label Text="{Binding Expenses.CaveatsText}" IsVisible="{Binding Expenses.HasCaveats}" Style="{StaticResource UiBody}" FontSize="12" />
+                </VerticalStackLayout>
+
                 <!-- Écrans détaillés -->
                 <Label Text="Analyses détaillées" Style="{StaticResource UiTitle}" FontSize="17" Margin="0,8,0,0" />
-                <Grid ColumnDefinitions="*,*"
-                      RowDefinitions="Auto,Auto,Auto"
-                      ColumnSpacing="12"
-                      RowSpacing="12">
-
-                    <!-- Chiffre d'affaires, panier et commandes : remplacés par les cartes du haut (mêmes règles que le résultat de période). -->
-                    <components:StatistiqueBadgeView Grid.Row="0" Grid.Column="0"
-                                                     SourceImage="caisse.png"
-                                                     Name="Caisse"
-                                                     ButtonStatistique="{Binding NavigateToCaisseCommand}"/>
-
-                    <components:StatistiqueBadgeView Grid.Row="0" Grid.Column="1"
-                                                     SourceImage="payment.png"
-                                                     Name="Paiements"
-                                                     ButtonStatistique="{Binding NavigateToPaymentCommand}"/>
-
-                    <components:StatistiqueBadgeView Grid.Row="1" Grid.Column="0"
+                <!-- Caisse, Paiements et Frais : remplacés par les volets ci-dessus (lot S2-a). Stock et Total frais : en attendant S2-b. -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                    <components:StatistiqueBadgeView Grid.Column="0"
                                                      SourceImage="stock.png"
                                                      Name="Stock"
                                                      ButtonStatistique="{Binding NavigateToStockCommand}"/>
 
-                    <components:StatistiqueBadgeView Grid.Row="1" Grid.Column="1"
-                                                     SourceImage="frais.png"
-                                                     Name="Frais"
-                                                     ButtonStatistique="{Binding NavigateToFraisCommand}"/>
-
-                    <components:StatistiqueBadgeView Grid.Row="2" Grid.Column="0"
+                    <components:StatistiqueBadgeView Grid.Column="1"
                                                      SourceImage="fraistotal.png"
                                                      Name="Total frais"
                                                      ButtonStatistique="{Binding NavigateToFraisTotalCommand}"/>
-
                 </Grid>
             </VerticalStackLayout>
         </ScrollView>

@@ -22,7 +22,7 @@ namespace Easymakemoney.ViewModels.Statistiques
             _dialogService = dialogService;
             Ranges = StatsChoice.List(("today", "Aujourd'hui"), ("7d", "7 jours"), ("month", "Mois"), ("year", "Année"), ("period", "Période"), ("custom", "Dates"));
             Sources = StatsChoice.List(("all", "Tout"), ("ecommerce", "Boutique en ligne"), ("pos", "Caisse"), ("mobile_app", "Application"));
-            Metrics = StatsChoice.List(("revenue", "Ventes"), ("grossMargin", "Marge"), ("orders", "Commandes"));
+            Metrics = StatsChoice.List(("revenue", "Ventes"), ("grossMargin", "Marge"), ("orders", "Commandes"), ("received", "Encaissé"), ("expenses", "Frais"));
             StatsChoice.Select(Ranges, "month");
             StatsChoice.Select(Sources, "all");
             StatsChoice.Select(Metrics, "revenue");
@@ -83,6 +83,22 @@ namespace Easymakemoney.ViewModels.Statistiques
 
         [ObservableProperty]
         private bool _hasData;
+
+        /// <summary>Volet « Paiements et caisse » (lot S2-a) : null tant que le serveur ne le rend pas.</summary>
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasPayments))]
+        private StatsSectionView? _payments;
+
+        /// <summary>Volet « Frais » (lot S2-a) : notes de frais, port d'achat, publicité ; frais fixes à côté.</summary>
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasExpenses))]
+        private StatsSectionView? _expenses;
+
+        public bool HasPayments => Payments != null;
+        public bool HasExpenses => Expenses != null;
+
+        /// <summary>Volets demandés avec les cartes, dans la même requête (mêmes plage, canal et comparaisons).</summary>
+        public const string RequestedSections = "payments,expenses";
 
         /// <summary>La valeur exacte du point touché, avec l'an dernier.</summary>
         public string SelectedPointText
@@ -173,9 +189,9 @@ namespace Easymakemoney.ViewModels.Statistiques
 
         private StatsQuery Query() => _range switch
         {
-            "period" when SelectedPeriod != null => new StatsQuery(null, PeriodId: SelectedPeriod.id, Source: _source),
-            "custom" => new StatsQuery(null, From: CustomFrom.Date, To: CustomTo.Date, Source: _source),
-            _ => new StatsQuery(_range, Source: _source),
+            "period" when SelectedPeriod != null => new StatsQuery(null, PeriodId: SelectedPeriod.id, Source: _source, Sections: RequestedSections),
+            "custom" => new StatsQuery(null, From: CustomFrom.Date, To: CustomTo.Date, Source: _source, Sections: RequestedSections),
+            _ => new StatsQuery(_range, Source: _source, Sections: RequestedSections),
         };
 
         public async Task LoadAsync()
@@ -217,6 +233,8 @@ namespace Easymakemoney.ViewModels.Statistiques
             HasOtherRevenue = OtherRevenue.Count > 0;
             CaveatsText = data.CaveatsText;
             HasCaveats = data.HasCaveats;
+            Payments = StatsSectionView.Payments(data.sections?.payments, data.currency, data.HasPrevious);
+            Expenses = StatsSectionView.Expenses(data.sections?.expenses, data.currency, data.HasPrevious);
             HasData = true;
             ApplyChart();
         }
@@ -273,27 +291,6 @@ namespace Easymakemoney.ViewModels.Statistiques
         {
             if (Shell.Current is { } shell)
                 await shell.GoToAsync(nameof(StockPage));
-        }
-
-        [RelayCommand]
-        private async Task NavigateToFrais()
-        {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(FraisEvolutionEntreprisePage));
-        }
-
-        [RelayCommand]
-        private async Task NavigateToCaisse()
-        {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(TransactionCaissePage));
-        }
-
-        [RelayCommand]
-        private async Task NavigateToPayment()
-        {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(PaiementRemboursementPage));
         }
 
         [RelayCommand]

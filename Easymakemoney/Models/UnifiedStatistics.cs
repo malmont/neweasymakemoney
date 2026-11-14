@@ -20,6 +20,9 @@ namespace Easymakemoney.Models
         public StatsChart? chart { get; set; }
         public List<StatsCaveat> caveats { get; set; } = new();
 
+        /// <summary>Volets demandés par sections=… (lot S2) ; absent quand ils ne sont pas demandés.</summary>
+        public StatsSections? sections { get; set; }
+
         /// <summary>« 1-11 nov. · comparé au 1-11 oct. et au 1-11 nov. 2025 ».</summary>
         public string ComparisonText
         {
@@ -69,8 +72,36 @@ namespace Easymakemoney.Models
         public string CaveatsText => string.Join("\n", caveats.Where(c => !string.IsNullOrWhiteSpace(c.text)).Select(c => $"• {c.text}"));
         public bool HasCaveats => CaveatsText.Length > 0;
 
-        /// <summary>Points du graphique pour l'indicateur choisi : revenue, grossMargin ou orders.</summary>
-        public List<StatsChartPoint> ChartPoints(string metric) => (chart?.points ?? new())
+        /// <summary>Points du graphique pour l'indicateur choisi : revenue, grossMargin, orders, ou un volet (received : encaissé, expenses : total des frais).</summary>
+        public List<StatsChartPoint> ChartPoints(string metric)
+        {
+            var section = metric switch
+            {
+                "received" => sections?.payments?.chart,
+                "expenses" => sections?.expenses?.chart,
+                _ => null,
+            };
+            if (section != null)
+            {
+                var field = metric == "received" ? "received" : "total";
+                return section.points.Select(point =>
+                {
+                    var asPoint = new StatsPoint { key = point.key, from = point.from, to = point.to };
+                    var value = field == "received" ? point.received : point.total;
+                    return new StatsChartPoint(
+                        point.key ?? string.Empty,
+                        StatsFormat.PointLabel(asPoint, section.granularity),
+                        StatsFormat.ShortLabel(asPoint, section.granularity),
+                        value ?? 0,
+                        point.LastYearValue(field));
+                }).ToList();
+            }
+            if (metric is "received" or "expenses")
+                return new List<StatsChartPoint>();
+            return MainChartPoints(metric);
+        }
+
+        private List<StatsChartPoint> MainChartPoints(string metric) => (chart?.points ?? new())
             .Select(point => new StatsChartPoint(
                 point.key ?? string.Empty,
                 StatsFormat.PointLabel(point, chart?.granularity),
@@ -319,7 +350,7 @@ namespace Easymakemoney.Models
     }
 
     /// <summary>Plage demandée : un raccourci (today, 7d, month, year), une période de vente ou des dates libres.</summary>
-    public sealed record StatsQuery(string? Range, int? PeriodId = null, DateTime? From = null, DateTime? To = null, string Source = "all")
+    public sealed record StatsQuery(string? Range, int? PeriodId = null, DateTime? From = null, DateTime? To = null, string Source = "all", string? Sections = null)
     {
         public string Url(string locale)
         {
@@ -335,6 +366,8 @@ namespace Easymakemoney.Models
                 parts.Add($"range={Range ?? "month"}");
             parts.Add($"source={Source}");
             parts.Add($"locale={locale}");
+            if (!string.IsNullOrWhiteSpace(Sections))
+                parts.Add($"sections={Sections}");
             return "gestion/statistiques?" + string.Join("&", parts);
         }
     }

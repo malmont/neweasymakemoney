@@ -77,6 +77,12 @@ namespace Easymakemoney.Utilities
             ["occupation"] = new("Taux d'occupation", "Le temps où un article est loué, rapporté au temps où il pourrait l'être. À 80 %, l'article est loué 8 heures sur 10 d'ouverture."),
             ["recurrent"] = new("Revenu mensuel récurrent", "Ce que vos abonnements actifs rapportent chaque mois, ramené au mois quelle que soit leur fréquence."),
             ["taux-depart"] = new("Taux de départ", "La part des abonnés qui arrêtent leur abonnement chaque mois."),
+            ["encaisse"] = new("Encaissé", "L'argent reçu des clients, taxes comprises, par carte, en espèces ou par Paypal. Il est rangé au jour de la commande, comme dans « Ma journée », pour que les chiffres d'un même jour soient les mêmes partout."),
+            ["rembourse"] = new("Remboursé", "L'argent rendu aux clients pour des retours ou des annulations, sur la même plage."),
+            ["encaisse-net"] = new("Encaissé net", "Encaissé moins remboursé : ce qui reste vraiment dans la caisse et sur le compte."),
+            ["note-de-frais"] = new("Note de frais", "Une dépense de l'entreprise saisie avec son justificatif : hébergement, fournitures, repas… Elle compte dans les frais de la période à sa date."),
+            ["port-achat"] = new("Port d'achat", "Les frais de livraison payés aux fournisseurs pour recevoir la marchandise. Ils sont datés par la commande fournisseur."),
+            ["publicite"] = new("Publicité", "Le budget des campagnes de publicité de la période. Il compte dans les frais, comme les notes de frais et le port d'achat."),
         };
 
         /// <summary>

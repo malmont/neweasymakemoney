@@ -77,15 +77,15 @@ public class StatistiquesViewModelTests : IDisposable
         await vm.InitializeAsync(); // Second appel : _loader ne doit pas recharger
 
         var url = Assert.Single(_statsService.RequestedUrls);
-        Assert.Equal("gestion/statistiques?range=month&source=all&locale=fr", url);
+        Assert.Equal("gestion/statistiques?range=month&source=all&locale=fr&sections=payments,expenses", url);
         Assert.Empty(_dialogService.ShownErrors);
     }
 
     [Theory]
-    [InlineData("today", "gestion/statistiques?range=today&source=all&locale=fr")]
-    [InlineData("7d", "gestion/statistiques?range=7d&source=all&locale=fr")]
-    [InlineData("month", "gestion/statistiques?range=month&source=all&locale=fr")]
-    [InlineData("year", "gestion/statistiques?range=year&source=all&locale=fr")]
+    [InlineData("today", "gestion/statistiques?range=today&source=all&locale=fr&sections=payments,expenses")]
+    [InlineData("7d", "gestion/statistiques?range=7d&source=all&locale=fr&sections=payments,expenses")]
+    [InlineData("month", "gestion/statistiques?range=month&source=all&locale=fr&sections=payments,expenses")]
+    [InlineData("year", "gestion/statistiques?range=year&source=all&locale=fr&sections=payments,expenses")]
     public async Task SelectRange_UpdatesUrl_ForStandardRanges(string code, string expectedUrl)
     {
         _statsService.ResultToReturn = CreateSampleData();
@@ -106,7 +106,7 @@ public class StatistiquesViewModelTests : IDisposable
         await vm.SelectRangeCommand.ExecuteAsync("7d");
         await vm.SelectSourceCommand.ExecuteAsync("pos");
 
-        Assert.Equal("gestion/statistiques?range=7d&source=pos&locale=fr", _statsService.RequestedUrls.Last());
+        Assert.Equal("gestion/statistiques?range=7d&source=pos&locale=fr&sections=payments,expenses", _statsService.RequestedUrls.Last());
         Assert.Empty(_dialogService.ShownErrors);
     }
 
@@ -138,7 +138,7 @@ public class StatistiquesViewModelTests : IDisposable
 
         Assert.NotNull(vm.SelectedPeriod);
         Assert.Equal(42, vm.SelectedPeriod.id);
-        Assert.Contains("gestion/statistiques?periodId=42&source=all&locale=fr", _statsService.RequestedUrls);
+        Assert.Contains("gestion/statistiques?periodId=42&source=all&locale=fr&sections=payments,expenses", _statsService.RequestedUrls);
         Assert.Empty(_dialogService.ShownErrors);
     }
 
@@ -172,7 +172,7 @@ public class StatistiquesViewModelTests : IDisposable
         vm.CustomTo = to;
         await vm.ApplyCustomDatesCommand.ExecuteAsync(null);
 
-        var expectedUrl = $"gestion/statistiques?from={TreasuryDates.Iso(from)}&to={TreasuryDates.Iso(to)}&source=all&locale=fr";
+        var expectedUrl = $"gestion/statistiques?from={TreasuryDates.Iso(from)}&to={TreasuryDates.Iso(to)}&source=all&locale=fr&sections=payments,expenses";
         Assert.Equal(expectedUrl, _statsService.RequestedUrls.Last());
         Assert.Empty(_dialogService.ShownErrors);
     }
