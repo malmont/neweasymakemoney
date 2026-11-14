@@ -72,33 +72,54 @@ namespace Easymakemoney.Models
         public string CaveatsText => string.Join("\n", caveats.Where(c => !string.IsNullOrWhiteSpace(c.text)).Select(c => $"• {c.text}"));
         public bool HasCaveats => CaveatsText.Length > 0;
 
-        /// <summary>Points du graphique pour l'indicateur choisi : revenue, grossMargin, orders, ou un volet (received : encaissé, expenses : total des frais).</summary>
+        /// <summary>Indicateurs dont le graphique vient d'un volet : (volet, champ du point).</summary>
+        private static readonly Dictionary<string, string> SectionMetrics = new()
+        {
+            ["received"] = "received",
+            ["expenses"] = "total",
+            ["stockValue"] = "saleValue",
+            ["shipping"] = "billed",
+            ["taxes"] = "collected",
+        };
+
+        /// <summary>
+        /// Points du graphique pour l'indicateur choisi : revenue, grossMargin, orders, ou un volet (received, expenses, stockValue,
+        /// shipping, taxes). La valeur du stock n'a de point que les jours relevés : les tranches sans relevé sont omises.
+        /// </summary>
         public List<StatsChartPoint> ChartPoints(string metric)
         {
+            if (!SectionMetrics.TryGetValue(metric, out var field))
+                return MainChartPoints(metric);
             var section = metric switch
             {
                 "received" => sections?.payments?.chart,
                 "expenses" => sections?.expenses?.chart,
-                _ => null,
+                "stockValue" => sections?.stock?.chart,
+                "shipping" => sections?.shipping?.chart,
+                _ => sections?.taxes?.chart,
             };
-            if (section != null)
-            {
-                var field = metric == "received" ? "received" : "total";
-                return section.points.Select(point =>
+            if (section == null)
+                return new List<StatsChartPoint>();
+            return section.points
+                .Select(point => (point, value: field switch
                 {
-                    var asPoint = new StatsPoint { key = point.key, from = point.from, to = point.to };
-                    var value = field == "received" ? point.received : point.total;
+                    "received" => point.received,
+                    "total" => point.total,
+                    "saleValue" => point.saleValue,
+                    "billed" => point.billed,
+                    _ => point.collected,
+                }))
+                .Where(item => metric != "stockValue" || item.value != null)
+                .Select(item =>
+                {
+                    var asPoint = new StatsPoint { key = item.point.key, from = item.point.from, to = item.point.to };
                     return new StatsChartPoint(
-                        point.key ?? string.Empty,
+                        item.point.key ?? string.Empty,
                         StatsFormat.PointLabel(asPoint, section.granularity),
                         StatsFormat.ShortLabel(asPoint, section.granularity),
-                        value ?? 0,
-                        point.LastYearValue(field));
+                        item.value ?? 0,
+                        metric == "stockValue" ? null : item.point.LastYearValue(field));
                 }).ToList();
-            }
-            if (metric is "received" or "expenses")
-                return new List<StatsChartPoint>();
-            return MainChartPoints(metric);
         }
 
         private List<StatsChartPoint> MainChartPoints(string metric) => (chart?.points ?? new())

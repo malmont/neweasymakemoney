@@ -11,6 +11,89 @@ namespace Easymakemoney.Models
     {
         public StatsPaymentsSection? payments { get; set; }
         public StatsExpensesSection? expenses { get; set; }
+        public StatsStockSection? stock { get; set; }
+        public StatsShippingSection? shipping { get; set; }
+        public StatsTaxesSection? taxes { get; set; }
+    }
+
+    /// <summary>Mouvements de stock de la plage, valeur du stock aujourd'hui et stock bas (lot S2-b).</summary>
+    public class StatsStockSection
+    {
+        public StatsStockIndicators indicators { get; set; } = new();
+        public StatsStockValue? value { get; set; }
+        public int? lowCount { get; set; }
+        public StatsSectionChart? chart { get; set; }
+        public List<StatsCaveat> caveats { get; set; } = new();
+        public bool appliesSource { get; set; }
+    }
+
+    public class StatsStockIndicators
+    {
+        public StatsIndicator? unitsIn { get; set; }
+        public StatsIndicator? unitsOut { get; set; }
+        public StatsIndicator? receptions { get; set; }
+        public StatsIndicator? adjustments { get; set; }
+        public StatsIndicator? returns { get; set; }
+    }
+
+    public class StatsStockValue
+    {
+        public double? saleValue { get; set; }
+        public double? costValue { get; set; }
+        public string? historyStartsAt { get; set; }
+    }
+
+    /// <summary>Port facturé aux clients, par transporteur (lot S2-b) ; ce n'est pas le coût des étiquettes.</summary>
+    public class StatsShippingSection
+    {
+        public StatsShippingIndicators indicators { get; set; } = new();
+        public List<StatsCarrier> breakdown { get; set; } = new();
+        public StatsSectionChart? chart { get; set; }
+        public List<StatsCaveat> caveats { get; set; } = new();
+        public bool appliesSource { get; set; } = true;
+    }
+
+    public class StatsShippingIndicators
+    {
+        public StatsIndicator? billed { get; set; }
+        public StatsIndicator? orders { get; set; }
+        public StatsIndicator? averagePerOrder { get; set; }
+    }
+
+    public class StatsCarrier
+    {
+        public int? carrierId { get; set; }
+        public string? name { get; set; }
+        public string? kind { get; set; }
+        public double? billed { get; set; }
+        public int? orders { get; set; }
+        public double? share { get; set; }
+    }
+
+    /// <summary>Taxes collectées, nettes des retours, taxe par taxe (lot S2-b) ; aide à préparer une déclaration, n'en est pas une.</summary>
+    public class StatsTaxesSection
+    {
+        public StatsTaxesIndicators indicators { get; set; } = new();
+        public List<StatsTax> breakdown { get; set; } = new();
+        public StatsSectionChart? chart { get; set; }
+        public List<StatsCaveat> caveats { get; set; } = new();
+        public bool appliesSource { get; set; } = true;
+    }
+
+    public class StatsTaxesIndicators
+    {
+        public StatsIndicator? collected { get; set; }
+    }
+
+    public class StatsTax
+    {
+        public string? code { get; set; }
+        public string? label { get; set; }
+        public string? jurisdiction { get; set; }
+        public long? ratePpm { get; set; }
+        public double? @base { get; set; }
+        public double? collected { get; set; }
+        public double? share { get; set; }
     }
 
     /// <summary>Encaissé, remboursé et net (datés par la date de la commande, comme « Ma journée »), par moyen de paiement, et les clôtures de caisse.</summary>
@@ -129,6 +212,9 @@ namespace Easymakemoney.Models
         public double? refunded { get; set; }
         public double? net { get; set; }
         public double? total { get; set; }
+        public double? saleValue { get; set; }
+        public double? billed { get; set; }
+        public double? collected { get; set; }
         public JObject? lastYear { get; set; }
 
         public double? LastYearValue(string field) => lastYear?[field] is { Type: JTokenType.Integer or JTokenType.Float } value ? value.Value<double>() : null;
@@ -250,6 +336,105 @@ namespace Easymakemoney.Models
                 RowsTitle = "Notes de frais par type et campagnes",
                 ExtraRows = extra,
                 ExtraTitle = "À côté du total",
+                CaveatsText = Caveats(section.caveats),
+            };
+        }
+
+        /// <summary>« Stock » : les cinq mouvements de la plage, puis la valeur d'aujourd'hui et le stock bas.</summary>
+        public static StatsSectionView? Stock(StatsStockSection? section, string? currency, bool hasPrevious)
+        {
+            if (section == null)
+                return null;
+            var cards = new List<StatsCard>();
+            void Add(string key, string title, string term, StatsIndicator? indicator)
+            {
+                if (indicator != null)
+                    cards.Add(new StatsCard(key, title, term, indicator, null, currency, hasPrevious));
+            }
+            Add("unitsOut", "Sorties", "sorties-stock", section.indicators.unitsOut);
+            Add("unitsIn", "Entrées", "entrees-stock", section.indicators.unitsIn);
+            Add("receptions", "Réceptions fournisseur", "receptions-stock", section.indicators.receptions);
+            Add("returns", "Retours", "retours-stock", section.indicators.returns);
+            Add("adjustments", "Ajustements", "ajustements-stock", section.indicators.adjustments);
+
+            var rows = new List<StatsSectionRow>();
+            if (section.value is { } value)
+            {
+                rows.Add(new StatsSectionRow("Valeur de vente aujourd'hui", StatsFormat.Value(value.saleValue, "money", currency)));
+                rows.Add(new StatsSectionRow("Valeur au coût aujourd'hui", StatsFormat.Value(value.costValue, "money", currency)));
+            }
+            if (section.lowCount is { } low)
+                rows.Add(new StatsSectionRow("Articles en stock bas", StatsFormat.Value(low, "count", currency)));
+
+            return new StatsSectionView
+            {
+                CardRows = StatsCardRow.Pair(cards),
+                Rows = rows,
+                RowsTitle = "Le stock aujourd'hui",
+                CaveatsText = Caveats(section.caveats),
+            };
+        }
+
+        /// <summary>« Livraison » : port facturé, ventes livrées, moyenne, puis le détail par transporteur.</summary>
+        public static StatsSectionView? Shipping(StatsShippingSection? section, string? currency, bool hasPrevious)
+        {
+            if (section == null)
+                return null;
+            var cards = new List<StatsCard>();
+            void Add(string key, string title, string term, StatsIndicator? indicator, bool? higherIsBetter)
+            {
+                if (indicator != null)
+                    cards.Add(new StatsCard(key, title, term, indicator, higherIsBetter, currency, hasPrevious));
+            }
+            Add("shippingBilled", "Port facturé", "port-facture", section.indicators.billed, true);
+            Add("shippingOrders", "Ventes livrées", "commandes", section.indicators.orders, true);
+            Add("shippingAverage", "Port moyen", "port-moyen", section.indicators.averagePerOrder, null);
+
+            var rows = section.breakdown.Select(c =>
+            {
+                var details = new List<string>();
+                if (c.orders is { } orders)
+                    details.Add($"{orders} vente{(orders > 1 ? "s" : string.Empty)}");
+                if (Share(c.share) is { Length: > 0 } share)
+                    details.Add($"{share} du port");
+                return new StatsSectionRow(c.name ?? "Sans transporteur", StatsFormat.Value(c.billed, "money", currency), string.Join(" · ", details));
+            }).ToList();
+
+            return new StatsSectionView
+            {
+                CardRows = StatsCardRow.Pair(cards),
+                Rows = rows,
+                RowsTitle = "Par transporteur",
+                CaveatsText = Caveats(section.caveats),
+            };
+        }
+
+        /// <summary>« Taxes » : le total collecté, puis chaque taxe avec son taux et sa base quand elle est connue.</summary>
+        public static StatsSectionView? Taxes(StatsTaxesSection? section, string? currency, bool hasPrevious)
+        {
+            if (section == null)
+                return null;
+            var cards = new List<StatsCard>();
+            if (section.indicators.collected is { } collected)
+                cards.Add(new StatsCard("taxesCollected", "Taxes collectées", "taxes-collectees", collected, null, currency, hasPrevious));
+
+            var rows = section.breakdown.Select(t =>
+            {
+                var details = new List<string>();
+                if (t.ratePpm is { } ppm)
+                    details.Add($"taux {(ppm / 10000.0).ToString("0.###", CultureInfo.CurrentCulture)} %");
+                if (t.@base is { } taxBase)
+                    details.Add($"base {StatsFormat.Value(taxBase, "money", currency)}");
+                if (Share(t.share) is { Length: > 0 } share)
+                    details.Add($"{share} des taxes");
+                return new StatsSectionRow(t.label ?? t.code ?? "Taxe", StatsFormat.Value(t.collected, "money", currency), string.Join(" · ", details));
+            }).ToList();
+
+            return new StatsSectionView
+            {
+                CardRows = StatsCardRow.Pair(cards),
+                Rows = rows,
+                RowsTitle = "Par taxe",
                 CaveatsText = Caveats(section.caveats),
             };
         }

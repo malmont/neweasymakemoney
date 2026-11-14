@@ -83,6 +83,14 @@ namespace Easymakemoney.Utilities
             ["note-de-frais"] = new("Note de frais", "Une dépense de l'entreprise saisie avec son justificatif : hébergement, fournitures, repas… Elle compte dans les frais de la période à sa date."),
             ["port-achat"] = new("Port d'achat", "Les frais de livraison payés aux fournisseurs pour recevoir la marchandise. Ils sont datés par la commande fournisseur."),
             ["publicite"] = new("Publicité", "Le budget des campagnes de publicité de la période. Il compte dans les frais, comme les notes de frais et le port d'achat."),
+            ["sorties-stock"] = new("Sorties de stock", "Les pièces sorties du stock sur la plage : ventes de tous les canaux, à la caisse comme en ligne."),
+            ["entrees-stock"] = new("Entrées de stock", "Les pièces ajoutées au stock à la main sur la plage, hors réceptions de commandes fournisseur."),
+            ["receptions-stock"] = new("Réceptions fournisseur", "Les pièces entrées en stock à la réception d'une commande fournisseur."),
+            ["retours-stock"] = new("Retours en stock", "Les pièces rapportées par des clients et remises en stock."),
+            ["ajustements-stock"] = new("Ajustements de stock", "Les corrections faites à la main après un comptage, une casse ou une erreur."),
+            ["port-facture"] = new("Port facturé", "Les frais de livraison payés par vos clients sur leurs commandes. Ce n'est pas ce que vous coûtent les étiquettes."),
+            ["port-moyen"] = new("Port moyen", "Le port facturé divisé par le nombre de ventes livrées."),
+            ["taxes-collectees"] = new("Taxes collectées", "Les taxes encaissées sur vos ventes (TPS, TVQ…), retours déduits. Ce total aide à préparer une déclaration, il n'en est pas une."),
         };
 
         /// <summary>

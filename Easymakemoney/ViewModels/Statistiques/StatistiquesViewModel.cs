@@ -5,7 +5,8 @@ namespace Easymakemoney.ViewModels.Statistiques
 {
     /// <summary>
     /// Statistiques (lot backend S1) : cartes d'indicateurs comparées à la plage précédente et à l'an dernier, graphique avec l'an dernier,
-    /// choix de la plage (aujourd'hui, 7 jours, mois, année, période de vente, dates libres) et du canal. Les écrans détaillés restent accessibles.
+    /// choix de la plage (aujourd'hui, 7 jours, mois, année, période de vente, dates libres) et du canal ; volets paiements et caisse, frais,
+    /// stock, livraison et taxes (lot S2), qui remplacent les cinq anciens écrans.
     /// </summary>
     public partial class StatistiquesViewModel : BaseViewModel
     {
@@ -22,7 +23,7 @@ namespace Easymakemoney.ViewModels.Statistiques
             _dialogService = dialogService;
             Ranges = StatsChoice.List(("today", "Aujourd'hui"), ("7d", "7 jours"), ("month", "Mois"), ("year", "Année"), ("period", "Période"), ("custom", "Dates"));
             Sources = StatsChoice.List(("all", "Tout"), ("ecommerce", "Boutique en ligne"), ("pos", "Caisse"), ("mobile_app", "Application"));
-            Metrics = StatsChoice.List(("revenue", "Ventes"), ("grossMargin", "Marge"), ("orders", "Commandes"), ("received", "Encaissé"), ("expenses", "Frais"));
+            Metrics = StatsChoice.List(("revenue", "Ventes"), ("grossMargin", "Marge"), ("orders", "Commandes"), ("received", "Encaissé"), ("expenses", "Frais"), ("stockValue", "Valeur du stock"), ("shipping", "Port"), ("taxes", "Taxes"));
             StatsChoice.Select(Ranges, "month");
             StatsChoice.Select(Sources, "all");
             StatsChoice.Select(Metrics, "revenue");
@@ -94,11 +95,27 @@ namespace Easymakemoney.ViewModels.Statistiques
         [NotifyPropertyChangedFor(nameof(HasExpenses))]
         private StatsSectionView? _expenses;
 
+        /// <summary>Volets « Stock », « Livraison » et « Taxes » (lot S2-b).</summary>
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasStock))]
+        private StatsSectionView? _stock;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasShipping))]
+        private StatsSectionView? _shipping;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasTaxes))]
+        private StatsSectionView? _taxes;
+
         public bool HasPayments => Payments != null;
         public bool HasExpenses => Expenses != null;
+        public bool HasStock => Stock != null;
+        public bool HasShipping => Shipping != null;
+        public bool HasTaxes => Taxes != null;
 
         /// <summary>Volets demandés avec les cartes, dans la même requête (mêmes plage, canal et comparaisons).</summary>
-        public const string RequestedSections = "payments,expenses";
+        public const string RequestedSections = "payments,expenses,stock,shipping,taxes";
 
         /// <summary>La valeur exacte du point touché, avec l'an dernier.</summary>
         public string SelectedPointText
@@ -235,6 +252,9 @@ namespace Easymakemoney.ViewModels.Statistiques
             HasCaveats = data.HasCaveats;
             Payments = StatsSectionView.Payments(data.sections?.payments, data.currency, data.HasPrevious);
             Expenses = StatsSectionView.Expenses(data.sections?.expenses, data.currency, data.HasPrevious);
+            Stock = StatsSectionView.Stock(data.sections?.stock, data.currency, data.HasPrevious);
+            Shipping = StatsSectionView.Shipping(data.sections?.shipping, data.currency, data.HasPrevious);
+            Taxes = StatsSectionView.Taxes(data.sections?.taxes, data.currency, data.HasPrevious);
             HasData = true;
             ApplyChart();
         }
@@ -284,20 +304,6 @@ namespace Easymakemoney.ViewModels.Statistiques
         {
             if (Shell.Current is { } shell)
                 await shell.GoToAsync(nameof(RentalStatisticsPage));
-        }
-
-        [RelayCommand]
-        private async Task NavigateToStock()
-        {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(StockPage));
-        }
-
-        [RelayCommand]
-        private async Task NavigateToFraisTotal()
-        {
-            if (Shell.Current is { } shell)
-                await shell.GoToAsync(nameof(FraisClientTotalViewPage));
         }
     }
 

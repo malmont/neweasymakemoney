@@ -62,11 +62,6 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute("DashBoardCommandPage", typeof(DashBoardCommandPage));
 		Routing.RegisterRoute("DashBoardProductPage", typeof(DashBoardProductPage));
 		Routing.RegisterRoute("StatistiquesPage", typeof(StatistiquesPage));
-		Routing.RegisterRoute("StockPage", typeof(StockPage));
-		Routing.RegisterRoute("FraisEvolutionEntreprisePage", typeof(FraisEvolutionEntreprisePage));
-		Routing.RegisterRoute("PaiementRemboursementPage", typeof(PaiementRemboursementPage));
-		Routing.RegisterRoute("TransactionCaissePage", typeof(TransactionCaissePage));
-		Routing.RegisterRoute("FraisClientTotalViewPage", typeof(FraisClientTotalViewPage));
 		
     }
 

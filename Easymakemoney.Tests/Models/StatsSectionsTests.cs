@@ -73,7 +73,36 @@ public class StatsSectionsTests : IDisposable
           "chart": { "granularity": "day", "points": [
             { "key": "2026-10-05", "from": "2026-10-05", "to": "2026-10-05", "total": 24900, "notes": 0, "purchaseShipping": 24900, "advertising": 0, "lastYear": { "total": 0 } } ] },
           "caveats": [],
-          "appliesSource": false } } }
+          "appliesSource": false },
+        "stock": {
+          "indicators": {
+            "unitsIn": { "value": 7, "unit": "count", "previous": 0 }, "unitsOut": { "value": 51, "unit": "count", "previous": 0 },
+            "receptions": { "value": 0, "unit": "count" }, "adjustments": { "value": 0, "unit": "count" }, "returns": { "value": 0, "unit": "count" } },
+          "breakdown": [ { "code": "in", "label": "Entrées", "quantity": 7 } ],
+          "value": { "saleValue": 9983860, "costValue": 2305605, "historyStartsAt": "2026-11-11" },
+          "lowCount": 0,
+          "chart": { "granularity": "day", "points": [
+            { "key": "2026-11-10", "from": "2026-11-10", "to": "2026-11-10", "in": 0, "out": 2, "saleValue": null, "costValue": null },
+            { "key": "2026-11-11", "from": "2026-11-11", "to": "2026-11-11", "in": 0, "out": 1, "saleValue": 9983860, "costValue": 2305605 } ] },
+          "caveats": [ { "code": "STOCK_HISTORY_STARTS", "text": "La valeur du stock est relevée chaque jour depuis le 11/11/2026 : la courbe commence à cette date.", "date": "2026-11-11" } ],
+          "appliesSource": false },
+        "shipping": {
+          "indicators": { "billed": { "value": 9000, "unit": "money", "previous": 0 }, "orders": { "value": 20, "unit": "count" }, "averagePerOrder": { "value": 450, "unit": "money", "previous": null } },
+          "breakdown": [
+            { "carrierId": 1, "name": "Livraison standard", "kind": "fixed", "billed": 9000, "orders": 8, "share": 100 },
+            { "carrierId": null, "name": "Sans transporteur", "kind": null, "billed": 0, "orders": 1, "share": 0 } ],
+          "chart": { "granularity": "day", "points": [ { "key": "2026-10-08", "from": "2026-10-08", "to": "2026-10-08", "billed": 3000, "orders": 4, "lastYear": { "billed": 0, "orders": 0 } } ] },
+          "caveats": [ { "code": "SHIPPING_BILLED_NOT_COST", "text": "C'est le port payé par les clients, pas le coût des étiquettes." } ],
+          "appliesSource": true },
+        "taxes": {
+          "indicators": { "collected": { "value": 22041, "unit": "money", "previous": 0 } },
+          "breakdown": [
+            { "code": "qst", "label": "TVQ", "jurisdiction": null, "ratePpm": 99750, "base": null, "collected": 11937, "share": 54.2 },
+            { "code": "gst", "label": "TPS", "jurisdiction": null, "ratePpm": 50000, "base": 119720, "collected": 5986, "share": 27.2 },
+            { "code": null, "label": "Taxe", "jurisdiction": null, "ratePpm": null, "base": null, "collected": 4118, "share": 18.7 } ],
+          "chart": { "granularity": "day", "points": [ { "key": "2026-10-08", "from": "2026-10-08", "to": "2026-10-08", "collected": 4000, "lastYear": { "collected": 100 } } ] },
+          "caveats": [ { "code": "TAXES_NOT_A_RETURN", "text": "Ce total aide à préparer une déclaration, il n'en est pas une." } ],
+          "appliesSource": true } } }
     """;
 
     private static UnifiedStatistics Read() => JsonConvert.DeserializeObject<UnifiedStatistics>(Json)!;
@@ -158,10 +187,75 @@ public class StatsSectionsTests : IDisposable
     }
 
     [Fact]
+    public void Stock_MovementsThenTodayValueAndLowStock()
+    {
+        var data = Read();
+        var view = StatsSectionView.Stock(data.sections?.stock, data.currency, data.HasPrevious)!;
+
+        var cards = view.CardRows.SelectMany(r => new[] { r.Left, r.Right }).Where(c => c != null).Select(c => c!).ToList();
+        Assert.Equal(new[] { "unitsOut", "unitsIn", "receptions", "returns", "adjustments" }, cards.Select(c => c.Key));
+        Assert.Equal("51", cards[0].ValueText);
+        Assert.Equal(new[] { "Valeur de vente aujourd'hui", "Valeur au coût aujourd'hui", "Articles en stock bas" }, view.Rows.Select(r => r.Title));
+        Assert.Equal(Money(9983860), view.Rows[0].ValueText);
+        Assert.Contains("11/11/2026", view.CaveatsText);
+    }
+
+    [Fact]
+    public void Shipping_ByCarrier()
+    {
+        var data = Read();
+        var view = StatsSectionView.Shipping(data.sections?.shipping, data.currency, data.HasPrevious)!;
+
+        var cards = view.CardRows.SelectMany(r => new[] { r.Left, r.Right }).Where(c => c != null).Select(c => c!).ToList();
+        Assert.Equal(new[] { "shippingBilled", "shippingOrders", "shippingAverage" }, cards.Select(c => c.Key));
+        Assert.Equal(Money(450), cards[2].ValueText);
+        Assert.Equal("Livraison standard", view.Rows[0].Title);
+        Assert.Equal("8 ventes · 100 % du port", view.Rows[0].Detail);
+        Assert.Equal("1 vente · 0 % du port", view.Rows[1].Detail);
+        Assert.Contains("pas le coût des étiquettes", view.CaveatsText);
+    }
+
+    [Fact]
+    public void Taxes_ByTax_WithRateAndKnownBase()
+    {
+        var data = Read();
+        var view = StatsSectionView.Taxes(data.sections?.taxes, data.currency, data.HasPrevious)!;
+
+        Assert.Equal(Money(22041), Assert.Single(view.CardRows).Left.ValueText);
+        Assert.Equal(new[] { "TVQ", "TPS", "Taxe" }, view.Rows.Select(r => r.Title));
+        Assert.Equal("taux 9,975 % · 54,2 % des taxes", view.Rows[0].Detail);
+        Assert.Equal($"taux 5 % · base {Money(119720)} · 27,2 % des taxes", view.Rows[1].Detail);
+        Assert.Equal("18,7 % des taxes", view.Rows[2].Detail);
+        Assert.Contains("n'en est pas une", view.CaveatsText);
+    }
+
+    [Fact]
+    public void ChartPoints_StockValueSkipsDaysWithoutReading_OthersKeepLastYear()
+    {
+        var data = Read();
+
+        var stock = Assert.Single(data.ChartPoints("stockValue"));
+        Assert.Equal("2026-11-11", stock.Key);
+        Assert.Equal(9983860, stock.Value);
+        Assert.Null(stock.LastYear);
+
+        var shipping = Assert.Single(data.ChartPoints("shipping"));
+        Assert.Equal(3000, shipping.Value);
+        Assert.Equal(0, shipping.LastYear);
+
+        var taxes = Assert.Single(data.ChartPoints("taxes"));
+        Assert.Equal(4000, taxes.Value);
+        Assert.Equal(100, taxes.LastYear);
+    }
+
+    [Fact]
     public void WithoutSections_NoView()
     {
         Assert.Null(StatsSectionView.Payments(null, "CAD", true));
         Assert.Null(StatsSectionView.Expenses(null, "CAD", true));
+        Assert.Null(StatsSectionView.Stock(null, "CAD", true));
+        Assert.Null(StatsSectionView.Shipping(null, "CAD", true));
+        Assert.Null(StatsSectionView.Taxes(null, "CAD", true));
     }
 
     [Fact]

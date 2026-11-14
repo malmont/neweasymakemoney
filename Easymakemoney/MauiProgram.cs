@@ -103,14 +103,6 @@ public static class MauiProgram
 		builder.Services.AddTransient<IListFraisDePortService, ListFraisDePortService>();
 		builder.Services.AddTransient<IDashBoardCollectionService, DashBoardCollectionService>();
 		builder.Services.AddTransient<IDashboardCommandServices, DashboardCommandServices>();
-		builder.Services.AddTransient<IChiffreAffaireService, ChiffreAffaireService>();
-		builder.Services.AddTransient<IOrderCountServices, OrderCountServices>();
-		builder.Services.AddTransient<IAverageOrderValueServices, AverageOrderValueServices>();
-		builder.Services.AddTransient<IStockEvolutionServices, StockEvolutionServices>();
-		builder.Services.AddTransient<IFraisEvolutionService, FraisEvolutionService>();
-		builder.Services.AddTransient<IPaiementRemboursementService, PaiementRemboursementService>();
-		builder.Services.AddTransient<ITransactionCaisseService, TransactionCaisseService>();
-		builder.Services.AddTransient<IFraisClientTotalService, FraisClientTotalService>();
 		builder.Services.AddTransient<ICollectionCloseService, CollectionCloseService>();
 		builder.Services.AddTransient<IPeriodResultService, PeriodResultService>();
 		builder.Services.AddTransient<IUnifiedStatisticsService, UnifiedStatisticsService>();
@@ -182,14 +174,6 @@ public static class MauiProgram
 		builder.Services.AddTransient<GetListTransporteurUseCase>();
 		builder.Services.AddTransient<GetDashBoardCollectionUseCase>();
 		builder.Services.AddTransient<GetDashboardCommandUseCase>();
-		builder.Services.AddTransient<StockPage>();
-		builder.Services.AddTransient<StockEvolutionUseCase>();
-		builder.Services.AddTransient<StockValueEvolutionUseCase>();
-		builder.Services.AddTransient<FraisEvolutionUseCase>();
-		builder.Services.AddTransient<PaiementRemboursementUseCase>();
-		builder.Services.AddTransient<TransactionCaisseUseCase>();
-		builder.Services.AddTransient<GetFraisClientTaxUseCase>();
-		builder.Services.AddTransient<GetFraisClientCarrierUseCase>();
 		builder.Services.AddTransient<GetCollectionCloseUseCase>();
 		builder.Services.AddTransient<GetListTypeFournisseurUseCase>();
 		builder.Services.AddTransient<GestListTypeNoteDeFraisUseCase>();
@@ -251,10 +235,6 @@ public static class MauiProgram
 		builder.Services.AddTransient<DashBoardCommandPage>();
 		builder.Services.AddTransient<DashBoardProductPage>();
 		builder.Services.AddTransient<StatistiquesPage>();
-		builder.Services.AddTransient<FraisEvolutionEntreprisePage>();
-		builder.Services.AddTransient<PaiementRemboursementPage>();
-		builder.Services.AddTransient<TransactionCaissePage>();
-		builder.Services.AddTransient<FraisClientTotalViewPage>();
 
 
 		//View Models
@@ -322,11 +302,6 @@ public static class MauiProgram
 		builder.Services.AddTransient<DashBoardCommandViewModel>();
 		builder.Services.AddTransient<DashBoardProductViewModel>();
 		builder.Services.AddTransient<StatistiquesViewModel>();
-		builder.Services.AddTransient<StockEvolutionViewModel>();
-		builder.Services.AddTransient<FraisEvolutionEntrepriseViewModel>();
-		builder.Services.AddTransient<PaiementRemboursementViewModel>();
-		builder.Services.AddTransient<TransactionCaisseViewModel>();
-		builder.Services.AddTransient<FraisClientTotalViewModel>();
 
 
 
