@@ -156,6 +156,10 @@ Changer de site : POST /api/logout {refresh_token} → purge des données du sit
 9. **Tests automatiques** : la clé d'activation (200, 400, 403, 404, 429, réactivation refusée → purge) et la saisie
    du repli, les intercepteurs (en-tête présent, absent sur `activate`, blocage sans site), le rafraîchissement unique
    sur 401 et le contrôle `tenant_code` du JWT.
+10. **Famille d'applications (APPS-MEMBRES, depuis le 13/11/2026)** : envoyer `app` = code de l'application (`mobile`,
+   `livingmemory`…) à `login`, `otp-verify`, `token/refresh` et `register` ; le redire à chaque rafraîchissement (le
+   jeton de rafraîchissement ne garde pas la famille) ; un jeton sans famille ou d'une autre famille n'est jamais
+   refusé côté application (seul `tenant_code` est vérifié). Voir `docs/apps-membres.md` du backend.
 
 ## 4. Côté backend : livré, reporté, à venir
 
