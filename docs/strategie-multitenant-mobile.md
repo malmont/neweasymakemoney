@@ -160,6 +160,7 @@ Changer de site : POST /api/logout {refresh_token} → purge des données du sit
    `livingmemory`…) à `login`, `otp-verify`, `token/refresh` et `register` ; le redire à chaque rafraîchissement (le
    jeton de rafraîchissement ne garde pas la famille) ; un jeton sans famille ou d'une autre famille n'est jamais
    refusé côté application (seul `tenant_code` est vérifié). Voir `docs/apps-membres.md` du backend.
+11. **« Rejoindre » et « Quitter » (APPS-MEMBRES M3, depuis le 14/11/2026)** : un 403 `APP_MEMBERSHIP_REQUIRED` de `login` ou `otp-verify` se lit par son code, avant tout repli « 403 → plateforme refusée » ; il ouvre l'étape « Rejoindre » (conditions de la réponse en HTML assaini, un bouton), puis `POST /api/apps/join {joinToken, termsVersion, accepted: true}`, dont la réponse est la session (`tenant_code` vérifié). 409 `TERMS_VERSION_CHANGED` : nouvelles conditions, même jeton ; 401 `JOIN_TOKEN_INVALID` : retour à la connexion. Le jeton de passage n'est jamais écrit dans un journal ni gardé sur le téléphone. `apps/join` et `apps/{app}/terms` sont publics (pas de rafraîchissement sur leur 401). À l'inscription : conditions de `GET /api/apps/{app}/terms` et `termsVersion`. « Quitter » : `DELETE /api/account/memberships/{app}`, puis déconnexion locale.
 
 ## 4. Côté backend : livré, reporté, à venir
 
