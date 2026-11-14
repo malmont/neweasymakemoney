@@ -159,6 +159,11 @@ boutique ?
 
 ## Campagne d'essais avant le premier client
 
+**Sécurité de la base, à faire pendant la campagne (signalé le 14/11) :** la production et les tests se connectent au même serveur PostgreSQL, avec le même compte super-utilisateur. À prévoir, avec la rotation des clés JWT :
+- un compte de test à part, sans droits de super-utilisateur, avec une limite de connexions ;
+- un compte applicatif de production aux droits réduits.
+En attendant, un coupe-circuit arrête la suite de tests au-delà de 60 connexions (lot « connexions »).
+
 Décision du propriétaire (12/11/2026) : tout lot validé part en production sans attendre ; les essais réels se font en une campagne
 avant de mettre un premier client en production, le propriétaire se connectant lui-même. Le 13/11/2026 : un **nouveau site dédié aux
 essais** sera créé pour cette campagne, avec sa documentation des essais (la démo n'est pas modifiée pour cela). Liste à tenir à jour :
