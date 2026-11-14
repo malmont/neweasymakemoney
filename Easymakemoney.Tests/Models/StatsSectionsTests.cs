@@ -54,7 +54,13 @@ public class StatsSectionsTests : IDisposable
           "caveats": [
             { "code": "PAYMENTS_BY_ORDER_DATE", "text": "L'encaissé est rangé au jour de la commande." },
             { "code": "REFUNDS_UNMATCHED", "text": "45,34 $ de remboursements sans ligne de paiement.", "amount": -4534 } ],
-          "appliesSource": true },
+          "appliesSource": true,
+          "storeCreditIssued": { "amount": 3334, "count": 1, "label": "Avoirs clients émis" },
+          "giftCardRecredited": { "amount": 1000, "count": 1, "label": "Revenu sur des cartes-cadeaux" },
+          "paidByStoreCredit": { "amount": 3334, "count": 1, "label": "Payé par avoir client" },
+          "paidByGiftCard": { "amount": 0, "count": 0, "label": "Payé par carte-cadeau" },
+          "outstandingStoreCredit": { "amount": 0, "count": 0, "asOf": "2026-11-14", "label": "Avoirs clients en cours" },
+          "outstandingGiftCards": { "amount": 2500, "count": 2, "asOf": "2026-11-14", "label": "Cartes-cadeaux non dépensées" } },
         "expenses": {
           "indicators": {
             "total": { "value": 69200, "unit": "money", "previous": 0, "changeUnit": "percent" },
@@ -135,6 +141,25 @@ public class StatsSectionsTests : IDisposable
 
         Assert.Contains("jour de la commande", view.CaveatsText);
         Assert.Contains("sans ligne de paiement", view.CaveatsText);
+    }
+
+    [Fact]
+    public void Payments_StoreCreditAndGiftCards_ApartFromCash_ZeroLinesHidden()
+    {
+        var data = Read();
+        var view = StatsSectionView.Payments(data.sections?.payments, data.currency, data.HasPrevious)!;
+
+        Assert.True(view.HasCredit);
+        Assert.Equal(new[] { "Avoirs clients émis", "Payé par avoir client", "Revenu sur des cartes-cadeaux", "Cartes-cadeaux non dépensées" }, view.CreditRows.Select(r => r.Title));
+        Assert.Equal(Money(3334), view.CreditRows[0].ValueText);
+        Assert.Equal("1 fois", view.CreditRows[0].Detail);
+        Assert.Equal("2 en cours, à ce jour", view.CreditRows[3].Detail);
+
+        data.sections!.payments!.storeCreditIssued = null; // boutique en ligne : lignes à null
+        data.sections.payments.paidByStoreCredit = null;
+        data.sections.payments.giftCardRecredited = null;
+        data.sections.payments.outstandingGiftCards = null;
+        Assert.False(StatsSectionView.Payments(data.sections.payments, data.currency, data.HasPrevious)!.HasCredit);
     }
 
     [Fact]

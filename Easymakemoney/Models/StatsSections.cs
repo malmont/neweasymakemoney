@@ -105,6 +105,24 @@ namespace Easymakemoney.Models
         public StatsSectionChart? chart { get; set; }
         public List<StatsCaveat> caveats { get; set; } = new();
         public bool appliesSource { get; set; } = true;
+
+        /// <summary>Lot AVOIRS : lignes à part, hors de reçu, remboursé et net ; null pour la boutique en ligne.</summary>
+        public StatsCreditLine? storeCreditIssued { get; set; }
+        public StatsCreditLine? giftCardRecredited { get; set; }
+        public StatsCreditLine? paidByStoreCredit { get; set; }
+        public StatsCreditLine? paidByGiftCard { get; set; }
+
+        /// <summary>États du moment (« à ce jour ») : ce que le magasin doit encore en marchandise.</summary>
+        public StatsCreditLine? outstandingStoreCredit { get; set; }
+        public StatsCreditLine? outstandingGiftCards { get; set; }
+    }
+
+    public class StatsCreditLine
+    {
+        public double? amount { get; set; }
+        public int? count { get; set; }
+        public string? label { get; set; }
+        public string? asOf { get; set; }
     }
 
     public class StatsPaymentsIndicators
@@ -234,10 +252,13 @@ namespace Easymakemoney.Models
         public string RowsTitle { get; init; } = string.Empty;
         public List<StatsSectionRow> ExtraRows { get; init; } = new();
         public string ExtraTitle { get; init; } = string.Empty;
+        public List<StatsSectionRow> CreditRows { get; init; } = new();
+        public string CreditTitle { get; init; } = string.Empty;
         public string CaveatsText { get; init; } = string.Empty;
 
         public bool HasRows => Rows.Count > 0;
         public bool HasExtra => ExtraRows.Count > 0;
+        public bool HasCredit => CreditRows.Count > 0;
         public bool HasCaveats => CaveatsText.Length > 0;
 
         public static string Caveats(IEnumerable<StatsCaveat> caveats) =>
@@ -288,6 +309,28 @@ namespace Easymakemoney.Models
                 }
             }
 
+            var credit = new List<StatsSectionRow>();
+            void Credit(StatsCreditLine? line, string fallback, bool now)
+            {
+                if (line == null || ((line.amount ?? 0) == 0 && (line.count ?? 0) == 0))
+                    return;
+                var title = string.IsNullOrWhiteSpace(line.label) ? fallback : line.label!;
+                var detail = (now, line.count) switch
+                {
+                    (true, { } n) => $"{n} en cours, à ce jour",
+                    (true, null) => "à ce jour",
+                    (false, { } n) => $"{n} fois",
+                    _ => string.Empty,
+                };
+                credit.Add(new StatsSectionRow(title, StatsFormat.Value(line.amount, "money", currency), detail));
+            }
+            Credit(section.storeCreditIssued, "Avoirs clients émis", false);
+            Credit(section.paidByStoreCredit, "Payé par avoir client", false);
+            Credit(section.giftCardRecredited, "Revenu sur des cartes-cadeaux", false);
+            Credit(section.paidByGiftCard, "Payé par carte-cadeau", false);
+            Credit(section.outstandingStoreCredit, "Avoirs clients en cours", true);
+            Credit(section.outstandingGiftCards, "Cartes-cadeaux non dépensées", true);
+
             return new StatsSectionView
             {
                 CardRows = StatsCardRow.Pair(cards),
@@ -295,6 +338,8 @@ namespace Easymakemoney.Models
                 RowsTitle = "Par moyen de paiement",
                 ExtraRows = desk,
                 ExtraTitle = "Clôtures de caisse",
+                CreditRows = credit,
+                CreditTitle = "Avoirs clients et cartes-cadeaux (hors encaissé)",
                 CaveatsText = Caveats(section.caveats),
             };
         }

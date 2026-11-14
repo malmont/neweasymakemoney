@@ -218,6 +218,22 @@
                             </VerticalStackLayout>
                         </VerticalStackLayout>
                     </components:UiCard>
+                    <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding Payments.HasCredit}">
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="{Binding Payments.CreditTitle}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                            <VerticalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding Payments.CreditRows}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:StatsSectionRow">
+                                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                                            <Label Text="{Binding Title}" Style="{StaticResource UiBody}" FontSize="14" />
+                                            <Label Grid.Column="1" Text="{Binding ValueText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                            <Label Grid.Row="1" Grid.ColumnSpan="2" Text="{Binding Detail}" IsVisible="{Binding HasDetail}" Style="{StaticResource UiBody}" FontSize="11" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </components:UiCard>
                     <Label Text="{Binding Payments.CaveatsText}" IsVisible="{Binding Payments.HasCaveats}" Style="{StaticResource UiBody}" FontSize="12" />
                 </VerticalStackLayout>
 
