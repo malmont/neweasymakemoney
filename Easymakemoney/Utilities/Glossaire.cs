@@ -91,6 +91,10 @@ namespace Easymakemoney.Utilities
             ["port-facture"] = new("Port facturé", "Les frais de livraison payés par vos clients sur leurs commandes. Ce n'est pas ce que vous coûtent les étiquettes."),
             ["port-moyen"] = new("Port moyen", "Le port facturé divisé par le nombre de ventes livrées."),
             ["taxes-collectees"] = new("Taxes collectées", "Les taxes encaissées sur vos ventes (TPS, TVQ…), retours déduits. Ce total aide à préparer une déclaration, il n'en est pas une."),
+            ["constat"] = new("Constat", "Un fait que l'application relève dans ce que la caisse a enregistré, et qui mérite votre vérification. Un constat n'accuse personne et ne prouve aucune perte : il vous montre les faits, et la décision vous revient."),
+            ["montant-en-jeu"] = new("Montant en jeu", "Le montant concerné par un constat. Ce n'est pas une perte prouvée : il vous aide à choisir ce que vous vérifiez en premier."),
+            ["preuve"] = new("Preuve", "Une copie datée de ce que la caisse a enregistré (clôture, ouverture du tiroir, vente, retour, remise), qui ne peut plus être modifiée. Elle établit ce que la caisse a enregistré, pas qui est en faute."),
+            ["decision-constat"] = new("Décision sur un constat", "Ce que vous concluez après vérification : à suivre, expliqué, classé sans suite ou confirmé. Une note est demandée pour « Expliqué » et « Confirmé ». La décision est toujours la vôtre ; vous pouvez la changer, et chaque changement est gardé."),
         };
 
         /// <summary>

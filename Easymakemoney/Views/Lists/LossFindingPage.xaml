@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:stats="clr-namespace:Easymakemoney.ViewModels.Statistiques"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             x:DataType="list:LossFindingViewModel"
+             x:Class="Easymakemoney.Views.Lists.LossFindingPage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Prévention des pertes">
+
+    <ContentPage.Resources>
+        <Style x:Key="Chip" TargetType="Border">
+            <Setter Property="StrokeShape" Value="RoundRectangle 18" />
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+        </Style>
+        <Style x:Key="FormField" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="MinimumHeightRequest" Value="44" />
+            <Setter Property="Padding" Value="12,0" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Constat" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" HeightRequest="24" />
+
+                <VerticalStackLayout Spacing="12" IsVisible="{Binding HasFinding}">
+                    <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding Finding.HeaderText}" FontFamily="InterSemiBold" FontSize="12" TextColor="{DynamicResource ThemePrimary}" />
+                            <Label Text="{Binding Finding.summary}" Style="{StaticResource UiTitle}" FontSize="16" />
+                            <Label Text="{Binding Finding.DetailText}" Style="{StaticResource UiBody}" FontSize="13" />
+                            <Label Text="{Binding Finding.amountNotice}" Style="{StaticResource UiBody}" FontSize="12" />
+                        </VerticalStackLayout>
+                    </components:UiCard>
+
+                    <!-- Preuves -->
+                    <components:UiTerm Term="preuve" Text="Preuves" FontSize="15" />
+                    <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Finding.evidence}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:LossEvidence">
+                                <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                    <VerticalStackLayout Spacing="4">
+                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                            <Label Text="{Binding title}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                            <Label Grid.Column="1" Text="{Binding WhenText}" Style="{StaticResource UiBody}" FontSize="11" />
+                                        </Grid>
+                                        <VerticalStackLayout Spacing="2" BindableLayout.ItemsSource="{Binding lines}">
+                                            <BindableLayout.ItemTemplate>
+                                                <DataTemplate x:DataType="models:LossEvidenceLine">
+                                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                                        <Label Text="{Binding label}" Style="{StaticResource UiBody}" FontSize="13" />
+                                                        <Label Grid.Column="1" Text="{Binding value}" FontFamily="InterMedium" FontSize="13" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="End" MaximumWidthRequest="200" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </BindableLayout.ItemTemplate>
+                                        </VerticalStackLayout>
+                                    </VerticalStackLayout>
+                                </components:UiCard>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                    <!-- En poste -->
+                    <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding Finding.HasOnDuty}">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Qui était en poste" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                            <VerticalStackLayout Spacing="4" BindableLayout.ItemsSource="{Binding Finding.OnDutyLines}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:LossPersonLine">
+                                        <VerticalStackLayout>
+                                            <Label Text="{Binding Name}" FontFamily="InterMedium" FontSize="13" TextColor="{StaticResource UiTextPrimary}" />
+                                            <Label Text="{Binding Roles}" IsVisible="{Binding HasRoles}" Style="{StaticResource UiBody}" FontSize="12" />
+                                        </VerticalStackLayout>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+                            <Label Text="{Binding Finding.onDutyNotice}" Style="{StaticResource UiBody}" FontSize="12" />
+                        </VerticalStackLayout>
+                    </components:UiCard>
+
+                    <!-- Décision -->
+                    <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                        <VerticalStackLayout Spacing="8">
+                            <components:UiTerm Term="decision-constat" Text="Votre décision" FontSize="15" />
+                            <Label Text="{Binding Finding.DecisionText}" Style="{StaticResource UiBody}" FontSize="13" />
+                            <Label Text="{Binding Finding.DecisionNote}" IsVisible="{Binding Finding.HasDecisionNote}" Style="{StaticResource UiBody}" FontSize="13" FontAttributes="Italic" />
+                            <FlexLayout Wrap="Wrap" Direction="Row" Margin="0,0,0,-8" BindableLayout.ItemsSource="{Binding Choices}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="stats:StatsChoice">
+                            <Border Style="{StaticResource Chip}">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimary}" />
+                                        <Setter Property="Stroke" Value="{DynamicResource ThemePrimary}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Path=BindingContext.SelectDecisionCommand, Source={x:Reference Page}, x:DataType=ContentPage}" CommandParameter="{Binding Code}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding Label}" FontFamily="InterSemiBold" FontSize="13" TextColor="{StaticResource UiTextPrimary}">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="TextColor" Value="{DynamicResource ThemeOnPrimary}" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+                            <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12" Padding="12,4">
+                                <Editor Text="{Binding Note}" Placeholder="Ce que vous avez vérifié" AutoSize="TextChanges" MinimumHeightRequest="70"
+                                        FontFamily="Inter" FontSize="14" TextColor="{StaticResource UiTextPrimary}" PlaceholderColor="{StaticResource UiTextMuted}" />
+                            </Border>
+                            <Label Text="{Binding NoteHint}" Style="{StaticResource UiBody}" FontSize="12" />
+                            <Button Text="Enregistrer ma décision" Command="{Binding DecideCommand}" IsEnabled="{Binding CanDecide}" HeightRequest="48" CornerRadius="14"
+                                    FontFamily="InterSemiBold" FontSize="15" BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" />
+                        </VerticalStackLayout>
+                    </components:UiCard>
+
+                    <!-- Historique -->
+                    <VerticalStackLayout Spacing="4" BindableLayout.ItemsSource="{Binding Finding.history}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:LossHistoryEntry">
+                                <Label Text="{Binding Text}" Style="{StaticResource UiBody}" FontSize="12" />
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

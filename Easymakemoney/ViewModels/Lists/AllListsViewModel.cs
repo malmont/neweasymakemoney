@@ -144,6 +144,12 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
         [RelayCommand]
+        private async Task NavigateToLossPrevention()
+        {
+            await NavigateAsync(nameof(LossFindingListPage));
+        }
+
+        [RelayCommand]
         private async Task NavigateToReadiness()
         {
             await NavigateAsync(nameof(ManagementReadinessPage));

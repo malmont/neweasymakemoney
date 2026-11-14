@@ -55,6 +55,16 @@ namespace Easymakemoney.Utilities
                     await shell.GoToAsync(nameof(RentalStatisticsPage));
                     return true;
 
+                case "pertes.home":
+                case "pertes.constats":
+                    var onlyNew = values?["isNew"] is { } isNew && (isNew.Type == JTokenType.Boolean ? isNew.Value<bool>() : isNew.ToString() == "1");
+                    await shell.GoToAsync(onlyNew ? $"{nameof(LossFindingListPage)}?Filter=new" : nameof(LossFindingListPage));
+                    return true;
+
+                case "pertes.constat" when Int("id") > 0:
+                    await shell.GoToAsync($"{nameof(LossFindingPage)}?FindingId={Int("id")}");
+                    return true;
+
                 case "tresorerie":
                     await shell.GoToAsync(nameof(TreasuryPage));
                     return true;

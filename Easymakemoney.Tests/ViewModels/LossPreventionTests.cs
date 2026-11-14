@@ -1,0 +1,228 @@
+using System.Globalization;
+using System.Net;
+using Easymakemoney.Models;
+using Easymakemoney.Models.Api;
+using Easymakemoney.Services;
+using Easymakemoney.Services.Api;
+using Easymakemoney.Tests.Fakes;
+using Easymakemoney.Utilities;
+using Easymakemoney.ViewModels.Lists;
+using Newtonsoft.Json;
+using Xunit;
+
+namespace Easymakemoney.Tests.ViewModels;
+
+/// <summary>Prévention des pertes sur le mobile : synthèse, liste, fiche et décision (exemples du backend, tests/Fixtures/pertes).</summary>
+[Collection("SiteCurrency")]
+public class LossPreventionTests : IDisposable
+{
+    private readonly CultureInfo _originalCulture = CultureInfo.CurrentCulture;
+
+    public LossPreventionTests()
+    {
+        CultureInfo.CurrentCulture = new CultureInfo("fr-CA");
+        SiteCurrency.Reset();
+    }
+
+    public void Dispose()
+    {
+        CultureInfo.CurrentCulture = _originalCulture;
+        SiteCurrency.Reset();
+    }
+
+    private const string SummaryJson = """
+    { "period": { "from": "2026-11-14", "to": "2026-11-14" },
+      "lastAnalysis": { "at": "2026-11-14T20:28:47+00:00", "pending": false, "blocked": "STAFF_NOTICE_REQUIRED", "skipped": null, "ran": null, "failed": false },
+      "counts": { "open": 5, "watch": 0, "new": 2, "active": 5, "byStatus": [], "byRule": [], "byRegister": [] },
+      "amountAtStake": 20862, "currency": "CAD",
+      "cashDesk": { "closings": 1, "discrepancy": -1200, "discrepancyCount": 1 },
+      "staffNotice": { "required": true, "confirmedAt": null },
+      "caveats": [
+        { "code": "STAFF_NOTICE_REQUIRED", "text": "L'analyse ne démarre qu'après votre confirmation d'avoir informé vos salariés (Réglages)." },
+        { "code": "AMOUNT_NOT_A_LOSS", "text": "Le montant en jeu est le montant concerné par le constat, pas une perte prouvée." } ],
+      "screen": "pertes.home" }
+    """;
+
+    private const string DetailJson = """
+    { "id": 6, "number": 6, "rule": { "code": "CASH_DISCREPANCY", "label": "Écart de caisse à la clôture" }, "personPattern": false,
+      "status": "open", "statusLabel": "Nouveau",
+      "summary": "Clôture n° 1 : il manque 12,00 $ dans la caisse (attendu 132,75 $, compté 120,75 $).",
+      "storeDay": "2026-11-14", "cashRegister": { "id": 1, "name": "Caisse principale" }, "amountAtStake": 1200, "currency": "CAD",
+      "isNew": false, "newEvidenceSinceDecision": false, "backfill": false,
+      "onDuty": [ { "id": 19, "name": "Caisse Nom", "role": "closer", "roleLabel": "Fermeture de la caisse" },
+                  { "id": 19, "name": "Caisse Nom", "role": "seller", "roleLabel": "Vente" } ],
+      "onDutyNotice": "Ces personnes étaient en poste au moment des faits. Ce n'est pas une accusation : la décision vous revient, après vérification.",
+      "amountNotice": "Le montant en jeu est le montant concerné par le constat, pas une perte prouvée.",
+      "evidence": [ { "id": 14, "kind": "z_report", "at": "2026-11-14T20:28:47+00:00", "atLabel": "14/11/2026 15 h 28", "title": "Rapport de clôture",
+                      "lines": [ { "label": "Espèces attendues", "value": "132,75 $" }, { "label": "Espèces comptées", "value": "120,75 $" } ] } ],
+      "evidenceIntact": true, "opinion": null, "decision": null, "history": [], "screen": "pertes.constat" }
+    """;
+
+    private static LossSummary Summary() => JsonConvert.DeserializeObject<LossSummary>(SummaryJson)!;
+    private static LossFindingDetail Detail() => JsonConvert.DeserializeObject<LossFindingDetail>(DetailJson)!;
+
+    [Fact]
+    public void Summary_SaysWhyNothingIsAnalysed_AndKeepsOtherCaveats()
+    {
+        var summary = Summary();
+
+        Assert.True(summary.IsBlocked);
+        Assert.Contains("informé vos salariés", summary.BlockedText);
+        Assert.Contains("sur le web", summary.BlockedText);
+        Assert.Equal(SiteCurrency.FormatCents(20862, null, "CAD"), summary.AmountText);
+        Assert.Equal($"1 clôture de caisse, écart total −{SiteCurrency.FormatCents(1200, null, "CAD")} sur 1 clôture.", summary.CashDeskText);
+        Assert.DoesNotContain("Réglages", summary.CaveatsText); // la remarque du blocage n'est pas répétée
+        Assert.Contains("pas une perte prouvée", summary.CaveatsText);
+    }
+
+    [Fact]
+    public void Detail_GroupsRolesOfTheSamePerson_AndNamesNobodyInTheSummary()
+    {
+        var detail = Detail();
+
+        var person = Assert.Single(detail.OnDutyLines);
+        Assert.Equal("Caisse Nom", person.Name);
+        Assert.Equal("Fermeture de la caisse, Vente", person.Roles);
+        Assert.Equal("Constat 6 · Écart de caisse à la clôture", detail.HeaderText);
+        Assert.Contains("Caisse principale", detail.DetailText);
+        Assert.Contains("en jeu", detail.DetailText);
+        Assert.Equal("Aucune décision pour l'instant.", detail.DecisionText);
+        Assert.Equal("14/11/2026 15 h 28", Assert.Single(detail.evidence).WhenText);
+    }
+
+    [Fact]
+    public void Exercise_ShowsItsNumberWithoutSign()
+    {
+        var finding = new LossFinding { number = -3, exercise = true };
+        Assert.Equal("Exercice 3", finding.NumberText);
+        Assert.Equal("Nouveau", new LossFinding { isNew = true }.BadgeText);
+        Assert.Equal("Nouvelles preuves", new LossFinding { newEvidenceSinceDecision = true }.BadgeText);
+    }
+
+    [Fact]
+    public async Task Service_BuildsTheExpectedRoutes()
+    {
+        var http = new FakeHttpService { ResultToReturn = new List<LossFinding>() };
+        var service = new LossPreventionService(http);
+
+        await service.GetFindingsAsync("open,watch", false, 1, 20);
+        await service.GetFindingsAsync(null, true, 2, 20);
+
+        Assert.Equal(new[]
+        {
+            "gestion/pertes/constats?status=open%2Cwatch&sort=date&page=1&limit=20&locale=fr",
+            "gestion/pertes/constats?isNew=1&sort=date&page=2&limit=20&locale=fr",
+        }, http.RequestedUrls);
+    }
+
+    [Fact]
+    public async Task List_LoadsSummaryThenActiveFindings_AndFilterNewAsksIsNew()
+    {
+        var service = new FakeLossPreventionService { Summary = Summary(), Findings = { new LossFinding { id = 6 } } };
+        var vm = new LossFindingListViewModel(service, new FakeDialogService());
+
+        await vm.InitializeAsync();
+        Assert.True(vm.HasSummary);
+        Assert.Single(vm.Findings);
+        Assert.Equal(("open,watch", false), service.Queries.Last());
+
+        await vm.SelectFilterCommand.ExecuteAsync(LossFindingListViewModel.FilterNew);
+        Assert.Equal((null, true), service.Queries.Last());
+    }
+
+    [Fact]
+    public async Task List_InitialFilterFromTheTile_OpensNewFindings()
+    {
+        var service = new FakeLossPreventionService { Summary = Summary() };
+        var vm = new LossFindingListViewModel(service, new FakeDialogService());
+
+        vm.UseInitialFilter("new");
+        await vm.InitializeAsync();
+
+        Assert.Equal((null, true), service.Queries.Single());
+        Assert.True(vm.IsEmpty);
+    }
+
+    [Fact]
+    public async Task List_ModuleNotGranted_ShowsTheCard_WithoutClosingTheApp()
+    {
+        var service = new FakeLossPreventionService
+        {
+            SummaryException = new ApiException(new ApiError { Code = ModuleInactiveInfo.Code, Message = "Module non activé." }, HttpStatusCode.Forbidden),
+        };
+        var dialog = new FakeDialogService();
+        var vm = new LossFindingListViewModel(service, dialog);
+
+        await vm.InitializeAsync();
+
+        Assert.True(vm.IsModuleInactive);
+        Assert.Empty(service.Queries); // la liste n'est pas demandée
+        Assert.Empty(dialog.ShownErrors);
+    }
+
+    [Fact]
+    public async Task Decision_RequiresANoteForExplainedAndConfirmed()
+    {
+        var service = new FakeLossPreventionService { Detail = Detail() };
+        var dialog = new FakeDialogService();
+        var vm = new LossFindingViewModel(service, dialog) { FindingId = 6 };
+        await vm.LoadAsync();
+        LossFindingListViewModel.FindingsChanged = false;
+
+        vm.SelectDecisionCommand.Execute("confirmed");
+        Assert.True(vm.CanDecide);
+        await vm.DecideCommand.ExecuteAsync(null);
+        Assert.Empty(service.Decisions);
+        Assert.Single(dialog.ShownInfos);
+
+        vm.Note = "Recompté avec le responsable : erreur de monnaie confirmée.";
+        await vm.DecideCommand.ExecuteAsync(null);
+        Assert.Equal((6, "confirmed", "Recompté avec le responsable : erreur de monnaie confirmée."), service.Decisions.Single());
+        Assert.True(LossFindingListViewModel.FindingsChanged);
+        Assert.Equal(string.Empty, vm.Note);
+        Assert.Null(vm.SelectedDecision);
+    }
+
+    [Fact]
+    public async Task Decision_WatchNeedsNoNote_AndTheSameStatusCannotBeResent()
+    {
+        var service = new FakeLossPreventionService { Detail = Detail() };
+        var vm = new LossFindingViewModel(service, new FakeDialogService()) { FindingId = 6 };
+        await vm.LoadAsync();
+
+        vm.SelectDecisionCommand.Execute("open"); // déjà « Nouveau »
+        Assert.False(vm.CanDecide);
+
+        vm.SelectDecisionCommand.Execute("watch");
+        await vm.DecideCommand.ExecuteAsync(null);
+        Assert.Equal((6, "watch", ""), service.Decisions.Single());
+    }
+
+    private sealed class FakeLossPreventionService : ILossPreventionService
+    {
+        public LossSummary Summary { get; set; } = new();
+        public Exception? SummaryException { get; set; }
+        public List<LossFinding> Findings { get; } = new();
+        public LossFindingDetail Detail { get; set; } = new();
+        public List<(string? Status, bool OnlyNew)> Queries { get; } = new();
+        public List<(int Id, string Status, string? Note)> Decisions { get; } = new();
+
+        public Task<LossSummary> GetSummaryAsync(bool analyse = true) =>
+            SummaryException != null ? Task.FromException<LossSummary>(SummaryException) : Task.FromResult(Summary);
+
+        public Task<List<LossFinding>> GetFindingsAsync(string? status, bool onlyNew, int page, int limit)
+        {
+            Queries.Add((status, onlyNew));
+            return Task.FromResult(Findings.ToList());
+        }
+
+        public Task<LossFindingDetail> GetFindingAsync(int id) => Task.FromResult(Detail);
+
+        public Task<LossFindingDetail> DecideAsync(int id, string status, string? note)
+        {
+            Decisions.Add((id, status, note));
+            Detail.status = status;
+            return Task.FromResult(Detail);
+        }
+    }
+}
