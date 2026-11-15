@@ -131,6 +131,7 @@ public class ReceptionLabelsTests
     {
         var (vm, service, dialog, _) = Create();
         await vm.LoadAsync();
+        vm.Labels[0].Copies = 7;
         var updated = Read();
         updated.missing = new ReceptionLabelsMissing();
         updated.labels[1].barcode = "2900000000024";
@@ -145,6 +146,7 @@ public class ReceptionLabelsTests
         Assert.Equal("1 code-barres généré.", dialog.ShownInfos.Single());
         Assert.False(vm.Data!.HasMissing);
         Assert.True(vm.Labels[1].printable);
+        Assert.Equal(7, vm.Labels[0].Copies);
     }
 
     [Fact]

@@ -47,7 +47,12 @@ namespace Easymakemoney.ViewModels.Lists
                 $"Donner un code-barres aux {data.missing.count} variante(s) qui n'en ont pas ? Aucun code existant n'est remplacé.", "Générer", "Annuler");
             if (!ok)
                 return;
+            // Les nombres déjà saisis sont gardés : la liste rendue à jour ne doit pas les écraser.
+            var typed = Labels.ToDictionary(l => l.variantId, l => l.Copies);
             var result = await _service.GenerateMissingAsync(CommandeId);
+            foreach (var label in result.labels)
+                if (typed.TryGetValue(label.variantId, out var copies))
+                    label.Copies = copies;
             Show(result);
             var count = result.generated?.Count ?? 0;
             await _dialogService.ShowInfoAsync(count == 1 ? "1 code-barres généré." : $"{count} codes-barres générés.");
