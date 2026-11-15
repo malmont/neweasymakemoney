@@ -159,6 +159,15 @@ boutique ?
 
 ## Campagne d'essais avant le premier client
 
+**Scénario phare : migration complète d'une boutique Shopify (décision du propriétaire du 15/11).** C'est un parcours de bout en bout, chronométré, sur une boutique Shopify de test. Il sert à la campagne d'essais, puis de démonstration aux agences (« votre boutique Shopify migrée en moins d'une heure »).
+1. Catalogue (IMP-1) : dépôt de l'export des produits, analyse, confirmation (visibilité, caisse, taxes comprises ou hors taxes), suivi, contrôle des articles, des variantes, des images, du stock de départ et des codes-barres, puis annulation d'essai.
+2. Codes-barres (CB-1 à CB-3) : générer les codes manquants, poser un code de fabricant, imprimer les étiquettes en planche et en rouleau, retrouver un article par le scan sur le mobile.
+3. Clients (IMP-2) : dépôt de l'export des clients, attestation du consentement, envoi des invitations vers des adresses de test, acceptation et refus sur la page /invitation, effacement à 90 jours simulé.
+4. Gestion dès le premier jour : statistiques, bilan PDF de la période avec et sans l'avis de l'IA, console.
+5. À venir : l'historique des commandes (IMP-3), puis WooCommerce et PrestaShop, sur le même modèle.
+
+À mesurer : la durée de chaque étape, les lignes refusées et leur motif, et ce qu'il a fallu corriger à la main.
+
 **Relecture globale du backend (décision du propriétaire du 15/11) :** pendant la campagne, un agent neuf, sans l'historique des sessions, relit tout le backend.
 
 **Préparer le site de la campagne (demande du propriétaire du 15/11) :** pour tester et documenter chaque fonction, toutes doivent être actives sur le site d'essai :
