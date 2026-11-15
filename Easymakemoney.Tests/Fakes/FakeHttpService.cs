@@ -67,6 +67,14 @@ public class FakeHttpService : IHttpService
         return Task.FromResult(FileToReturn);
     }
 
+    public List<string> RequestedFiles { get; } = new();
+
+    public Task<Easymakemoney.Services.Api.DownloadedFile> GetFileAsync(string url)
+    {
+        RequestedFiles.Add(url);
+        return Task.FromResult(FileToReturn);
+    }
+
     public Task<bool> DeleAsyncWithAuth<T>(string url)
     {
         DeletedUrls.Add(url);

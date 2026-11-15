@@ -44,6 +44,10 @@
                             FontFamily="InterBold" FontSize="22" BackgroundColor="{StaticResource UiSurface}" TextColor="{DynamicResource ThemePrimary}" Padding="0" />
                 </Grid>
 
+                <Button Text="Bilan PDF de cet exercice" Command="{Binding OpenReportCommand}" IsVisible="{Binding HasData}" HeightRequest="44" CornerRadius="12"
+                        FontFamily="InterSemiBold" FontSize="13" BackgroundColor="{StaticResource UiSurface}" TextColor="{DynamicResource ThemePrimary}"
+                        BorderColor="{DynamicResource ThemePrimary}" BorderWidth="1" />
+
                 <Grid ColumnDefinitions="*,Auto">
                     <components:UiTerm Term="exercice" Text="{Binding FiscalYearText}" FontSize="13" VerticalOptions="Center" />
                     <Label Grid.Column="1" Text="Modifier" FontFamily="InterSemiBold" FontSize="13" TextColor="{DynamicResource ThemePrimary}" VerticalOptions="Center">

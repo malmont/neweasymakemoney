@@ -120,6 +120,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<INotificationPreferencesService, NotificationPreferencesService>();
 		builder.Services.AddTransient<ICatalogBarcodeService, CatalogBarcodeService>();
 		builder.Services.AddTransient<IReceptionLabelsService, ReceptionLabelsService>();
+		builder.Services.AddTransient<IGestionReportService, GestionReportService>();
 		builder.Services.AddTransient<IBarcodeScanner, CameraBarcodeScanner>();
 		builder.Services.AddTransient<IManagementEditService, ManagementEditService>();
 		builder.Services.AddSingleton<Easymakemoney.Services.Offline.IHomeSnapshotStore, Easymakemoney.Services.Offline.HomeSnapshotStore>();
@@ -222,6 +223,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<NotificationPreferencesPage>();
 		builder.Services.AddTransient<BarcodePage>();
 		builder.Services.AddTransient<ReceptionLabelsPage>();
+		builder.Services.AddTransient<ReportsPage>();
 		builder.Services.AddTransient<SupportTicketPage>();
 		builder.Services.AddTransient<SupportTicketCreatePage>();
 		builder.Services.AddTransient<SupplierEditPage>();
@@ -289,6 +291,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<NotificationPreferencesViewModel>();
 		builder.Services.AddTransient<BarcodeViewModel>();
 		builder.Services.AddTransient<ReceptionLabelsViewModel>();
+		builder.Services.AddTransient<ReportsViewModel>();
 		builder.Services.AddTransient<SupportTicketViewModel>();
 		builder.Services.AddTransient<SupportTicketCreateViewModel>();
 		builder.Services.AddTransient<SupplierEditViewModel>();

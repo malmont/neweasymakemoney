@@ -241,13 +241,20 @@ namespace Easymakemoney.Services
             }
         }
 
-        public async Task<DownloadedFile> PostForFileAsync(string url, object data)
+        public Task<DownloadedFile> PostForFileAsync(string url, object data)
         {
             var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+            return ReadFileAsync(() => _httpClient.PostAsync(url, content));
+        }
+
+        public Task<DownloadedFile> GetFileAsync(string url) => ReadFileAsync(() => _httpClient.GetAsync(url));
+
+        private static async Task<DownloadedFile> ReadFileAsync(Func<Task<HttpResponseMessage>> send)
+        {
             HttpResponseMessage response;
             try
             {
-                response = await _httpClient.PostAsync(url, content);
+                response = await send();
             }
             catch (Exception ex) when (ex is HttpRequestException or IOException or OperationCanceledException or TimeoutException)
             {

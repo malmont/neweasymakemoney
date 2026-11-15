@@ -103,6 +103,14 @@ namespace Easymakemoney.ViewModels.Statistiques
             await LoadAsync();
         }
 
+        /// <summary>Bilan PDF de l'exercice affiché (backend DOC-2) : demandé depuis « Mes rapports ».</summary>
+        [RelayCommand]
+        private async Task OpenReport()
+        {
+            if (Data is { year: > 0 } data && Shell.Current is { } shell)
+                await shell.GoToAsync($"{nameof(ReportsPage)}?Kind=year&Year={data.year}");
+        }
+
         [RelayCommand]
         private async Task PreviousYear()
         {

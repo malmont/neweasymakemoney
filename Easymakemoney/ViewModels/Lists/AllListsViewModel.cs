@@ -144,6 +144,12 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
         [RelayCommand]
+        private async Task NavigateToReports()
+        {
+            await NavigateAsync(nameof(ReportsPage));
+        }
+
+        [RelayCommand]
         private async Task NavigateToBarcodes()
         {
             await NavigateAsync(nameof(BarcodePage));

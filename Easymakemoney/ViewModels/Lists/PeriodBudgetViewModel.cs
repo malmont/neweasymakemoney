@@ -19,6 +19,14 @@ namespace Easymakemoney.ViewModels.Lists
 
         public int PeriodId { get; set; }
 
+        /// <summary>Bilan PDF de la période (backend DOC-2) : demandé depuis « Mes rapports ».</summary>
+        [RelayCommand]
+        private async Task OpenReport()
+        {
+            if (PeriodId > 0 && Shell.Current is { } shell)
+                await shell.GoToAsync($"{nameof(ReportsPage)}?Kind=period&PeriodId={PeriodId}");
+        }
+
         /// <summary>Période fermée : lecture seule, comme partout ailleurs.</summary>
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(CanEdit))]

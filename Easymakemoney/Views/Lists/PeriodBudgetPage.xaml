@@ -71,6 +71,11 @@
                     </BindableLayout.ItemTemplate>
                 </VerticalStackLayout>
 
+                <Button Text="Bilan PDF de la période"
+                        Command="{Binding OpenReportCommand}"
+                        BackgroundColor="{StaticResource UiSurface}"
+                        TextColor="{DynamicResource ThemePrimary}" BorderColor="{DynamicResource ThemePrimary}" BorderWidth="1"
+                        FontFamily="InterSemiBold" FontSize="15" CornerRadius="12" MinimumHeightRequest="48" />
                 <Button Text="Reprendre le prévu de l'an dernier"
                         IsVisible="{Binding CanEdit}"
                         Command="{Binding CopyLastYearCommand}"

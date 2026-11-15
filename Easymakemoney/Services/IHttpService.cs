@@ -14,5 +14,7 @@ namespace Easymakemoney.Services
         Task<bool> DeleAsyncWithAuth<T>(string url);
         /// <summary>POST JSON dont la réponse est un fichier (PDF…) ; erreurs comme les autres appels.</summary>
         Task<Easymakemoney.Services.Api.DownloadedFile> PostForFileAsync(string url, object data);
+        /// <summary>GET dont la réponse est un fichier (PDF…), avec le jeton ; erreurs comme les autres appels.</summary>
+        Task<Easymakemoney.Services.Api.DownloadedFile> GetFileAsync(string url);
     }
 }
