@@ -13,6 +13,7 @@
 
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Padding="16" Spacing="12">
+                <components:UiTile Command="{Binding NavigateToNotificationsCommand}" Icon="M6 8a6 6 0 0112 0c0 7 3 8 3 8H3s3-1 3-8M10 20a2 2 0 004 0" Title="Notifications" Text="Combien de courriels de suivi vous recevez" />
                 <components:UiTile Command="{Binding NavigateToReadinessCommand}" Icon="M9 11l3 3 8-8M4 12a8 8 0 1016 0" Title="Préparer ma gestion" Text="Ce qui manque pour des chiffres justes, étape par étape" />
                 <components:UiTile Command="{Binding NavigateToLossPreventionCommand}" Icon="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM9 12l2 2 4-4" Title="Prévention des pertes" Text="Constats de la caisse à vérifier, preuves et décision" />
                 <components:UiTile Command="{Binding NavigateToSupportCommand}" Icon="M4 5h16v10H8l-4 4zM8 9h8M8 12h5" Title="Assistance" Text="Demandes des clients : répondre, noter, suivre le délai" />

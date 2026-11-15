@@ -55,6 +55,7 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute("LossFindingListPage", typeof(LossFindingListPage));
 		Routing.RegisterRoute("LossFindingPage", typeof(LossFindingPage));
 		Routing.RegisterRoute("LossExercisePage", typeof(LossExercisePage));
+		Routing.RegisterRoute("NotificationPreferencesPage", typeof(NotificationPreferencesPage));
 		Routing.RegisterRoute("SupportTicketPage", typeof(SupportTicketPage));
 		Routing.RegisterRoute("SupportTicketCreatePage", typeof(SupportTicketCreatePage));
 		Routing.RegisterRoute(nameof(SupplierEditPage), typeof(SupplierEditPage));
