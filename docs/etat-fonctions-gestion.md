@@ -159,6 +159,12 @@ boutique ?
 
 ## Campagne d'essais avant le premier client
 
+**Préparer le site de la campagne (demande du propriétaire du 15/11) :** pour tester et documenter chaque fonction, toutes doivent être actives sur le site d'essai :
+- tous les modules accordés (gestion, Assistance, Prévention des pertes…) ;
+- le niveau des courriels de suivi réglé sur « Tout » ;
+- les minuteurs en marche, dont le point de la semaine ;
+- l'envoi réel des courriels de l'Assistance activé, vers des adresses de test.
+
 **Sécurité de la base, à faire pendant la campagne (signalé le 14/11) :** la production et les tests se connectent au même serveur PostgreSQL, avec le même compte super-utilisateur. À prévoir, avec la rotation des clés JWT :
 - un compte de test à part, sans droits de super-utilisateur, avec une limite de connexions ;
 - un compte applicatif de production aux droits réduits.
