@@ -148,7 +148,13 @@ namespace Easymakemoney.ViewModels.Lists
                 throw new UserMessageException("Indiquez un nombre d'étiquettes entre 1 et 500.");
             var showPrice = sheet.priceCents.HasValue
                 && await _dialogService.ConfirmAsync("Étiquettes", "Imprimer le prix sur l'étiquette ?", "Avec le prix", "Sans le prix");
-            var file = await _service.LabelsPdfAsync(new[] { new BarcodeLabelRequest(sheet, copies) }, showPrice);
+            var format = await _dialogService.ChooseAsync("Étiquettes", new[] { "Planche A4", "Rouleau thermique" });
+            if (format == null)
+                return;
+            if (format == "Rouleau thermique" && copies > 200)
+                throw new UserMessageException("200 étiquettes au plus en rouleau.");
+            var file = await _service.LabelsPdfAsync(new[] { new BarcodeLabelRequest(sheet, copies) }, showPrice,
+                format == "Rouleau thermique" ? "roll-50x30" : "a4-50x30");
             await OpenFile(file);
         });
 

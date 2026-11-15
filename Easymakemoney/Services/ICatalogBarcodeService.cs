@@ -12,7 +12,7 @@ namespace Easymakemoney.Services
         Task<BarcodeGenerated> GenerateAsync(bool variant, int id);
         /// <summary>Pose (ou retire, barcode vide) un code ; replace est exigé pour changer ou retirer un code déjà posé.</summary>
         Task<BarcodeWrite> SetAsync(bool variant, int id, string? barcode, bool replace);
-        Task<DownloadedFile> LabelsPdfAsync(IEnumerable<BarcodeLabelRequest> labels, bool showPrice);
+        Task<DownloadedFile> LabelsPdfAsync(IEnumerable<BarcodeLabelRequest> labels, bool showPrice, string format = "a4-50x30");
     }
 
     public class CatalogBarcodeService : ICatalogBarcodeService
@@ -48,7 +48,7 @@ namespace Easymakemoney.Services
             return await _httpService.PutAsyncWithAuth<BarcodeWrite>($"{Base}/{Kind(variant)}/{id}?{Locale}", body) ?? new BarcodeWrite();
         }
 
-        public Task<DownloadedFile> LabelsPdfAsync(IEnumerable<BarcodeLabelRequest> labels, bool showPrice)
+        public Task<DownloadedFile> LabelsPdfAsync(IEnumerable<BarcodeLabelRequest> labels, bool showPrice, string format = "a4-50x30")
         {
             var lines = labels.Select(l =>
             {
@@ -59,7 +59,7 @@ namespace Easymakemoney.Services
                     line["productId"] = l.Sheet.productId;
                 return line;
             }).ToList();
-            return _httpService.PostForFileAsync($"{Base}/etiquettes/pdf?{Locale}", new Dictionary<string, object> { ["labels"] = lines, ["showPrice"] = showPrice });
+            return _httpService.PostForFileAsync($"{Base}/etiquettes/pdf?{Locale}", new Dictionary<string, object> { ["labels"] = lines, ["showPrice"] = showPrice, ["format"] = format });
         }
     }
 }

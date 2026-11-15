@@ -53,7 +53,7 @@ public class ReceptionLabelsTests
         Assert.Equal("commandes/9/etiquettes?locale=fr", http.RequestedUrls.Single());
         Assert.Equal("commandes/9/etiquettes/codes?locale=fr", http.PostedAuthData.Single().Url);
         Assert.Equal("commandes/9/etiquettes/pdf?locale=fr", http.PostedFileRequests.Single().Url);
-        Assert.Equal("{\"labels\":[{\"variantId\":40,\"copies\":3}],\"showPrice\":true}", JsonConvert.SerializeObject(http.PostedFileRequests.Single().Data));
+        Assert.Equal("{\"labels\":[{\"variantId\":40,\"copies\":3}],\"showPrice\":true,\"format\":\"a4-50x30\"}", JsonConvert.SerializeObject(http.PostedFileRequests.Single().Data));
     }
 
     private sealed class FakeLabels : IReceptionLabelsService
@@ -62,13 +62,15 @@ public class ReceptionLabelsTests
         public ReceptionLabels AfterGenerate { get; set; } = new();
         public int GenerateCalls { get; private set; }
         public List<(int, List<(int, int)>, bool)> Pdfs { get; } = new();
+        public List<string> Formats { get; } = new();
 
         public Task<ReceptionLabels> GetAsync(int commandeId) => Task.FromResult(Data);
         public Task<ReceptionLabels> GenerateMissingAsync(int commandeId) { GenerateCalls++; return Task.FromResult(AfterGenerate); }
 
-        public Task<DownloadedFile> PdfAsync(int commandeId, IEnumerable<(int VariantId, int Copies)> labels, bool showPrice)
+        public Task<DownloadedFile> PdfAsync(int commandeId, IEnumerable<(int VariantId, int Copies)> labels, bool showPrice, string format = "a4-50x30")
         {
             Pdfs.Add((commandeId, labels.ToList(), showPrice));
+            Formats.Add(format);
             return Task.FromResult(new DownloadedFile(new byte[] { 1 }, "application/pdf", 3));
         }
     }
@@ -97,7 +99,25 @@ public class ReceptionLabelsTests
         Assert.Equal(9, id);
         Assert.Equal(new[] { (40, 2) }, lines);
         Assert.True(showPrice);
+        Assert.Equal("a4-50x30", service.Formats.Single());
         Assert.Single(opened);
+    }
+
+    [Fact]
+    public async Task Print_Roll_UsesItsOwnLimitAndFormat()
+    {
+        var (vm, service, dialog, _) = Create();
+        await vm.LoadAsync();
+        vm.UseRoll = true;
+        vm.Labels[0].Copies = 201;
+
+        await vm.PrintCommand.ExecuteAsync(null);
+        Assert.Empty(service.Pdfs);
+        Assert.Contains("200 au plus par impression en rouleau", dialog.ShownErrors.Single().Message);
+
+        vm.Labels[0].Copies = 200;
+        await vm.PrintCommand.ExecuteAsync(null);
+        Assert.Equal("roll-50x30", service.Formats.Single());
     }
 
     [Fact]

@@ -8,7 +8,8 @@ namespace Easymakemoney.Services
         Task<ReceptionLabels> GetAsync(int commandeId);
         /// <summary>Génère les codes de toutes les variantes de « missing » ; ne remplace jamais un code ; rend la liste à jour.</summary>
         Task<ReceptionLabels> GenerateMissingAsync(int commandeId);
-        Task<DownloadedFile> PdfAsync(int commandeId, IEnumerable<(int VariantId, int Copies)> labels, bool showPrice);
+        /// <summary>format : « a4-50x30 » (planche A4, par défaut) ou « roll-50x30 » (rouleau thermique, 200 au plus).</summary>
+        Task<DownloadedFile> PdfAsync(int commandeId, IEnumerable<(int VariantId, int Copies)> labels, bool showPrice, string format = "a4-50x30");
     }
 
     public class ReceptionLabelsService : IReceptionLabelsService
@@ -26,11 +27,12 @@ namespace Easymakemoney.Services
         public async Task<ReceptionLabels> GenerateMissingAsync(int commandeId) =>
             await _httpService.PostAsyncWithAuth<ReceptionLabels>($"commandes/{commandeId}/etiquettes/codes?locale=fr", new { }) ?? new ReceptionLabels();
 
-        public Task<DownloadedFile> PdfAsync(int commandeId, IEnumerable<(int VariantId, int Copies)> labels, bool showPrice) =>
+        public Task<DownloadedFile> PdfAsync(int commandeId, IEnumerable<(int VariantId, int Copies)> labels, bool showPrice, string format = "a4-50x30") =>
             _httpService.PostForFileAsync($"commandes/{commandeId}/etiquettes/pdf?locale=fr", new Dictionary<string, object>
             {
                 ["labels"] = labels.Select(l => new Dictionary<string, object> { ["variantId"] = l.VariantId, ["copies"] = l.Copies }).ToList(),
                 ["showPrice"] = showPrice,
+                ["format"] = format,
             });
     }
 }

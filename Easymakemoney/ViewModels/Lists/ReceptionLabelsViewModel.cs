@@ -28,6 +28,12 @@ namespace Easymakemoney.ViewModels.Lists
         [ObservableProperty]
         private bool _showPrice;
 
+        /// <summary>Rouleau thermique (50 × 30 mm, 200 au plus) au lieu de la planche A4 (500 au plus).</summary>
+        [ObservableProperty]
+        private bool _useRoll;
+
+        private int MaxLabels => UseRoll ? 200 : Data?.maxLabels ?? 500;
+
         /// <summary>Ouverture du PDF (partage vers l'imprimante) ; les tests la remplacent.</summary>
         public Func<DownloadedFile, Task> OpenFile { get; set; } = OpenWithShareAsync;
 
@@ -69,9 +75,9 @@ namespace Easymakemoney.ViewModels.Lists
                     ? "Aucune étiquette à imprimer : générez d'abord les codes manquants, ou indiquez un nombre d'étiquettes."
                     : "Indiquez au moins une étiquette à imprimer.");
             var total = lines.Sum(l => l.Item2);
-            if (total > Data.maxLabels)
-                throw new UserMessageException($"{total} étiquettes demandées : {Data.maxLabels} au plus par impression.");
-            var file = await _service.PdfAsync(CommandeId, lines, ShowPrice);
+            if (total > MaxLabels)
+                throw new UserMessageException($"{total} étiquettes demandées : {MaxLabels} au plus par impression{(UseRoll ? " en rouleau" : string.Empty)}.");
+            var file = await _service.PdfAsync(CommandeId, lines, ShowPrice, UseRoll ? "roll-50x30" : "a4-50x30");
             await OpenFile(file);
         });
 

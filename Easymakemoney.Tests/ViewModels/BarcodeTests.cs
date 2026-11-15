@@ -107,7 +107,7 @@ public class BarcodeTests
         Assert.Equal("{\"barcode\":null,\"replace\":true}", JsonConvert.SerializeObject(http.PutData[1].Data));
 
         Assert.Equal("gestion/codes-barres/etiquettes/pdf?locale=fr", http.PostedFileRequests[0].Url);
-        Assert.Equal("{\"labels\":[{\"copies\":3,\"variantId\":40},{\"copies\":1,\"productId\":12}],\"showPrice\":true}",
+        Assert.Equal("{\"labels\":[{\"copies\":3,\"variantId\":40},{\"copies\":1,\"productId\":12}],\"showPrice\":true,\"format\":\"a4-50x30\"}",
             JsonConvert.SerializeObject(http.PostedFileRequests[0].Data));
     }
 
@@ -301,8 +301,11 @@ public class BarcodeTests
         await h.Vm.SearchCommand.ExecuteAsync(null);
         h.Dialog.PromptResult = "4";
         h.Dialog.ConfirmResult = false;
+        h.Dialog.ChooseResult = "Rouleau thermique";
 
         await h.Vm.PrintLabelCommand.ExecuteAsync(null);
+
+        Assert.Equal("roll-50x30", h.Service.Formats.Single());
 
         var (labels, showPrice) = h.Service.LabelRequests.Single();
         Assert.Equal(4, labels.Single().Copies);
@@ -362,6 +365,7 @@ public class BarcodeTests
         public Queue<Exception> WriteErrors { get; } = new();
         public BarcodeWrite WriteResult { get; set; } = new();
         public List<(List<BarcodeLabelRequest>, bool)> LabelRequests { get; } = new();
+        public List<string> Formats { get; } = new();
 
         public Task<BarcodeSearch> SearchAsync(string code) { Searches.Add(code); return Task.FromResult(SearchResult); }
         public Task<BarcodeMissing> GetMissingAsync() => Task.FromResult(Missing);
@@ -382,9 +386,10 @@ public class BarcodeTests
             return Task.FromResult(WriteResult);
         }
 
-        public Task<DownloadedFile> LabelsPdfAsync(IEnumerable<BarcodeLabelRequest> labels, bool showPrice)
+        public Task<DownloadedFile> LabelsPdfAsync(IEnumerable<BarcodeLabelRequest> labels, bool showPrice, string format = "a4-50x30")
         {
             LabelRequests.Add((labels.ToList(), showPrice));
+            Formats.Add(format);
             return Task.FromResult(new DownloadedFile(new byte[] { 1 }, "application/pdf", 1));
         }
     }

@@ -15,7 +15,7 @@
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Padding="16" Spacing="10">
                 <Label Text="{Binding Data.commande.name}" FontFamily="InterSemiBold" FontSize="16" TextColor="{StaticResource UiTextPrimary}" />
-                <Label Text="Une étiquette 50 × 30 mm par pièce reçue, sur des planches A4. Changez le nombre si besoin." Style="{StaticResource UiBody}" FontSize="13" />
+                <Label Text="Une étiquette 50 × 30 mm par pièce reçue, en planche A4 ou en rouleau thermique. Changez le nombre si besoin." Style="{StaticResource UiBody}" FontSize="13" />
                 <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" HeightRequest="24" />
                 <Label Text="Rien n'a encore été reçu dans cette commande." IsVisible="{Binding Data.IsEmpty}" Style="{StaticResource UiBody}" FontSize="13" />
 
@@ -45,6 +45,10 @@
         </ScrollView>
 
         <VerticalStackLayout Grid.Row="2" Padding="16,8,16,16" Spacing="8">
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Rouleau thermique (sinon planche A4)" Style="{StaticResource UiBody}" FontSize="14" VerticalOptions="Center" />
+                <Switch Grid.Column="1" IsToggled="{Binding UseRoll}" OnColor="{DynamicResource ThemePrimary}" />
+            </Grid>
             <Grid ColumnDefinitions="*,Auto">
                 <Label Text="Imprimer le prix" Style="{StaticResource UiBody}" FontSize="14" VerticalOptions="Center" />
                 <Switch Grid.Column="1" IsToggled="{Binding ShowPrice}" OnColor="{DynamicResource ThemePrimary}" />
