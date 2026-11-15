@@ -12,5 +12,7 @@ namespace Easymakemoney.Services
         Task<T> PostAsyncWithoutAuth<T>(string url, object data);
         Task<T> PostMultipartAsyncWithAuth<T>(string url, ListProduct data, Stream fileStream, string fileName);
         Task<bool> DeleAsyncWithAuth<T>(string url);
+        /// <summary>POST JSON dont la réponse est un fichier (PDF…) ; erreurs comme les autres appels.</summary>
+        Task<Easymakemoney.Services.Api.DownloadedFile> PostForFileAsync(string url, object data);
     }
 }

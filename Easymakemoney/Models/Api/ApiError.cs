@@ -20,12 +20,16 @@ public class ApiError
     public int? RetryAfterSeconds { get; set; }
     public List<ApiValidationError> Errors { get; set; } = new();
 
+    /// <summary>Corps JSON de l'erreur, pour les champs propres à une route (ex. holder, current des codes-barres).</summary>
+    public JObject? Body { get; set; }
+
     public static ApiError FromHttpResponse(string? json, HttpStatusCode statusCode, HttpResponseHeaders? headers)
     {
         string? extractedCode = null;
         string? serverMessage = null;
         int? retryAfterSeconds = null;
         var validationErrors = new List<ApiValidationError>();
+        JObject? body = null;
 
         // Extraction Retry-After selon L1 (Delta ou Date)
         if (headers?.RetryAfter != null)
@@ -46,6 +50,7 @@ public class ApiError
             try
             {
                 var jObject = JObject.Parse(json);
+                body = jObject;
 
                 // Règle L1 : on prend code s'il s'agit d'une chaîne respectant ^[A-Z][A-Z0-9_]*$, sinon error
                 var codeToken = jObject["code"];
@@ -146,7 +151,8 @@ public class ApiError
             Code = extractedCode,
             Message = finalMessage,
             RetryAfterSeconds = retryAfterSeconds,
-            Errors = validationErrors
+            Errors = validationErrors,
+            Body = body
         };
     }
 

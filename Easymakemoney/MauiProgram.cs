@@ -1,4 +1,5 @@
 ﻿
+using ZXing.Net.Maui.Controls;
 using Easymakemoney.Services.Tenant;
 using Easymakemoney.Services.Site;
 using Easymakemoney.Services.Auth;
@@ -20,6 +21,7 @@ public static class MauiProgram
 		var builder = MauiApp.CreateBuilder();
 		builder
 			.UseMauiApp<App>()
+			.UseBarcodeReader()
 			.UseMauiCommunityToolkit(options =>
 			{
 				options.SetPopupDefaults(new DefaultPopupSettings
@@ -116,6 +118,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<ISupportService, SupportService>();
 		builder.Services.AddTransient<ILossPreventionService, LossPreventionService>();
 		builder.Services.AddTransient<INotificationPreferencesService, NotificationPreferencesService>();
+		builder.Services.AddTransient<ICatalogBarcodeService, CatalogBarcodeService>();
+		builder.Services.AddTransient<IBarcodeScanner, CameraBarcodeScanner>();
 		builder.Services.AddTransient<IManagementEditService, ManagementEditService>();
 		builder.Services.AddSingleton<Easymakemoney.Services.Offline.IHomeSnapshotStore, Easymakemoney.Services.Offline.HomeSnapshotStore>();
 		builder.Services.AddTransient<IPeriodService, PeriodService>();
@@ -215,6 +219,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<LossFindingPage>();
 		builder.Services.AddTransient<LossExercisePage>();
 		builder.Services.AddTransient<NotificationPreferencesPage>();
+		builder.Services.AddTransient<BarcodePage>();
 		builder.Services.AddTransient<SupportTicketPage>();
 		builder.Services.AddTransient<SupportTicketCreatePage>();
 		builder.Services.AddTransient<SupplierEditPage>();
@@ -280,6 +285,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<LossFindingViewModel>();
 		builder.Services.AddTransient<LossExerciseViewModel>();
 		builder.Services.AddTransient<NotificationPreferencesViewModel>();
+		builder.Services.AddTransient<BarcodeViewModel>();
 		builder.Services.AddTransient<SupportTicketViewModel>();
 		builder.Services.AddTransient<SupportTicketCreateViewModel>();
 		builder.Services.AddTransient<SupplierEditViewModel>();

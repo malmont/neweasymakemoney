@@ -241,6 +241,34 @@ namespace Easymakemoney.Services
             }
         }
 
+        public async Task<DownloadedFile> PostForFileAsync(string url, object data)
+        {
+            var content = new StringContent(JsonConvert.SerializeObject(data), Encoding.UTF8, "application/json");
+            HttpResponseMessage response;
+            try
+            {
+                response = await _httpClient.PostAsync(url, content);
+            }
+            catch (Exception ex) when (ex is HttpRequestException or IOException or OperationCanceledException or TimeoutException)
+            {
+                throw ApiException.NoConnection(ex);
+            }
+
+            using (response)
+            {
+                if (!response.IsSuccessStatusCode)
+                    return await HandleResponseAsync<DownloadedFile>(response);
+
+                var bytes = await response.Content.ReadAsByteArrayAsync();
+                var type = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
+                int? count = null;
+                if (response.Headers.TryGetValues("X-Labels-Count", out var values)
+                    && int.TryParse(values.FirstOrDefault(), out var parsed))
+                    count = parsed;
+                return new DownloadedFile(bytes, type, count);
+            }
+        }
+
         private static async Task<T> HandleResponseAsync<T>(HttpResponseMessage response)
         {
             if (response.IsSuccessStatusCode)
