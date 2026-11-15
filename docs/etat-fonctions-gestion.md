@@ -159,6 +159,8 @@ boutique ?
 
 ## Campagne d'essais avant le premier client
 
+**Relecture globale du backend (décision du propriétaire du 15/11) :** pendant la campagne, un agent neuf, sans l'historique des sessions, relit tout le backend.
+
 **Préparer le site de la campagne (demande du propriétaire du 15/11) :** pour tester et documenter chaque fonction, toutes doivent être actives sur le site d'essai :
 - tous les modules accordés (gestion, Assistance, Prévention des pertes…) ;
 - le niveau des courriels de suivi réglé sur « Tout » ;
