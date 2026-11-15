@@ -164,6 +164,7 @@ boutique ?
 - le niveau des courriels de suivi réglé sur « Tout » ;
 - les minuteurs en marche, dont le point de la semaine ;
 - l'envoi réel des courriels de l'Assistance activé, vers des adresses de test.
+- prévention des pertes : courriel d'essai d'un exercice, entrée « Découvrir » (module désactivé un moment), affichage sur téléphone ; effacer les deux exercices laissés sur demo.
 
 **Sécurité de la base, à faire pendant la campagne (signalé le 14/11) :** la production et les tests se connectent au même serveur PostgreSQL, avec le même compte super-utilisateur. À prévoir, avec la rotation des clés JWT :
 - un compte de test à part, sans droits de super-utilisateur, avec une limite de connexions ;
