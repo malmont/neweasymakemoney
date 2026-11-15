@@ -41,6 +41,8 @@
                                     </DataTrigger>
                                 </Label.Triggers>
                             </Label>
+                            <Label Text="{Binding Day.StoreValueText}" IsVisible="{Binding Day.HasStoreValue}" FontFamily="Inter" FontSize="12" TextColor="{StaticResource UiTextSecondary}" />
+                            <Label Text="{Binding Day.OutstandingText}" IsVisible="{Binding Day.HasOutstanding}" FontFamily="Inter" FontSize="12" TextColor="{StaticResource UiTextSecondary}" />
                         </VerticalStackLayout>
                         <BoxView HeightRequest="1" Color="{StaticResource UiBorder}" />
                         <Label Text="{Binding Day.ToShipText}" Style="{StaticResource UiBody}" FontSize="14" />

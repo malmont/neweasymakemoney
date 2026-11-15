@@ -57,6 +57,46 @@ namespace Easymakemoney.Models
         }
 
         public bool HasSalesTrend => SalesTrendText != null;
+
+        /// <summary>« Avoirs émis 33,34 $ · payé par carte-cadeau 10,00 $ » : mouvements du jour à part de l'encaissé, seulement s'ils existent.</summary>
+        public string StoreValueText
+        {
+            get
+            {
+                var parts = new List<string>();
+                void Add(string label, StatsCreditLine? line)
+                {
+                    if (line?.amount is { } amount && amount != 0)
+                        parts.Add($"{label} {Money((long)amount)}");
+                }
+                Add("avoirs émis", receipts?.storeCreditIssued);
+                Add("payé par avoir", receipts?.paidByStoreCredit);
+                Add("revenu sur carte-cadeau", receipts?.giftCardRecredited);
+                Add("payé par carte-cadeau", receipts?.paidByGiftCard);
+                if (parts.Count == 0)
+                    return string.Empty;
+                var text = string.Join(" · ", parts);
+                return char.ToUpper(text[0], CultureInfo.GetCultureInfo("fr-CA")) + text[1..];
+            }
+        }
+
+        public bool HasStoreValue => StoreValueText.Length > 0;
+
+        /// <summary>« À ce jour : avoirs en cours 50,00 $, cartes-cadeaux non dépensées 120,00 $ » ; rien si les deux sont nuls.</summary>
+        public string OutstandingText
+        {
+            get
+            {
+                var parts = new List<string>();
+                if (receipts?.outstandingStoreCredit?.amount is { } credit && credit != 0)
+                    parts.Add($"avoirs en cours {Money((long)credit)}");
+                if (receipts?.outstandingGiftCards?.amount is { } cards && cards != 0)
+                    parts.Add($"cartes-cadeaux non dépensées {Money((long)cards)}");
+                return parts.Count == 0 ? string.Empty : "À ce jour : " + string.Join(", ", parts);
+            }
+        }
+
+        public bool HasOutstanding => OutstandingText.Length > 0;
         public bool IsSalesUp => sales?.vsSameWeekdayAverage?.percent is > 0;
         public bool IsSalesDown => sales?.vsSameWeekdayAverage?.percent is < 0;
 
@@ -122,6 +162,14 @@ namespace Easymakemoney.Models
     public class DayReceipts
     {
         public long total { get; set; }
+
+        /// <summary>Lot AVOIRS : lignes à part, hors de l'encaissé ; soldes « à ce jour ».</summary>
+        public StatsCreditLine? storeCreditIssued { get; set; }
+        public StatsCreditLine? giftCardRecredited { get; set; }
+        public StatsCreditLine? paidByStoreCredit { get; set; }
+        public StatsCreditLine? paidByGiftCard { get; set; }
+        public StatsCreditLine? outstandingStoreCredit { get; set; }
+        public StatsCreditLine? outstandingGiftCards { get; set; }
     }
 
     public class DayToShip
