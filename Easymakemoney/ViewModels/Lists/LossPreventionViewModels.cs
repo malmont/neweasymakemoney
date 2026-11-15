@@ -173,6 +173,138 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private Task Open(LossFinding? finding) =>
             finding == null ? Task.CompletedTask : NavigateAsync($"LossFindingPage?FindingId={finding.id}");
+
+        [RelayCommand]
+        private Task OpenExercises() => NavigateAsync("LossExercisePage");
+    }
+
+    /// <summary>
+    /// « S'exercer » (EX-1) : lancer un constat fictif pour voir à quoi il ressemble et comment y répondre. Rien ne touche la caisse,
+    /// aucune personne réelle, aucun chiffre réel ; ouvert même sans le droit du module.
+    /// </summary>
+    public partial class LossExerciseViewModel : BaseViewModel
+    {
+        private readonly ILossPreventionService _service;
+        private readonly IDialogService _dialogService;
+
+        public LossExerciseViewModel(ILossPreventionService service, IDialogService dialogService)
+        {
+            _service = service;
+            _dialogService = dialogService;
+        }
+
+        public Func<string, Task> NavigateAsync { get; set; } = route => Shell.Current?.GoToAsync(route) ?? Task.CompletedTask;
+
+        public ObservableCollection<LossScenario> Scenarios { get; } = new();
+        public ObservableCollection<LossFinding> Exercises { get; } = new();
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasData))]
+        private LossExercises? _data;
+
+        public bool HasData => Data != null;
+
+        [ObservableProperty]
+        private bool _sendTestEmail;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasPreview))]
+        private string _previewText = string.Empty;
+
+        public bool HasPreview => PreviewText.Length > 0;
+
+        [ObservableProperty]
+        private bool _hasExercises;
+
+        public async Task LoadAsync()
+        {
+            if (IsBusy)
+                return;
+            IsBusy = true;
+            try
+            {
+                var data = await _service.GetExercisesAsync();
+                Scenarios.Clear();
+                foreach (var scenario in data.scenarios)
+                    Scenarios.Add(scenario);
+                Exercises.Clear();
+                foreach (var exercise in data.findings)
+                    Exercises.Add(exercise);
+                HasExercises = Exercises.Count > 0;
+                Data = data;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
+        private async Task Launch(LossScenario? scenario)
+        {
+            if (scenario?.code is not { } code || !scenario.available || IsBusy)
+                return;
+            if (Data is { CanLaunch: false })
+            {
+                await _dialogService.ShowInfoAsync("Plus de lancement possible pour l'instant : effacez des exercices, ou revenez demain.");
+                return;
+            }
+            IsBusy = true;
+            LossExerciseLaunch? launch = null;
+            try
+            {
+                launch = await _service.LaunchExerciseAsync(code, SendTestEmail);
+                PreviewText = launch.PreviewText;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+            if (launch == null)
+                return;
+            await LoadAsync();
+            if (launch.finding is { id: > 0 } finding)
+                await NavigateAsync($"LossFindingPage?FindingId={finding.id}&Exercise=1");
+        }
+
+        [RelayCommand]
+        private Task Open(LossFinding? exercise) =>
+            exercise == null ? Task.CompletedTask : NavigateAsync($"LossFindingPage?FindingId={exercise.id}&Exercise=1");
+
+        [RelayCommand]
+        private async Task DeleteAll()
+        {
+            if (!HasExercises || IsBusy)
+                return;
+            if (!await _dialogService.ConfirmAsync("Tout effacer", "Effacer tous les exercices de ce site ? Les vrais constats ne sont pas touchés.", "Effacer", "Annuler"))
+                return;
+            IsBusy = true;
+            try
+            {
+                await _service.DeleteExercisesAsync();
+                PreviewText = string.Empty;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await _dialogService.ShowErrorAsync(ex);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+            await LoadAsync();
+        }
     }
 
     /// <summary>
@@ -201,6 +333,9 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
         public int FindingId { get; set; }
+
+        /// <summary>Un exercice se lit et se décide par ses propres routes (jamais celles des vrais constats).</summary>
+        public bool IsExercise { get; set; }
 
         public ObservableCollection<StatsChoice> Choices { get; }
 
@@ -232,7 +367,7 @@ namespace Easymakemoney.ViewModels.Lists
             IsBusy = true;
             try
             {
-                Finding = await _service.GetFindingAsync(FindingId);
+                Finding = IsExercise ? await _service.GetExerciseAsync(FindingId) : await _service.GetFindingAsync(FindingId);
                 SelectDecision(null);
             }
             catch (Exception ex)
@@ -267,10 +402,13 @@ namespace Easymakemoney.ViewModels.Lists
             IsBusy = true;
             try
             {
-                Finding = await _service.DecideAsync(Finding.id, status, Note);
+                Finding = IsExercise
+                    ? await _service.DecideExerciseAsync(Finding.id, status, Note)
+                    : await _service.DecideAsync(Finding.id, status, Note);
                 Note = string.Empty;
                 SelectDecision(null);
-                LossFindingListViewModel.FindingsChanged = true;
+                if (!IsExercise)
+                    LossFindingListViewModel.FindingsChanged = true;
             }
             catch (Exception ex)
             {

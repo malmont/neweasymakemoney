@@ -95,6 +95,7 @@ namespace Easymakemoney.Utilities
             ["montant-en-jeu"] = new("Montant en jeu", "Le montant concerné par un constat. Ce n'est pas une perte prouvée : il vous aide à choisir ce que vous vérifiez en premier."),
             ["preuve"] = new("Preuve", "Une copie datée de ce que la caisse a enregistré (clôture, ouverture du tiroir, vente, retour, remise), qui ne peut plus être modifiée. Elle établit ce que la caisse a enregistré, pas qui est en faute."),
             ["decision-constat"] = new("Décision sur un constat", "Ce que vous concluez après vérification : à suivre, expliqué, classé sans suite ou confirmé. Une note est demandée pour « Expliqué » et « Confirmé ». La décision est toujours la vôtre ; vous pouvez la changer, et chaque changement est gardé."),
+            ["exercice-pertes"] = new("Exercice (prévention des pertes)", "Un constat fictif que vous lancez vous-même pour voir à quoi ressemble un constat et comment y répondre. Il est marqué « Exercice », ne touche pas à la caisse, ne concerne aucune personne réelle et n'entre dans aucun chiffre. Vous l'effacez quand vous voulez."),
         };
 
         /// <summary>

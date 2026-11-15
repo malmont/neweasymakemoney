@@ -212,6 +212,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<SupportTicketListPage>();
 		builder.Services.AddTransient<LossFindingListPage>();
 		builder.Services.AddTransient<LossFindingPage>();
+		builder.Services.AddTransient<LossExercisePage>();
 		builder.Services.AddTransient<SupportTicketPage>();
 		builder.Services.AddTransient<SupportTicketCreatePage>();
 		builder.Services.AddTransient<SupplierEditPage>();
@@ -275,6 +276,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<SupportTicketListViewModel>();
 		builder.Services.AddTransient<LossFindingListViewModel>();
 		builder.Services.AddTransient<LossFindingViewModel>();
+		builder.Services.AddTransient<LossExerciseViewModel>();
 		builder.Services.AddTransient<SupportTicketViewModel>();
 		builder.Services.AddTransient<SupportTicketCreateViewModel>();
 		builder.Services.AddTransient<SupplierEditViewModel>();

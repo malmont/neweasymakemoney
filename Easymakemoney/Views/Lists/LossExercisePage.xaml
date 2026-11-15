@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:stats="clr-namespace:Easymakemoney.ViewModels.Statistiques"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             x:DataType="list:LossExerciseViewModel"
+             x:Class="Easymakemoney.Views.Lists.LossExercisePage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="S'exercer">
+
+    <ContentPage.Resources>
+        <Style x:Key="Chip" TargetType="Border">
+            <Setter Property="StrokeShape" Value="RoundRectangle 18" />
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+        </Style>
+        <Style x:Key="FormField" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="MinimumHeightRequest" Value="44" />
+            <Setter Property="Padding" Value="12,0" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="S'exercer" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <components:UiTerm Term="exercice-pertes" Text="Un exercice, c'est quoi ?" FontSize="14" />
+                <Label Text="{Binding Data.notice}" Style="{StaticResource UiBody}" FontSize="13" />
+                <Label Text="{Binding Data.LimitsText}" IsVisible="{Binding HasData}" FontFamily="InterSemiBold" FontSize="12" TextColor="{StaticResource UiTextSecondary}" />
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" HeightRequest="24" />
+
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                    <Label Text="M'envoyer le courriel d'essai" Style="{StaticResource UiBody}" FontSize="14" VerticalOptions="Center" />
+                    <Switch Grid.Column="1" IsToggled="{Binding SendTestEmail}" OnColor="{DynamicResource ThemePrimary}" />
+                </Grid>
+
+                <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding HasPreview}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Ce que l'alerte aurait dit" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                        <Label Text="{Binding PreviewText}" Style="{StaticResource UiBody}" FontSize="13" />
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <!-- Exercices du site -->
+                <VerticalStackLayout Spacing="8" IsVisible="{Binding HasExercises}">
+                    <Label Text="Vos exercices" Style="{StaticResource UiTitle}" FontSize="15" />
+                    <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Exercises}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:LossFinding">
+                                <components:UiCard Style="{StaticResource UiCard}" Padding="12">
+                                    <components:UiCard.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenCommand, Source={x:Reference Page}, x:DataType=ContentPage}" CommandParameter="{Binding .}" />
+                                    </components:UiCard.GestureRecognizers>
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="{Binding HeaderText}" FontFamily="InterSemiBold" FontSize="12" TextColor="{DynamicResource ThemePrimary}" />
+                                        <Label Text="{Binding summary}" Style="{StaticResource UiBody}" FontSize="13" />
+                                        <Label Text="{Binding statusLabel}" FontFamily="InterMedium" FontSize="12" TextColor="{StaticResource UiTextSecondary}" />
+                                    </VerticalStackLayout>
+                                </components:UiCard>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                    <Button Text="Tout effacer" Command="{Binding DeleteAllCommand}" HeightRequest="40" CornerRadius="12"
+                            FontFamily="InterSemiBold" FontSize="13" BackgroundColor="{StaticResource UiSurface}" TextColor="#B91C1C" BorderColor="#B91C1C" BorderWidth="1" />
+                </VerticalStackLayout>
+
+                <!-- Scénarios -->
+                <Label Text="Choisir un scénario" Style="{StaticResource UiTitle}" FontSize="15" />
+                <VerticalStackLayout Spacing="10" BindableLayout.ItemsSource="{Binding Scenarios}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:LossScenario">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="{Binding label}" Style="{StaticResource UiTitle}" FontSize="14" />
+                                    <Label Text="{Binding description}" Style="{StaticResource UiBody}" FontSize="13" />
+                                    <Label Text="{Binding LearnText}" IsVisible="{Binding HasLearn}" Style="{StaticResource UiBody}" FontSize="12" FontAttributes="Italic" />
+                                    <Button Text="Lancer" Command="{Binding Path=BindingContext.LaunchCommand, Source={x:Reference Page}, x:DataType=ContentPage}" CommandParameter="{Binding .}"
+                                            IsEnabled="{Binding available}" HeightRequest="40" CornerRadius="12" Margin="0,4,0,0"
+                                            FontFamily="InterSemiBold" FontSize="14" BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" />
+                                    <Label Text="Pas proposé dans votre région." IsVisible="{Binding IsUnavailable}" Style="{StaticResource UiBody}" FontSize="12" />
+                                </VerticalStackLayout>
+                            </components:UiCard>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

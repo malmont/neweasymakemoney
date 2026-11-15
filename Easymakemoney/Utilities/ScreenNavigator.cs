@@ -61,6 +61,10 @@ namespace Easymakemoney.Utilities
                     await shell.GoToAsync(onlyNew ? $"{nameof(LossFindingListPage)}?Filter=new" : nameof(LossFindingListPage));
                     return true;
 
+                case "pertes.exercices":
+                    await shell.GoToAsync(nameof(LossExercisePage));
+                    return true;
+
                 case "pertes.constat" when Int("id") > 0:
                     await shell.GoToAsync($"{nameof(LossFindingPage)}?FindingId={Int("id")}");
                     return true;

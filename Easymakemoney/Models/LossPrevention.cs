@@ -229,6 +229,107 @@ namespace Easymakemoney.Models
         public string Text => $"{LossFormat.Date(at)} · {statusLabel ?? status} · {by?.name ?? "—"}{(hasNote ? " · avec une note" : string.Empty)}";
     }
 
+    /// <summary>Mode exercice (EX-1) : scénarios, exercices du site et plafonds ; ouvert même sans le droit du module.</summary>
+    public class LossExercises
+    {
+        public List<LossScenario> scenarios { get; set; } = new();
+        public List<LossFinding> findings { get; set; } = new();
+        public int count { get; set; }
+        public int limit { get; set; }
+        public int remaining { get; set; }
+        public LossDaily? daily { get; set; }
+        public string? notice { get; set; }
+
+        /// <summary>« 29 exercices possibles · 12 lancements aujourd'hui » ; le plafond du jour n'est cité que s'il est bas.</summary>
+        public string LimitsText
+        {
+            get
+            {
+                var parts = new List<string> { $"{remaining} exercice{(remaining > 1 ? "s" : string.Empty)} encore possible{(remaining > 1 ? "s" : string.Empty)} sur {limit}" };
+                if (daily is { } d && d.remaining <= 30)
+                    parts.Add(d.remaining == 0 ? "lancements du jour épuisés" : $"{d.remaining} lancement{(d.remaining > 1 ? "s" : string.Empty)} aujourd'hui");
+                return string.Join(" · ", parts);
+            }
+        }
+
+        public bool CanLaunch => remaining > 0 && (daily?.remaining ?? 1) > 0;
+    }
+
+    public class LossDaily
+    {
+        public int limit { get; set; }
+        public int remaining { get; set; }
+        public string? resetAt { get; set; }
+    }
+
+    public class LossScenario
+    {
+        public string? code { get; set; }
+        public string? label { get; set; }
+        public string? description { get; set; }
+        public string? learn { get; set; }
+        public LossRule? rule { get; set; }
+        public bool personPattern { get; set; }
+        public bool available { get; set; } = true;
+        public bool IsUnavailable => !available;
+
+        public string LearnText => string.IsNullOrWhiteSpace(learn) ? string.Empty : $"Ce que vous y apprenez : {learn}";
+        public bool HasLearn => LearnText.Length > 0;
+    }
+
+    public class LossExerciseLaunch
+    {
+        public LossFindingDetail? finding { get; set; }
+        public LossAlertPreview? alertPreview { get; set; }
+        public LossTestEmail? testEmail { get; set; }
+        public int remaining { get; set; }
+
+        /// <summary>Ce que l'alerte aurait dit, et le sort du courriel d'essai.</summary>
+        public string PreviewText
+        {
+            get
+            {
+                var lines = new List<string>();
+                if (alertPreview?.tile is { } tile)
+                    lines.Add($"Vignette de l'accueil : « {tile.text} »");
+                if (alertPreview?.email is { } email)
+                    lines.Add($"Courriel du jour : « {email.subject} »");
+                if (testEmail is { requested: true } test)
+                    lines.Add(test.sent
+                        ? "Le courriel d'essai vous a été envoyé."
+                        : test.reason == "DAILY_LIMIT_REACHED"
+                            ? "L'exercice est lancé, mais le courriel d'essai n'est pas parti : limite du jour atteinte."
+                            : "Le courriel d'essai n'est pas parti.");
+                return string.Join("\n", lines);
+            }
+        }
+    }
+
+    public class LossAlertPreview
+    {
+        public LossAlertText? tile { get; set; }
+        public LossAlertMail? email { get; set; }
+    }
+
+    public class LossAlertText
+    {
+        public string? title { get; set; }
+        public string? text { get; set; }
+    }
+
+    public class LossAlertMail
+    {
+        public string? subject { get; set; }
+        public string? message { get; set; }
+    }
+
+    public class LossTestEmail
+    {
+        public bool requested { get; set; }
+        public bool sent { get; set; }
+        public string? reason { get; set; }
+    }
+
     public static class LossFormat
     {
         public static string Money(long? cents, string? currency) =>

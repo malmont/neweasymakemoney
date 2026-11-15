@@ -37,6 +37,9 @@
                 <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" HeightRequest="24" />
 
                 <VerticalStackLayout Spacing="12" IsVisible="{Binding HasFinding}">
+                    <Border BackgroundColor="#FEF3C7" Stroke="#F59E0B" StrokeThickness="1" StrokeShape="RoundRectangle 12" Padding="12,8" IsVisible="{Binding Finding.exercise}">
+                        <Label Text="Exercice : constat fictif, sans lien avec la caisse ni avec une personne réelle." FontFamily="InterSemiBold" FontSize="13" TextColor="#92400E" />
+                    </Border>
                     <components:UiCard Style="{StaticResource UiCard}" Padding="14">
                         <VerticalStackLayout Spacing="4">
                             <Label Text="{Binding Finding.HeaderText}" FontFamily="InterSemiBold" FontSize="12" TextColor="{DynamicResource ThemePrimary}" />

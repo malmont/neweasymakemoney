@@ -1,6 +1,7 @@
 namespace Easymakemoney.Views.Lists
 {
     [QueryProperty(nameof(FindingId), "FindingId")]
+    [QueryProperty(nameof(Exercise), "Exercise")]
     public partial class LossFindingPage : ContentPage
     {
         private readonly LossFindingViewModel _viewModel;
@@ -14,6 +15,11 @@ namespace Easymakemoney.Views.Lists
         public string FindingId
         {
             set => _viewModel.FindingId = int.TryParse(value, out var id) ? id : 0;
+        }
+
+        public string Exercise
+        {
+            set => _viewModel.IsExercise = value == "1";
         }
 
         protected override async void OnAppearing()

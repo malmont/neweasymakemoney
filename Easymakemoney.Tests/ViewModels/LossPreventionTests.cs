@@ -224,5 +224,67 @@ public class LossPreventionTests : IDisposable
             Detail.status = status;
             return Task.FromResult(Detail);
         }
+
+        public Task<LossExercises> GetExercisesAsync() => Task.FromResult(new LossExercises());
+        public Task<LossExerciseLaunch> LaunchExerciseAsync(string scenario, bool sendTestEmail) => Task.FromResult(new LossExerciseLaunch());
+        public Task<LossFindingDetail> GetExerciseAsync(int id) => Task.FromResult(Detail);
+        public Task<LossFindingDetail> DecideExerciseAsync(int id, string status, string? note) => DecideAsync(id, status, note);
+        public Task DeleteExercisesAsync() => Task.CompletedTask;
+    }
+}
+
+/// <summary>Mode exercice (EX-1) sur le mobile : routes à part, aperçu de l'alerte, effacement confirmé.</summary>
+[Collection("SiteCurrency")]
+public class LossExerciseTests
+{
+    [Fact]
+    public async Task Service_UsesTheExerciseRoutesOnly()
+    {
+        var http = new FakeHttpService { ResultToReturn = new LossExercises() };
+        var service = new LossPreventionService(http);
+
+        await service.GetExercisesAsync();
+        http.ResultToReturn = new LossFindingDetail();
+        await service.GetExerciseAsync(12);
+
+        Assert.Equal(new[] { "gestion/pertes/exercices?locale=fr", "gestion/pertes/exercices/12?locale=fr" }, http.RequestedUrls);
+    }
+
+    [Fact]
+    public void Launch_PreviewSaysWhatTheAlertWouldSay_AndTheTestEmailFate()
+    {
+        var launch = JsonConvert.DeserializeObject<LossExerciseLaunch>("""
+        { "finding": { "id": 12, "number": -1, "exercise": true },
+          "alertPreview": { "tile": { "title": "Prévention des pertes", "text": "1 nouveau constat à vérifier, 10,00 $ en jeu." },
+                            "email": { "subject": "Prévention des pertes : 1 nouveau constat à vérifier", "message": "…" } },
+          "testEmail": { "requested": true, "sent": false, "reason": "DAILY_LIMIT_REACHED" }, "remaining": 29 }
+        """)!;
+
+        Assert.Contains("« 1 nouveau constat à vérifier, 10,00 $ en jeu. »", launch.PreviewText);
+        Assert.Contains("limite du jour atteinte", launch.PreviewText);
+        Assert.Equal("Exercice 1", launch.finding!.NumberText);
+    }
+
+    [Fact]
+    public void Limits_SayWhatIsLeft()
+    {
+        var data = new LossExercises { limit = 30, remaining = 29, daily = new LossDaily { limit = 30, remaining = 0 } };
+        Assert.Equal("29 exercices encore possibles sur 30 · lancements du jour épuisés", data.LimitsText);
+        Assert.False(data.CanLaunch);
+        Assert.True(new LossExercises { limit = 30, remaining = 30, daily = new LossDaily { limit = 1000000, remaining = 1000000 } }.CanLaunch);
+    }
+
+    [Fact]
+    public async Task ExerciseDetail_ReadsAndDecidesThroughExerciseRoutes()
+    {
+        var http = new FakeHttpService { ResultToReturn = new LossFindingDetail { id = 12, number = -1, exercise = true, status = "open" } };
+        var vm = new LossFindingViewModel(new LossPreventionService(http), new FakeDialogService()) { FindingId = 12, IsExercise = true };
+
+        await vm.LoadAsync();
+        vm.SelectDecisionCommand.Execute("watch");
+        await vm.DecideCommand.ExecuteAsync(null);
+
+        Assert.Equal("gestion/pertes/exercices/12?locale=fr", http.RequestedUrls[0]);
+        Assert.DoesNotContain(http.RequestedUrls, url => url.Contains("/constats/"));
     }
 }
