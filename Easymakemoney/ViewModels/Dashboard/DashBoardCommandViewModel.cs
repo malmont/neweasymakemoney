@@ -144,6 +144,15 @@ namespace Easymakemoney.ViewModels.Dashboard
                 await Easymakemoney.Utilities.AppPage.Current!.ShowPopupAsync(popup);
         }
 
+        /// <summary>Étiquettes de codes-barres de ce qui a été reçu dans la commande (CB-2).</summary>
+        [RelayCommand]
+        private async Task OpenLabels()
+        {
+            if (CommandId == 0)
+                return;
+            await NavigateAsync($"{nameof(ReceptionLabelsPage)}?CommandeId={CommandId}");
+        }
+
         [RelayCommand]
         private async Task ItemTapped()
         {

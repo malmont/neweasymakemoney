@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             x:DataType="list:ReceptionLabelsViewModel"
+             x:Class="Easymakemoney.Views.Lists.ReceptionLabelsPage"
+             Style="{StaticResource UiPage}"
+             Title="Étiquettes">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <components:AppHeader Title="Étiquettes" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="10">
+                <Label Text="{Binding Data.commande.name}" FontFamily="InterSemiBold" FontSize="16" TextColor="{StaticResource UiTextPrimary}" />
+                <Label Text="Une étiquette 50 × 30 mm par pièce reçue, sur des planches A4. Changez le nombre si besoin." Style="{StaticResource UiBody}" FontSize="13" />
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" Color="{DynamicResource ThemePrimary}" HeightRequest="24" />
+                <Label Text="Rien n'a encore été reçu dans cette commande." IsVisible="{Binding Data.IsEmpty}" Style="{StaticResource UiBody}" FontSize="13" />
+
+                <Button Text="{Binding Data.MissingButtonText}" IsVisible="{Binding Data.HasMissing}" Command="{Binding GenerateMissingCommand}" HeightRequest="44" CornerRadius="12"
+                        FontFamily="InterSemiBold" FontSize="13" BackgroundColor="{StaticResource UiSurface}" TextColor="{DynamicResource ThemePrimary}"
+                        BorderColor="{DynamicResource ThemePrimary}" BorderWidth="1" />
+
+                <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Labels}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:ReceptionLabel">
+                            <Border StrokeShape="RoundRectangle 12" Padding="12,10" StrokeThickness="1" Stroke="{StaticResource UiBorder}" BackgroundColor="{StaticResource UiSurface}">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <VerticalStackLayout Spacing="2">
+                                        <Label Text="{Binding title}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                        <Label Text="{Binding DetailText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                        <Label Text="{Binding CodeText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                    </VerticalStackLayout>
+                                    <Entry Grid.Column="1" Text="{Binding Copies}" Keyboard="Numeric" WidthRequest="64" HorizontalTextAlignment="Center" IsEnabled="{Binding printable}" VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Label Text="{Binding Data.SkippedText}" IsVisible="{Binding Data.HasSkipped}" Style="{StaticResource UiBody}" FontSize="12" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <VerticalStackLayout Grid.Row="2" Padding="16,8,16,16" Spacing="8">
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="Imprimer le prix" Style="{StaticResource UiBody}" FontSize="14" VerticalOptions="Center" />
+                <Switch Grid.Column="1" IsToggled="{Binding ShowPrice}" OnColor="{DynamicResource ThemePrimary}" />
+            </Grid>
+            <Button Text="Imprimer les étiquettes" Command="{Binding PrintCommand}" HeightRequest="48" CornerRadius="12"
+                    FontFamily="InterSemiBold" FontSize="14" BackgroundColor="{DynamicResource ThemePrimary}" TextColor="White" />
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

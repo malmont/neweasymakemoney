@@ -109,6 +109,14 @@ namespace Easymakemoney.ViewModels.Lists
             }
 
             await _dialogService.ShowInfoAsync(CommandeReception.Summary(received, last, postponed));
+            // Étiquettes des pièces arrivées (CB-2) : proposées seulement quand quelque chose a été reçu.
+            if (received > 0
+                && await _dialogService.ConfirmAsync("Étiquettes", "Imprimer les étiquettes de ce qui vient d'arriver ?", "Imprimer", "Plus tard")
+                && Shell.Current is { } shell)
+            {
+                await shell.GoToAsync($"{nameof(ReceptionLabelsPage)}?CommandeId={group.CommandeId}");
+                return;
+            }
             await LoadAsync();
         }
 
