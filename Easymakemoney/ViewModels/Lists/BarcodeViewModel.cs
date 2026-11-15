@@ -100,7 +100,10 @@ namespace Easymakemoney.ViewModels.Lists
             }
             catch (ApiException ex) when (ex.ApiError.Code == "BARCODE_ALREADY_SET")
             {
-                await _dialogService.ShowInfoAsync($"{target.Label} a déjà un code-barres : rien n'est remplacé.");
+                var current = ex.ApiError.Body?["current"]?.ToString();
+                await _dialogService.ShowInfoAsync(string.IsNullOrWhiteSpace(current)
+                    ? $"{target.Label} a déjà un code-barres : rien n'est remplacé."
+                    : $"{target.Label} a déjà le code {current} : rien n'est remplacé.");
             }
         });
 
