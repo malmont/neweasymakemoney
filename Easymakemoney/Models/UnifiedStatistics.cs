@@ -39,6 +39,12 @@ namespace Easymakemoney.Models
 
         public bool HasPrevious => previous != null;
 
+        /// <summary>L'an dernier vient de l'archive d'avant la migration : chiffre d'affaires et commandes seulement, jamais mêlé aux ventes du site.</summary>
+        public bool LastYearBeforeMigration => lastYear?.source == "before_migration";
+
+        /// <summary>Libellé court de la comparaison à l'an dernier.</summary>
+        public string LastYearChangeLabel => LastYearBeforeMigration ? "vs avant la migration" : "vs an dernier";
+
         /// <summary>Cartes dans l'ordre de lecture ; la valeur du stock vient en dernier, sans courbe d'historique tant qu'il n'y a pas d'instantané.</summary>
         public List<StatsCard> Cards()
         {
@@ -46,7 +52,7 @@ namespace Easymakemoney.Models
             void Add(string key, string title, string term, StatsIndicator? indicator, bool? higherIsBetter)
             {
                 if (indicator != null)
-                    cards.Add(new StatsCard(key, title, term, indicator, higherIsBetter, currency, HasPrevious));
+                    cards.Add(new StatsCard(key, title, term, indicator, higherIsBetter, currency, HasPrevious, LastYearChangeLabel));
             }
 
             Add("revenue", "Ventes", "ventes", indicators.revenue, true);
@@ -145,6 +151,9 @@ namespace Easymakemoney.Models
     {
         public string? from { get; set; }
         public string? to { get; set; }
+
+        /// <summary>« site » ou « before_migration » (IMP-3 : l'an dernier vient des ventes reprises de l'ancienne boutique).</summary>
+        public string? source { get; set; }
     }
 
     public class StatsComparison
@@ -229,7 +238,8 @@ namespace Easymakemoney.Models
     /// <summary>Une carte d'indicateur prête à afficher.</summary>
     public sealed class StatsCard
     {
-        public StatsCard(string key, string title, string term, StatsIndicator indicator, bool? higherIsBetter, string? currency, bool hasPrevious)
+        public StatsCard(string key, string title, string term, StatsIndicator indicator, bool? higherIsBetter, string? currency, bool hasPrevious,
+            string lastYearLabel = "vs an dernier")
         {
             Key = key;
             Title = title;
@@ -237,7 +247,7 @@ namespace Easymakemoney.Models
             Indicator = indicator;
             ValueText = StatsFormat.Value(indicator.value, indicator.unit, currency);
             PreviousText = hasPrevious ? StatsFormat.Change(indicator.changeVsPrevious, indicator.changeUnit, "vs précédent") : string.Empty;
-            LastYearText = StatsFormat.Change(indicator.changeVsLastYear, indicator.changeUnit, "vs an dernier");
+            LastYearText = StatsFormat.Change(indicator.changeVsLastYear, indicator.changeUnit, lastYearLabel);
             PreviousTone = StatsFormat.Tone(indicator.changeVsPrevious, higherIsBetter);
             LastYearTone = StatsFormat.Tone(indicator.changeVsLastYear, higherIsBetter);
             Spark = indicator.spark?.Select(v => v ?? 0).ToList() ?? new List<double>();

@@ -127,7 +127,8 @@ namespace Easymakemoney.ViewModels.Statistiques
                 var point = ChartPoints[SelectedPointIndex];
                 var unit = ChartIsMoney ? "money" : "count";
                 var text = $"{point.Label} : {StatsFormat.Value(point.Value, unit, Currency)}";
-                return point.LastYear is { } last ? $"{text} · an dernier {StatsFormat.Value(last, unit, Currency)}" : text;
+                var lastLabel = _data?.LastYearBeforeMigration == true ? "avant la migration" : "an dernier";
+                return point.LastYear is { } last ? $"{text} · {lastLabel} {StatsFormat.Value(last, unit, Currency)}" : text;
             }
         }
 
