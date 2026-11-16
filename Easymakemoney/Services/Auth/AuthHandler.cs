@@ -51,6 +51,12 @@ public class AuthHandler : DelegatingHandler
             return response;
         }
 
+        // Lecture répétée marquée « sans rafraîchissement » : le 401 remonte tel quel, la session n'est pas prolongée
+        if (request.GetSkipRefresh())
+        {
+            return response;
+        }
+
         // 401 Unauthorized sur une requête authentifiée : tentative de rafraîchissement
         var refreshResult = await _tokenRefresher.RefreshAsync(token, cancellationToken);
 

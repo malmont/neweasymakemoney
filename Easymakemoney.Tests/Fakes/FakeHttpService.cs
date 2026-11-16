@@ -19,6 +19,19 @@ public class FakeHttpService : IHttpService
         return Task.FromResult((T)(ResultToReturn ?? default(T)!));
     }
 
+    public List<string> RequestedWithoutRefresh { get; } = new();
+
+    /// <summary>Exception levée par GetWithoutRefreshAsync (ex. 401 d'une session éteinte).</summary>
+    public Exception? WithoutRefreshError { get; set; }
+
+    public Task<T> GetWithoutRefreshAsync<T>(string url)
+    {
+        RequestedWithoutRefresh.Add(url);
+        if (WithoutRefreshError != null)
+            return Task.FromException<T>(WithoutRefreshError);
+        return Task.FromResult((T)(ResultToReturn ?? default(T)!));
+    }
+
     public Task<T> PostFilesAsync<T>(string url, IDictionary<string, string> fields, string fileField, IEnumerable<Easymakemoney.Services.Api.UploadFile> files)
     {
         PostedFilesData.Add((url, fields, fileField, files));

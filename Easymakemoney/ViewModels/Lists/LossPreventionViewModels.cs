@@ -176,6 +176,9 @@ namespace Easymakemoney.ViewModels.Lists
 
         [RelayCommand]
         private Task OpenExercises() => NavigateAsync("LossExercisePage");
+
+        [RelayCommand]
+        private Task OpenHardware() => NavigateAsync("LossHardwarePage");
     }
 
     /// <summary>

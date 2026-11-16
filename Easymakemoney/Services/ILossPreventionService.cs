@@ -5,6 +5,11 @@ namespace Easymakemoney.Services
     {
         /// <summary>analyse=false : relire sans lancer d'analyse (rafraîchissement).</summary>
         Task<LossSummary> GetSummaryAsync(bool analyse = true);
+
+        // Matériel (L3-a, L3-a2) : le tableau de santé est relu sans rafraîchir la session.
+        Task<LossHealth> GetHealthAsync();
+        Task<LossBoxList> GetBoxesAsync();
+        Task<LossBoxPairResult> PairBoxAsync(string code, string name, string? place);
         Task<List<LossFinding>> GetFindingsAsync(string? status, bool onlyNew, int page, int limit);
         Task<LossFindingDetail> GetFindingAsync(int id);
         Task<LossFindingDetail> DecideAsync(int id, string status, string? note);
@@ -29,6 +34,16 @@ namespace Easymakemoney.Services
 
         public async Task<LossSummary> GetSummaryAsync(bool analyse = true) =>
             await _httpService.GetAsync<LossSummary>($"gestion/pertes?{(analyse ? string.Empty : "analyse=0&")}locale={Locale}") ?? new LossSummary();
+
+        public async Task<LossHealth> GetHealthAsync() =>
+            await _httpService.GetWithoutRefreshAsync<LossHealth>($"gestion/pertes/sante?locale={Locale}") ?? new LossHealth();
+
+        public async Task<LossBoxList> GetBoxesAsync() =>
+            await _httpService.GetAsync<LossBoxList>($"gestion/pertes/boitiers?locale={Locale}") ?? new LossBoxList();
+
+        public async Task<LossBoxPairResult> PairBoxAsync(string code, string name, string? place) =>
+            await _httpService.PostAsyncWithAuth<LossBoxPairResult>($"gestion/pertes/boitiers/jumeler?locale={Locale}",
+                new { code, name, place = string.IsNullOrWhiteSpace(place) ? null : place.Trim() }) ?? new LossBoxPairResult();
 
         public async Task<List<LossFinding>> GetFindingsAsync(string? status, bool onlyNew, int page, int limit)
         {

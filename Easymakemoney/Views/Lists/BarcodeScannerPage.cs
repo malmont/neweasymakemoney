@@ -11,16 +11,16 @@ namespace Easymakemoney.Views.Lists
 
         public Task<string?> Result => _result.Task;
 
-        public BarcodeScannerPage()
+        public BarcodeScannerPage(bool qr = false)
         {
-            Title = "Scanner un code-barres";
+            Title = qr ? "Scanner le QR code" : "Scanner un code-barres";
             BackgroundColor = Colors.Black;
 
             _reader = new CameraBarcodeReaderView
             {
                 Options = new BarcodeReaderOptions
                 {
-                    Formats = BarcodeFormats.OneDimensional,
+                    Formats = qr ? BarcodeFormat.QrCode : BarcodeFormats.OneDimensional,
                     AutoRotate = true,
                     Multiple = false,
                 },
@@ -40,7 +40,7 @@ namespace Easymakemoney.Views.Lists
 
             var hint = new Label
             {
-                Text = "Placez le code-barres dans le cadre.",
+                Text = qr ? "Placez le QR code dans le cadre." : "Placez le code-barres dans le cadre.",
                 TextColor = Colors.White,
                 HorizontalTextAlignment = TextAlignment.Center,
                 Margin = new Thickness(16, 24, 16, 8),

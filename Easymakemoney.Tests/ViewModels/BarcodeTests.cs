@@ -350,6 +350,7 @@ public class BarcodeTests
     {
         public string? Next { get; set; }
         public Task<string?> ScanAsync() => Task.FromResult(Next);
+        public Task<string?> ScanQrAsync() => Task.FromResult(Next);
     }
 
     private sealed class FakeBarcodeService : ICatalogBarcodeService

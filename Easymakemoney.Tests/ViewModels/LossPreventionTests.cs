@@ -230,6 +230,9 @@ public class LossPreventionTests : IDisposable
         public Task<LossFindingDetail> GetExerciseAsync(int id) => Task.FromResult(Detail);
         public Task<LossFindingDetail> DecideExerciseAsync(int id, string status, string? note) => DecideAsync(id, status, note);
         public Task DeleteExercisesAsync() => Task.CompletedTask;
+        public Task<LossHealth> GetHealthAsync() => Task.FromResult(new LossHealth());
+        public Task<LossBoxList> GetBoxesAsync() => Task.FromResult(new LossBoxList());
+        public Task<LossBoxPairResult> PairBoxAsync(string code, string name, string? place) => Task.FromResult(new LossBoxPairResult());
     }
 }
 

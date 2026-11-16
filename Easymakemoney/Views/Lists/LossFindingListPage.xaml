@@ -120,6 +120,9 @@
                             BorderColor="{DynamicResource ThemePrimary}" BorderWidth="1" />
 
                     <Label Text="{Binding Summary.CaveatsText}" IsVisible="{Binding HasSummary}" Style="{StaticResource UiBody}" FontSize="12" />
+                    <Button Text="Boîtiers et santé du matériel" Command="{Binding OpenHardwareCommand}" HeightRequest="44" CornerRadius="12"
+                            FontFamily="InterSemiBold" FontSize="14" BackgroundColor="{StaticResource UiSurface}" TextColor="{DynamicResource ThemePrimary}"
+                            BorderColor="{DynamicResource ThemePrimary}" BorderWidth="1" />
                     <Button Text="S'exercer : lancer un constat fictif" Command="{Binding OpenExercisesCommand}" HeightRequest="44" CornerRadius="12"
                             FontFamily="InterSemiBold" FontSize="14" BackgroundColor="{StaticResource UiSurface}" TextColor="{DynamicResource ThemePrimary}"
                             BorderColor="{DynamicResource ThemePrimary}" BorderWidth="1" />

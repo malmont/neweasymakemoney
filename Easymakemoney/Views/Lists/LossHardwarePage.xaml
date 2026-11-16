@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             x:DataType="list:LossHardwareViewModel"
+             x:Class="Easymakemoney.Views.Lists.LossHardwarePage"
+             Style="{StaticResource UiPage}"
+             Title="Boîtiers et santé">
+
+    <ContentPage.Resources>
+        <Style x:Key="FormField" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="MinimumHeightRequest" Value="44" />
+            <Setter Property="Padding" Value="12,0" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Boîtiers et santé" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+
+                <Label Text="Ce site n'a pas encore la Prévention des pertes. Elle s'essaie gratuitement ou se demande sur le web, dans la gestion."
+                       IsVisible="{Binding IsModuleInactive}" Style="{StaticResource UiBody}" FontSize="14" />
+
+                <!-- Session éteinte pendant que l'écran restait ouvert -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding IsPollingPaused}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="{x:Static list:LossHardwareViewModel.PausedText}" Style="{StaticResource UiBody}" FontSize="13" />
+                        <Button Text="Reprendre" Command="{Binding ResumeCommand}" HeightRequest="40" CornerRadius="12"
+                                FontFamily="InterSemiBold" FontSize="13" BackgroundColor="{DynamicResource ThemePrimary}" TextColor="White" />
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <!-- Tableau de santé -->
+                <Label Text="Santé du matériel" Style="{StaticResource UiTitle}" FontSize="15" />
+                <Border IsVisible="{Binding HasSummary}" StrokeThickness="0" Padding="12,8" StrokeShape="RoundRectangle 12"
+                        BackgroundColor="{Binding Summary.BannerColor}">
+                    <Label Text="{Binding Summary.label}" TextColor="White" FontFamily="InterSemiBold" FontSize="14" />
+                </Border>
+                <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Devices}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:LossHealthDevice">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="12">
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                    <Ellipse WidthRequest="14" HeightRequest="14" VerticalOptions="Start" Margin="0,3,0,0" Fill="{Binding DotColor}" />
+                                    <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                        <Label Text="{Binding label}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                        <Label Text="{Binding stateLabel}" FontFamily="InterMedium" FontSize="12" TextColor="{StaticResource UiTextSecondary}" />
+                                        <Label Text="{Binding hint}" IsVisible="{Binding HasHint}" Style="{StaticResource UiBody}" FontSize="12" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </components:UiCard>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <!-- Boîtiers -->
+                <Label Text="Vos boîtiers" Style="{StaticResource UiTitle}" FontSize="15" IsVisible="{Binding HasBoxes}" />
+                <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Boxes}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:LossBox">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="12">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="{Binding name}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                                    <Label Text="{Binding place}" IsVisible="{Binding HasPlace}" Style="{StaticResource UiBody}" FontSize="12" />
+                                    <Label Text="{Binding StateText}" FontFamily="InterMedium" FontSize="12" TextColor="{DynamicResource ThemePrimary}" />
+                                    <Label Text="{Binding DevicesText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                </VerticalStackLayout>
+                            </components:UiCard>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <!-- Jumelage -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding CanPair}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Ajouter un boîtier" FontFamily="InterSemiBold" FontSize="15" TextColor="{StaticResource UiTextPrimary}" />
+                        <Label Text="Branchez le boîtier et attendez que son voyant clignote. Scannez ensuite le QR code de son étiquette, ou tapez le code imprimé dessous."
+                               Style="{StaticResource UiBody}" FontSize="12" />
+                        <Button Text="Scanner le QR code" Command="{Binding ScanCodeCommand}" HeightRequest="44" CornerRadius="12"
+                                FontFamily="InterSemiBold" FontSize="14" BackgroundColor="{StaticResource UiSurface}" TextColor="{DynamicResource ThemePrimary}"
+                                BorderColor="{DynamicResource ThemePrimary}" BorderWidth="1" />
+                        <Border Style="{StaticResource FormField}">
+                            <Entry Text="{Binding PairCode}" Placeholder="Code, par exemple KX7-42P-9QM" Keyboard="Text" />
+                        </Border>
+                        <Border Style="{StaticResource FormField}">
+                            <Entry Text="{Binding PairName}" Placeholder="Nom, par exemple Boîtier de la réserve" />
+                        </Border>
+                        <Border Style="{StaticResource FormField}">
+                            <Entry Text="{Binding PairPlace}" Placeholder="Emplacement (facultatif)" />
+                        </Border>
+                        <Label Text="{Binding PairMessage}" IsVisible="{Binding HasPairMessage}" Style="{StaticResource UiBody}" FontSize="13" />
+                        <Button Text="Jumeler" Command="{Binding PairCommand}" IsEnabled="{Binding IsPairIdle}"
+                                HeightRequest="44" CornerRadius="12" FontFamily="InterSemiBold" FontSize="14"
+                                BackgroundColor="{DynamicResource ThemePrimary}" TextColor="White" />
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <Label Text="Clé d'un boîtier, nouvelle clé et retrait d'un boîtier : sur le web, dans la gestion."
+                       Style="{StaticResource UiBody}" FontSize="12" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

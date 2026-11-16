@@ -5,6 +5,8 @@ namespace Easymakemoney.Services
     public interface IHttpService
     {
         Task<T> GetAsync<T>(string url);
+        /// <summary>GET d'une lecture répétée : un 401 ne rafraîchit pas le jeton (la session laissée ouverte peut s'éteindre).</summary>
+        Task<T> GetWithoutRefreshAsync<T>(string url);
         Task<T> PostAsyncWithAuth<T>(string url, object data);
         Task<T> PatchAsyncWithAuth<T>(string url, object data);
         Task<T> PutAsyncWithAuth<T>(string url, object data);

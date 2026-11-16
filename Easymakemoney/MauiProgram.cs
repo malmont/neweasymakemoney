@@ -220,6 +220,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<LossFindingListPage>();
 		builder.Services.AddTransient<LossFindingPage>();
 		builder.Services.AddTransient<LossExercisePage>();
+		builder.Services.AddTransient<LossHardwarePage>();
 		builder.Services.AddTransient<NotificationPreferencesPage>();
 		builder.Services.AddTransient<BarcodePage>();
 		builder.Services.AddTransient<ReceptionLabelsPage>();
@@ -288,6 +289,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<LossFindingListViewModel>();
 		builder.Services.AddTransient<LossFindingViewModel>();
 		builder.Services.AddTransient<LossExerciseViewModel>();
+		builder.Services.AddTransient<LossHardwareViewModel>();
 		builder.Services.AddTransient<NotificationPreferencesViewModel>();
 		builder.Services.AddTransient<BarcodeViewModel>();
 		builder.Services.AddTransient<ReceptionLabelsViewModel>();

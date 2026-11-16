@@ -37,6 +37,27 @@ namespace Easymakemoney.Services
             }
         }
 
+        public async Task<T> GetWithoutRefreshAsync<T>(string url)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.SetSkipRefresh(true);
+
+            HttpResponseMessage response;
+            try
+            {
+                response = await _httpClient.SendAsync(request);
+            }
+            catch (Exception ex) when (ex is HttpRequestException or IOException or OperationCanceledException or TimeoutException)
+            {
+                throw ApiException.NoConnection(ex);
+            }
+
+            using (response)
+            {
+                return await HandleResponseAsync<T>(response);
+            }
+        }
+
         public async Task<T> PostAsyncWithAuth<T>(string url, object? data = null)
         {
             HttpContent? content = null;
