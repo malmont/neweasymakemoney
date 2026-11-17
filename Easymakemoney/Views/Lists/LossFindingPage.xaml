@@ -98,6 +98,7 @@
                     <components:UiCard Style="{StaticResource UiCard}" Padding="14">
                         <VerticalStackLayout Spacing="8">
                             <components:UiTerm Term="decision-constat" Text="Votre décision" FontSize="15" />
+                            <Label Text="{Binding Finding.GrewText}" IsVisible="{Binding Finding.HasGrown}" FontFamily="InterSemiBold" FontSize="13" TextColor="#B45309" />
                             <Label Text="{Binding Finding.DecisionText}" Style="{StaticResource UiBody}" FontSize="13" />
                             <Label Text="{Binding Finding.DecisionNote}" IsVisible="{Binding Finding.HasDecisionNote}" Style="{StaticResource UiBody}" FontSize="13" FontAttributes="Italic" />
                             <FlexLayout Wrap="Wrap" Direction="Row" Margin="0,0,0,-8" BindableLayout.ItemsSource="{Binding Choices}">

@@ -108,6 +108,7 @@
                                         </Grid>
                                         <Label Text="{Binding summary}" Style="{StaticResource UiTitle}" FontSize="14" />
                                         <Label Text="{Binding DetailText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                        <Label Text="{Binding GrewText}" IsVisible="{Binding HasGrown}" FontFamily="InterMedium" FontSize="12" TextColor="#B45309" />
                                         <Label Text="{Binding statusLabel}" FontFamily="InterMedium" FontSize="12" TextColor="{StaticResource UiTextSecondary}" />
                                     </VerticalStackLayout>
                                 </components:UiCard>

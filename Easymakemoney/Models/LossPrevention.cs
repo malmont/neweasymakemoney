@@ -118,6 +118,16 @@ namespace Easymakemoney.Models
         public bool backfill { get; set; }
         public bool exercise { get; set; }
 
+        /// <summary>Constat classé (expliqué, écarté, à surveiller) dont le nombre a au moins doublé depuis la décision (L5-b).</summary>
+        public LossGrowth? grewSinceDecision { get; set; }
+
+        public bool HasGrown => grewSinceDecision != null;
+
+        /// <summary>« A grossi depuis votre décision : 4 à la décision, 8 maintenant. »</summary>
+        public string GrewText => grewSinceDecision is { } g
+            ? $"A grossi depuis votre décision : {g.before} à la décision, {g.after} maintenant."
+            : string.Empty;
+
         /// <summary>« Constat 12 » ; un exercice a un numéro négatif : « Exercice 3 ».</summary>
         public string NumberText => exercise || number < 0 ? $"Exercice {Math.Abs(number)}" : $"Constat {number}";
 
@@ -147,8 +157,15 @@ namespace Easymakemoney.Models
             }
         }
 
-        public string BadgeText => isNew ? "Nouveau" : newEvidenceSinceDecision ? "Nouvelles preuves" : backfill ? "Reprise" : string.Empty;
+        public string BadgeText => HasGrown ? "A grossi" : isNew ? "Nouveau" : newEvidenceSinceDecision ? "Nouvelles preuves" : backfill ? "Reprise" : string.Empty;
         public bool HasBadge => BadgeText.Length > 0;
+    }
+
+    public class LossGrowth
+    {
+        public string? at { get; set; }
+        public int before { get; set; }
+        public int after { get; set; }
     }
 
     /// <summary>La fiche d'un constat : preuves, personnes en poste, décision et historique.</summary>
@@ -220,13 +237,19 @@ namespace Easymakemoney.Models
 
     public class LossHistoryEntry
     {
+        /// <summary>« decision », ou « grew » : le constat a grossi (sans auteur, texte déjà rédigé dans statusLabel).</summary>
+        public string? kind { get; set; }
+        public int? before { get; set; }
+        public int? after { get; set; }
         public string? at { get; set; }
         public string? status { get; set; }
         public string? statusLabel { get; set; }
         public bool hasNote { get; set; }
         public LossPerson? by { get; set; }
 
-        public string Text => $"{LossFormat.Date(at)} · {statusLabel ?? status} · {by?.name ?? "—"}{(hasNote ? " · avec une note" : string.Empty)}";
+        public string Text => kind == "grew"
+            ? $"{LossFormat.Date(at)} · {statusLabel ?? $"a grossi depuis votre décision ({before} puis {after})"}"
+            : $"{LossFormat.Date(at)} · {statusLabel ?? status} · {by?.name ?? "—"}{(hasNote ? " · avec une note" : string.Empty)}";
     }
 
     /// <summary>Mode exercice (EX-1) : scénarios, exercices du site et plafonds ; ouvert même sans le droit du module.</summary>

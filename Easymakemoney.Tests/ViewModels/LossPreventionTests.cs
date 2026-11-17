@@ -97,6 +97,7 @@ public class LossPreventionTests : IDisposable
         Assert.Equal("Exercice 3", finding.NumberText);
         Assert.Equal("Nouveau", new LossFinding { isNew = true }.BadgeText);
         Assert.Equal("Nouvelles preuves", new LossFinding { newEvidenceSinceDecision = true }.BadgeText);
+        Assert.Equal("A grossi", new LossFinding { isNew = true, grewSinceDecision = new LossGrowth { before = 4, after = 8 } }.BadgeText);
     }
 
     [Fact]
@@ -289,5 +290,29 @@ public class LossExerciseTests
 
         Assert.Equal("gestion/pertes/exercices/12?locale=fr", http.RequestedUrls[0]);
         Assert.DoesNotContain(http.RequestedUrls, url => url.Contains("/constats/"));
+    }
+
+    [Fact]
+    public void Constat_qui_a_grossi_lu_depuis_le_json()
+    {
+        var json = "{\"id\":5,\"number\":12,\"isNew\":true,\"grewSinceDecision\":{\"at\":\"2026-11-17T10:00:00+00:00\",\"before\":4,\"after\":8},"
+            + "\"history\":[{\"kind\":\"grew\",\"at\":\"2026-11-17T10:00:00+00:00\",\"by\":null,\"before\":4,\"after\":8,\"statusLabel\":\"A grossi depuis votre décision : 4 puis 8\"},"
+            + "{\"kind\":\"decision\",\"at\":\"2026-11-10T10:00:00+00:00\",\"status\":\"explained\",\"statusLabel\":\"Expliqué\",\"by\":{\"id\":1,\"name\":\"Gérant\"}}]}";
+        var finding = System.Text.Json.JsonSerializer.Deserialize<LossFindingDetail>(json)!;
+
+        Assert.True(finding.HasGrown);
+        Assert.Equal("A grossi depuis votre décision : 4 à la décision, 8 maintenant.", finding.GrewText);
+        Assert.Equal("A grossi", finding.BadgeText);
+        Assert.EndsWith("A grossi depuis votre décision : 4 puis 8", finding.history[0].Text);
+        Assert.DoesNotContain("—", finding.history[0].Text);
+        Assert.EndsWith("Expliqué · Gérant", finding.history[1].Text);
+    }
+
+    [Fact]
+    public void Constat_sans_croissance()
+    {
+        var finding = System.Text.Json.JsonSerializer.Deserialize<LossFinding>("{\"id\":5,\"number\":12,\"grewSinceDecision\":null}")!;
+        Assert.False(finding.HasGrown);
+        Assert.Equal(string.Empty, finding.GrewText);
     }
 }
