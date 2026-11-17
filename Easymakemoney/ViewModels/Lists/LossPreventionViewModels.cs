@@ -93,7 +93,7 @@ namespace Easymakemoney.ViewModels.Lists
             {
                 Summary = null;
                 IsModuleInactive = true;
-                ModuleInactiveText = "Ce site n'a pas encore la Prévention des pertes. Elle s'essaie gratuitement ou se demande sur le web, dans la gestion, thème « Prévention des pertes ».";
+                ModuleInactiveText = Utilities.AppStorePolicy.LossModuleMissingText;
                 Findings.Clear();
                 IsEmpty = false;
                 HasMore = false;

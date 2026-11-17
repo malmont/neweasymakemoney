@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:utilities="clr-namespace:Easymakemoney.Utilities"
              xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
              xmlns:stats="clr-namespace:Easymakemoney.ViewModels.Statistiques"
              xmlns:models="clr-namespace:Easymakemoney.Models"
@@ -81,7 +82,7 @@
                 <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding IsModuleInactive}">
                     <VerticalStackLayout Spacing="4">
                         <Label Text="Module Assistance non activé" Style="{StaticResource UiTitle}" FontSize="15" />
-                        <Label Text="Ce site n'a pas le module Assistance. Il se demande ou s'active sur le site, dans « Mon site »." Style="{StaticResource UiBody}" FontSize="13" />
+                        <Label Text="{x:Static utilities:AppStorePolicy.SupportModuleMissingText}" Style="{StaticResource UiBody}" FontSize="13" />
                     </VerticalStackLayout>
                 </components:UiCard>
 

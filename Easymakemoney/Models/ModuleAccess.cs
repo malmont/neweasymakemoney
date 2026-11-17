@@ -86,6 +86,10 @@ namespace Easymakemoney.Models
         {
             get
             {
+                if (!Utilities.AppStorePolicy.CanOfferModules)
+                    return Pending
+                        ? "Une demande d'activation est en attente pour ce site."
+                        : "L'application de gestion n'est pas encore activée sur ce site.";
                 if (Pending)
                     return "Votre demande est en attente. La plateforme vous répondra par courriel ; l'application s'ouvrira dès l'accord.";
                 if (!Requestable)
@@ -96,7 +100,8 @@ namespace Easymakemoney.Models
             }
         }
 
-        public bool CanRequest => Requestable && !Pending;
+        /// <summary>Jamais sur iPhone (règle de l'App Store) : pas d'essai ni de demande depuis l'application.</summary>
+        public bool CanRequest => Requestable && !Pending && Utilities.AppStorePolicy.CanOfferModules;
 
         public string RequestButtonText => TrialDays > 0 ? $"Essayer {TrialDays} jours gratuitement" : "Demander l'activation";
 

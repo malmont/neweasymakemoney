@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:utilities="clr-namespace:Easymakemoney.Utilities"
              xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
              xmlns:components="clr-namespace:Easymakemoney.Components"
              x:DataType="list:ModuleInactiveViewModel"
@@ -35,7 +36,7 @@
                     BackgroundColor="{StaticResource UiSurface}" TextColor="{DynamicResource ThemePrimary}"
                     BorderColor="{DynamicResource ThemePrimary}" BorderWidth="1" />
 
-            <Label Text="L'offre et le forfait du site se gèrent aussi sur le site, dans « Mon site »."
+            <Label Text="L'offre et le forfait du site se gèrent aussi sur le site, dans « Mon site »." IsVisible="{x:Static utilities:AppStorePolicy.CanOfferModules}"
                    Style="{StaticResource UiBody}" FontSize="12" HorizontalTextAlignment="Center" />
         </VerticalStackLayout>
     </ScrollView>

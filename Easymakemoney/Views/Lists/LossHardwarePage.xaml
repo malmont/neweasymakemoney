@@ -4,6 +4,7 @@
              xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
              xmlns:models="clr-namespace:Easymakemoney.Models"
              xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:utilities="clr-namespace:Easymakemoney.Utilities"
              x:DataType="list:LossHardwareViewModel"
              x:Class="Easymakemoney.Views.Lists.LossHardwarePage"
              Style="{StaticResource UiPage}"
@@ -25,7 +26,7 @@
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Padding="16" Spacing="12">
 
-                <Label Text="Ce site n'a pas encore la Prévention des pertes. Elle s'essaie gratuitement ou se demande sur le web, dans la gestion."
+                <Label Text="{x:Static utilities:AppStorePolicy.LossModuleMissingText}"
                        IsVisible="{Binding IsModuleInactive}" Style="{StaticResource UiBody}" FontSize="14" />
 
                 <!-- Session éteinte pendant que l'écran restait ouvert -->
