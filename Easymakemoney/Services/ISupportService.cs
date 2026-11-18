@@ -7,6 +7,8 @@ namespace Easymakemoney.Services
         Task<SupportTicket> CreateAsync(SupportTicketCreateRequest request);
         Task<SupportTicket> UpdateAsync(int id, IDictionary<string, object?> changes);
         Task AddMessageAsync(int id, string body, bool isInternal, bool fromCustomer);
+        /// <summary>« Transmettre à l'équipe technique » (INC-3) : le résumé écrit par l'agent, jamais le fil ni les coordonnées du client.</summary>
+        Task<SupportEscaladeResult> EscaladeAsync(int id, string summary);
     }
 
     /// <summary>Module Assistance, lot 1 du backend : routes /api/support (ROLE_ADMIN ou ROLE_SUPPORT).</summary>
@@ -56,5 +58,9 @@ namespace Easymakemoney.Services
                 payload["fromCustomer"] = true;
             await _httpService.PostAsyncWithAuth<object>($"support/tickets/{id}/messages", payload);
         }
+
+        public async Task<SupportEscaladeResult> EscaladeAsync(int id, string summary) =>
+            await _httpService.PostAsyncWithAuth<SupportEscaladeResult>($"support/tickets/{id}/escalade",
+                new Dictionary<string, object> { ["summary"] = summary.Trim() }) ?? new SupportEscaladeResult();
     }
 }

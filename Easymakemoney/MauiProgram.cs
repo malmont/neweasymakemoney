@@ -226,6 +226,9 @@ public static class MauiProgram
 		builder.Services.AddTransient<ModuleInactivePage>();
 		builder.Services.AddTransient<ManagementReadinessPage>();
 		builder.Services.AddTransient<SupportTicketListPage>();
+		builder.Services.AddTransient<BugReportPage>();
+		builder.Services.AddTransient<BugReportViewModel>();
+		builder.Services.AddSingleton<IBugReportService, BugReportService>();
 		builder.Services.AddTransient<LossFindingListPage>();
 		builder.Services.AddTransient<LossFindingPage>();
 		builder.Services.AddTransient<LossExercisePage>();

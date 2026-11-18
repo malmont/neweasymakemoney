@@ -137,6 +137,18 @@ namespace Easymakemoney.ViewModels.Lists
             await NavigateAsync(nameof(TreasuryPage));
         }
 
+        /// <summary>« Signaler un problème » : seulement pour le personnel (administrateur, responsable de caisse, caissier).</summary>
+        public bool CanReportBug =>
+            Easymakemoney.Models.BugReportRules.CanReport(
+                Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions
+                    .GetService<Easymakemoney.Services.Session.ISessionService>(_services)?.CurrentUser?.Roles);
+
+        [RelayCommand]
+        private async Task NavigateToBugReport()
+        {
+            await NavigateAsync(nameof(BugReportPage));
+        }
+
         [RelayCommand]
         private async Task NavigateToSupport()
         {

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:stats="clr-namespace:Easymakemoney.ViewModels.Statistiques"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             x:DataType="list:BugReportViewModel"
+             x:Class="Easymakemoney.Views.Lists.BugReportPage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Signaler un problème">
+
+    <ContentPage.Resources>
+        <Style x:Key="Chip" TargetType="Border">
+            <Setter Property="StrokeShape" Value="RoundRectangle 18" />
+            <Setter Property="Padding" Value="12,8" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Signaler un problème" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <Label Text="Quelque chose ne marche pas ? Décrivez-le : l'équipe technique de la plateforme le reçoit et vous répond ici et par courriel."
+                       Style="{StaticResource UiBody}" FontSize="13" />
+
+                <components:UiCard Style="{StaticResource UiCard}" Padding="16">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Où ?" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                        <FlexLayout Wrap="Wrap" Direction="Row" Margin="0,0,0,-8" BindableLayout.ItemsSource="{Binding Sections}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="stats:StatsChoice">
+                                    <Border Style="{StaticResource Chip}">
+                                        <Border.Triggers>
+                                            <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                                <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimary}" />
+                                                <Setter Property="Stroke" Value="{DynamicResource ThemePrimary}" />
+                                            </DataTrigger>
+                                        </Border.Triggers>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.SelectSectionCommand, Source={x:Reference Page}, x:DataType=ContentPage}" CommandParameter="{Binding Code}" />
+                                        </Border.GestureRecognizers>
+                                        <Label Text="{Binding Label}" FontFamily="InterSemiBold" FontSize="13" TextColor="{StaticResource UiTextPrimary}">
+                                            <Label.Triggers>
+                                                <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                                                    <Setter Property="TextColor" Value="{DynamicResource ThemeOnPrimary}" />
+                                                </DataTrigger>
+                                            </Label.Triggers>
+                                        </Label>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </FlexLayout>
+
+                        <Label Text="Ce qui se passe" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" />
+                        <Border StrokeThickness="1" Stroke="{StaticResource UiBorder}" StrokeShape="RoundRectangle 12" Padding="10,4" BackgroundColor="{StaticResource UiSurface}">
+                            <Editor Text="{Binding Description}" Placeholder="Ce que vous faisiez, ce qui s'est passé, ce que vous attendiez" AutoSize="TextChanges" MinimumHeightRequest="120"
+                                    MaxLength="2000" FontFamily="Inter" FontSize="15" TextColor="{StaticResource UiTextPrimary}" PlaceholderColor="{StaticResource UiTextMuted}" BackgroundColor="Transparent" />
+                        </Border>
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="{x:Static list:BugReportViewModel.NoCustomerDataText}" Style="{StaticResource UiBody}" FontSize="12" />
+                            <Label Grid.Column="1" Text="{Binding CountText}" Style="{StaticResource UiBody}" FontSize="12" />
+                        </Grid>
+                        <Label Text="{Binding DescriptionError}" IsVisible="{Binding HasDescriptionError}" FontSize="12" TextColor="#B91C1C" />
+
+                        <Button Text="Joindre une capture (facultatif)" Command="{Binding PickScreenshotCommand}" IsVisible="{Binding HasNoScreenshot}"
+                                HeightRequest="44" CornerRadius="12" FontFamily="InterSemiBold" FontSize="14"
+                                BackgroundColor="{StaticResource UiSurface}" TextColor="{DynamicResource ThemePrimary}" BorderColor="{DynamicResource ThemePrimary}" BorderWidth="1" />
+                        <VerticalStackLayout Spacing="8" IsVisible="{Binding HasScreenshot}">
+                            <Image Source="{Binding ScreenshotPreview}" HeightRequest="160" Aspect="AspectFit" HorizontalOptions="Start" />
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                                <CheckBox IsChecked="{Binding NoCustomerDataChecked}" VerticalOptions="Start" />
+                                <Label Grid.Column="1" Text="{x:Static list:BugReportViewModel.ScreenshotCheckText}" Style="{StaticResource UiBody}" FontSize="13" VerticalOptions="Center" />
+                            </Grid>
+                            <Label Text="Retirer la capture" FontFamily="InterSemiBold" FontSize="13" TextColor="{DynamicResource ThemePrimary}">
+                                <Label.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding RemoveScreenshotCommand}" />
+                                </Label.GestureRecognizers>
+                            </Label>
+                        </VerticalStackLayout>
+                        <Label Text="{Binding ScreenshotError}" IsVisible="{Binding HasScreenshotError}" FontSize="12" TextColor="#B91C1C" />
+
+                        <Button Text="Envoyer" Command="{Binding SendCommand}" IsEnabled="{Binding CanSend}" HeightRequest="48" CornerRadius="14"
+                                FontFamily="InterSemiBold" FontSize="15" BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" />
+                        <Label Text="{Binding ResultMessage}" IsVisible="{Binding HasResultMessage}" FontFamily="InterSemiBold" FontSize="13" TextColor="{DynamicResource ThemePrimary}" />
+                    </VerticalStackLayout>
+                </components:UiCard>
+
+                <Label Text="Mes signalements" Style="{StaticResource UiTitle}" FontSize="16" IsVisible="{Binding HasReports}" Margin="0,6,0,0" />
+                <VerticalStackLayout Spacing="8" BindableLayout.ItemsSource="{Binding Reports}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="models:BugReport">
+                            <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                                <VerticalStackLayout Spacing="4">
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                        <Label Text="{Binding HeaderText}" FontFamily="InterSemiBold" FontSize="12" TextColor="{DynamicResource ThemePrimary}" />
+                                        <Label Grid.Column="1" Text="{Binding StatusText}" FontFamily="InterSemiBold" FontSize="12" TextColor="#B45309" />
+                                    </Grid>
+                                    <Label Text="{Binding description}" Style="{StaticResource UiBody}" FontSize="13" MaxLines="4" LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding AnswerText}" IsVisible="{Binding HasAnswer}" FontFamily="InterMedium" FontSize="13" TextColor="{StaticResource UiTextPrimary}" />
+                                </VerticalStackLayout>
+                            </components:UiCard>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

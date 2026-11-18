@@ -117,6 +117,34 @@
                     </BindableLayout.ItemTemplate>
                 </VerticalStackLayout>
 
+                <!-- Équipe technique de la plateforme (INC-3 / INC-4) -->
+                <components:UiCard Style="{StaticResource UiCard}" Padding="16" IsVisible="{Binding HasPlatform}">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="{Binding Platform.StatusText}" FontFamily="InterSemiBold" FontSize="14" TextColor="{DynamicResource ThemePrimary}" />
+                        <Label Text="{Binding Platform.AnswerText}" IsVisible="{Binding Platform.HasAnswer}" Style="{StaticResource UiBody}" FontSize="13" />
+                    </VerticalStackLayout>
+                </components:UiCard>
+                <Button Text="Transmettre à l'équipe technique" Command="{Binding OpenEscaladeCommand}" IsVisible="{Binding CanEscalate}"
+                        HeightRequest="44" CornerRadius="12" FontFamily="InterSemiBold" FontSize="14"
+                        BackgroundColor="{StaticResource UiSurface}" TextColor="{DynamicResource ThemePrimary}" BorderColor="{DynamicResource ThemePrimary}" BorderWidth="1" />
+                <components:UiCard Style="{StaticResource UiCard}" Padding="16" IsVisible="{Binding IsEscaladeOpen}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="Transmettre à l'équipe technique" FontFamily="InterSemiBold" FontSize="15" TextColor="{StaticResource UiTextPrimary}" />
+                        <Label Text="{x:Static list:SupportTicketViewModel.EscaladeHint}" Style="{StaticResource UiBody}" FontSize="12" />
+                        <Border StrokeThickness="1" Stroke="{StaticResource UiBorder}" StrokeShape="RoundRectangle 12" Padding="10,4" BackgroundColor="{StaticResource UiSurface}">
+                            <Editor Text="{Binding EscaladeSummary}" Placeholder="Résumé du problème (20 caractères au moins)" AutoSize="TextChanges" MinimumHeightRequest="96"
+                                    FontFamily="Inter" FontSize="15" TextColor="{StaticResource UiTextPrimary}" PlaceholderColor="{StaticResource UiTextMuted}" BackgroundColor="Transparent" />
+                        </Border>
+                        <Label Text="{Binding EscaladeError}" IsVisible="{Binding HasEscaladeError}" FontSize="12" TextColor="#B91C1C" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <Button Text="Annuler" Command="{Binding CancelEscaladeCommand}" HeightRequest="44" CornerRadius="12" FontFamily="InterSemiBold" FontSize="14"
+                                    BackgroundColor="{StaticResource UiSurface}" TextColor="{StaticResource UiTextPrimary}" BorderColor="{StaticResource UiBorder}" BorderWidth="1" />
+                            <Button Grid.Column="1" Text="Transmettre" Command="{Binding EscaladeCommand}" HeightRequest="44" CornerRadius="12" FontFamily="InterSemiBold" FontSize="14"
+                                    BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </components:UiCard>
+
                 <!-- Réponse -->
                 <components:UiCard Style="{StaticResource UiCard}" Padding="16" IsVisible="{Binding CanReply}" Margin="0,6,0,0">
                     <VerticalStackLayout Spacing="10">

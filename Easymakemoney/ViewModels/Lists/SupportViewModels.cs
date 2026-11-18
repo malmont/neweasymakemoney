@@ -173,8 +173,29 @@ namespace Easymakemoney.ViewModels.Lists
         public ObservableCollection<SupportMessage> Messages { get; } = new();
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(HasTicket), nameof(CanReply))]
+        [NotifyPropertyChangedFor(nameof(HasTicket), nameof(CanReply), nameof(Platform), nameof(HasPlatform), nameof(CanEscalate))]
         private SupportTicketDetail? _ticket;
+
+        // Transmission à l'équipe technique (INC-3 / INC-4)
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(Platform), nameof(HasPlatform), nameof(CanEscalate))]
+        private SupportPlatform? _sentPlatform;
+
+        [ObservableProperty]
+        private string _escaladeSummary = string.Empty;
+
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasEscaladeError))]
+        private string _escaladeError = string.Empty;
+
+        [ObservableProperty]
+        private bool _isEscaladeOpen;
+
+        public SupportPlatform? Platform => SentPlatform ?? Ticket?.platform;
+        public bool HasPlatform => Platform != null;
+        public bool CanEscalate => HasTicket && Platform == null && !(Ticket?.anonymized ?? false);
+        public bool HasEscaladeError => EscaladeError.Length > 0;
+        public const string EscaladeHint = "Décrivez le problème technique en quelques phrases. Ne recopiez ni les échanges ni les coordonnées du client.";
 
         [ObservableProperty]
         private string _replyText = string.Empty;
@@ -209,6 +230,62 @@ namespace Easymakemoney.ViewModels.Lists
                 foreach (var message in ticket.messages)
                     Messages.Add(message);
                 Ticket = ticket;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await ShowErrorAsync(ex);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
+        private void OpenEscalade()
+        {
+            EscaladeError = string.Empty;
+            IsEscaladeOpen = CanEscalate;
+        }
+
+        [RelayCommand]
+        private void CancelEscalade()
+        {
+            IsEscaladeOpen = false;
+            EscaladeSummary = string.Empty;
+            EscaladeError = string.Empty;
+        }
+
+        [RelayCommand]
+        private async Task Escalade()
+        {
+            if (!CanEscalate || IsBusy)
+                return;
+            var summary = EscaladeSummary?.Trim() ?? string.Empty;
+            if (summary.Length < BugReportRules.MinSummary || summary.Length > BugReportRules.MaxSummary)
+            {
+                EscaladeError = $"Le résumé doit faire de {BugReportRules.MinSummary} à {BugReportRules.MaxSummary} caractères.";
+                return;
+            }
+            IsBusy = true;
+            try
+            {
+                var result = await _service.EscaladeAsync(TicketId, summary);
+                SentPlatform = result.platform ?? new SupportPlatform();
+                IsEscaladeOpen = false;
+                EscaladeSummary = string.Empty;
+                EscaladeError = string.Empty;
+            }
+            catch (ApiException ex) when (ex.ApiError.Code == "ALREADY_ESCALATED")
+            {
+                IsEscaladeOpen = false;
+                IsBusy = false;
+                await LoadAsync();
+            }
+            catch (ApiException ex) when (ex.StatusCode == System.Net.HttpStatusCode.UnprocessableEntity)
+            {
+                EscaladeError = $"Le résumé doit faire de {BugReportRules.MinSummary} à {BugReportRules.MaxSummary} caractères.";
             }
             catch (Exception ex)
             {

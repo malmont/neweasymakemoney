@@ -93,6 +93,8 @@ namespace Easymakemoney.Models
     {
         public List<SupportMessage> messages { get; set; } = new();
         public SupportOrderSummary? orderSummary { get; set; }
+        /// <summary>Transmission à l'équipe technique (INC-3) : null tant que la demande n'a jamais été transmise.</summary>
+        public SupportPlatform? platform { get; set; }
 
         public bool HasOrder => orderSummary != null;
     }

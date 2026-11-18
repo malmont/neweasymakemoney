@@ -428,6 +428,46 @@ public class SupportTests : IDisposable
         Assert.True(SupportTicketListViewModel.TicketsChanged);
     }
 
+    // ---------- Transmission à l'équipe technique (INC-4) ----------
+
+    [Fact]
+    public async Task Transmettre_a_l_equipe_technique()
+    {
+        var service = new FakeSupportService { Detail = new SupportTicketDetail { id = 7, subject = "Commande" } };
+        var vm = new SupportTicketViewModel(service, new FakeDialogService()) { TicketId = 7 };
+        await vm.LoadAsync();
+        Assert.True(vm.CanEscalate);
+
+        vm.OpenEscaladeCommand.Execute(null);
+        vm.EscaladeSummary = "trop court";
+        await vm.EscaladeCommand.ExecuteAsync(null);
+        Assert.True(vm.HasEscaladeError);
+        Assert.Empty(service.Escalades);
+
+        vm.EscaladeSummary = "Le paiement est capturé deux fois sur ce type de commande.";
+        await vm.EscaladeCommand.ExecuteAsync(null);
+        Assert.Equal(7, Assert.Single(service.Escalades).Id);
+        Assert.True(vm.HasPlatform);
+        Assert.False(vm.CanEscalate);
+        Assert.Equal("Transmis à l'équipe technique", vm.Platform!.StatusText);
+    }
+
+    [Fact]
+    public async Task Deja_transmis_le_bouton_disparait_apres_relecture()
+    {
+        var service = new FakeSupportService { Detail = new SupportTicketDetail { id = 7 } };
+        var vm = new SupportTicketViewModel(service, new FakeDialogService()) { TicketId = 7 };
+        await vm.LoadAsync();
+        service.EscaladeError = new ApiException(new ApiError { Code = "ALREADY_ESCALATED" }, HttpStatusCode.Conflict);
+        service.Detail = new SupportTicketDetail { id = 7, platform = new SupportPlatform { status = "fixed", answer = "Corrigé." } };
+
+        vm.EscaladeSummary = "Le paiement est capturé deux fois sur ce type de commande.";
+        await vm.EscaladeCommand.ExecuteAsync(null);
+        Assert.False(vm.CanEscalate);
+        Assert.Equal("Équipe technique : corrigé", vm.Platform!.StatusText);
+        Assert.True(vm.Platform.HasAnswer);
+    }
+
     // ---------- Faux service ----------
 
     private sealed class FakeSupportService : ISupportService
@@ -472,6 +512,17 @@ public class SupportTests : IDisposable
                 return Task.FromException(MessageError);
             Messages.Add((id, body.Trim(), isInternal, fromCustomer));
             return Task.CompletedTask;
+        }
+
+        public Exception? EscaladeError { get; set; }
+        public List<(int Id, string Summary)> Escalades { get; } = new();
+
+        public Task<SupportEscaladeResult> EscaladeAsync(int id, string summary)
+        {
+            if (EscaladeError != null)
+                return Task.FromException<SupportEscaladeResult>(EscaladeError);
+            Escalades.Add((id, summary));
+            return Task.FromResult(new SupportEscaladeResult { platform = new SupportPlatform { status = "transmitted" } });
         }
     }
 }
