@@ -67,12 +67,21 @@ public static class MauiProgram
 			.AddHttpMessageHandler<AuthHandler>()
 			.AddHttpMessageHandler<Easymakemoney.Services.Module.ModuleGateHandler>()
 			// En dernier : la requête porte déjà le site et le jeton ; sans réseau, sert la dernière copie (statistiques, trésorerie)
-			.AddHttpMessageHandler<Easymakemoney.Services.Offline.OfflineCacheHandler>();
+			.AddHttpMessageHandler<Easymakemoney.Services.Offline.OfflineCacheHandler>()
+			// Au plus près du réseau : voit l'appel resté sans réponse, avant que la copie hors connexion ne le remplace (INC-2)
+			.AddHttpMessageHandler<Easymakemoney.Services.Incidents.IncidentNetworkHandler>();
 
 		builder.Services.AddHttpClient<ISiteService, SiteService>(ConfigureBackendHttpClient)
 			.AddHttpMessageHandler<TenantHandler>();
 
 		builder.Services.AddSingleton<IDeviceInfoService, MauiDeviceInfoService>();
+
+		// Remontée des incidents vers la plateforme (lot INC-2)
+		builder.Services.AddSingleton<Easymakemoney.Services.Incidents.IIncidentQueue, Easymakemoney.Services.Incidents.FileIncidentQueue>();
+		builder.Services.AddSingleton<Easymakemoney.Services.Incidents.IIncidentEnvironment, Easymakemoney.Services.Incidents.MauiIncidentEnvironment>();
+		builder.Services.AddSingleton<Easymakemoney.Services.Incidents.IIncidentSender, Easymakemoney.Services.Incidents.HttpIncidentSender>();
+		builder.Services.AddSingleton<Easymakemoney.Services.Incidents.IIncidentReporter, Easymakemoney.Services.Incidents.IncidentReporter>();
+		builder.Services.AddTransient<Easymakemoney.Services.Incidents.IncidentNetworkHandler>();
 		builder.Services.AddSingleton<ITenantStore, TenantStore>();
 		builder.Services.AddSingleton<Easymakemoney.Services.Theme.ISiteBrandingService, Easymakemoney.Services.Theme.SiteBrandingService>();
 		builder.Services.AddSingleton<ISiteDataCleaner, SiteDataCleaner>();

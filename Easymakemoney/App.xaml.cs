@@ -55,6 +55,29 @@ namespace Easymakemoney
 
             // Le Shell est créé ici, après InitializeComponent : son XAML utilise les ressources de l'application.
             _shell = services.GetRequiredService<AppShell>();
+
+            // Remontée des incidents (INC-2) : erreurs non attrapées, plantage noté pour le lancement suivant, file au retour du réseau
+            if (services.GetService<Easymakemoney.Services.Incidents.IIncidentReporter>() is { } reporter)
+            {
+                AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+                {
+                    if (e.ExceptionObject is not Exception ex)
+                        return;
+                    if (e.IsTerminating)
+                        reporter.WriteCrashMarker(ex);
+                    else
+                        reporter.ReportException(ex);
+                };
+                TaskScheduler.UnobservedTaskException += (_, e) => reporter.ReportException(e.Exception);
+                try
+                {
+                    Connectivity.Current.ConnectivityChanged += (_, _) => _ = reporter.FlushAsync();
+                }
+                catch (Exception)
+                {
+                }
+                _ = reporter.StartAsync();
+            }
         }
 
         protected override Window CreateWindow(IActivationState? activationState) => new(_shell);
