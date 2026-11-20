@@ -58,6 +58,33 @@ namespace Easymakemoney.Services
             }
         }
 
+        public async Task<T> PostAsyncWithAuth<T>(string url, object data, CancellationToken cancellationToken)
+        {
+            var json = JsonConvert.SerializeObject(data);
+            using var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response;
+            try
+            {
+                response = await _httpClient.PostAsync(url, content, cancellationToken);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                // Demande abandonnée par l'appelant (une plus récente l'a remplacée) : ce n'est pas une coupure réseau.
+                throw;
+            }
+            catch (Exception ex) when (ex is HttpRequestException or IOException or OperationCanceledException or TimeoutException)
+            {
+                throw ApiException.NoConnection(ex);
+            }
+
+            using (response)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                return await HandleResponseAsync<T>(response);
+            }
+        }
+
         public async Task<T> PostAsyncWithAuth<T>(string url, object? data = null)
         {
             HttpContent? content = null;
@@ -361,6 +388,10 @@ namespace Easymakemoney.Services
 
             // Le « currency » d'un fournisseur est celui de ses commandes, pas celui du site.
             if (element.TryGetProperty("purchaseCurrency", out _))
+                return false;
+
+            // Le « currency » d'un prêt (FIS-1) est sa propre devise, qui peut différer de celle du site.
+            if (element.TryGetProperty("ratePpm", out _))
                 return false;
 
             return TryReadString(element, "currency", out currencyCode)

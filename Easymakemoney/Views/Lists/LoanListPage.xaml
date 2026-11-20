@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             x:DataType="list:LoanListViewModel"
+             x:Class="Easymakemoney.Views.Lists.LoanListPage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Prêts">
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Prêts" />
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Loans}" SelectionMode="None" Margin="16,0">
+            <CollectionView.Header>
+                <VerticalStackLayout Padding="0,12,0,12" Spacing="10">
+                    <components:UiCard Style="{StaticResource UiCard}" Padding="16">
+                        <VerticalStackLayout Spacing="4">
+                            <components:UiTerm Term="capital-restant-du" Text="Restant dû aujourd'hui" FontSize="14" />
+                            <Label Text="{Binding RemainingTotalText}" FontFamily="InterBold" FontSize="24" TextColor="{StaticResource UiTextPrimary}" />
+                            <Label Text="Les prêts dans une autre devise ne sont pas comptés dans ce total : ils restent hors trésorerie et résultats."
+                                   IsVisible="{Binding HasOtherCurrency}" Style="{StaticResource UiBody}" FontSize="12" TextColor="#B45309" />
+                            <Label Text="Chaque échéance sort de la trésorerie, capital compris. Dans le résultat, seuls les intérêts, l'assurance et les frais comptent : le capital remboursé n'est pas une charge."
+                                   Style="{StaticResource UiBody}" FontSize="12" />
+                        </VerticalStackLayout>
+                    </components:UiCard>
+                    <Button Text="Nouveau prêt" Command="{Binding AddCommand}" HeightRequest="48" CornerRadius="12"
+                            FontFamily="InterBold" FontSize="15" BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}" />
+                    <VerticalStackLayout IsVisible="{Binding IsEmpty}" Spacing="8" Padding="8,24,8,0">
+                        <Label Text="Aucun prêt" FontFamily="InterBold" FontSize="20" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="Center" />
+                        <Label Text="Saisissez un emprunt une fois : l'échéancier se calcule, les échéances entrent dans la trésorerie et les intérêts dans le résultat."
+                               Style="{StaticResource UiBody}" FontSize="15" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </CollectionView.Header>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Loan">
+                    <Grid Padding="0,0,0,10">
+                        <components:UiCard Style="{StaticResource UiCard}" Padding="14">
+                            <components:UiCard.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Path=BindingContext.OpenCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                                      CommandParameter="{Binding .}" />
+                            </components:UiCard.GestureRecognizers>
+                            <VerticalStackLayout Spacing="3">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <Label Text="{Binding label}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
+                                    <Label Grid.Column="1" Text="{Binding RemainingText}" FontFamily="InterBold" FontSize="15" TextColor="{StaticResource UiTextPrimary}" />
+                                </Grid>
+                                <Label Text="{Binding lender}" IsVisible="{Binding HasLender}" Style="{StaticResource UiBody}" FontSize="13" />
+                                <Label Text="{Binding TermsText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                <Label Text="{Binding NextInstalmentLine}" FontFamily="InterSemiBold" FontSize="13" TextColor="{StaticResource UiTextPrimary}" />
+                                <Label Text="{Binding OtherCurrencyText}" IsVisible="{Binding IsOtherCurrency}" Style="{StaticResource UiBody}" FontSize="12" TextColor="#B45309" />
+                            </VerticalStackLayout>
+                        </components:UiCard>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

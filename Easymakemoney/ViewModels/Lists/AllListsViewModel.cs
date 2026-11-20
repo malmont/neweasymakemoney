@@ -126,6 +126,12 @@ namespace Easymakemoney.ViewModels.Lists
         }
 
         [RelayCommand]
+        private async Task NavigateToLoans()
+        {
+            await NavigateAsync(nameof(LoanListPage));
+        }
+
+        [RelayCommand]
         private async Task NavigateToFiscalYear()
         {
             await NavigateAsync(nameof(FiscalYearPage));

@@ -221,6 +221,8 @@ public class ApiError
             "TRANSPORTEUR_NOT_FOUND" => "Ce transporteur n'existe plus.",
             "COMMANDE_CLOSED" => "Cette commande est clôturée : rouvrez sa période pour la modifier.",
             "FRAIS_DE_PORT_NOT_FOUND" => "Cette commande n'a plus de frais de port.",
+            "LOAN_NOT_FOUND" => "Ce prêt n'existe plus.",
+            "LOAN_PREPAYMENT_NOT_FOUND" => "Ce remboursement anticipé n'existe plus.",
             _ => (int)statusCode switch
             {
                 429 => $"Trop de tentatives. Veuillez patienter {retryAfterSeconds ?? 60} secondes.",

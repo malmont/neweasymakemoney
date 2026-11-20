@@ -178,6 +178,7 @@ public sealed class StockLowAndAllListsViewModelTests : IDisposable
         await vm.NavigateToVariantPromotionsCommand.ExecuteAsync(null);
         await vm.NavigateToPriceBatchesCommand.ExecuteAsync(null);
         await vm.NavigateToFixedCostsCommand.ExecuteAsync(null);
+        await vm.NavigateToLoansCommand.ExecuteAsync(null);
         await vm.NavigateToTreasuryCommand.ExecuteAsync(null);
         await vm.NavigateToSupportCommand.ExecuteAsync(null);
 
@@ -194,6 +195,7 @@ public sealed class StockLowAndAllListsViewModelTests : IDisposable
                 "VariantPromotionListPage",
                 "PriceBatchListPage",
                 "FixedCostsPage",
+                "LoanListPage",
                 "TreasuryPage",
                 "SupportTicketListPage"
             ],

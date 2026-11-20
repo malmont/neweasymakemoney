@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             xmlns:handlers="clr-namespace:Easymakemoney.Handlers"
+             x:DataType="list:LoanEditViewModel"
+             x:Class="Easymakemoney.Views.Lists.LoanEditPage"
+             Style="{StaticResource UiPage}"
+             Title="Prêt">
+
+    <ContentPage.Resources>
+        <!-- Styles de formulaire : ils ne sont pas globaux -->
+        <Style x:Key="FormDate" TargetType="handlers:BorderlessDatePicker">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="FormLabel" TargetType="Label">
+            <Setter Property="FontFamily" Value="InterMedium" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextSecondary}" />
+        </Style>
+        <Style x:Key="FormError" TargetType="Label">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="TextColor" Value="#B91C1C" />
+        </Style>
+        <Style x:Key="FormField" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="{StaticResource UiSurface}" />
+            <Setter Property="Stroke" Value="{StaticResource UiBorder}" />
+            <Setter Property="StrokeThickness" Value="1" />
+            <Setter Property="MinimumHeightRequest" Value="48" />
+            <Setter Property="Padding" Value="12,0" />
+        </Style>
+        <Style x:Key="FormEntry" TargetType="handlers:BorderlessEntry">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="PlaceholderColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="FormPicker" TargetType="Picker">
+            <Setter Property="FontFamily" Value="Inter" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="TextColor" Value="{StaticResource UiTextPrimary}" />
+            <Setter Property="TitleColor" Value="{StaticResource UiTextMuted}" />
+            <Setter Property="BackgroundColor" Value="Transparent" />
+            <Setter Property="VerticalOptions" Value="Fill" />
+        </Style>
+        <Style x:Key="DocMain" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{DynamicResource ThemePrimary}" />
+            <Setter Property="TextColor" Value="{DynamicResource ThemeOnPrimary}" />
+            <Setter Property="FontFamily" Value="InterBold" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="CornerRadius" Value="14" />
+            <Setter Property="HeightRequest" Value="52" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="{Binding PageTitle}" />
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="16" Spacing="10">
+                <components:UiCard Style="{StaticResource UiCard}" Padding="14" IsVisible="{Binding IsReadOnly}">
+                    <Label Text="{Binding ReadOnlyText}" Style="{StaticResource UiBody}" FontSize="13" TextColor="#B45309" />
+                </components:UiCard>
+
+                <Label Text="Nom" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Ex. : Prêt d'aménagement du local" Text="{Binding Label}" />
+                </Border>
+                <Label Text="{Binding LabelError}" IsVisible="{Binding HasLabelError}" Style="{StaticResource FormError}" />
+
+                <Label Text="Prêteur (facultatif)" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Ex. : votre banque" Text="{Binding Lender}" />
+                </Border>
+                <Label Text="{Binding LenderError}" IsVisible="{Binding HasLenderError}" Style="{StaticResource FormError}" />
+
+                <Label Text="Montant emprunté" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="0,00" Keyboard="Numeric" Text="{Binding AmountText}" />
+                </Border>
+                <Label Text="{Binding AmountError}" IsVisible="{Binding HasAmountError}" Style="{StaticResource FormError}" />
+
+                <Label Text="Taux annuel (%)" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Ex. : 4,5" Keyboard="Numeric" Text="{Binding RateText}" />
+                </Border>
+                <Label Text="{Binding RateError}" IsVisible="{Binding HasRateError}" Style="{StaticResource FormError}" />
+
+                <Label Text="Durée en mois (différé compris)" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Ex. : 60" Keyboard="Numeric" Text="{Binding DurationText}" />
+                </Border>
+                <Label Text="{Binding DurationError}" IsVisible="{Binding HasDurationError}" Style="{StaticResource FormError}" />
+
+                <Label Text="Échéances" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <Picker Style="{StaticResource FormPicker}" Title="Choisir un rythme" ItemsSource="{Binding Frequencies}"
+                            SelectedItem="{Binding SelectedFrequency}" ItemDisplayBinding="{Binding Label, x:DataType=models:TreasuryChoice}" />
+                </Border>
+                <Label Text="{Binding FrequencyError}" IsVisible="{Binding HasFrequencyError}" Style="{StaticResource FormError}" />
+
+                <Label Text="Type de remboursement" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <Picker Style="{StaticResource FormPicker}" Title="Choisir un type" ItemsSource="{Binding Types}"
+                            SelectedItem="{Binding SelectedType}" ItemDisplayBinding="{Binding Label, x:DataType=models:TreasuryChoice}" />
+                </Border>
+                <Label Text="{Binding TypeError}" IsVisible="{Binding HasTypeError}" Style="{StaticResource FormError}" />
+
+                <Label Text="Date de déblocage" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessDatePicker Style="{StaticResource FormDate}" Date="{Binding DisbursedOn}" Format="dd/MM/yyyy" />
+                </Border>
+
+                <Label Text="Date de la première échéance" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessDatePicker Style="{StaticResource FormDate}" Date="{Binding FirstDueOn}" Format="dd/MM/yyyy" />
+                </Border>
+                <Label Text="{Binding DatesError}" IsVisible="{Binding HasDatesError}" Style="{StaticResource FormError}" />
+
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Différé" Style="{StaticResource FormLabel}" />
+                        <Label Text="Des premiers mois sans capital remboursé." Style="{StaticResource UiBody}" FontSize="12" />
+                    </VerticalStackLayout>
+                    <Switch Grid.Column="1" IsToggled="{Binding HasDeferral}" OnColor="{DynamicResource ThemePrimary}" VerticalOptions="Center" />
+                </Grid>
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding HasDeferral}">
+                    <Label Text="Durée du différé en mois" Style="{StaticResource FormLabel}" />
+                    <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Ex. : 6" Keyboard="Numeric" Text="{Binding DeferralMonthsText}" />
+                    </Border>
+                    <Label Text="Type de différé" Style="{StaticResource FormLabel}" />
+                    <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <Picker Style="{StaticResource FormPicker}" Title="Choisir un type de différé" ItemsSource="{Binding DeferralKinds}"
+                                SelectedItem="{Binding SelectedDeferralKind}" ItemDisplayBinding="{Binding Label, x:DataType=models:TreasuryChoice}" />
+                    </Border>
+                    <Label Text="Différé total : rien n'est payé, les intérêts s'ajoutent au capital." Style="{StaticResource UiBody}" FontSize="12" />
+                </VerticalStackLayout>
+                <Label Text="{Binding DeferralError}" IsVisible="{Binding HasDeferralError}" Style="{StaticResource FormError}" />
+
+                <Label Text="Assurance" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <Picker Style="{StaticResource FormPicker}" Title="Choisir l'assurance" ItemsSource="{Binding InsuranceModes}"
+                            SelectedItem="{Binding SelectedInsuranceMode}" ItemDisplayBinding="{Binding Label, x:DataType=models:TreasuryChoice}" />
+                </Border>
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding IsFixedInsurance}">
+                    <Label Text="Assurance par échéance" Style="{StaticResource FormLabel}" />
+                    <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="0,00" Keyboard="Numeric" Text="{Binding InsuranceAmountText}" />
+                    </Border>
+                </VerticalStackLayout>
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding IsRateInsurance}">
+                    <Label Text="Taux de l'assurance (%)" Style="{StaticResource FormLabel}" />
+                    <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                        <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Ex. : 0,3" Keyboard="Numeric" Text="{Binding InsuranceRateText}" />
+                    </Border>
+                </VerticalStackLayout>
+                <Label Text="{Binding InsuranceError}" IsVisible="{Binding HasInsuranceError}" Style="{StaticResource FormError}" />
+
+                <Label Text="Frais de dossier (facultatif)" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="0,00" Keyboard="Numeric" Text="{Binding FeesText}" />
+                </Border>
+                <Label Text="{Binding FeesError}" IsVisible="{Binding HasFeesError}" Style="{StaticResource FormError}" />
+
+                <Label Text="Notes (facultatif)" Style="{StaticResource FormLabel}" />
+                <Border Style="{StaticResource FormField}" StrokeShape="RoundRectangle 12">
+                    <handlers:BorderlessEntry Style="{StaticResource FormEntry}" Placeholder="Ex. : garantie sur le fonds de commerce" Text="{Binding Notes}" />
+                </Border>
+                <Label Text="{Binding NotesError}" IsVisible="{Binding HasNotesError}" Style="{StaticResource FormError}" />
+
+                <components:UiCard Style="{StaticResource UiCard}" Padding="16" Margin="0,8,0,0">
+                    <VerticalStackLayout Spacing="6">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <Label Text="Aperçu" Style="{StaticResource UiTitle}" FontSize="16" />
+                            <ActivityIndicator Grid.Column="1" IsRunning="{Binding IsPreviewLoading}" IsVisible="{Binding IsPreviewLoading}"
+                                               HeightRequest="18" WidthRequest="18" Color="{DynamicResource ThemePrimary}" />
+                        </Grid>
+                        <Label Text="{Binding PreviewMessage}" IsVisible="{Binding HasPreviewMessage}" Style="{StaticResource UiBody}" FontSize="13" />
+                        <VerticalStackLayout Spacing="4" IsVisible="{Binding HasPreview}">
+                            <Label Text="{Binding PreviewInstalmentText}" FontFamily="InterBold" FontSize="18" TextColor="{StaticResource UiTextPrimary}" />
+                            <components:UiAmountRow Title="Coût total du crédit" Term="cout-du-credit" Value="{Binding PreviewCreditCostText}" />
+                            <Label Text="{Binding PreviewCostDetailText}" Style="{StaticResource UiBody}" FontSize="12" HorizontalOptions="End" />
+                            <Label Text="{Binding PreviewCapitalText}" Style="{StaticResource UiBody}" FontSize="13" />
+                            <Label Text="Le capital remboursé n'est pas une charge : seuls les intérêts, l'assurance et les frais comptent dans le résultat."
+                                   Style="{StaticResource UiBody}" FontSize="12" />
+                            <Label Text="Premières échéances" FontFamily="InterSemiBold" FontSize="13" TextColor="{StaticResource UiTextPrimary}" Margin="0,6,0,0" />
+                            <VerticalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding PreviewLines}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:LoanInstalment">
+                                        <VerticalStackLayout Spacing="1">
+                                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                                <Label Text="{Binding TitleText}" FontFamily="InterSemiBold" FontSize="13" TextColor="{StaticResource UiTextPrimary}" />
+                                                <Label Grid.Column="1" Text="{Binding TotalText}" FontFamily="InterBold" FontSize="13" TextColor="{StaticResource UiTextPrimary}" />
+                                            </Grid>
+                                            <Label Text="{Binding DetailText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                            <Label Text="{Binding NoteText}" IsVisible="{Binding HasNote}" Style="{StaticResource UiBody}" FontSize="12" TextColor="#B45309" />
+                                        </VerticalStackLayout>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                        <Label Text="Rien n'est enregistré avant « Enregistrer »." Style="{StaticResource UiBody}" FontSize="12" />
+                    </VerticalStackLayout>
+                </components:UiCard>
+                <Label Text="{Binding GeneralError}" IsVisible="{Binding HasGeneralError}" Style="{StaticResource FormError}" />
+
+                <Button Text="Enregistrer" Command="{Binding SaveCommand}" IsVisible="{Binding CanWrite}" Style="{StaticResource DocMain}" Margin="0,8,0,16" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>
