@@ -51,6 +51,10 @@ namespace Easymakemoney.ViewModels.Dashboard
         [ObservableProperty]
         private string? commandName;
 
+        /// <summary>Commande choisie : arrivée d'un transfert du groupe (G-5), elle se réceptionne sans se modifier.</summary>
+        [ObservableProperty]
+        private bool isGroupTransfer;
+
 
         public async Task GetDashboardCommandAsync(int CommandId)
         {
@@ -116,6 +120,7 @@ namespace Easymakemoney.ViewModels.Dashboard
             CommandId = command.id;
             CommandImage = command.Photo;
             CommandName = command.Name;
+            IsGroupTransfer = command.groupTransfer;
             await GetDashboardCommandAsync(command.id);
         }
 
@@ -160,7 +165,7 @@ namespace Easymakemoney.ViewModels.Dashboard
                 return;
 
             // Navigate to the ListNewCommandPage and pass the collection ID
-            await NavigateAsync($"{nameof(DashBoardProductPage)}?CommandId={CommandId}");
+            await NavigateAsync($"{nameof(DashBoardProductPage)}?CommandId={CommandId}{TransferOrderRules.RouteSuffix(IsGroupTransfer)}");
         }
 
     }

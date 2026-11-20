@@ -149,6 +149,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<IAdviceService, AdviceService>();
 		builder.Services.AddTransient<IPriceService, PriceService>();
 		builder.Services.AddTransient<IToReceiveService, ToReceiveService>();
+		builder.Services.AddTransient<IGroupService, GroupService>();
+		builder.Services.AddTransient<IGroupTransferService, GroupTransferService>();
 		builder.Services.AddTransient<IPromotionService, PromotionService>();
 		builder.Services.AddTransient<IPreparationService, PreparationService>();
 		builder.Services.AddTransient<Easymakemoney.UseCase.DocumentUseCase.DocumentReaderUseCase>();
@@ -245,6 +247,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<PriceChangePage>();
 		builder.Services.AddTransient<PriceBatchListPage>();
 		builder.Services.AddTransient<ToReceivePage>();
+		builder.Services.AddTransient<GroupTransfersPage>();
 		builder.Services.AddTransient<PromotionCreatePage>();
 		builder.Services.AddTransient<PromotionListPage>();
 		builder.Services.AddTransient<PreparationPage>();
@@ -317,6 +320,7 @@ public static class MauiProgram
 		builder.Services.AddTransient<PriceChangeViewModel>();
 		builder.Services.AddTransient<PriceBatchListViewModel>();
 		builder.Services.AddTransient<ToReceiveViewModel>();
+		builder.Services.AddTransient<GroupTransfersViewModel>();
 		builder.Services.AddTransient<PromotionCreateViewModel>();
 		builder.Services.AddTransient<PromotionListViewModel>();
 		builder.Services.AddTransient<PreparationViewModel>();

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:list="clr-namespace:Easymakemoney.ViewModels.Lists"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             xmlns:components="clr-namespace:Easymakemoney.Components"
+             x:DataType="list:GroupTransfersViewModel"
+             x:Class="Easymakemoney.Views.Lists.GroupTransfersPage"
+             x:Name="Page"
+             Style="{StaticResource UiPage}"
+             Title="Transferts à envoyer">
+
+    <Grid RowDefinitions="Auto,*">
+        <components:AppHeader Title="Transferts à envoyer" />
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Items}" SelectionMode="None" Margin="16,0">
+            <CollectionView.Header>
+                <VerticalStackLayout Padding="0,12,0,12" Spacing="10">
+                    <Label Text="Le siège demande du stock de votre boutique pour une autre boutique du groupe. Le stock sort de chez vous à l'envoi ; la boutique de destination le reçoit à sa réception."
+                           Style="{StaticResource UiBody}" FontSize="13" />
+                    <VerticalStackLayout IsVisible="{Binding IsEmpty}" Spacing="8" Padding="8,24,8,0">
+                        <Label Text="Aucun transfert à envoyer" FontFamily="InterBold" FontSize="20" TextColor="{StaticResource UiTextPrimary}" HorizontalTextAlignment="Center" />
+                        <Label Text="Les demandes du siège apparaîtront ici." Style="{StaticResource UiBody}" FontSize="15" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </CollectionView.Header>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="list:GroupTransferItem">
+                    <components:UiCard Style="{StaticResource UiCard}" Padding="14" Margin="0,0,0,12">
+                        <VerticalStackLayout Spacing="10">
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="{Binding TargetText}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding RequestedText}" IsVisible="{Binding HasRequestedText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="1" StrokeThickness="0" StrokeShape="RoundRectangle 8" BackgroundColor="{DynamicResource ThemePrimaryTint}" Padding="8,3" VerticalOptions="Start">
+                                    <Label Text="{Binding StateText}" FontFamily="InterSemiBold" FontSize="12" TextColor="{DynamicResource ThemePrimary}" />
+                                </Border>
+                            </Grid>
+
+                            <VerticalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding Lines}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="models:GroupTransferLine">
+                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                                            <Label Text="{Binding Label}" FontFamily="InterSemiBold" FontSize="14" TextColor="{StaticResource UiTextPrimary}" LineBreakMode="TailTruncation" />
+                                            <Label Grid.Column="1" Text="{Binding QuantityText}" Style="{StaticResource UiBody}" FontSize="13" VerticalOptions="Center" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+
+                            <Border IsVisible="{Binding HasNotice}" StrokeThickness="0" StrokeShape="RoundRectangle 12" BackgroundColor="#FEF3C7" Padding="12,10">
+                                <VerticalStackLayout Spacing="8">
+                                    <Label Text="{Binding NoticeText}" FontFamily="InterSemiBold" FontSize="14" TextColor="#92400E" />
+                                    <!-- TRANSFER_STOCK_SHORT : demandé / disponible par ligne -->
+                                    <VerticalStackLayout IsVisible="{Binding HasShortLines}" Spacing="4">
+                                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12">
+                                            <Label Text="Article" FontFamily="InterBold" FontSize="12" TextColor="#92400E" />
+                                            <Label Grid.Column="1" Text="Demandé" FontFamily="InterBold" FontSize="12" TextColor="#92400E" />
+                                            <Label Grid.Column="2" Text="Disponible" FontFamily="InterBold" FontSize="12" TextColor="#92400E" />
+                                        </Grid>
+                                        <VerticalStackLayout Spacing="4" BindableLayout.ItemsSource="{Binding ShortLines}">
+                                            <BindableLayout.ItemTemplate>
+                                                <DataTemplate x:DataType="models:TransferShortLine">
+                                                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12">
+                                                        <Label Text="{Binding Label}" FontSize="13" TextColor="#92400E" LineBreakMode="TailTruncation" />
+                                                        <Label Grid.Column="1" Text="{Binding RequestedText}" FontSize="13" TextColor="#92400E" HorizontalTextAlignment="End" WidthRequest="64" />
+                                                        <Label Grid.Column="2" Text="{Binding AvailableText}" FontFamily="InterBold" FontSize="13" TextColor="#B91C1C" HorizontalTextAlignment="End" WidthRequest="72" />
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </BindableLayout.ItemTemplate>
+                                        </VerticalStackLayout>
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <Button Text="{Binding SendText}" IsVisible="{Binding CanSend}"
+                                    Command="{Binding Path=BindingContext.SendCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                    CommandParameter="{Binding .}"
+                                    BackgroundColor="{DynamicResource ThemePrimary}" TextColor="{DynamicResource ThemeOnPrimary}"
+                                    FontFamily="InterBold" FontSize="15" CornerRadius="12" HeightRequest="48" />
+                        </VerticalStackLayout>
+                    </components:UiCard>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

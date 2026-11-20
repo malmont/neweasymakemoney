@@ -34,6 +34,9 @@
                                     </Label.GestureRecognizers>
                                 </Label>
                                 <Label Text="{Binding DateText}" Style="{StaticResource UiBody}" FontSize="12" />
+                                <Border IsVisible="{Binding GroupTransfer}" StrokeThickness="0" StrokeShape="RoundRectangle 8" BackgroundColor="#B45309" Padding="8,3" HorizontalOptions="Start">
+                                    <Label Text="{Binding TransferBadge}" FontFamily="InterBold" FontSize="12" TextColor="White" />
+                                </Border>
                             </VerticalStackLayout>
                             <VerticalStackLayout Spacing="6" BindableLayout.ItemsSource="{Binding .}">
                                 <BindableLayout.ItemTemplate>

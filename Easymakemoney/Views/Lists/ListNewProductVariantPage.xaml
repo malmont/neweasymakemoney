@@ -17,10 +17,11 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,Auto,*">
         <components:AppHeader Title="Variantes" />
+        <components:TransferOrderNotice Grid.Row="1" IsVisible="{Binding IsGroupTransfer}" Margin="16,12,16,0" />
 
-        <CollectionView Grid.Row="1" ItemsSource="{Binding ListProductVariants}" SelectionMode="None" Margin="16,8,16,0">
+        <CollectionView Grid.Row="2" ItemsSource="{Binding ListProductVariants}" SelectionMode="None" Margin="16,8,16,0">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="10" VerticalItemSpacing="10" />
             </CollectionView.ItemsLayout>
@@ -40,7 +41,7 @@
                             </Border>
                             <Label Text="{Binding size.name, StringFormat='Taille : {0}'}" Style="{StaticResource UiBody}" LineBreakMode="TailTruncation" />
                             <Label Text="{Binding stockQuantity, StringFormat='Stock : {0}'}" Style="{StaticResource UiBody}" />
-                            <Button Text="Supprimer" BackgroundColor="#B91C1C" TextColor="White" FontFamily="InterSemiBold" FontSize="14"
+                            <Button Text="Supprimer" IsVisible="{Binding Path=BindingContext.CanEdit, Source={x:Reference Page}, x:DataType=ContentPage}" BackgroundColor="#B91C1C" TextColor="White" FontFamily="InterSemiBold" FontSize="14"
                                     CornerRadius="12" HeightRequest="44"
                                     Command="{Binding Path=BindingContext.DeleteProductVariantCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
                                     CommandParameter="{Binding .}" />
@@ -50,7 +51,7 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <Border Grid.Row="1" WidthRequest="60" HeightRequest="60" StrokeThickness="0" StrokeShape="RoundRectangle 18"
+        <Border Grid.Row="2" IsVisible="{Binding CanEdit}" WidthRequest="60" HeightRequest="60" StrokeThickness="0" StrokeShape="RoundRectangle 18"
                 BackgroundColor="{DynamicResource ThemePrimary}" HorizontalOptions="End" VerticalOptions="End" Margin="16,0,16,28"
                 SemanticProperties.Description="Ajouter une variante">
             <Border.GestureRecognizers>

@@ -223,6 +223,20 @@ public class ApiError
             "FRAIS_DE_PORT_NOT_FOUND" => "Cette commande n'a plus de frais de port.",
             "LOAN_NOT_FOUND" => "Ce prêt n'existe plus.",
             "LOAN_PREPAYMENT_NOT_FOUND" => "Ce remboursement anticipé n'existe plus.",
+            // Transferts de stock entre boutiques du groupe (lot backend G-5)
+            "TRANSFER_ORDER_LOCKED" => TransferOrderRules.Notice,
+            "TRANSFER_STOCK_SHORT" => "Stock insuffisant dans votre boutique : rien n'est sorti. Voici ce qui manque.",
+            "TRANSFER_STOCK_BUSY" => "Le stock de ces articles est en cours de modification. Réessayez dans un instant.",
+            "TRANSFER_ALREADY_SENDING" => "Ce transfert est déjà en cours d'envoi.",
+            "TRANSFER_ALREADY_SENT" => "Ce transfert a déjà été envoyé.",
+            "TRANSFER_CANCELLED" => "Ce transfert a été annulé par le siège.",
+            "TRANSFER_ASSOCIATED_SHOP" => "Seules les boutiques de la même entreprise que le siège peuvent échanger du stock.",
+            "TRANSFER_NOT_FOUND" => "Ce transfert n'existe plus.",
+            "GROUP_SHOP_UNKNOWN" => "Cette boutique n'est pas connue du groupe.",
+            "TRANSFER_SEND_FAILED" => "La boutique de destination a refusé l'envoi : le stock est revenu chez vous. Vous pouvez renvoyer.",
+            "TRANSFER_SEND_PENDING" => TransferSendRefusal.PendingNotice,
+            "TRANSFER_CURRENCY_DIFFERS" => "Les deux boutiques n'ont pas la même devise : le transfert est impossible.",
+            "TRANSFER_ITEM_NOT_IN_TARGET" => "Certains articles n'existent pas encore dans la boutique de destination.",
             _ => (int)statusCode switch
             {
                 429 => $"Trop de tentatives. Veuillez patienter {retryAfterSeconds ?? 60} secondes.",

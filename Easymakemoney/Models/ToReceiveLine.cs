@@ -53,19 +53,31 @@ namespace Easymakemoney.Models
         public int id { get; set; }
         public string? name { get; set; }
         public string? date { get; set; }
+
+        /// <summary>
+        /// Commande d'arrivée d'un transfert du groupe (G-5). Le contrat ne le promet pas pour cette route : lu s'il est
+        /// présent, faux sinon (le serveur refuse alors toute modification par 409 TRANSFER_ORDER_LOCKED).
+        /// </summary>
+        public bool groupTransfer { get; set; }
     }
 
     /// <summary>Lignes à recevoir d'une même commande.</summary>
     public class ToReceiveGroup : List<ToReceiveLine>
     {
-        public ToReceiveGroup(int commandeId, string name, string? date, IEnumerable<ToReceiveLine> lines) : base(lines)
+        public ToReceiveGroup(int commandeId, string name, string? date, IEnumerable<ToReceiveLine> lines, bool groupTransfer = false) : base(lines)
         {
             CommandeId = commandeId;
             Name = name;
             Date = date;
+            GroupTransfer = groupTransfer;
         }
 
         public int CommandeId { get; }
+
+        /// <summary>Commande d'arrivée d'un transfert du groupe : elle se réceptionne ici comme les autres.</summary>
+        public bool GroupTransfer { get; }
+
+        public string TransferBadge => TransferOrderRules.Badge;
         public string Name { get; }
         public string? Date { get; }
 
@@ -83,7 +95,8 @@ namespace Easymakemoney.Models
                 group.Key,
                 group.First().commande?.name ?? $"Commande n° {group.Key}",
                 group.First().commande?.date,
-                group))
+                group,
+                group.Any(line => line.commande?.groupTransfer == true)))
             .ToList();
     }
 }

@@ -37,13 +37,13 @@
                     <SwipeView Margin="0,0,0,10">
                         <SwipeView.RightItems>
                             <SwipeItems Mode="Reveal">
-                                <SwipeItem Text="Voyage" BackgroundColor="#334155" IsVisible="{Binding Path=BindingContext.CanEdit, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                <SwipeItem Text="Voyage" BackgroundColor="#334155" IsVisible="{Binding CanEdit}"
                                            Command="{Binding Path=BindingContext.ChooseTripCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
                                            CommandParameter="{Binding .}" />
                                 <SwipeItem Text="Prix" BackgroundColor="#475569"
                                            Command="{Binding Path=BindingContext.ChangePricesCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
                                            CommandParameter="{Binding .}" />
-                                <SwipeItem Text="Supprimer" BackgroundColor="#B91C1C" IsVisible="{Binding Path=BindingContext.CanEdit, Source={x:Reference Page}, x:DataType=ContentPage}"
+                                <SwipeItem Text="Supprimer" BackgroundColor="#B91C1C" IsVisible="{Binding CanEdit}"
                                            Command="{Binding Path=BindingContext.DeleteCommandCommand, Source={x:Reference Page}, x:DataType=ContentPage}"
                                            CommandParameter="{Binding .}" />
                             </SwipeItems>
@@ -70,6 +70,10 @@
                                                    TextColor="{DynamicResource ThemePrimary}" LineBreakMode="TailTruncation" VerticalOptions="Center" />
                                         </HorizontalStackLayout>
                                         <Label Text="Rattachée à un voyage d'achat" IsVisible="{Binding HasTrip}" Style="{StaticResource UiBody}" FontSize="12" />
+                                        <!-- Commande d'arrivée d'un transfert du groupe (G-5) : ni voyage ni suppression, la réception reste -->
+                                        <Border IsVisible="{Binding groupTransfer}" StrokeThickness="0" StrokeShape="RoundRectangle 8" BackgroundColor="#B45309" Padding="8,3" HorizontalOptions="Start">
+                                            <Label Text="{Binding TransferBadge}" FontFamily="InterBold" FontSize="12" TextColor="White" />
+                                        </Border>
                                     </VerticalStackLayout>
                                 </Grid>
                             </components:UiCard>

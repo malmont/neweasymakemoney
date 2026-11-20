@@ -39,6 +39,10 @@ namespace Easymakemoney.ViewModels.Dashboard
 
         public int CommandId { get; set; }
 
+        /// <summary>Commande d'arrivée d'un transfert du groupe (G-5) : aucun article ne s'y ajoute.</summary>
+        [ObservableProperty]
+        private bool isGroupTransfer;
+
         private string _productImage;
 
         public string ProductImage
@@ -56,6 +60,11 @@ namespace Easymakemoney.ViewModels.Dashboard
             if (CommandId == 0)
             {
                 await _dialogService.ShowInfoAsync("Vous devez choisir obligatoirement une commande");
+                return;
+            }
+            if (IsGroupTransfer)
+            {
+                await _dialogService.ShowInfoAsync(TransferOrderRules.Notice);
                 return;
             }
             // L'article créé appartient à la commande affichée : la liste rechargée après l'enregistrement est la sienne.

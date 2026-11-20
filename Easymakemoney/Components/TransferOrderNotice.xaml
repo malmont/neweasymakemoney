@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Avis d'une commande d'arrivée d'un transfert de stock entre boutiques du groupe (lot backend G-5). -->
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:Easymakemoney.Models"
+             x:Class="Easymakemoney.Components.TransferOrderNotice">
+    <Border StrokeThickness="0" StrokeShape="RoundRectangle 12" BackgroundColor="#FEF3C7" Padding="12,10">
+        <VerticalStackLayout Spacing="6">
+            <Border StrokeThickness="0" StrokeShape="RoundRectangle 8" BackgroundColor="#B45309" Padding="8,3" HorizontalOptions="Start">
+                <Label Text="{x:Static models:TransferOrderRules.Badge}" FontFamily="InterBold" FontSize="12" TextColor="White" />
+            </Border>
+            <Label Text="{x:Static models:TransferOrderRules.Notice}" FontFamily="InterSemiBold" FontSize="14" TextColor="#92400E" />
+        </VerticalStackLayout>
+    </Border>
+</ContentView>

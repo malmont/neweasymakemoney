@@ -1,7 +1,7 @@
 ﻿
 namespace Easymakemoney.ViewModels.Lists
 {
-    public partial class AllListsViewModel
+    public partial class AllListsViewModel : ObservableObject
 	{
         /// <summary>Navigation (point d'entrée des tests).</summary>
         public Func<string, Task> NavigateAsync { get; set; } = route => Shell.Current?.GoToAsync(route) ?? Task.CompletedTask;
@@ -93,6 +93,40 @@ namespace Easymakemoney.ViewModels.Lists
         private async Task NavigateToToReceive()
         {
             await NavigateAsync(nameof(ToReceivePage));
+        }
+
+        /// <summary>
+        /// Tuile « Transferts à envoyer » (G-5) : seulement si le site fait partie d'un groupe (GET /api/group rend un group
+        /// non nul, siège compris). Cachée en cas d'erreur.
+        /// </summary>
+        [ObservableProperty]
+        private bool _canSendTransfers;
+
+        public async Task LoadGroupAsync()
+        {
+            var groupService = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions
+                .GetService<IGroupService>(_services);
+            if (groupService == null)
+            {
+                CanSendTransfers = false;
+                return;
+            }
+
+            try
+            {
+                CanSendTransfers = await groupService.IsInGroupAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[Gestion] Groupe illisible, tuile des transferts cachée : {ex.Message}");
+                CanSendTransfers = false;
+            }
+        }
+
+        [RelayCommand]
+        private async Task NavigateToGroupTransfers()
+        {
+            await NavigateAsync(nameof(GroupTransfersPage));
         }
 
         [RelayCommand]

@@ -37,7 +37,7 @@ namespace Easymakemoney.Models
 
     /// <summary>
     /// Réponse de « POST commandes/{id}/reception » (lot R1), lue sans MAUI :
-    /// { received: [{ lineId, quantity, movementId }], needsVariant: [{ lineId, product, variants }], lines, commande: { id, remaining, receptionStatus } }.
+    /// { received: [{ lineId, quantity, movementId }], needsVariant: [{ lineId, product, variants }], lines, commande: { id, remaining, receptionStatus, groupTransfer } }.
     /// </summary>
     public sealed class CommandeReception
     {
@@ -49,6 +49,9 @@ namespace Easymakemoney.Models
 
         /// <summary>none | partial | complete.</summary>
         public string? ReceptionStatus { get; init; }
+
+        /// <summary>Commande d'arrivée d'un transfert entre boutiques du groupe (G-5) : elle se réceptionne, sans se modifier.</summary>
+        public bool GroupTransfer { get; init; }
 
         public static CommandeReception Read(JToken? json)
         {
@@ -108,6 +111,7 @@ namespace Easymakemoney.Models
                 CommandeId = InvoiceExtraction.Int(commande?["id"]),
                 Remaining = InvoiceExtraction.Int(commande?["remaining"]),
                 ReceptionStatus = InvoiceExtraction.Text(commande?["receptionStatus"]),
+                GroupTransfer = commande?["groupTransfer"]?.Type == JTokenType.Boolean && commande.Value<bool>("groupTransfer"),
             };
         }
 

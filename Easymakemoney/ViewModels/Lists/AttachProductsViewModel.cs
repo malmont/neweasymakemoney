@@ -233,9 +233,17 @@ namespace Easymakemoney.ViewModels.Lists
                     return null;
                 }
 
+                // La commande d'arrivée d'un transfert du groupe (G-5) ne reçoit pas d'autres articles.
+                var choices = commandes.Where(c => !c.groupTransfer).ToList();
+                if (choices.Count == 0)
+                {
+                    await _dialogService.ShowInfoAsync("Cette période n'a que des commandes de transfert de stock : elles ne se modifient pas.");
+                    return null;
+                }
+
                 ListCommand? commande = null;
                 await ShowPickerAsync(
-                    () => Task.FromResult(commandes.Cast<IListItem>()),
+                    () => Task.FromResult(choices.Cast<IListItem>()),
                     item => commande = item as ListCommand);
                 return commande?.id;
             }

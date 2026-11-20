@@ -38,6 +38,7 @@ public partial class AppShell : Shell
 		Routing.RegisterRoute("PriceChangePage", typeof(PriceChangePage));
 		Routing.RegisterRoute("PriceBatchListPage", typeof(PriceBatchListPage));
 		Routing.RegisterRoute("ToReceivePage", typeof(ToReceivePage));
+		Routing.RegisterRoute("GroupTransfersPage", typeof(GroupTransfersPage));
 		Routing.RegisterRoute("PromotionCreatePage", typeof(PromotionCreatePage));
 		Routing.RegisterRoute("PromotionListPage", typeof(PromotionListPage));
 		Routing.RegisterRoute("PreparationPage", typeof(PreparationPage));

@@ -37,7 +37,12 @@ namespace Easymakemoney.ViewModels.Lists
         [NotifyPropertyChangedFor(nameof(CanEdit))]
         private bool isClosed;
 
-        public bool CanEdit => !IsClosed;
+        /// <summary>Commande d'arrivée d'un transfert du groupe (G-5) : articles et lignes en lecture seule, la réception reste.</summary>
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanEdit))]
+        private bool isGroupTransfer;
+
+        public bool CanEdit => TransferOrderRules.CanEdit(IsClosed, IsGroupTransfer);
 
         public ICommand DeleteProductCommand { get; }
         public async Task GetListProductAsync()
@@ -70,6 +75,9 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         public async Task ShowBottomSheet()
         {
+            if (IsGroupTransfer)
+                return;
+
             var viewModel = new BottomSheetPopupViewModel(
                 popup: new Popup(),
                 isProductForm: true,
@@ -94,7 +102,7 @@ namespace Easymakemoney.ViewModels.Lists
 
             // Navigate to the ListNewCommandPage and pass the collection ID
             if (Shell.Current is { } shell)
-                await shell.GoToAsync($"{nameof(ListNewProductVariantPage)}?ProductId={product.id}", true);
+                await shell.GoToAsync($"{nameof(ListNewProductVariantPage)}?ProductId={product.id}{TransferOrderRules.RouteSuffix(IsGroupTransfer)}", true);
         }
 
         /// <summary>Prix de vente d'un article, avec aperçu, journal et annulation 24 h (permis même en période fermée).</summary>
@@ -116,6 +124,8 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private async Task OpenAttachProducts()
         {
+            if (IsGroupTransfer)
+                return;
             if (Shell.Current is { } shell)
                 await shell.GoToAsync($"{nameof(AttachProductsPage)}?CommandId={CommandId}", true);
         }
@@ -123,7 +133,7 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private async Task DetachProduct(ListProduct? product)
         {
-            if (product == null || IsBusy)
+            if (product == null || IsBusy || IsGroupTransfer)
                 return;
 
             bool confirmed = await _dialogService.ConfirmAsync(
@@ -159,7 +169,7 @@ namespace Easymakemoney.ViewModels.Lists
 
         private async Task DeleteProduct(ListProduct? product)
         {
-            if (product == null)
+            if (product == null || IsGroupTransfer)
                 return;
 
             if (IsBusy)

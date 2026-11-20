@@ -49,6 +49,9 @@
                                 <VerticalStackLayout Grid.Column="1" Spacing="4" VerticalOptions="Center">
                                     <Label Text="{Binding CommandeName}" Style="{StaticResource UiTitle}" FontSize="16" LineBreakMode="TailTruncation" />
                                     <Label Text="{Binding DetailText}" Style="{StaticResource UiBody}" LineBreakMode="TailTruncation" />
+                                    <Border IsVisible="{Binding IsGroupTransfer}" StrokeThickness="0" StrokeShape="RoundRectangle 8" BackgroundColor="#B45309" Padding="8,3" HorizontalOptions="Start">
+                                        <Label Text="{Binding TransferBadge}" FontFamily="InterBold" FontSize="12" TextColor="White" />
+                                    </Border>
                                     <Label Text="{Binding PriceText}"
                                            IsVisible="{Binding HasFrais}"
                                            FontFamily="InterBold"

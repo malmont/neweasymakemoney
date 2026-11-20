@@ -14,12 +14,22 @@ namespace Easymakemoney.Models
 
         public bool HasFrais => Frais != null;
 
-        public bool CanAddFrais => Frais == null && !PeriodClosed;
+        /// <summary>
+        /// Période ouverte, et commande qui n'est pas l'arrivée d'un transfert du groupe (G-5) : celle-ci ne se modifie pas,
+        /// frais de port compris.
+        /// </summary>
+        public bool CanEdit => TransferOrderRules.CanEdit(PeriodClosed, Commande.groupTransfer);
 
-        public bool CanDeleteFrais => Frais != null && !PeriodClosed;
+        public bool IsGroupTransfer => Commande.groupTransfer;
+
+        public string TransferBadge => TransferOrderRules.Badge;
+
+        public bool CanAddFrais => Frais == null && CanEdit;
+
+        public bool CanDeleteFrais => Frais != null && CanEdit;
 
         /// <summary>Lot EDIT : un frais de port d'une période ouverte se modifie.</summary>
-        public bool CanEditFrais => Frais != null && !PeriodClosed;
+        public bool CanEditFrais => Frais != null && CanEdit;
 
         /// <summary>Prix dans la devise de la commande ; en devise étrangère, le montant converti par le serveur (« ≈ … »).</summary>
         public string PriceText

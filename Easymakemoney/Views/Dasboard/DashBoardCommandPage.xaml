@@ -35,6 +35,7 @@
         <ScrollView Grid.Row="2">
             <VerticalStackLayout Padding="16" Spacing="12">
                 <Label Text="Tableau de bord commande" Style="{StaticResource UiTitle}"/>
+                <components:TransferOrderNotice IsVisible="{Binding IsGroupTransfer}" />
                 <Button Text="Imprimer les étiquettes de ce qui est reçu" Command="{Binding OpenLabelsCommand}" HeightRequest="44" CornerRadius="12"
                         FontFamily="InterSemiBold" FontSize="13" BackgroundColor="{StaticResource UiSurface}" TextColor="{DynamicResource ThemePrimary}"
                         BorderColor="{DynamicResource ThemePrimary}" BorderWidth="1" />

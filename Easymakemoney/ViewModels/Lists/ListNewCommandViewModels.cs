@@ -60,6 +60,8 @@ namespace Easymakemoney.ViewModels.Lists
 
                 foreach (var command in commands)
                 {
+                    // La règle de chaque commande (CanEdit) tient compte de la période et du transfert du groupe.
+                    command.PeriodClosed = IsClosed;
                     ListCommands.Add(command);
                 }
             }
@@ -76,7 +78,8 @@ namespace Easymakemoney.ViewModels.Lists
 
         private async Task DeleteCommand(ListCommand? command)
         {
-            if (command == null)
+            // Ni en période clôturée, ni pour la commande d'arrivée d'un transfert du groupe (409 TRANSFER_ORDER_LOCKED).
+            if (command == null || !command.CanEdit)
                 return;
 
             bool confirmed = await _dialogService.ConfirmAsync(
@@ -113,7 +116,7 @@ namespace Easymakemoney.ViewModels.Lists
 
             // Navigate to the ListNewCommandPage and pass the collection ID
             if (Shell.Current is { } shell)
-                await shell.GoToAsync($"{nameof(ListNewProductPage)}?CommandId={command.id}&Closed={IsClosed}", true);
+                await shell.GoToAsync($"{nameof(ListNewProductPage)}?CommandId={command.id}&Closed={IsClosed}{TransferOrderRules.RouteSuffix(command.groupTransfer)}", true);
         }
 
         private readonly ITripService _tripService;
@@ -125,7 +128,7 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private async Task ChooseTrip(ListCommand? command)
         {
-            if (command == null || !CanEdit)
+            if (command == null || !CanEdit || !command.CanEdit)
                 return;
 
             List<Trip> trips;

@@ -29,6 +29,25 @@ namespace Easymakemoney.Models
 
         public bool ShouldSerializeHasTrip() => false;
 
+        /// <summary>
+        /// Commande d'arrivée d'un transfert de stock entre boutiques du groupe (lot backend G-5, lecture seule) :
+        /// elle ne se modifie pas et ne se supprime pas, mais elle se réceptionne.
+        /// </summary>
+        public bool groupTransfer { get; set; }
+
+        public bool ShouldSerializegroupTransfer() => false;
+
+        /// <summary>Période de la commande clôturée : posé par l'écran qui affiche la liste (jamais lu ni envoyé).</summary>
+        [JsonIgnore]
+        public bool PeriodClosed { get; set; }
+
+        /// <summary>Supprimer, rattacher à un voyage, toucher aux lignes et aux articles : voir <see cref="TransferOrderRules.CanEdit"/>.</summary>
+        [JsonIgnore]
+        public bool CanEdit => TransferOrderRules.CanEdit(PeriodClosed, groupTransfer);
+
+        [JsonIgnore]
+        public string TransferBadge => TransferOrderRules.Badge;
+
         public string BudgetText => budget.HasValue
             ? Utilities.SiteCurrency.FormatCents(budget.Value, System.Globalization.CultureInfo.CurrentCulture, currency)
             : string.Empty;

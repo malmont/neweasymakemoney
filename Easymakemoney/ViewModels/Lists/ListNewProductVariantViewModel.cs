@@ -32,6 +32,13 @@ namespace Easymakemoney.ViewModels.Lists
         public int ProductId { get; set; }
         public ICommand DeleteProductVariantCommand { get; }
 
+        /// <summary>Article ouvert depuis la commande d'arrivée d'un transfert du groupe (G-5) : ses variantes ne se modifient pas.</summary>
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(CanEdit))]
+        private bool isGroupTransfer;
+
+        public bool CanEdit => TransferOrderRules.CanEdit(false, IsGroupTransfer);
+
         public async Task GetlistProductVariantAsync()
         {
             if (IsBusy)
@@ -62,6 +69,9 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         public async Task ShowBottomSheet()
         {
+            if (!CanEdit)
+                return;
+
             var viewModel = new BottomSheetPopupViewModel(
                 popup: new Popup(),
                 productVariantViewModel: this,
@@ -81,7 +91,7 @@ namespace Easymakemoney.ViewModels.Lists
 
         private async Task DeleteProductVariant(ProductVariant? productVariant)
         {
-            if (productVariant == null)
+            if (productVariant == null || !CanEdit)
                 return;
 
             if (IsBusy)

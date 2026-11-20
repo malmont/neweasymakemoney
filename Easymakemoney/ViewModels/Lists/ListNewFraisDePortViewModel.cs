@@ -200,7 +200,7 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private async Task DeleteFraisDePort(FraisDePortCommandeRow? row)
         {
-            if (row?.Frais == null || IsBusy)
+            if (row?.Frais == null || !row.CanDeleteFrais || IsBusy)
                 return;
 
             bool confirmed = await _dialogService.ConfirmAsync(
@@ -271,7 +271,7 @@ namespace Easymakemoney.ViewModels.Lists
         [RelayCommand]
         private async Task AddFrais(FraisDePortCommandeRow? row)
         {
-            if (row == null || row.HasFrais || IsBusy)
+            if (row == null || !row.CanAddFrais || IsBusy)
                 return;
 
             CommandId = row.Commande.id;

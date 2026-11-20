@@ -138,7 +138,7 @@ namespace Easymakemoney.ViewModels.Lists
         private async Task OpenCommande(ToReceiveGroup? group)
         {
             if (group != null && Shell.Current is { } shell)
-                await shell.GoToAsync($"{nameof(ListNewProductPage)}?CommandId={group.CommandeId}");
+                await shell.GoToAsync($"{nameof(ListNewProductPage)}?CommandId={group.CommandeId}{TransferOrderRules.RouteSuffix(group.GroupTransfer)}");
         }
     }
 }
