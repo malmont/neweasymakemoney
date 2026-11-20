@@ -14,6 +14,12 @@ namespace Easymakemoney.Models
         public int remaining { get; set; }
         public ToReceiveCommande? commande { get; set; }
 
+        /// <summary>Origine de la ligne : « transfer » (transfert du groupe, G-5), « manual » ou null.</summary>
+        public string? source { get; set; }
+
+        /// <summary>Ligne d'une commande d'arrivée d'un transfert du groupe : marque de la commande ou origine de la ligne.</summary>
+        public bool IsGroupTransfer => commande?.groupTransfer == true || source == "transfer";
+
         public string Title => product?.name ?? "Article";
 
         public string VariantText
@@ -54,10 +60,7 @@ namespace Easymakemoney.Models
         public string? name { get; set; }
         public string? date { get; set; }
 
-        /// <summary>
-        /// Commande d'arrivée d'un transfert du groupe (G-5). Le contrat ne le promet pas pour cette route : lu s'il est
-        /// présent, faux sinon (le serveur refuse alors toute modification par 409 TRANSFER_ORDER_LOCKED).
-        /// </summary>
+        /// <summary>Commande d'arrivée d'un transfert du groupe (G-5) ; faux tant que le backend ne le rend pas.</summary>
         public bool groupTransfer { get; set; }
     }
 
@@ -96,7 +99,7 @@ namespace Easymakemoney.Models
                 group.First().commande?.name ?? $"Commande n° {group.Key}",
                 group.First().commande?.date,
                 group,
-                group.Any(line => line.commande?.groupTransfer == true)))
+                group.Any(line => line.IsGroupTransfer)))
             .ToList();
     }
 }

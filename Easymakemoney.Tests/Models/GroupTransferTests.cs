@@ -90,19 +90,22 @@ public class GroupTransferTests
     }
 
     [Fact]
-    public void ToReceiveGroup_KeepsGroupTransfer_WhenTheRouteGivesIt()
+    public void ToReceiveGroup_IsTransfer_FromCommandeFlagOrLineSource()
     {
         var lines = JsonConvert.DeserializeObject<List<ToReceiveLine>>("""
         [
-            { "id": 1, "commandeId": 4, "remaining": 2, "commande": { "id": 4, "name": "Transfert depuis Lyon", "groupTransfer": true } },
-            { "id": 2, "commandeId": 5, "remaining": 1, "commande": { "id": 5, "name": "Commande Milan" } }
+            { "id": 1, "commandeId": 4, "remaining": 2, "source": "transfer", "commande": { "id": 4, "name": "Transfert depuis Siège", "date": "2026-11-18" } },
+            { "id": 2, "commandeId": 5, "remaining": 1, "source": null, "commande": { "id": 5, "name": "Transfert depuis Lyon", "date": "2026-11-18", "groupTransfer": true } },
+            { "id": 3, "commandeId": 6, "remaining": 1, "source": "manual", "commande": { "id": 6, "name": "Commande Milan", "date": "2026-11-18", "groupTransfer": false } },
+            { "id": 4, "commandeId": 7, "remaining": 1, "commande": { "id": 7, "name": "Commande Rome", "date": "2026-11-18" } }
         ]
         """)!;
 
+        Assert.Equal(new[] { true, true, false, false }, lines.Select(l => l.IsGroupTransfer));
+
         var groups = ToReceiveGroup.Build(lines);
 
-        Assert.True(groups[0].GroupTransfer);
-        Assert.False(groups[1].GroupTransfer);
+        Assert.Equal(new[] { true, true, false, false }, groups.Select(g => g.GroupTransfer));
     }
 
     [Fact]
@@ -122,15 +125,18 @@ public class GroupTransferTests
         {
             "transfers": [
                 {
-                    "id": 12, "source": "lyon", "target": { "id": 4, "name": "Boutique de Milan" }, "state": "requested", "currency": "EUR",
-                    "requestedAt": "2026-11-18T09:30:00+00:00", "partlyReceived": false,
+                    "id": 12, "source": "siege", "sourceName": "Siège", "target": "milan", "targetName": "Boutique de Milan",
+                    "state": "requested", "currency": "EUR", "requestedAt": "2026-11-18T09:30:00+00:00", "partlyReceived": false,
                     "lines": [
-                        { "line": 1, "sourceVariantId": 501, "targetVariantId": 901, "quantity": 3 },
-                        { "line": 2, "sourceVariantId": 502, "targetVariantId": 902, "quantity": 1, "name": "Robe lin · Taille M" }
+                        { "line": 1, "sourceVariantId": 412, "targetVariantId": 901, "quantity": 3,
+                          "product": { "id": 51, "name": "Casquette" }, "variant": { "id": 412, "size": "M", "color": "Bleu" } },
+                        { "line": 2, "sourceVariantId": 413, "targetVariantId": 902, "quantity": 1,
+                          "product": { "id": 52, "name": "Sac" }, "variant": null },
+                        { "line": 3, "sourceVariantId": 501, "targetVariantId": 903, "quantity": 2 }
                     ]
                 },
-                { "id": 13, "target": "Boutique de Nice", "state": "sending", "lines": [] },
-                { "id": 14, "target": 7, "state": "send_failed", "lines": [] },
+                { "id": 13, "target": "nice", "state": "sending", "lines": [] },
+                { "id": 14, "target": "rome", "targetName": null, "state": "send_failed", "lines": [] },
                 { "state": "requested" }
             ]
         }
@@ -139,22 +145,43 @@ public class GroupTransferTests
         Assert.Equal(3, transfers.Count);
         var first = transfers[0];
         Assert.Equal(12, first.Id);
+        Assert.Equal("milan", first.Target);
         Assert.Equal("Vers Boutique de Milan", first.TargetText);
         Assert.Equal("À envoyer", first.StateText);
         Assert.StartsWith("Demandé le 18 novembre 2026", first.RequestedText);
         Assert.True(first.IsSendable);
-        Assert.Equal(2, first.Lines.Count);
-        Assert.Equal("Variante n° 501", first.Lines[0].Label);
+        Assert.Equal(3, first.Lines.Count);
+        Assert.Equal("Casquette — M, Bleu", first.Lines[0].Label);
         Assert.Equal("3 articles", first.Lines[0].QuantityText);
-        Assert.Equal("Robe lin · Taille M", first.Lines[1].Label);
+        Assert.Equal("Sac", first.Lines[1].Label);
         Assert.Equal("1 article", first.Lines[1].QuantityText);
+        // Sans product (avant l'ajout du backend) : la référence de la variante.
+        Assert.Equal("Variante n° 501", first.Lines[2].Label);
 
-        Assert.Equal("Vers Boutique de Nice", transfers[1].TargetText);
+        // Sans targetName : le code du site.
+        Assert.Equal("Vers nice", transfers[1].TargetText);
         Assert.Equal("Envoi en cours", transfers[1].StateText);
         Assert.False(transfers[1].IsSendable);
-        Assert.Equal("Vers Boutique n° 7", transfers[2].TargetText);
+        Assert.Equal("Vers rome", transfers[2].TargetText);
         Assert.Equal("Échec de l'envoi", transfers[2].StateText);
         Assert.True(transfers[2].IsSendable);
+    }
+
+    [Fact]
+    public void Line_VariantWithOnlyColor_AndGuessedFieldsIgnored()
+    {
+        var transfer = GroupTransfer.Read(JObject.Parse("""
+        {
+            "id": 1, "target": "milan", "state": "requested",
+            "lines": [
+                { "line": 1, "sourceVariantId": 7, "quantity": 1, "product": { "id": 3, "name": "Écharpe" }, "variant": { "id": 7, "size": null, "color": "Rouge" } },
+                { "line": 2, "sourceVariantId": 8, "quantity": 1, "name": "Deviné", "variantName": "Deviné", "label": "Deviné" }
+            ]
+        }
+        """));
+
+        Assert.Equal("Écharpe — Rouge", transfer.Lines[0].Label);
+        Assert.Equal("Variante n° 8", transfer.Lines[1].Label);
     }
 
     [Fact]
@@ -189,7 +216,7 @@ public class GroupTransferTests
     {
         var lines = new[]
         {
-            new GroupTransferLine { Line = 1, SourceVariantId = 501, Quantity = 3, Name = "Robe lin" },
+            new GroupTransferLine { Line = 1, SourceVariantId = 501, Quantity = 3, ProductName = "Robe lin", VariantSize = "M" },
         };
         var refusal = Refusal("""
         { "code": "TRANSFER_STOCK_SHORT", "lines": [ { "variantId": 501, "requested": 3, "available": 1 }, { "variantId": 777, "requested": 2, "available": 0 } ] }
@@ -200,7 +227,7 @@ public class GroupTransferTests
         Assert.Equal("Stock insuffisant dans votre boutique : rien n'est sorti. Voici ce qui manque.", refusal.Message);
         Assert.True(refusal.HasShortLines);
         Assert.Equal(2, refusal.ShortLines.Count);
-        Assert.Equal("Robe lin", refusal.ShortLines[0].Label);
+        Assert.Equal("Robe lin — M", refusal.ShortLines[0].Label);
         Assert.Equal("3", refusal.ShortLines[0].RequestedText);
         Assert.Equal("1", refusal.ShortLines[0].AvailableText);
         Assert.Equal("Variante n° 777", refusal.ShortLines[1].Label);

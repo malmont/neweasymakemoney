@@ -32,7 +32,10 @@ namespace Easymakemoney.Models
             json is JObject root && root["group"] is { } group && group.Type is not (JTokenType.Null or JTokenType.Undefined);
     }
 
-    /// <summary>Ligne d'un transfert à envoyer : variante de la boutique source et quantité (sans coût pour la source).</summary>
+    /// <summary>
+    /// Ligne d'un transfert à envoyer : variante de la boutique source et quantité (sans coût pour la source),
+    /// avec product { id, name } et variant { id, size, color } (variant nul pour un article sans variante).
+    /// </summary>
     public sealed class GroupTransferLine
     {
         public int Line { get; init; }
@@ -40,25 +43,44 @@ namespace Easymakemoney.Models
         public int? TargetVariantId { get; init; }
         public int Quantity { get; init; }
 
-        /// <summary>Nom de l'article s'il est rendu par la route ; sinon l'écran montre la référence de la variante.</summary>
-        public string? Name { get; init; }
+        public string? ProductName { get; init; }
+        public string? VariantSize { get; init; }
+        public string? VariantColor { get; init; }
 
-        public string Label => !string.IsNullOrWhiteSpace(Name)
-            ? Name!
-            : SourceVariantId is > 0 ? $"Variante n° {SourceVariantId}" : $"Ligne {Line}";
+        /// <summary>
+        /// « Casquette — M, Bleu » ; sans variante, « Casquette ». Sans product (routes antérieures à l'ajout du backend),
+        /// la référence de la variante.
+        /// </summary>
+        public string Label
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(ProductName))
+                {
+                    var details = new[] { VariantSize, VariantColor }.Where(part => !string.IsNullOrWhiteSpace(part)).ToList();
+                    return details.Count > 0 ? $"{ProductName} — {string.Join(", ", details)}" : ProductName!;
+                }
+                return SourceVariantId is > 0 ? $"Variante n° {SourceVariantId}" : $"Ligne {Line}";
+            }
+        }
 
         public string QuantityText => Quantity == 1 ? "1 article" : $"{Quantity} articles";
 
-        internal static GroupTransferLine Read(JObject item) => new()
+        internal static GroupTransferLine Read(JObject item)
         {
-            Line = InvoiceExtraction.Int(item["line"]) ?? 0,
-            SourceVariantId = InvoiceExtraction.Int(item["sourceVariantId"]) ?? InvoiceExtraction.Int(item["variantId"]),
-            TargetVariantId = InvoiceExtraction.Int(item["targetVariantId"]),
-            Quantity = InvoiceExtraction.Int(item["quantity"]) ?? 0,
-            Name = GroupTransfer.FirstText(item, "name", "variantName", "productName", "label")
-                   ?? GroupTransfer.FirstText(item["variant"] as JObject, "name", "label")
-                   ?? GroupTransfer.FirstText(item["product"] as JObject, "name"),
-        };
+            var product = item["product"] as JObject;
+            var variant = item["variant"] as JObject;
+            return new GroupTransferLine
+            {
+                Line = InvoiceExtraction.Int(item["line"]) ?? 0,
+                SourceVariantId = InvoiceExtraction.Int(item["sourceVariantId"]),
+                TargetVariantId = InvoiceExtraction.Int(item["targetVariantId"]),
+                Quantity = InvoiceExtraction.Int(item["quantity"]) ?? 0,
+                ProductName = InvoiceExtraction.Text(product?["name"]),
+                VariantSize = InvoiceExtraction.Text(variant?["size"]),
+                VariantColor = InvoiceExtraction.Text(variant?["color"]),
+            };
+        }
     }
 
     /// <summary>
@@ -69,12 +91,19 @@ namespace Easymakemoney.Models
     {
         public int Id { get; init; }
         public string State { get; init; } = string.Empty;
+        /// <summary>Code du site de destination (texte, par exemple « milan »).</summary>
         public string? Target { get; init; }
+
+        /// <summary>Nom de la boutique de destination (« Boutique de Milan »), quand la route le rend.</summary>
+        public string? TargetName { get; init; }
         public string? Currency { get; init; }
         public DateTime? RequestedAt { get; init; }
         public List<GroupTransferLine> Lines { get; init; } = new();
 
-        public string TargetText => string.IsNullOrWhiteSpace(Target) ? "Vers une boutique du groupe" : $"Vers {Target}";
+        /// <summary>Le nom de la destination, sinon son code.</summary>
+        public string TargetText => !string.IsNullOrWhiteSpace(TargetName)
+            ? $"Vers {TargetName}"
+            : !string.IsNullOrWhiteSpace(Target) ? $"Vers {Target}" : "Vers une boutique du groupe";
 
         public string StateText => StateLabel(State);
 
@@ -119,41 +148,12 @@ namespace Easymakemoney.Models
         {
             Id = InvoiceExtraction.Int(item["id"]) ?? 0,
             State = InvoiceExtraction.Text(item["state"]) ?? string.Empty,
-            Target = ShopName(item["target"]) ?? FirstText(item, "targetName"),
+            Target = InvoiceExtraction.Text(item["target"]),
+            TargetName = InvoiceExtraction.Text(item["targetName"]),
             Currency = InvoiceExtraction.Text(item["currency"]),
             RequestedAt = Date(item["requestedAt"]),
             Lines = (item["lines"] as JArray)?.OfType<JObject>().Select(GroupTransferLine.Read).ToList() ?? new List<GroupTransferLine>(),
         };
-
-        /// <summary>
-        /// Nom de la boutique : le contrat ne fixe pas sa forme. Texte tel quel, objet { name | label | host | id },
-        /// ou identifiant seul (« Boutique n° 12 »).
-        /// </summary>
-        internal static string? ShopName(JToken? token)
-        {
-            switch (token)
-            {
-                case JObject shop:
-                    return FirstText(shop, "name", "label", "host")
-                           ?? (InvoiceExtraction.Int(shop["id"]) is > 0 and var id ? $"Boutique n° {id}" : null);
-                case JValue { Type: JTokenType.Integer } number:
-                    return $"Boutique n° {InvoiceExtraction.Int(number)}";
-                default:
-                    return InvoiceExtraction.Text(token);
-            }
-        }
-
-        internal static string? FirstText(JObject? item, params string[] keys)
-        {
-            if (item == null)
-                return null;
-            foreach (var key in keys)
-            {
-                if (InvoiceExtraction.Text(item[key]) is { } text)
-                    return text;
-            }
-            return null;
-        }
 
         /// <summary>Date lue en heure locale (Newtonsoft a pu déjà la transformer en DateTime).</summary>
         internal static DateTime? Date(JToken? token)

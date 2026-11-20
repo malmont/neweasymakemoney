@@ -21,8 +21,9 @@ public class GroupTransfersViewModelTests
     {
         Id = id,
         State = state,
-        Target = "Boutique de Milan",
-        Lines = new List<GroupTransferLine> { new() { Line = 1, SourceVariantId = 501, Quantity = 3, Name = "Robe lin" } },
+        Target = "milan",
+        TargetName = "Boutique de Milan",
+        Lines = new List<GroupTransferLine> { new() { Line = 1, SourceVariantId = 501, Quantity = 3, ProductName = "Robe lin" } },
     };
 
     private static ApiException Refused(string code, HttpStatusCode status, string extra = "") =>
