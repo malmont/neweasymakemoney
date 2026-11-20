@@ -126,7 +126,7 @@ public class LoanViewModelsTests : IDisposable
         var vm = new LoanDetailViewModel(_service, _dialog);
         await vm.LoadAsync(12);
         var recalculated = SampleLoan();
-        recalculated.prepayments.RemoveAt(0);
+        recalculated.prepayments.RemoveAt(1);
         _service.Loan = recalculated;
 
         _dialog.ConfirmResult = false;

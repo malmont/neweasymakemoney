@@ -136,12 +136,13 @@ namespace Easymakemoney.Models
 
         public string NextInstalmentLine => $"Prochaine échéance : {NextInstalmentText}";
 
-        /// <summary>Remboursements anticipés dans l'ordre des dates : leur rang est l'index de la route de retrait.</summary>
+        /// <summary>
+        /// Remboursements anticipés tels que le serveur les rend : il les trie par date à chaque écriture, et l'index de la route
+        /// de retrait est leur position dans prepayments[] (à partir de 0). On ne retrie pas : deux dates égales pourraient sinon
+        /// prendre un autre ordre que celui du serveur, et le retrait viserait le mauvais remboursement.
+        /// </summary>
         public List<LoanPrepayment> SortedPrepayments() => prepayments
-            .Select((prepayment, position) => (prepayment, position))
-            .OrderBy(item => item.prepayment.date, StringComparer.Ordinal)
-            .ThenBy(item => item.position)
-            .Select((item, index) => item.prepayment.WithIndex(index, currency))
+            .Select((prepayment, position) => prepayment.WithIndex(position, currency))
             .ToList();
 
         public List<LoanInstalment> ScheduleWithCurrency() => schedule.Select(line => line.WithCurrency(currency)).ToList();

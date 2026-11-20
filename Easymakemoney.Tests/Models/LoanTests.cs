@@ -39,7 +39,7 @@ public class LoanTests : IDisposable
       "ratePpm": 45000, "durationMonths": 12, "frequencyMonths": 1, "disbursedOn": "2026-01-05", "firstDueOn": "2026-02-05",
       "type": "annuity", "deferralMonths": 0, "deferralKind": null,
       "insuranceMode": "fixed", "insuranceAmount": 500, "insuranceRatePpm": null, "fees": 15000,
-      "prepayments": [ { "date": "2026-09-05", "amount": 200000, "fees": 3000 }, { "date": "2026-06-05", "amount": 100000, "fees": 0 } ],
+      "prepayments": [ { "date": "2026-06-05", "amount": 100000, "fees": 0 }, { "date": "2026-09-05", "amount": 200000, "fees": 3000 } ],
       "notes": "Garantie sur le fonds",
       "remainingToday": 545210,
       "nextInstalment": { "n": 11, "date": "2026-12-05", "periodStart": "2026-11-05", "capital": 54000, "interest": 1200, "insurance": 500, "total": 55700, "remaining": 491210, "deferral": null, "prepayment": null },
@@ -212,7 +212,7 @@ public class LoanTests : IDisposable
     }
 
     [Fact]
-    public void Prepayments_AreSortedByDate_WithTheirRankAsIndex()
+    public void Prepayments_KeepTheServerOrder_WithTheirPositionAsIndex()
     {
         var loan = JsonConvert.DeserializeObject<Loan>(LoanJson)!;
 
